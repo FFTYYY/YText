@@ -1,0 +1,14 @@
+.App {
+  text-align: center;
+}
+
+.left-part{
+  position: absolute;
+  left: 0;
+  width: 50%;
+}
+.right-part{
+  position: absolute;
+  left: 50%;
+  width: 50%;
+}
