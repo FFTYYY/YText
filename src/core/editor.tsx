@@ -23,6 +23,8 @@ class _YEditor_Component_ extends React.Component{
         }
         this.slate   = props.editor.slate
         this.yeditor = props.editor
+
+        this.updateValue(this.state.value) //向父组件发送value初始值
     }
 
     renderElement(props: any){
@@ -38,10 +40,16 @@ class _YEditor_Component_ extends React.Component{
         return <p {...props.attributes}>{props.children}</p>
     }
 
+    updateValue(value:any){
+        this.setState({value:value})
+        if(this.props.onValueChange != undefined){ //将value的值传回给父组件
+            this.props.onValueChange(value)
+        }
+    }
+
     render(){
-        this.props.updateValue(this.state.value)
         return <div>
-            <Slate editor={this.slate} value={this.state.value} onChange={value => this.setState({value:value})}>
+            <Slate editor={this.slate} value={this.state.value} onChange={value => this.updateValue(value)}>
                 <Editable
                     renderElement={this.renderElement.bind(this)}
                 />

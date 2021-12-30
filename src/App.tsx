@@ -28,6 +28,10 @@ class App extends React.Component {
 		this.renderer.update_renderer("test" , (props) => <Card {...props.attributes}>{props.children}</Card>)
 	}
 
+	updateValue(val){
+		this.setState({value: val})
+	}
+
 	render() {
 
 		let me = this
@@ -45,14 +49,20 @@ class App extends React.Component {
 		return <div>
 			<div className = "left-part">
 				<Toolbar> {buttons} </Toolbar>
-				<YEditor.Component editor={this.editor} updateValue={(val)=>{me.updateValue(val)}}/>
+				<YEditor.Component 
+					editor={this.editor} 
+					onValueChange={(val)=>{me.updateValue(val)}} 
+					key="1"
+				/>
 			</div>
 			<div className = "right-part">
 				<Renderer.Component 
 					renderer={this.renderer} 
 					node={{
+						type: "root" , 
 						children: me.state.value
 					}} 
+					key="2"
 				/>
 			</div>
 		</div> 
