@@ -3,6 +3,12 @@
 import { NodeTransforms } from "slate/dist/transforms/node"
 import { Node } from 'slate'
 
+interface RendererProps{
+    attributes: any , 
+    children: any , 
+    element: any , 
+}
+
 interface TextPrototype{
     text: string , 
 }
@@ -46,3 +52,4 @@ function group_prototype(typename: string , parameters: any): GroupPrototype{
 }
 
 export {text_prototype , paragraph_prototype , group_prototype}
+export type { RendererProps }

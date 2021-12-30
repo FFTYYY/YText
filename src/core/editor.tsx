@@ -7,8 +7,10 @@ import { Editor, Transforms } from 'slate'
 import { EditorContext } from "slate-react/dist/hooks/use-slate-static";
 import GroupType from "./group"
 import {paragraph_prototype} from "./meta"
+import type {RendererProps} from "./meta"
 
 interface YEditor_Component_Props{
+    onValueChange: (val: any[]) => any
     editor: YEditor
 }
 
@@ -27,7 +29,7 @@ class _YEditor_Component_ extends React.Component{
         this.updateValue(this.state.value) //向父组件发送value初始值
     }
 
-    renderElement(props: any){
+    renderElement(props: RendererProps){
         let element = props.element
         let nodetype = element.type
         if (nodetype == "paragraph"){

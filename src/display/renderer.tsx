@@ -1,8 +1,12 @@
 import {text_prototype , paragraph_prototype , group_prototype} from "../core/meta"
-import React, { useEffect, useMemo, useState , useCallback} from "react";
+import type { RendererProps } from "../core/meta"
 
+interface RendererComponentProps{
+    node: any
+    renderer: Renderer
+}
 
-function _Renderer_Component(props){
+function _Renderer_Component(props: RendererComponentProps){
     let node = props.node
     let me   = props.renderer
 
@@ -13,7 +17,8 @@ function _Renderer_Component(props){
     let children = node.children
     let SubRenderer = me.decide_renderer(node)
     return <SubRenderer 
-        attributes={{node:{node}}}
+        element={node}
+        attributes={undefined}
         children={
             Object.keys(children).map((num) => <Renderer.Component
                 node={children[num]} 
@@ -31,25 +36,25 @@ class Renderer{
 
     constructor(){
         this.renderers = {
-            "default":       (props) => <div {...props.attributes}>{props.children}</div> , 
-            "paragraph":     (props) => <p {...props.attributes}>{props.children}</p> , 
-            "group-default": (props) => <div {...props.attributes}>{props.children}</div> , // group default
+            "default":       (props: RendererProps) => <div {...props.attributes}>{props.children}</div> , 
+            "paragraph":     (props: RendererProps) => <p {...props.attributes}>{props.children}</p> , 
+            "group-default": (props: RendererProps) => <div {...props.attributes}>{props.children}</div> , // group default
             "grouptypes": {}
         }
     }
 
-    update_default_paragraph(renderer){
+    update_default_paragraph(renderer: (props: RendererProps)=>any){
         this.renderers.paragraph = renderer
     }
-    update_default_group(renderer){
+    update_default_group(renderer: (props: RendererProps)=>any){
         this.renderers["group-default"] = renderer
     }
 
-    update_renderer(grouptype_name , renderer){
+    update_renderer(grouptype_name: string , renderer: (props: RendererProps)=>any){
         this.renderers.grouptypes[grouptype_name] = renderer
     }
 
-    decide_renderer(node){
+    decide_renderer(node:any): (props:RendererProps)=>any{
         if(node.type == "paragraph"){
             return this.renderers.paragraph
         }

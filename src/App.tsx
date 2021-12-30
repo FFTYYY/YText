@@ -28,7 +28,7 @@ class App extends React.Component {
 		this.renderer.update_renderer("test" , (props) => <Card {...props.attributes}>{props.children}</Card>)
 	}
 
-	updateValue(val){
+	updateValue(val: any[]){
 		this.setState({value: val})
 	}
 
@@ -51,7 +51,7 @@ class App extends React.Component {
 				<Toolbar> {buttons} </Toolbar>
 				<YEditor.Component 
 					editor={this.editor} 
-					onValueChange={(val)=>{me.updateValue(val)}} 
+					onValueChange={(val: any[])=>{me.updateValue(val)}} 
 					key="1"
 				/>
 			</div>
