@@ -1,3 +1,10 @@
+/*
+    这个文件定义一个React组件，来渲染slate node树 。
+    exports:
+        Renderer: 一个类，用来记录渲染信息。
+        Renderer.Component: 一个组件，用来渲染node树。
+*/
+
 import {text_prototype , paragraph_prototype , group_prototype} from "../core/meta"
 import type { RendererProps } from "../core/meta"
 

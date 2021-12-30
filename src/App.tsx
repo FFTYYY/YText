@@ -1,6 +1,6 @@
 import React from "react";
 import YEditor from "./core/editor"
-import GroupType from "./core/group"
+import GroupType from "./core/elements/group"
 import Toolbar from '@mui/material/Toolbar'
 import Button from '@mui/material/Button'
 import { Transforms } from 'slate'

@@ -1,29 +1,31 @@
-/* 这个文件定义所有可能出现的Slate节点类型 */
+/* 
+    这个文件定义所有可能出现的Slate节点类型，以及常用接口。
+*/
 
 import { NodeTransforms } from "slate/dist/transforms/node"
 import { Node } from 'slate'
 
 interface RendererProps{
-    attributes: any , 
-    children: any , 
-    element: any , 
+    attributes: any
+    children: any
+    element: any
 }
 
 interface TextPrototype{
-    text: string , 
+    text: string
 }
 
 interface ParagraphPrototype{
-    type: string , 
-    children: Node[] , 
+    type: string
+    children: Node[]
 }
 
 interface GroupPrototype{
-    type: string,
-    precursor: GroupPrototype | undefined , 
-    successor: GroupPrototype | undefined , 
-    parameters: any , 
-    typename: string , 
+    type: string
+    precursor: GroupPrototype | undefined
+    successor: GroupPrototype | undefined
+    parameters: any
+    typename: string
     children: Node[]
 }
 

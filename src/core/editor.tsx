@@ -1,4 +1,9 @@
-/* YEditor是一个React组件 */
+/* 
+    这个文件定义了一个React组件，封装了Slate编辑器。
+    exports:
+        YEditor: 一个类，用于管理这个编辑器的自定义元素列表。
+        YEditor.Component: 一个组件，表示一个编辑器。
+*/
 
 import React, { useEffect, useMemo, useState , useCallback} from "react";
 import { createEditor , Node , BaseEditor} from 'slate'
