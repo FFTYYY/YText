@@ -2,7 +2,7 @@
     这个文件定义Slate的「Group」元素
 */
 
-import {text_prototype , paragraph_prototype , group_prototype} from "./meta"
+import {text_prototype , paragraph_prototype , group_prototype} from "../meta"
 
 class GroupType{
     name: string
