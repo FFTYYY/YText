@@ -1,32 +1,28 @@
 import {text_prototype , paragraph_prototype , group_prototype} from "../core/meta"
 import React, { useEffect, useMemo, useState , useCallback} from "react";
 
-class _Renderer_Component extends React.Component{
-    constructor(props){
-        super(props)
 
-        this.renderer   = props.renderer
-        this.node   = props.node
+function _Renderer_Component(props){
+    let node = props.node
+    let me   = props.renderer
+
+    if(node.children == undefined){
+        return <span>{node.text}</span>
     }
-    render(){
-        let node = this.node
-        let me = this.me
-        console.log(node)
-        if(node.children == undefined){
-            return <span>{node.text}</span>
-        }
-        let children = node.children
-        let SubRenderer = me.decide_renderer(node)
-        return <SubRenderer 
-            attributes={{node:{node}}}
-            children={Object.keys(children).map((num) => <Renderer.Component
+
+    let children = node.children
+    let SubRenderer = me.decide_renderer(node)
+    return <SubRenderer 
+        attributes={{node:{node}}}
+        children={
+            Object.keys(children).map((num) => <Renderer.Component
                 node={children[num]} 
                 renderer={me} 
                 key={num}
-            />)}
-        />
+            />)
+        }
+    />
 
-    }
 }
 class Renderer{
     renderers: any
