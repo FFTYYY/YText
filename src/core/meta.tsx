@@ -29,6 +29,13 @@ interface GroupPrototype{
     children: Node[]
 }
 
+interface AbstractPrototype{
+    type: string
+    parameters: any
+    abstractname: string
+    children: Node[]
+}
+
 function text_prototype() :TextPrototype{
     return {
         text: "233" , 
@@ -53,5 +60,14 @@ function group_prototype(typename: string , parameters: any): GroupPrototype{
     }
 }
 
-export {text_prototype , paragraph_prototype , group_prototype}
+function abstract_prototype(abstractname: string , parameters: any): AbstractPrototype{
+    return {        
+        type: "abstract" , 
+        abstractname: abstractname , 
+        parameters: parameters , 
+        children: [paragraph_prototype()],
+    }
+}
+
+export {text_prototype , paragraph_prototype , group_prototype , abstract_prototype}
 export type { RendererProps }
