@@ -3,6 +3,9 @@
     exports:
         YEditor: 一个类，用于管理这个编辑器的自定义元素列表。
         YEditor.Component: 一个组件，表示一个编辑器。
+    
+    注：
+        Editor对有哪些node一无所知，node需要自己维护在editor中的渲染方式。
 */
 
 import React, { useEffect, useMemo, useState , useCallback} from "react";
@@ -10,7 +13,8 @@ import { createEditor , Node , BaseEditor} from 'slate'
 import { Slate, Editable, withReact, ReactEditor} from 'slate-react'
 import { Editor, Transforms } from 'slate'
 import { EditorContext } from "slate-react/dist/hooks/use-slate-static";
-import GroupType from "./group"
+import GroupType from "./elements/group"
+import AbstractType from "./elements/abstract"
 import {paragraph_prototype} from "./meta"
 import type {RendererProps} from "./meta"
 
@@ -41,7 +45,10 @@ class _YEditor_Component_ extends React.Component{
             return <p {...props.attributes}>{props.children}</p>
         }
         else if (nodetype == "group"){
-            return this.yeditor.grouptypes[element.typename].renderer(props)
+            return this.yeditor.grouptypes[element.groupname].renderer(props)
+        }
+        else if (nodetype == "abstract"){
+            return this.yeditor.abstractypes[element.abstractname].renderer(props)
         }
 
         return <p {...props.attributes}>{props.children}</p>
@@ -68,15 +75,20 @@ class _YEditor_Component_ extends React.Component{
 
 export default class YEditor{
     grouptypes: any
+    abstractypes: any
     slate: ReactEditor
     static Component = _YEditor_Component_
 
     constructor(){
         this.grouptypes = {}
+        this.abstractypes = {}
         this.slate = withReact(createEditor())
     }
 
-    add_group_type(grouptype: GroupType){
+    add_grouptype(grouptype: GroupType){
         this.grouptypes[grouptype.name] = grouptype
+    }
+    add_abstracttype(abstractype: AbstractType){
+        this.abstractypes[abstractype.name] = abstractype
     }
 }

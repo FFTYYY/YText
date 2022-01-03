@@ -3,6 +3,9 @@
     exports:
         Renderer: 一个类，用来记录渲染信息。
         Renderer.Component: 一个组件，用来渲染node树。
+
+    注：
+        renderer必须知道每种node如何渲染，否则就会用默认的渲染方式。
 */
 
 import {text_prototype , paragraph_prototype , group_prototype} from "../core/meta"
@@ -18,7 +21,7 @@ function _Renderer_Component(props: RendererComponentProps){
     let me   = props.renderer
 
     if(node.children == undefined){
-        return <span>{node.text}</span>
+        return <span>{node.text}<br/></span>
     }
 
     let children = node.children
@@ -46,7 +49,9 @@ class Renderer{
             "default":       (props: RendererProps) => <div {...props.attributes}>{props.children}</div> , 
             "paragraph":     (props: RendererProps) => <p {...props.attributes}>{props.children}</p> , 
             "group-default": (props: RendererProps) => <div {...props.attributes}>{props.children}</div> , // group default
-            "grouptypes": {}
+            "grouptypes": {} , 
+            "abstract-default": (props: RendererProps) => <div {...props.attributes}>{props.children}</div> , // abstract default
+            "abstracttypes": {} , 
         }
     }
 
@@ -56,9 +61,15 @@ class Renderer{
     update_default_group(renderer: (props: RendererProps)=>any){
         this.renderers["group-default"] = renderer
     }
+    update_default_abstract(renderer: (props: RendererProps)=>any){
+        this.renderers["abstract-default"] = renderer
+    }
 
-    update_renderer(grouptype_name: string , renderer: (props: RendererProps)=>any){
+    update_group_renderer(grouptype_name: string , renderer: (props: RendererProps)=>any){
         this.renderers.grouptypes[grouptype_name] = renderer
+    }
+    update_abstract_renderer(abstractype_name: string , renderer: (props: RendererProps)=>any){
+        this.renderers.abstracttypes[abstractype_name] = renderer
     }
 
     decide_renderer(node:any): (props:RendererProps)=>any{
@@ -66,9 +77,16 @@ class Renderer{
             return this.renderers.paragraph
         }
         else if(node.type == "group"){
-            let r = this.renderers.grouptypes[node.typename]
+            let r = this.renderers.grouptypes[node.groupname]
             if(r === undefined){
                 return this.renderers["group-default"]
+            }
+            return r
+        }
+        else if(node.type == "abstract"){
+            let r = this.renderers.abstracttypes[node.abstractname]
+            if(r === undefined){
+                return this.renderers["abstract-default"]
             }
             return r
         }

@@ -25,7 +25,7 @@ interface GroupPrototype{
     precursor: GroupPrototype | undefined
     successor: GroupPrototype | undefined
     parameters: any
-    typename: string
+    groupname: string
     children: Node[]
 }
 
@@ -33,6 +33,7 @@ interface AbstractPrototype{
     type: string
     parameters: any
     abstractname: string
+    hidden: Node[] 
     children: Node[]
 }
 
@@ -44,28 +45,32 @@ function text_prototype() :TextPrototype{
 
 function paragraph_prototype() :ParagraphPrototype{
     return {
+        special: false , 
         type: "paragraph" , 
         children: [text_prototype()],
     }
 }
 
-function group_prototype(typename: string , parameters: any): GroupPrototype{
-    return {        
+function group_prototype(groupname: string , parameters: any): GroupPrototype{
+    return {
+        special: true , 
         type: "group" , 
         precursor: undefined , 
         successor: undefined , 
         parameters: parameters , 
-        typename: typename , 
+        groupname: groupname , 
         children: [paragraph_prototype()],
     }
 }
 
 function abstract_prototype(abstractname: string , parameters: any): AbstractPrototype{
     return {        
+        special: true , 
         type: "abstract" , 
         abstractname: abstractname , 
         parameters: parameters , 
-        children: [paragraph_prototype()],
+        hidden: [paragraph_prototype()] , // 下层子节点
+        children: [paragraph_prototype()], // 同层子节点
     }
 }
 
