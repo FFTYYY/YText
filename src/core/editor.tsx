@@ -8,7 +8,7 @@
         Editor对有哪些node一无所知，node需要自己维护在editor中的渲染方式。
 */
 
-import React, { useEffect, useMemo, useState , useCallback} from "react";
+import React from "react";
 import { createEditor , Node , BaseEditor} from 'slate'
 import { Slate, Editable, withReact, ReactEditor} from 'slate-react'
 import { Editor, Transforms } from 'slate'
@@ -16,18 +16,23 @@ import { EditorContext } from "slate-react/dist/hooks/use-slate-static";
 import GroupType from "./elements/group"
 import AbstractType from "./elements/abstract"
 import {paragraph_prototype} from "./meta"
-import type {RendererProps} from "./meta"
 
-interface YEditor_Component_Props{
+interface YEditorComponentProps{
     onValueChange: (val: any[]) => any
     editor: YEditor
+}
+
+interface SlateRendererProps{
+    attributes: any
+    element: Node
+    children: any[]
 }
 
 class _YEditor_Component_ extends React.Component{
     yeditor: YEditor
     slate: ReactEditor
 
-    constructor(props: YEditor_Component_Props){
+    constructor(props: YEditorComponentProps){
         super(props)
         this.state = {
             value: [paragraph_prototype()] , 
@@ -38,20 +43,26 @@ class _YEditor_Component_ extends React.Component{
         this.updateValue(this.state.value) //向父组件发送value初始值
     }
 
-    renderElement(props: RendererProps){
+    renderElement(props: SlateRendererProps){
         let element = props.element
         let nodetype = element.type
         if (nodetype == "paragraph"){
             return <p {...props.attributes}>{props.children}</p>
         }
         else if (nodetype == "group"){
-            return this.yeditor.grouptypes[element.groupname].renderer(props)
+            let R = this.yeditor.grouptypes[element.groupname].renderer
+            return <R {...props.attributes}>{props.children}</R>
         }
         else if (nodetype == "abstract"){
-            return this.yeditor.abstractypes[element.abstractname].renderer(props)
+            let R = this.yeditor.abstractypes[element.abstractname].renderer
+
+            return<R {...props.attributes}>{props.children}</R>
+        }
+        else if(nodetype == "abstract-middle"){
+            return <div {...props.attributes}>{props.children}</div>
         }
 
-        return <p {...props.attributes}>{props.children}</p>
+        return <div {...props.attributes}>{props.children}</div>
     }
 
     updateValue(value:any){

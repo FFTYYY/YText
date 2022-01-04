@@ -10,6 +10,10 @@ import Paper from '@mui/material/Paper'
 import './App.css'
 import Renderer from "./display/renderer"
 import { listItemAvatarClasses } from "@mui/material";
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+
 
 class App extends React.Component {
 	editor: YEditor
@@ -23,17 +27,21 @@ class App extends React.Component {
 
 		this.editor = new YEditor()
 		this.editor.add_grouptype(new GroupType(
-			"test" , [] , [] , {} , (props) => <Card {...props.attributes}>{props.children}</Card>
+			"test" , [] , [] , {} , Card
 		))
 		this.editor.add_abstracttype(new AbstractType(
-			"tabs" , {} , (props) => <Card {...props.attributes}>
-				{props.children}
-			</Card>
+			"tabs" , {} , React.forwardRef( (props,ref) => <Accordion ref={ref}>
+					<AccordionSummary>} >{props.children[0]}</AccordionSummary>
+					<AccordionDetails>{props.children[1]}</AccordionDetails>
+				</Accordion>)
 		))
 
 		this.renderer = new Renderer()
-		this.renderer.update_group_renderer("test" , (props) => <Paper elevation={3}  {...props.attributes}>{props.children}</Paper>)
-		this.renderer.update_abstract_renderer("tabs" , (props) => <Paper elevation={3}  {...props.attributes}>{props.children}</Paper>)
+		this.renderer.update_group_renderer("test" , (props) => <Paper elevation={3}>{props.children}</Paper>)
+		this.renderer.update_abstract_renderer("tabs" , (props) => <div>
+			<Paper elevation={3}>{props.children[0]}</Paper>
+			<Paper elevation={3}>{props.children[1]}</Paper>
+		</div>)
 	}
 
 	updateValue(val: any[]){

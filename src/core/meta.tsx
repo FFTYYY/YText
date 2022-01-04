@@ -5,22 +5,19 @@
 import { NodeTransforms } from "slate/dist/transforms/node"
 import { Node } from 'slate'
 
-interface RendererProps{
-    attributes: any
-    children: any
-    element: any
-}
-
 interface TextPrototype{
+    flags: {}
     text: string
 }
 
 interface ParagraphPrototype{
+    flags: {}
     type: string
     children: Node[]
 }
 
 interface GroupPrototype{
+    flags: {}
     type: string
     precursor: GroupPrototype | undefined
     successor: GroupPrototype | undefined
@@ -30,30 +27,36 @@ interface GroupPrototype{
 }
 
 interface AbstractPrototype{
+    flags: {}
     type: string
     parameters: any
     abstractname: string
-    hidden: Node[] 
+    children: Node[]
+}
+interface AbstractMiddlePrototype{
+    flags: {}
+    type: string
     children: Node[]
 }
 
-function text_prototype() :TextPrototype{
+function text_prototype(flags: any[] = []) :TextPrototype{
     return {
+        flags: flags,
         text: "233" , 
     }
 }
 
-function paragraph_prototype() :ParagraphPrototype{
+function paragraph_prototype(flags: any[] = []) :ParagraphPrototype{
     return {
-        special: false , 
+        flags: {} , 
         type: "paragraph" , 
         children: [text_prototype()],
     }
 }
 
-function group_prototype(groupname: string , parameters: any): GroupPrototype{
+function group_prototype(groupname: string , parameters: any , flags: any[] = []): GroupPrototype{
     return {
-        special: true , 
+        flags: {} , 
         type: "group" , 
         precursor: undefined , 
         successor: undefined , 
@@ -63,16 +66,27 @@ function group_prototype(groupname: string , parameters: any): GroupPrototype{
     }
 }
 
-function abstract_prototype(abstractname: string , parameters: any): AbstractPrototype{
-    return {        
-        special: true , 
+function abstract_middle_prototype(real: boolean , flags: any = []): AbstractMiddlePrototype{
+    let f = real ? ["real"] : []
+    f = f.concat(flags)
+    return {
+        flags: f, 
+        type: "abstract-middle" , 
+        children: [paragraph_prototype()] , 
+    }
+}
+
+function abstract_prototype(abstractname: string , parameters: any , flags: {}): AbstractPrototype{
+    return {
+        flags: {} , 
         type: "abstract" , 
         abstractname: abstractname , 
         parameters: parameters , 
-        hidden: [paragraph_prototype()] , // 下层子节点
-        children: [paragraph_prototype()], // 同层子节点
+        children: [
+            abstract_middle_prototype(true) , 
+            abstract_middle_prototype(false) , 
+        ],
     }
 }
 
 export {text_prototype , paragraph_prototype , group_prototype , abstract_prototype}
-export type { RendererProps }

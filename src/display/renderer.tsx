@@ -9,12 +9,18 @@
 */
 
 import {text_prototype , paragraph_prototype , group_prototype} from "../core/meta"
-import type { RendererProps } from "../core/meta"
 
 interface RendererComponentProps{
     node: any
     renderer: Renderer
 }
+
+interface RendererProps{
+    children: any[]
+    element: Node
+}
+
+
 
 function _Renderer_Component(props: RendererComponentProps){
     let node = props.node
@@ -28,7 +34,6 @@ function _Renderer_Component(props: RendererComponentProps){
     let SubRenderer = me.decide_renderer(node)
     return <SubRenderer 
         element={node}
-        attributes={undefined}
         children={
             Object.keys(children).map((num) => <Renderer.Component
                 node={children[num]} 
@@ -46,11 +51,11 @@ class Renderer{
 
     constructor(){
         this.renderers = {
-            "default":       (props: RendererProps) => <div {...props.attributes}>{props.children}</div> , 
-            "paragraph":     (props: RendererProps) => <p {...props.attributes}>{props.children}</p> , 
-            "group-default": (props: RendererProps) => <div {...props.attributes}>{props.children}</div> , // group default
+            "default":       (props: RendererProps) => <div>{props.children}</div> , 
+            "paragraph":     (props: RendererProps) => <p>{props.children}</p> , 
+            "group-default": (props: RendererProps) => <div>{props.children}</div> , // group default
             "grouptypes": {} , 
-            "abstract-default": (props: RendererProps) => <div {...props.attributes}>{props.children}</div> , // abstract default
+            "abstract-default": (props: RendererProps) => <div>{props.children}</div> , // abstract default
             "abstracttypes": {} , 
         }
     }
@@ -89,6 +94,9 @@ class Renderer{
                 return this.renderers["abstract-default"]
             }
             return r
+        }
+        else if(node.type == "abstract-middle"){
+            return this.renderers["default"]
         }
         return this.renderers["default"]
     }
