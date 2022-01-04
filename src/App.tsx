@@ -31,7 +31,7 @@ class App extends React.Component {
 		))
 		this.editor.add_abstracttype(new AbstractType(
 			"tabs" , {} , React.forwardRef( (props,ref) => <Accordion ref={ref}>
-					<AccordionSummary>} >{props.children[0]}</AccordionSummary>
+					<AccordionSummary>{props.children[0]}</AccordionSummary>
 					<AccordionDetails>{props.children[1]}</AccordionDetails>
 				</Accordion>)
 		))
