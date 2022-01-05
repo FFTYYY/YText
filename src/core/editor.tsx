@@ -41,6 +41,10 @@ class _YEditor_Component_ extends React.Component{
         this.yeditor = props.editor
 
         this.updateValue(this.state.value) //向父组件发送value初始值
+
+        this.slate.isInline = (node) => {
+            return node.flags.has("inline")
+        }
     }
 
     renderElement(props: SlateRendererProps){
@@ -59,8 +63,10 @@ class _YEditor_Component_ extends React.Component{
             return<R {...props.attributes}>{props.children}</R>
         }
         else if(nodetype == "abstract-middle"){
-            return <div {...props.attributes}>{props.children}</div>
+            return <span {...props.attributes}>{props.children}</span>
         }
+
+        console.log("type")
 
         return <div {...props.attributes}>{props.children}</div>
     }

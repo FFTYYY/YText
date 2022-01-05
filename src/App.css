@@ -12,3 +12,12 @@
   left: 50%;
   width: 50%;
 }
+
+.inlinespan{
+  background-color: darkslategray !important;
+  color:khaki;
+}
+
+.inlinediv{
+  display: inline-block;
+}

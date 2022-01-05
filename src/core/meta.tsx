@@ -39,24 +39,24 @@ interface AbstractMiddlePrototype{
     children: Node[]
 }
 
-function text_prototype(flags: any[] = []) :TextPrototype{
+function text_prototype(flags: Set<string> = new Set()) :TextPrototype{
     return {
         flags: flags,
-        text: "233" , 
+        text: "xxx" , 
     }
 }
 
-function paragraph_prototype(flags: any[] = []) :ParagraphPrototype{
+function paragraph_prototype(flags: Set<string> = new Set()) :ParagraphPrototype{
     return {
-        flags: {} , 
+        flags: flags , 
         type: "paragraph" , 
         children: [text_prototype()],
     }
 }
 
-function group_prototype(groupname: string , parameters: any , flags: any[] = []): GroupPrototype{
+function group_prototype(groupname: string , parameters: any , flags: Set<string> = new Set()): GroupPrototype{
     return {
-        flags: {} , 
+        flags: flags , 
         type: "group" , 
         precursor: undefined , 
         successor: undefined , 
@@ -66,19 +66,19 @@ function group_prototype(groupname: string , parameters: any , flags: any[] = []
     }
 }
 
-function abstract_middle_prototype(real: boolean , flags: any = []): AbstractMiddlePrototype{
-    let f = real ? ["real"] : []
-    f = f.concat(flags)
+function abstract_middle_prototype(real: boolean , flags: Set<string> = new Set()): AbstractMiddlePrototype{
+    if(real)
+        flags.add("real")
     return {
-        flags: f, 
+        flags: flags, 
         type: "abstract-middle" , 
-        children: [paragraph_prototype()] , 
+        children: [text_prototype()] , 
     }
 }
 
-function abstract_prototype(abstractname: string , parameters: any , flags: {}): AbstractPrototype{
+function abstract_prototype(abstractname: string , parameters: any , flags: Set<string> = new Set()): AbstractPrototype{
     return {
-        flags: {} , 
+        flags: flags , 
         type: "abstract" , 
         abstractname: abstractname , 
         parameters: parameters , 

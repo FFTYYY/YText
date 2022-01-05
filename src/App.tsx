@@ -13,7 +13,42 @@ import { listItemAvatarClasses } from "@mui/material";
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
+
+class TestInlineAbs extends React.Component {
+	constructor(props){
+		super(props)
+
+		this.state = {
+			anchorEl: null
+		}
+	}
+	render(){
+
+		let me = this
+		const open = Boolean(me.state.anchorEl);
+		const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+			me.setState({anchorEl: event.currentTarget})
+		};
+		const handleClose = () => {
+			me.setState({anchorEl: null})
+		};
+	
+		return <span
+				id="basic-button"
+				aria-controls={open ? 'basic-menu' : undefined}
+				aria-haspopup="true"
+				aria-expanded={open ? 'true' : undefined}
+				onClick={handleClick}
+				className = "inlinespan"
+			>
+			{me.props.main}
+			</span>
+	}
+  }
+  
 
 class App extends React.Component {
 	editor: YEditor
@@ -30,10 +65,14 @@ class App extends React.Component {
 			"test" , [] , [] , {} , Card
 		))
 		this.editor.add_abstracttype(new AbstractType(
-			"tabs" , {} , React.forwardRef( (props,ref) => <Accordion ref={ref}>
+			"tabs" , {} , false , React.forwardRef( (props,ref) => <Accordion ref={ref}>
 					<AccordionSummary>{props.children[0]}</AccordionSummary>
 					<AccordionDetails>{props.children[1]}</AccordionDetails>
 				</Accordion>)
+		))
+
+		this.editor.add_abstracttype(new AbstractType(
+			"abinl" , {} , true , React.forwardRef( (props,ref) => <TestInlineAbs ref={ref} main={props.children[0]} hid={props.children[1]} /> )
 		))
 
 		this.renderer = new Renderer()
@@ -67,7 +106,13 @@ class App extends React.Component {
 				variant = "text" 
 				key = {name}
 				onClick = {()=>{
-					Transforms.insertNodes(me.editor.slate , abstractypes[name].make_node())
+					console.log(abstractypes[name])
+					if(abstractypes[name].is_inline){
+						Transforms.insertNodes(me.editor.slate , abstractypes[name].make_node())
+					}
+					else{
+						Transforms.insertNodes(me.editor.slate , abstractypes[name].make_node())
+					}
 				}}
 			>{name}</Button>
 		)
