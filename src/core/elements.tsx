@@ -3,6 +3,22 @@
 
 import { Node , BaseElement  } from 'slate'
 
+export {
+    TextPrototype , 
+    ParagraphPrototype , 
+    GroupPrototype , 
+    StructPrototype , 
+    SupportPrototype , 
+}
+export type {
+    BaseNode , 
+    TextNode , 
+    ParagraphNode , 
+    GroupNode , 
+    StructNode , 
+    SupportNode , 
+}
+
 // 所有可能的节点类型
 type NodeType = "text" | "paragraph" | "group" | "struct" | "support"
 
@@ -30,7 +46,7 @@ interface GroupNode extends BaseNode{
     name: string
     parameters: string
     relation: GroupRelationType
-    children: ParagraphNode[]
+    children: ParagraphNode[] | GroupNode[] | StructNode[]
 }
 
 interface StructNode extends BaseNode{
@@ -89,18 +105,3 @@ function SupportPrototype(name: string , parameter_proto: any): SupportNode{
     }
 }
 
-export {
-    TextPrototype , 
-    ParagraphPrototype , 
-    GroupPrototype , 
-    StructPrototype , 
-    SupportPrototype , 
-}
-export type {
-    BaseNode , 
-    TextNode , 
-    ParagraphNode , 
-    GroupNode , 
-    StructNode , 
-    SupportNode , 
-}
