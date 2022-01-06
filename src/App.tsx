@@ -1,5 +1,5 @@
 import React from "react";
-import YEditor from "./core/editor"
+import YEditor from "./core/editor/editor"
 import GroupType from "./core/elements/group"
 import AbstractType from "./core/elements/abstract"
 import Toolbar from '@mui/material/Toolbar'

@@ -19,6 +19,8 @@ export type {
     SupportNode , 
 }
 
+export type { NodeType , GroupRelationType }
+
 // 所有可能的节点类型
 type NodeType = "text" | "paragraph" | "group" | "struct" | "support"
 
