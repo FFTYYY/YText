@@ -1,9 +1,9 @@
 /* 作为React组件的Editor */
 
 import React from "react";
-import { createEditor , Node , BaseEditor} from 'slate'
+import { createEditor , Node , BaseEditor , Path} from 'slate'
 import { Slate, Editable, withReact, ReactEditor} from 'slate-react'
-import { Editor, Transforms } from 'slate'
+import { Editor, Transforms , Point } from 'slate'
 import { EditorCore } from "./editorcore"
 import type { BaseNode , TextNode , ParagraphNode , GroupNode , StructNode , SupportNode } from "../elements"
 import { TextPrototype , ParagraphPrototype , GroupPrototype , StructPrototype , SupportPrototype } from "../elements"
@@ -123,10 +123,34 @@ class YEditor{
         this.renderers[`${nodetype}styles`][stylename] = renderer
     }
     
-    get_button(nodetype: NodeType, stylename: string){
-
+    get_onclick(nodetype: NodeType, stylename: string): (e:any)=>undefined|void{
         let me = this
+        let root = me.core.root
+        if(nodetype == "group")
+        {                
+            let style = me.core.groupstyles[stylename]
+            if(style == undefined)
+                return (e:any) => undefined
 
-        return <Button>{stylename}</Button>
+            return function(e:any){
+                let node = style.makenode()
+                me.slate.insertNode(node)
+            }
+        }
+        return (e:any) => undefined
     }
 }
+
+/* 以下是写了一半的把当前选区转换为group的代码
+let selection = me.slate.selection
+
+if (selection == undefined)
+    return undefined
+
+let point_bef = selection.anchor
+let point_aft = selection.focus
+if(Point.isAfter(point_bef , point_aft))
+    [ point_bef , point_aft ] = [point_aft , point_bef]
+
+let nodes: [Node,Path][] = Array.from( Node.elements(root , {from: point_bef.path, to: point_aft.path}) )
+*/

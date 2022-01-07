@@ -4,13 +4,13 @@ import { TextPrototype , ParagraphPrototype , GroupPrototype , StructPrototype ,
 export {EditorCore , TextStyle , GroupStyle , StructStyle , SupportStyle}
 
 class EditorCore{
-    textstyles   : { [sty: string] : TextStyle}
-    groupstyles  : { [sty: string] : GroupStyle}
-    structstyles : { [sty: string] : StructStyle}
-    supportstyles: { [sty: string] : SupportStyle}
+    textstyles   : { [sty: string] : TextStyle    }
+    groupstyles  : { [sty: string] : GroupStyle   }
+    structstyles : { [sty: string] : StructStyle  }
+    supportstyles: { [sty: string] : SupportStyle }
     root: GroupNode
 
-    constructor(textstyles: TextStyle[], groupstyles: GroupStyle[], structstyles: StructStyle[], supportstyles: SupportStyle[]){
+    constructor(textstyles: TextStyle[] = [], groupstyles: GroupStyle[] = [], structstyles: StructStyle[] = [], supportstyles: SupportStyle[] = []){
         this.textstyles    = {}
         this.groupstyles   = {}
         this.structstyles  = {}
