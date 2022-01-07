@@ -90,7 +90,7 @@ function GroupPrototype(name: string , parameter_proto: any): GroupNode{
         parameters: parameter_proto , 
         relation: "separating" , 
 
-        children: [] , 
+        children: [ParagraphPrototype()] , 
     }
 }
 
@@ -110,6 +110,7 @@ function SupportPrototype(name: string , parameter_proto: any): SupportNode{
         type: "support" , 
         name: name , 
         parameters: parameter_proto , 
+        children: [],
     }
 }
 

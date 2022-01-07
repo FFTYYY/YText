@@ -48,18 +48,16 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
         let name = undefined
         if (element.hasOwnProperty("name"))
             name = element.name
-
-        return this.editor.get_renderer(type , name)
+        return this.editor.get_renderer(type , name)(props)
     }
 
     render(){
         let me = this
-        return <Slate editor={me.slate} value={me.core.root.children} onChange={value => me.updateValue(value)}>
+        return <Slate editor={me.slate} value={me.editor.core.root.children} onChange={value => me.updateValue(value)}>
             <Editable
                 renderElement={me.renderElement.bind(me)}
             />
         </Slate>
-
     }
     
 }
@@ -127,14 +125,16 @@ class YEditor{
         let me = this
         let root = me.core.root
         if(nodetype == "group")
-        {                
+        {        
             let style = me.core.groupstyles[stylename]
             if(style == undefined)
                 return (e:any) => undefined
 
             return function(e:any){
                 let node = style.makenode()
-                me.slate.insertNode(node)
+                Transforms.insertNodes(me.slate , node)
+
+                console.log(me.slate)
             }
         }
         return (e:any) => undefined

@@ -3,7 +3,7 @@ import { YEditor } from "./core/editor/editor_interface"
 import { EditorCore , GroupStyle } from "./core/editor/editorcore"
 import { theorem } from "./components/groups"
 import { Button } from "antd"
-
+import "./App.css"
 
 class App extends React.Component {
 	editorcore: EditorCore
@@ -25,9 +25,9 @@ class App extends React.Component {
 		let me = this
 		let groupstyles = this.editor.core.groupstyles
 		const buttons_grp = Object.keys(groupstyles).map( (name) => 
-			<Button 
+			<Button  type="primary"
 				key = {name}
-				onClick = {this.editor.get_onclick("group" , name)}
+				onClick = {e => me.editor.get_onclick("group" , name)(e)}
 			>{name}</Button>
 		)
 		

@@ -50,7 +50,7 @@ class Style{
     parameter_prototype: any
     prototype: BaseNode
 
-    constructor(name: string, parameter_prototype: any, prototype){
+    constructor(name: string, parameter_prototype: any, prototype: BaseNode){
         this.name = name
         this.parameter_prototype = parameter_prototype
         this.prototype = prototype
@@ -58,6 +58,10 @@ class Style{
 
     makenode(){
         return this.prototype
+    }
+
+    update_prototype(new_proto:any){
+        Object.assign(this.prototype , new_proto)
     }
 
 }
@@ -81,7 +85,7 @@ class GroupStyle extends Style{
 
     constructor(name: string , parameter_prototype: any){
 
-        let prototype = TextPrototype()
+        let prototype = GroupPrototype(name,parameter_prototype)
         prototype.name = name
         prototype.parameters = parameter_prototype
 
@@ -95,7 +99,7 @@ class StructStyle extends Style{
 
     constructor(name: string , parameter_prototype: any){
 
-        let prototype = TextPrototype()
+        let prototype = StructPrototype(name , parameter_prototype)
         prototype.name = name
         prototype.parameters = parameter_prototype
 
@@ -109,7 +113,7 @@ class SupportStyle extends Style{
 
     constructor(name: string , parameter_prototype: any){
 
-        let prototype = TextPrototype()
+        let prototype = SuportPrototype(name , parameter_prototype)
         prototype.name = name
         prototype.parameters = parameter_prototype
 
