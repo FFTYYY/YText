@@ -1,5 +1,5 @@
 import React from "react";
-import YEditor from "./core/editor/editor"
+import YEditor from "./core/editor"
 import GroupType from "./core/elements/group"
 import AbstractType from "./core/elements/abstract"
 import Toolbar from '@mui/material/Toolbar'
@@ -15,6 +15,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import Popover from '@mui/material/Popover';
 
 
 class TestInlineAbs extends React.Component {

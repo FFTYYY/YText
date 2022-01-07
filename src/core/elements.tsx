@@ -27,40 +27,46 @@ type NodeType = "text" | "paragraph" | "group" | "struct" | "support"
 // 所有可能的段组连接方式
 type GroupRelationType = "chaining" | "separating"
 
-interface BaseNode{
-    type: NodeType
+interface _BaseNode{
+    type?: NodeType         // 没有type默认为Text
     hidden?: BaseNode[]    
     hidden_parameters?: any
 }
+type BaseNode = _BaseNode & Node
 
-interface TextNode extends BaseNode{
+interface _TextNode extends _BaseNode{
     text: string
     name?: string
     parameters?: string // 文本节点可以有parameters，因为文本节点可以有样式
 }
+type TextNode = _TextNode & Node
 
 // 注意段落节点则没有样式，因为所有段落样式都由group定义
-interface ParagraphNode extends BaseNode{
+interface _ParagraphNode extends _BaseNode{
     children: TextNode[]
 }
+type ParagraphNode = _ParagraphNode & Node
 
-interface GroupNode extends BaseNode{
+interface _GroupNode extends _BaseNode{
     name: string
     parameters: string
     relation: GroupRelationType
-    children: ParagraphNode[] | GroupNode[] | StructNode[]
+    children: BaseNode[]
 }
+type GroupNode = _GroupNode & Node
 
-interface StructNode extends BaseNode{
+interface _StructNode extends _BaseNode{
     name: string
     parameters: string
-    children: GroupNode[] | StructNode[]
+    children: BaseNode[]
 }
+type StructNode = _StructNode & Node
 
-interface SupportNode extends BaseNode{
+interface _SupportNode extends _BaseNode{
     name: string
     parameters: string
 }
+type SupportNode = _SupportNode & Node
 
 function TextPrototype(text: string = ""): TextNode{
     return {
@@ -72,7 +78,7 @@ function TextPrototype(text: string = ""): TextNode{
 function ParagraphPrototype(): ParagraphNode{
     return {
         type: "paragraph" , 
-        children: [] , 
+        children: [TextPrototype("")] , 
     }
 }
 

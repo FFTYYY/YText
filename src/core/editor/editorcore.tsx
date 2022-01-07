@@ -4,19 +4,44 @@ import { TextPrototype , ParagraphPrototype , GroupPrototype , StructPrototype ,
 export {EditorCore , TextStyle , GroupStyle , StructStyle , SupportStyle}
 
 class EditorCore{
-    textstyles   : TextStyle[]
-    groupstyles  : GroupStyle[]
-    structstyles : StructStyle[]
-    supportstyles: SupportStyle[]
+    textstyles   : { [sty: string] : TextStyle}
+    groupstyles  : { [sty: string] : GroupStyle}
+    structstyles : { [sty: string] : StructStyle}
+    supportstyles: { [sty: string] : SupportStyle}
     root: GroupNode
 
     constructor(textstyles: TextStyle[], groupstyles: GroupStyle[], structstyles: StructStyle[], supportstyles: SupportStyle[]){
-        this.textstyles = textstyles
-        this.groupstyles = groupstyles
-        this.structstyles = structstyles
-        this.supportstyles = supportstyles
+        this.textstyles    = {}
+        this.groupstyles   = {}
+        this.structstyles  = {}
+        this.supportstyles = {}
+
+        for(let style of textstyles)
+            this.add_textstyle(style)
+        for(let style of groupstyles)
+            this.add_groupstyle(style)
+        for(let style of structstyles)
+            this.add_structstyle(style)
+        for(let style of supportstyles)
+            this.add_supportstyle(style)
 
         this.root = GroupPrototype("root" , {}) //节点树
+    }
+
+    add_textstyle(style: TextStyle){
+        this.textstyles[style.name] = style
+    }
+
+    add_groupstyle(style: GroupStyle){
+        this.groupstyles[style.name] = style
+    }
+
+    add_structstyle(style: StructStyle){
+        this.structstyles[style.name] = style
+    }
+
+    add_supportstyle(style: SupportStyle){
+        this.supportstyles[style.name] = style
     }
 }
 

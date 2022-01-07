@@ -1,0 +1,132 @@
+/* 作为React组件的Editor */
+
+import React from "react";
+import { createEditor , Node , BaseEditor} from 'slate'
+import { Slate, Editable, withReact, ReactEditor} from 'slate-react'
+import { Editor, Transforms } from 'slate'
+import { EditorCore } from "./editorcore"
+import type { BaseNode , TextNode , ParagraphNode , GroupNode , StructNode , SupportNode } from "../elements"
+import { TextPrototype , ParagraphPrototype , GroupPrototype , StructPrototype , SupportPrototype } from "../elements"
+import type { NodeType } from "../elements"
+// import type { Group_Child_Node , Struct_Child_Node } from "../elements"
+import { Card } from 'antd'
+import { Button } from 'antd'
+
+export type { Renderer_Func , Renderer_Props }
+export { YEditor }
+
+interface YEditorComponent_Props{
+    editor: YEditor
+}
+
+interface SlateRenderer_Props{
+    attributes: any
+    element: BaseNode
+    children: any[]
+}
+class _YEditorComponent extends React.Component<YEditorComponent_Props>{
+    editor: YEditor
+    core: EditorCore
+    slate: ReactEditor
+
+    constructor(props: YEditorComponent_Props){
+        super(props)
+
+        this.editor = this.props.editor
+        this.core = this.editor.core
+        this.slate = this.editor.slate
+    }
+
+    updateValue(value: BaseNode[]){
+        this.core.root.children = value
+    }
+
+    renderElement(props: SlateRenderer_Props){
+
+        let element = props.element
+        let type = element.type
+        let name = undefined
+        if (element.hasOwnProperty("name"))
+            name = element.name
+
+        return this.editor.get_renderer(type , name)
+    }
+
+    render(){
+        let me = this
+        return <Slate editor={me.slate} value={me.core.root.children} onChange={value => me.updateValue(value)}>
+            <Editable
+                renderElement={me.renderElement.bind(me)}
+            />
+        </Slate>
+
+    }
+    
+}
+
+interface YEditorToolbox_Props{
+    editor: YEditor
+}
+
+interface Renderer_Props{
+    attributes: any
+    children: any[]
+    element: Node
+}
+
+type Renderer_Func = (props: Renderer_Props)=>any
+
+function default_renderer(props: Renderer_Props):any{
+    return <Card {...props.attributes}>{props.children}</Card>
+}
+
+class YEditor{
+    core: EditorCore
+    renderers: {[nd: string]: Renderer_Func | {[sty: string]: Renderer_Func}}
+    slate: ReactEditor
+    static Component = _YEditorComponent
+
+    constructor(core: EditorCore){
+        this.core = core
+
+        this.renderers = {
+            "text-default"      : default_renderer , 
+            "paragraph-default" : (props: Renderer_Props)=><p {...props.attributes}>{props.children}</p> , 
+            "group-default"     : default_renderer , 
+            "struct-default"    : default_renderer , 
+            "support-default"   : default_renderer , 
+
+            "textstyles"      : {} , 
+            "paragraphstyles" : {} , 
+            "groupstyles"     : {} , 
+            "structstyles"    : {} , 
+            "supportstyles"   : {} , 
+        }
+
+        this.slate  = withReact(createEditor())
+    }
+
+    get_renderer(nodetype: NodeType, stylename: string | undefined = undefined){
+        if(stylename == undefined){
+            return this.renderers[`${nodetype}-default`]
+        }
+        let r = this.renderers[`${nodetype}styles`][stylename]
+        if(r == undefined)
+            return default_renderer
+        return r
+    }
+
+    update_renderer(renderer: Renderer_Func, nodetype: NodeType, stylename: string | undefined = undefined){
+        if(stylename == undefined){
+            this.renderers[`${nodetype}-default`] = renderer
+        }
+        this.renderers[`${nodetype}styles`][stylename] = renderer
+    }
+    
+    get_button(nodetype: NodeType, stylename: string){
+
+        let me = this
+
+        return <Button>{stylename}</Button>
+    }
+}
