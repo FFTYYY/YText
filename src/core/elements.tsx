@@ -31,10 +31,10 @@ type GroupRelationType = "chaining" | "separating"
 interface _BaseNode{
     nodekey: number
     type?: NodeType         // 没有type默认为Text
-    hidden?: BaseNode[]    
-    hidden_parameters?: any
+    hidden?: GroupNode 
 }
 type BaseNode = _BaseNode & Node
+
 
 interface _TextNode extends _BaseNode{
     text: string
@@ -71,8 +71,7 @@ interface _SupportNode extends _BaseNode{
 type SupportNode = _SupportNode & Node
 
 interface AbstractNode{
-    hidden: Node[]
-    abstract_parameters: string
+    hidden: GroupNode
 }
 
 var key_count = 0

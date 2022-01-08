@@ -2,19 +2,21 @@ import { GroupNode , GroupPrototype , ParagraphPrototype} from "../core/elements
 import { GroupStyle , EditorCore} from "../core/editor/editorcore"
 import type { Renderer_Func , Renderer_Props } from "../core/editor/editor_interface"
 import { YEditor } from "../core/editor/editor_interface"
-import { Transforms , Node } from "slate"
+import { Transforms , Node, Editor } from "slate"
 import { Node2Path } from "./utils"
 import React, {useState} from "react"
 export {theorem}
 import {CaretDownOutlined,} from '@ant-design/icons'
 import { DownOutlined } from '@ant-design/icons'
 import {non_selectable_prop} from "../core/meta"
-import { MenuItem } from "rc-menu"
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import CardHeader from '@mui/material/CardHeader';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Drawer from '@mui/material/Drawer';
 
 interface DefaultParameterContainer_Props{
     initval: any
@@ -99,6 +101,7 @@ class DefaultParameterContainer extends React.Component<DefaultParameterContaine
     }
 }
 
+// 这是一个默认的Parameter容器组件，和特定的节点关联，会自动修改对应节点的属性
 function DefaultParameterContainer_withElement(props: {editor: YEditor, element: Node}){
     return <DefaultParameterContainer 
         initval={props.element.parameters} 
@@ -110,6 +113,103 @@ function DefaultParameterContainer_withElement(props: {editor: YEditor, element:
     />
 }
 
+// 这个组件提供一个按钮，让element选择其hidden style
+function DefaultNewHidden(props: {editor: YEditor, element: Node}){
+    const [anchorEl, setAnchorEl] = React.useState<undefined | HTMLElement>(undefined)
+
+    let editor = props.editor
+    let hiddenstyles = editor.core.hiddenstyles 
+
+    function getOnClose(selection: string | undefined){
+        return (e)=>{
+            setAnchorEl(undefined)
+            if(!hiddenstyles.hasOwnProperty(selection))
+                return 
+
+            Transforms.setNodes(
+                editor.slate , 
+                hiddenstyles[selection].makehidden() , 
+                {match: n=>n.nodekey==props.element.nodekey}
+            )
+        }
+    }
+
+    return <div>
+        <Button onClick={e=>setAnchorEl(e.currentTarget)}>Dashboard</Button>
+        <Menu
+            anchorEl={anchorEl}
+            open={anchorEl != undefined}
+            onClose={getOnClose(undefined)}
+        >
+            {Object.keys(hiddenstyles).map(name=>{
+                return <MenuItem onClick={getOnClose(name)} key={name}>{name}</MenuItem>
+            })}
+        </Menu>
+    </div>  
+}
+
+interface DefaultHiddenEditor_Props{
+    editor: YEditor
+    element: Node
+}
+
+class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props>{
+    subeditor: YEditor
+    constructor(props: DefaultHiddenEditor_Props){
+        super(props)
+
+        this.state = {
+            drawer_open: false
+        }
+
+        this.subeditor = new YEditor(new EditorCore(
+            Object.values(props.editor.core.textstyles      ) , 
+            Object.values(props.editor.core.groupstyles     ) , 
+            Object.values(props.editor.core.structstyles    ) , 
+            Object.values(props.editor.core.supportstyles   ) , 
+            Object.values(props.editor.core.hiddenstyles    ) , 
+        ))
+
+        this.subeditor.renderers = props.editor.renderers
+        this.subeditor.core.root = {...this.subeditor.core.root , ...{children:props.element.hidden.children}}
+    }
+
+	render() {
+
+		let me = this
+		let groupstyles = this.subeditor.core.groupstyles
+		const buttons_grp = Object.keys(groupstyles).map( (name) => 
+			<Button  type="primary"
+				key = {name}
+				onClick = {e => me.subeditor.get_onclick("group" , name)(e)}
+			>{name}</Button>
+		)
+		
+        let props = this.props
+		return <div>
+            <Button onClick={e=>me.setState({drawer_open: true})}>Edit</Button>
+            <Drawer
+                anchor={"right"}
+                open={this.state.drawer_open}
+                onClose={e=>me.setState({drawer_open: false})}
+            >
+                <div>{buttons_grp} </div>
+                <div>
+                    <YEditor.Component 
+                        editor={me.subeditor}
+                        onUpdate={val=>{
+                            Transforms.setNodes(
+                                props.editor.slate , 
+                                { hidden: {...props.element.hidden , ...{children: val}} } , 
+                                { match: n=>n.nodekey == props.element.nodekey}
+                            )
+                        }}
+                    />
+                </div>
+            </Drawer>
+        </div> 
+	}}
+
 function theorem(editor: YEditor, name:string = "theorem"): [GroupStyle,Renderer_Func]{
     let style = new GroupStyle(name , {
         "words": "Theorem" , 
@@ -120,12 +220,23 @@ function theorem(editor: YEditor, name:string = "theorem"): [GroupStyle,Renderer
         }
     })
 
+
     let renderer = (props: Renderer_Props) => <Card {...props.attributes}><Grid container>
         <Grid item xs={11} key="left-part" ><span {...non_selectable_prop}>{props.element.parameters.words}</span>{props.children}</Grid>
-        <Grid item xs={1}  key="right-part"><div {...non_selectable_prop}><DefaultParameterContainer_withElement 
-            editor={editor}
-            element={props.element}
-        /></div></Grid>
+        <Grid item xs={1}  key="right-part"><div {...non_selectable_prop}>
+            <DefaultParameterContainer_withElement editor={editor} element={props.element} />
+            <DefaultNewHidden editor={editor} element={props.element}/>
+            <p>{(()=>{
+                if(props.element.hidden != undefined)
+                    return props.element.hidden.name
+                return "no hidden"
+            })()}</p>
+            {(()=>{
+                if(props.element.hidden != undefined)
+                    return <DefaultHiddenEditor editor={editor} element={props.element}/> 
+                return <p>no hidden</p>
+            })()}
+        </div></Grid>
     </Grid></Card>
     
 

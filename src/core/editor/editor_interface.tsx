@@ -16,6 +16,7 @@ export { YEditor }
 
 interface YEditorComponent_Props{
     editor: YEditor
+    onUpdate?: (newval:any)=>any
 }
 
 interface SlateRenderer_Props{
@@ -27,26 +28,25 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     editor: YEditor
     core: EditorCore
     slate: ReactEditor
+    onUpdate: (v: any) => any
 
     constructor(props: YEditorComponent_Props){
         super(props)
 
-        this.editor = this.props.editor
+        this.editor = props.editor
         this.core = this.editor.core
         this.slate = this.editor.slate
 
         
-        this.state = {
-            value: this.core.root.children
-        }
-
-
+        this.onUpdate = (v)=>null
+        if(props.hasOwnProperty("onUpdate"))
+            this.onUpdate = props.onUpdate
     }
 
 
     updateValue(value: BaseNode[]){
-        this.core.root.children = value
-        this.setState({value: value})
+        this.core.root = {...this.core.root , ...{children:value}}
+        this.onUpdate(value)
     }
 
     renderElement(props){
@@ -61,7 +61,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
 
     render(){
         let me = this
-        return <Slate editor={me.slate} value={me.state.value} onChange={value => me.updateValue(value)}>
+        return <Slate editor={me.slate} value={me.core.root.children} onChange={value => me.updateValue(value)}>
             <Editable
                 renderElement={me.renderElement.bind(me)}
             />

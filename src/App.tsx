@@ -1,6 +1,6 @@
 import React from "react";
 import { YEditor } from "./core/editor/editor_interface"
-import { EditorCore , GroupStyle } from "./core/editor/editorcore"
+import { EditorCore , GroupStyle , HiddenStyle} from "./core/editor/editorcore"
 import { theorem } from "./components/groups"
 import Button from '@mui/material/Button';
 import "./App.css"
@@ -13,6 +13,8 @@ class App extends React.Component {
 		super(props)
 		this.state = {}
 
+
+		
 		this.editor = new YEditor(new EditorCore())
 
 		let [theoremstyle, theoremrenderer] = theorem(this.editor)
@@ -20,6 +22,8 @@ class App extends React.Component {
 		this.editor.core.add_groupstyle(theoremstyle)
 		this.editor.update_renderer(theoremrenderer , "group" , theoremstyle.name)
 		
+		this.editor.core.add_hiddenstyle(new HiddenStyle("comment" , {}))
+
 	}
 	render() {
 

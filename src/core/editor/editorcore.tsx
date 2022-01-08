@@ -1,20 +1,28 @@
-import type { BaseNode , TextNode , ParagraphNode , GroupNode , StructNode , SupportNode } from "../elements"
+import type { BaseNode , TextNode , ParagraphNode , GroupNode , StructNode , SupportNode , AbstractNode } from "../elements"
 import { TextPrototype , ParagraphPrototype , GroupPrototype , StructPrototype , SupportPrototype } from "../elements"
 
-export {EditorCore , TextStyle , GroupStyle , StructStyle , SupportStyle}
+export {EditorCore , TextStyle , GroupStyle , StructStyle , SupportStyle , HiddenStyle}
 
 class EditorCore{
     textstyles   : { [sty: string] : TextStyle    }
     groupstyles  : { [sty: string] : GroupStyle   }
     structstyles : { [sty: string] : StructStyle  }
     supportstyles: { [sty: string] : SupportStyle }
+    hiddenstyles : { [sty: string] : HiddenStyle }
     root: GroupNode
 
-    constructor(textstyles: TextStyle[] = [], groupstyles: GroupStyle[] = [], structstyles: StructStyle[] = [], supportstyles: SupportStyle[] = []){
+    constructor(
+        textstyles      : TextStyle     [] = [], 
+        groupstyles     : GroupStyle    [] = [], 
+        structstyles    : StructStyle   [] = [], 
+        supportstyles   : SupportStyle  [] = [] ,
+        hiddenstyles    : HiddenStyle   [] = [] , 
+    ){
         this.textstyles    = {}
         this.groupstyles   = {}
         this.structstyles  = {}
         this.supportstyles = {}
+        this.hiddenstyles  = {}
 
         for(let style of textstyles)
             this.add_textstyle(style)
@@ -24,6 +32,8 @@ class EditorCore{
             this.add_structstyle(style)
         for(let style of supportstyles)
             this.add_supportstyle(style)
+        for(let style of hiddenstyles)
+            this.add_hiddenstyle(style)
 
         this.root = GroupPrototype("root" , {}) //节点树
     }
@@ -42,6 +52,9 @@ class EditorCore{
 
     add_supportstyle(style: SupportStyle){
         this.supportstyles[style.name] = style
+    }
+    add_hiddenstyle(style: HiddenStyle){
+        this.hiddenstyles[style.name] = style
     }
 }
 
@@ -67,7 +80,7 @@ class Style{
 }
 
 class TextStyle extends Style{
-    declare prototype: TextNode
+    declare prototype: ()=>TextNode
 
     constructor(name: string , parameter_prototype: any){
 
@@ -84,7 +97,7 @@ class TextStyle extends Style{
 }
 
 class GroupStyle extends Style{
-    declare prototype: GroupNode
+    declare prototype: ()=>GroupNode
 
     constructor(name: string , parameter_prototype: any){
 
@@ -96,7 +109,7 @@ class GroupStyle extends Style{
 }
 
 class StructStyle extends Style{
-    declare prototype: StructNode
+    declare prototype: ()=>StructNode
 
     constructor(name: string , parameter_prototype: any){
 
@@ -108,7 +121,7 @@ class StructStyle extends Style{
 }
 
 class SupportStyle extends Style{
-    declare prototype: SupportNode
+    declare prototype: ()=>SupportNode
 
     constructor(name: string , parameter_prototype: any){
 
@@ -119,3 +132,17 @@ class SupportStyle extends Style{
 
 }
 
+class HiddenStyle extends Style{
+    declare prototype: ()=>AbstractNode
+
+    constructor(name: string , parameter_prototype: any){
+
+        super(name, parameter_prototype, ()=>undefined)
+    }
+
+    makehidden(){
+        return {
+            hidden: GroupPrototype("hidden_root" , this.parameter_prototype) , 
+        }
+    }
+}
