@@ -17,6 +17,7 @@ export type {
     GroupNode , 
     StructNode , 
     SupportNode , 
+    AbstractNode , 
 }
 
 export type { NodeType , GroupRelationType }
@@ -67,6 +68,12 @@ interface _SupportNode extends _BaseNode{
     parameters: string
 }
 type SupportNode = _SupportNode & Node
+
+interface AbstractNode{
+    hidden: Node[]
+    abstract_parameters: string
+}
+
 
 function TextPrototype(text: string = ""): TextNode{
     return {
