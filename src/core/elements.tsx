@@ -29,6 +29,7 @@ type NodeType = "text" | "paragraph" | "group" | "struct" | "support"
 type GroupRelationType = "chaining" | "separating"
 
 interface _BaseNode{
+    nodekey: number
     type?: NodeType         // 没有type默认为Text
     hidden?: BaseNode[]    
     hidden_parameters?: any
@@ -74,9 +75,14 @@ interface AbstractNode{
     abstract_parameters: string
 }
 
+var key_count = 0
+function genekey(){
+    return key_count ++
+}
 
 function TextPrototype(text: string = ""): TextNode{
     return {
+        nodekey: genekey() , 
         type: "text" , 
         text: text , 
     }
@@ -84,6 +90,7 @@ function TextPrototype(text: string = ""): TextNode{
 
 function ParagraphPrototype(): ParagraphNode{
     return {
+        nodekey: genekey() , 
         type: "paragraph" , 
         children: [TextPrototype("")] , 
     }
@@ -91,6 +98,7 @@ function ParagraphPrototype(): ParagraphNode{
 
 function GroupPrototype(name: string , parameter_proto: any): GroupNode{
     return {
+        nodekey: genekey() , 
         type: "group" , 
         name: name , 
 
@@ -103,6 +111,7 @@ function GroupPrototype(name: string , parameter_proto: any): GroupNode{
 
 function StructPrototype(name: string , parameter_proto: any): StructNode{
     return {
+        nodekey: genekey() , 
         type: "struct" , 
         name: name , 
 
@@ -114,6 +123,7 @@ function StructPrototype(name: string , parameter_proto: any): StructNode{
 
 function SupportPrototype(name: string , parameter_proto: any): SupportNode{
     return {
+        nodekey: genekey() , 
         type: "support" , 
         name: name , 
         parameters: parameter_proto , 

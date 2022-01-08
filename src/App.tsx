@@ -2,7 +2,7 @@ import React from "react";
 import { YEditor } from "./core/editor/editor_interface"
 import { EditorCore , GroupStyle } from "./core/editor/editorcore"
 import { theorem } from "./components/groups"
-import { Button } from "antd"
+import Button from '@mui/material/Button';
 import "./App.css"
 
 class App extends React.Component {

@@ -9,8 +9,7 @@ import type { BaseNode , TextNode , ParagraphNode , GroupNode , StructNode , Sup
 import { TextPrototype , ParagraphPrototype , GroupPrototype , StructPrototype , SupportPrototype } from "../elements"
 import type { NodeType } from "../elements"
 // import type { Group_Child_Node , Struct_Child_Node } from "../elements"
-import { Card } from 'antd'
-import { Button } from 'antd'
+import Card from '@mui/material/Card';
 
 export type { Renderer_Func , Renderer_Props }
 export { YEditor }
@@ -35,25 +34,37 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
         this.editor = this.props.editor
         this.core = this.editor.core
         this.slate = this.editor.slate
+
+        
+        this.state = {
+            value: this.core.root.children
+        }
+
+
     }
+
 
     updateValue(value: BaseNode[]){
         this.core.root.children = value
+        this.setState({value: value})
     }
 
-    renderElement(props: SlateRenderer_Props){
+    renderElement(props){
+
+        return <div {...props.attributes}>{props.children}</div>
 
         let element = props.element
         let type = element.type
         let name = undefined
         if (element.hasOwnProperty("name"))
             name = element.name
-        return this.editor.get_renderer(type , name)(props)
+        let R = this.editor.get_renderer(type , name)
+        return <R {...props} key={element.nodekey}></R>
     }
 
     render(){
         let me = this
-        return <Slate editor={me.slate} value={me.editor.core.root.children} onChange={value => me.updateValue(value)}>
+        return <Slate editor={me.slate} value={me.state.value} onChange={value => me.updateValue(value)}>
             <Editable
                 renderElement={me.renderElement.bind(me)}
             />
@@ -133,8 +144,6 @@ class YEditor{
             return function(e:any){
                 let node = style.makenode()
                 Transforms.insertNodes(me.slate , node)
-
-                console.log(me.slate)
             }
         }
         return (e:any) => undefined

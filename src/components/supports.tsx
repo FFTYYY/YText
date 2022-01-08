@@ -2,7 +2,7 @@ import { SupportNode , SupportPrototype , ParagraphPrototype} from "../core/elem
 import { SupportStyle , EditorCore} from "../core/editor/editorcore"
 import type { Renderer_Func , Renderer_Props } from "../core/editor/editor_interface"
 import { YEditor } from "../core/editor/editor_interface"
-import { Button } from "antd"
+import Button from '@mui/material/Button';
 import { Transforms , Node } from "slate"
 import { Node2Path } from "./utils"
 
