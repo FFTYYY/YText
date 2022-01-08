@@ -52,7 +52,7 @@ class DefaultParameterContainer extends React.Component<DefaultParameterContaine
         let RO = this.renderDict.bind(this)
 
         return <Card key={props.name}>
-            <CardHeader>{props.name}</CardHeader>
+            <CardHeader title={props.name} />
             {Object.keys(props.val).map(
                 (subname)=>{
                     let subval = props.val[subname]
@@ -99,6 +99,17 @@ class DefaultParameterContainer extends React.Component<DefaultParameterContaine
     }
 }
 
+function DefaultParameterContainer_withElement(props: {editor: YEditor, element: Node}){
+    return <DefaultParameterContainer 
+        initval={props.element.parameters} 
+        onUpdate={val=>Transforms.setNodes(
+            props.editor.slate , 
+            { parameters:val },
+            { match: n=> n.hasOwnProperty("nodekey") && n.nodekey==props.element.nodekey }
+        ) }
+    />
+}
+
 function theorem(editor: YEditor, name:string = "theorem"): [GroupStyle,Renderer_Func]{
     let style = new GroupStyle(name , {
         "words": "Theorem" , 
@@ -109,20 +120,13 @@ function theorem(editor: YEditor, name:string = "theorem"): [GroupStyle,Renderer
         }
     })
 
-    let renderer = (props)=><div {...props.attributes}>{props.children}</div>
-
-    // let renderer = (props: Renderer_Props) => <Card {...props.attributes}><Grid container>
-    //     <Grid item xs={11} key="left-part" ><span {...non_selectable_prop}>{props.element.parameters.words}</span>{props.children}</Grid>
-    //     <Grid item xs={1}  key="right-part"><div {...non_selectable_prop}>
-    //         <DefaultParameterContainer 
-    //             initval={props.element.parameters} 
-    //             onUpdate={val=>Transforms.setNodes(
-    //                 editor.slate , 
-    //                 { parameters:val },
-    //                 { match: n=> n.hasOwnProperty("nodekey") && n.nodekey==props.element.nodekey }
-    //             ) }
-    //         /></div></Grid>
-    // </Grid></Card>
+    let renderer = (props: Renderer_Props) => <Card {...props.attributes}><Grid container>
+        <Grid item xs={11} key="left-part" ><span {...non_selectable_prop}>{props.element.parameters.words}</span>{props.children}</Grid>
+        <Grid item xs={1}  key="right-part"><div {...non_selectable_prop}><DefaultParameterContainer_withElement 
+            editor={editor}
+            element={props.element}
+        /></div></Grid>
+    </Grid></Card>
     
 
     return [style , renderer]

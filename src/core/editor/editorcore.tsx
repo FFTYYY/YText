@@ -48,20 +48,20 @@ class EditorCore{
 class Style{
     name: string
     parameter_prototype: any
-    prototype: BaseNode
+    prototype_generator: ()=>BaseNode
 
-    constructor(name: string, parameter_prototype: any, prototype: BaseNode){
+    constructor(name: string, parameter_prototype: any, prototype_generator: ()=>BaseNode){
         this.name = name
         this.parameter_prototype = parameter_prototype
-        this.prototype = prototype
+        this.prototype_generator = prototype_generator
     }
 
     makenode(){
-        return this.prototype
+        return this.prototype_generator()
     }
 
-    update_prototype(new_proto:any){
-        Object.assign(this.prototype , new_proto)
+    update_prototype(prototype_generator:()=>BaseNode){
+        this.prototype_generator = prototype_generator
     }
 
 }
@@ -71,9 +71,12 @@ class TextStyle extends Style{
 
     constructor(name: string , parameter_prototype: any){
 
-        let prototype = TextPrototype()
-        prototype.name = name
-        prototype.parameters = parameter_prototype
+        let prototype = ()=>{
+            let p = TextPrototype()
+            p.name = name
+            p.parameters = parameter_prototype
+            return p
+        }
 
         super(name, parameter_prototype, prototype)
     }
@@ -85,9 +88,7 @@ class GroupStyle extends Style{
 
     constructor(name: string , parameter_prototype: any){
 
-        let prototype = GroupPrototype(name,parameter_prototype)
-        prototype.name = name
-        prototype.parameters = parameter_prototype
+        let prototype = ()=>GroupPrototype(name , parameter_prototype)
 
         super(name, parameter_prototype, prototype)
     }
@@ -99,9 +100,7 @@ class StructStyle extends Style{
 
     constructor(name: string , parameter_prototype: any){
 
-        let prototype = StructPrototype(name , parameter_prototype)
-        prototype.name = name
-        prototype.parameters = parameter_prototype
+        let prototype = () => StructPrototype(name , parameter_prototype)
 
         super(name, parameter_prototype, prototype)
     }
@@ -113,9 +112,7 @@ class SupportStyle extends Style{
 
     constructor(name: string , parameter_prototype: any){
 
-        let prototype = SuportPrototype(name , parameter_prototype)
-        prototype.name = name
-        prototype.parameters = parameter_prototype
+        let prototype = ()=>SupportPrototype(name , parameter_prototype)
 
         super(name, parameter_prototype, prototype)
     }

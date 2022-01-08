@@ -19,6 +19,7 @@ class App extends React.Component {
 
 		this.editor.core.add_groupstyle(theoremstyle)
 		this.editor.update_renderer(theoremrenderer , "group" , theoremstyle.name)
+		
 	}
 	render() {
 

@@ -50,16 +50,13 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     }
 
     renderElement(props){
-
-        return <div {...props.attributes}>{props.children}</div>
-
         let element = props.element
         let type = element.type
         let name = undefined
         if (element.hasOwnProperty("name"))
             name = element.name
         let R = this.editor.get_renderer(type , name)
-        return <R {...props} key={element.nodekey}></R>
+        return <R {...props}></R>
     }
 
     render(){
