@@ -80,7 +80,9 @@ interface Renderer_Props{
     element: Node
 }
 
-type Renderer_Func = (props: Renderer_Props)=>any
+
+// TODO：一个可能解决hidden中参数无法编辑的问题的方案是，让renderer接收editor作为参数，不过这样会导致页面刷新，需要考虑
+type Renderer_Func = (props: Renderer_Props, editor?:YEditor)=>any
 
 function default_renderer(props: Renderer_Props):any{
     return <Card {...props.attributes}>{props.children}</Card>
@@ -119,6 +121,7 @@ class YEditor{
         let r = this.renderers[`${nodetype}styles`][stylename]
         if(r == undefined)
             return default_renderer
+
         return r
     }
 

@@ -43,7 +43,7 @@ function DefaultNewHidden(props: {editor: YEditor, element: Node}){
     }
 
     return <div>
-        <Button onClick={e=>setAnchorEl(e.currentTarget)}>Dashboard</Button>
+        <Button onClick={e=>setAnchorEl(e.currentTarget)}>Add Hidden</Button>
         <Menu
             anchorEl={anchorEl}
             open={anchorEl != undefined}
@@ -107,8 +107,8 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props>{
                 }}
 
                 PaperProps={{
-                    sx: { width: "20%" },
-                  }}
+                    sx: { width: "40%" },
+                }}
                 
             >
                 <div>{buttons_grp} </div>
@@ -116,6 +116,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props>{
                     <YEditor.Component 
                         editor={me.subeditor}
                         onUpdate={val=>{
+                            console.log("hid" , me.subeditor.core.root)
                             Transforms.setNodes(
                                 props.editor.slate , 
                                 { hidden: {...props.element.hidden , ...{children: val}} } , 
