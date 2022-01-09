@@ -1,7 +1,7 @@
 import React from "react";
-import { YEditor } from "./core/editor/editor_interface"
-import { EditorCore , GroupStyle , HiddenStyle} from "./core/editor/editorcore"
-import { theorem } from "./components/groups"
+import { YEditor } from "./editor/core/editor/editor_interface"
+import { EditorCore , GroupStyle , AbstractStyle} from "./editor/core/editor/editor_core"
+import { theorem } from "./editor/components/groups"
 import Button from '@mui/material/Button';
 import "./App.css"
 
@@ -13,8 +13,6 @@ class App extends React.Component {
 		super(props)
 		this.state = {}
 
-
-		
 		this.editor = new YEditor(new EditorCore())
 
 		let [theoremstyle, theoremrenderer] = theorem(this.editor)
@@ -22,7 +20,7 @@ class App extends React.Component {
 		this.editor.core.add_groupstyle(theoremstyle)
 		this.editor.update_renderer(theoremrenderer , "group" , theoremstyle.name)
 		
-		this.editor.core.add_hiddenstyle(new HiddenStyle("comment" , {}))
+		this.editor.core.add_abstractstyle(new AbstractStyle("comment" , {}))
 
 	}
 	render() {
@@ -30,9 +28,9 @@ class App extends React.Component {
 		let me = this
 		let groupstyles = this.editor.core.groupstyles
 		const buttons_grp = Object.keys(groupstyles).map( (name) => 
-			<Button  type="primary"
+			<Button 
 				key = {name}
-				onClick = {e => me.editor.get_onclick("group" , name)(e)}
+				onClick = {e => me.editor.get_onClick("group" , name)(e)}
 			>{name}</Button>
 		)
 		

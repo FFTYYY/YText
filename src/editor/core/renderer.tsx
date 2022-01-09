@@ -11,3 +11,4 @@ class Responder{
         this.methods = methods
     }
 }
+export {}
