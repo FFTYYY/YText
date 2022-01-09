@@ -17,6 +17,7 @@ import CardHeader from '@mui/material/CardHeader';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
+import {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden} from "./hidden"
 
 interface DefaultParameterContainer_Props{
     initval: any
@@ -113,103 +114,6 @@ function DefaultParameterContainer_withElement(props: {editor: YEditor, element:
     />
 }
 
-// 这个组件提供一个按钮，让element选择其hidden style
-function DefaultNewHidden(props: {editor: YEditor, element: Node}){
-    const [anchorEl, setAnchorEl] = React.useState<undefined | HTMLElement>(undefined)
-
-    let editor = props.editor
-    let hiddenstyles = editor.core.hiddenstyles 
-
-    function getOnClose(selection: string | undefined){
-        return (e)=>{
-            setAnchorEl(undefined)
-            if(!hiddenstyles.hasOwnProperty(selection))
-                return 
-
-            Transforms.setNodes(
-                editor.slate , 
-                hiddenstyles[selection].makehidden() , 
-                {match: n=>n.nodekey==props.element.nodekey}
-            )
-        }
-    }
-
-    return <div>
-        <Button onClick={e=>setAnchorEl(e.currentTarget)}>Dashboard</Button>
-        <Menu
-            anchorEl={anchorEl}
-            open={anchorEl != undefined}
-            onClose={getOnClose(undefined)}
-        >
-            {Object.keys(hiddenstyles).map(name=>{
-                return <MenuItem onClick={getOnClose(name)} key={name}>{name}</MenuItem>
-            })}
-        </Menu>
-    </div>  
-}
-
-interface DefaultHiddenEditor_Props{
-    editor: YEditor
-    element: Node
-}
-
-class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props>{
-    subeditor: YEditor
-    constructor(props: DefaultHiddenEditor_Props){
-        super(props)
-
-        this.state = {
-            drawer_open: false
-        }
-
-        this.subeditor = new YEditor(new EditorCore(
-            Object.values(props.editor.core.textstyles      ) , 
-            Object.values(props.editor.core.groupstyles     ) , 
-            Object.values(props.editor.core.structstyles    ) , 
-            Object.values(props.editor.core.supportstyles   ) , 
-            Object.values(props.editor.core.hiddenstyles    ) , 
-        ))
-
-        this.subeditor.renderers = props.editor.renderers
-        this.subeditor.core.root = {...this.subeditor.core.root , ...{children:props.element.hidden.children}}
-    }
-
-	render() {
-
-		let me = this
-		let groupstyles = this.subeditor.core.groupstyles
-		const buttons_grp = Object.keys(groupstyles).map( (name) => 
-			<Button  type="primary"
-				key = {name}
-				onClick = {e => me.subeditor.get_onclick("group" , name)(e)}
-			>{name}</Button>
-		)
-		
-        let props = this.props
-		return <div>
-            <Button onClick={e=>me.setState({drawer_open: true})}>Edit</Button>
-            <Drawer
-                anchor={"right"}
-                open={this.state.drawer_open}
-                onClose={e=>me.setState({drawer_open: false})}
-            >
-                <div>{buttons_grp} </div>
-                <div>
-                    <YEditor.Component 
-                        editor={me.subeditor}
-                        onUpdate={val=>{
-                            Transforms.setNodes(
-                                props.editor.slate , 
-                                { hidden: {...props.element.hidden , ...{children: val}} } , 
-                                { match: n=>n.nodekey == props.element.nodekey}
-                            )
-                        }}
-                    />
-                </div>
-            </Drawer>
-        </div> 
-	}}
-
 function theorem(editor: YEditor, name:string = "theorem"): [GroupStyle,Renderer_Func]{
     let style = new GroupStyle(name , {
         "words": "Theorem" , 
@@ -225,20 +129,9 @@ function theorem(editor: YEditor, name:string = "theorem"): [GroupStyle,Renderer
         <Grid item xs={11} key="left-part" ><span {...non_selectable_prop}>{props.element.parameters.words}</span>{props.children}</Grid>
         <Grid item xs={1}  key="right-part"><div {...non_selectable_prop}>
             <DefaultParameterContainer_withElement editor={editor} element={props.element} />
-            <DefaultNewHidden editor={editor} element={props.element}/>
-            <p>{(()=>{
-                if(props.element.hidden != undefined)
-                    return props.element.hidden.name
-                return "no hidden"
-            })()}</p>
-            {(()=>{
-                if(props.element.hidden != undefined)
-                    return <DefaultHiddenEditor editor={editor} element={props.element}/> 
-                return <p>no hidden</p>
-            })()}
+            <DefaultHidden editor={editor} element={props.element}/>
         </div></Grid>
     </Grid></Card>
     
-
     return [style , renderer]
 }
