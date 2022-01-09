@@ -86,3 +86,11 @@
     比如图片，则用参数控制url，不渲染自然段
 
 
+
+编码规范：
+    关于命名
+        所有组件用 ThisIsAComponent 这样命名
+        所有类用 ThisIsAComponent 这样命名
+        所有其他函数和其他变量用下划线命名法 this_is_a_function
+        所有接口，如果是函数的参数， _Parameters（函数参数）或者 _Props（组件参数）命名，否则直接用 ThisIsAInterface命名
+        

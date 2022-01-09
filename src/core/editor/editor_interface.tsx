@@ -1,4 +1,6 @@
-/* 作为React组件的Editor */
+/** 这个文件定义YEditor组件
+ * @module 
+ */
 
 import React from "react";
 import { createEditor , Node , BaseEditor , Path} from 'slate'
@@ -8,28 +10,37 @@ import { EditorCore } from "./editorcore"
 import type { BaseNode , TextNode , ParagraphNode , GroupNode , StructNode , SupportNode } from "../elements"
 import { TextPrototype , ParagraphPrototype , GroupPrototype , StructPrototype , SupportPrototype } from "../elements"
 import type { NodeType } from "../elements"
-// import type { Group_Child_Node , Struct_Child_Node } from "../elements"
 import Card from '@mui/material/Card';
 
 export type { Renderer_Func , Renderer_Props }
 export { YEditor }
 
 interface YEditorComponent_Props{
-    editor: YEditor
-    onUpdate?: (newval:any)=>any
+    editor: YEditor // 目标YEditor对象
+    onUpdate?: (newval:any)=>any // 当节点改变时的回调函数
 }
 
-interface SlateRenderer_Props{
+interface YEditorComponent_RenderElement_Props{
+    element: Node
     attributes: any
-    element: BaseNode
-    children: any[]
+    children: Node[]
 }
+
+/** 
+ * 这个类定义了渲染YEditor的组件
+ * 一个YEditor类负责储存数据，而_YEditorComponent类负责渲染组件。
+ */
 class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     editor: YEditor
     core: EditorCore
     slate: ReactEditor
     onUpdate: (v: any) => any
 
+    /**
+     * @param props.editor 与这个组件对应的YEditor。
+     * @param props.onUpdate 当数据变化时的回调函数。这个函数不需要改变editor的值，因为这个改变会被自动完成。
+     * @private
+     */
     constructor(props: YEditorComponent_Props){
         super(props)
 
@@ -43,18 +54,29 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
             this.onUpdate = props.onUpdate
     }
 
-
+    /** 当文档的值改变时调用这个函数。
+     * @param value 改变的值。注意这个值是YEditorCore.root的children。
+     * @private
+     */
     updateValue(value: BaseNode[]){
         this.core.root = {...this.core.root , ...{children:value}}
         this.onUpdate(value)
     }
 
-    renderElement(props){
+    /** 渲染函数
+     * @param props.element 当前要渲染的节点
+     * @param props.attributes 这是slate要求的
+     * @param props.children 下层节点，这是slate要求的
+     * @private
+     */
+    renderElement(props: YEditorComponent_RenderElement_Props){
         let element = props.element
         let type = element.type
         let name = undefined
-        if (element.hasOwnProperty("name"))
+        if ("name" in element){
             name = element.name
+        }
+        
         let R = this.editor.get_renderer(type , name)
         return <R {...props}></R>
     }
