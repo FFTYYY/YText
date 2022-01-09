@@ -61,11 +61,11 @@ function theorem(editor: YEditor, name:string = "theorem"): [GroupStyle,Renderer
         >
             <Grid container>
                 <Grid item xs={11} key="left-part" >
-                    <span>{element.parameters.words}</span>
+                    <span {...non_selectable_prop}>{element.parameters.words}</span>
                     {props.children}
                 </Grid>
 
-                <Grid item xs={1}  key="right-part"><div>
+                <Grid item xs={1}  key="right-part"><div {...non_selectable_prop}>
                     <DefaultGroupParameter editor={editor} element={element} />
                     <DefaultHidden         editor={editor} element={element}/>
                 </div></Grid>

@@ -25,9 +25,9 @@ import { non_selectable_prop , is_same_node} from "../utils"
 export {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden}
 export type {DefaultHiddenEditor_Props}
 
-/** 这个组件提供一个按钮，让element选择其hidden style。
+/** 这个组件提供一个按钮，让 element 选择其 hidden style 。
  * @param props.editor 这个组件所服务的编辑器。
- * @param props.element 这个组件所依附的节点。注意只有 Sty
+ * @param props.element 这个组件所服务的节点。注意只有 StyledNode 可以有 hidden 属性。
  */
 function DefaultNewHidden(props: {editor: YEditor, element: StyledNode}){
     const [anchor_element, set_anchor_element] = React.useState<undefined | HTMLElement>(undefined)
@@ -147,7 +147,11 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
 }
 
 
-// 如果目标节点有hidden，则这个节点提供编辑界面，否则提供选择hidden的界面
+/** 如果目标节点有hidden，则这个节点提供编辑界面，否则提供选择hidden的界面。
+ * @param props.editor 这个组件所服务的编辑器。
+ * @param props.element 这个组件所服务的节点。
+ * @returns 若 props.element 有hidden属性，则返回一个 DefaultHiddenEditor ，否则返回一个 DefaultNewHidden。
+*/
 function DefaultHidden(props: {editor: YEditor , element: StyledNode}){
     let R:any = DefaultNewHidden
     if(props.element.hidden != undefined)

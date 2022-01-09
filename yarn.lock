@@ -1760,7 +1760,12 @@
   "resolved" "https://registry.npmjs.org/toggle-selection/-/toggle-selection-1.0.6.tgz"
   "version" "1.0.6"
 
-"typedoc@^0.22.10":
+"typedoc-plugin-missing-exports@^0.22.6":
+  "integrity" "sha512-1uguGQqa+c5f33nWS3v1mm0uAx4Ii1lw4Kx2zQksmYFKNEWTmrmMXbMNBoBg4wu0p4dFCNC7JIWPoRzpNS6pFA=="
+  "resolved" "https://registry.npmjs.org/typedoc-plugin-missing-exports/-/typedoc-plugin-missing-exports-0.22.6.tgz"
+  "version" "0.22.6"
+
+"typedoc@^0.22.10", "typedoc@0.22.x":
   "integrity" "sha512-hQYZ4WtoMZ61wDC6w10kxA42+jclWngdmztNZsDvIz7BMJg7F2xnT+uYsUa7OluyKossdFj9E9Ye4QOZKTy8SA=="
   "resolved" "https://registry.npmjs.org/typedoc/-/typedoc-0.22.10.tgz"
   "version" "0.22.10"

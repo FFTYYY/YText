@@ -1,9 +1,10 @@
 import { Node } from "slate"
 import { is_styled } from "./core/elements"
+import React from "react"
 
 /** 给一个组件分配这个prop可以防止其被slate视为文本 */ 
-let non_selectable_prop = {
-    style: { userSelect: "none" },
+const non_selectable_prop = {
+    style: { userSelect: "none" } as React.CSSProperties,
     contentEditable: false , 
 }
 
