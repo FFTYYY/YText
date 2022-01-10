@@ -10,6 +10,11 @@ import CardHeader   from "@mui/material/CardHeader"
 import Menu         from "@mui/material/Menu"
 import MenuItem     from "@mui/material/MenuItem"
 import Drawer       from "@mui/material/Drawer"
+import Box from '@mui/material/Box'
+import Stack from '@mui/material/Stack'
+import ButtonGroup from '@mui/material/ButtonGroup'
+import CodeIcon from '@mui/icons-material/Code'
+import FilterVintageIcon from '@mui/icons-material/FilterVintage';
 
 import { InlineStyle , EditorCore} from "../core/editor/editor_core"
 import { InlineNode , StyledNode } from "../core/elements"
@@ -52,15 +57,21 @@ function strong(editor: YEditor, name:string = "strong"): [InlineStyle,Renderer_
     // TODO: 让renderer和editor解耦，否则hidden中的子editor无法继承到正确的renderer
     let renderer = (props: Renderer_Props<InlineNode>) => {
         let element = props.element
-        return <Card 
+        return <Box component="span"><Card 
             {...props.attributes}
             style={{
                 backgroundColor: "#AABBCC" , 
-                display: "inline-block"
+                display: "inline-block" , 
             }}
         >
-            {props.children}
-        </Card>
+            <Grid container>
+                <Grid item xs={10}>{props.children}</Grid>
+                <Grid item xs={ 2} {...non_selectable_prop}><ButtonGroup orientation="vertical">
+                    <Button><CodeIcon/></Button>
+                    <Button><FilterVintageIcon/></Button>
+                </ButtonGroup></Grid>
+            </Grid>
+        </Card></Box>
     }
     
     return [style , renderer]
