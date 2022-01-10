@@ -5,7 +5,7 @@
 import React from "react";
 import { createEditor , Node , BaseEditor , Path} from "slate"
 import { Slate, Editable, withReact, ReactEditor} from "slate-react"
-import { Editor, Transforms , Point } from "slate"
+import { Editor, Transforms , Point , Text } from "slate"
 
 import Card from "@mui/material/Card"
 
@@ -14,7 +14,8 @@ import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , A
 import type { StyleType , NodeType } from "../elements"
 import { get_node_type , is_styled } from "../elements"
 import { EditorCore } from "./editor_core"
-import { TypeSerializerComponent } from "typedoc/dist/lib/serialization";
+import { is_same_node } from "../../utils"
+
 
 export type { Renderer_Func , Renderer_Props }
 export { YEditor }
@@ -25,9 +26,11 @@ interface YEditorComponent_Props{
 }
 
 interface YEditorComponent_RenderElement_Props{
-    element: Node
     attributes: any
     children: Node[]
+
+    element?: Node
+    leaf?: Node
 }
 
 /** 
@@ -51,7 +54,6 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
         this.core = this.editor.core
         this.slate = this.editor.slate
 
-        
         this.onUpdate = (v)=>null
         if(props.hasOwnProperty("onUpdate"))
             this.onUpdate = props.onUpdate
@@ -73,7 +75,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
      * @private
      */
     renderElement(props: YEditorComponent_RenderElement_Props){
-        let element = props.element
+        let element = props.element || props.leaf
 
         let type = get_node_type(element)
         let name = undefined // 如果name是undefined，则get_renderer会返回默认样式。
@@ -90,7 +92,8 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
         return <Slate editor={me.slate} value={me.core.root.children} onChange={value => me.update_value(value)}>
             <Editable
                 renderElement={me.renderElement.bind(me)}
-            />
+                renderLeaf   ={me.renderElement.bind(me)}
+                />
         </Slate>
     }
     
@@ -103,7 +106,8 @@ interface YEditorToolbox_Props{
 interface Renderer_Props<NT = Node>{
     attributes: any
     children: any[]
-    element: NT
+    element?: NT
+    leaf?: NT
 }
 
 
@@ -125,8 +129,8 @@ class YEditor{
         this.core = core
 
         this.default_renderers = {
-            text      : default_renderer , 
-            paragraph : (props: Renderer_Props)=><p {...props.attributes}>{props.children}</p> , 
+            text      : (props: Renderer_Props)=><span {...props.attributes}>{props.children}</span> , 
+            paragraph : (props: Renderer_Props)=><div {...props.attributes}>{props.children}</div> , 
             group     : default_renderer , 
             struct    : default_renderer , 
             support   : default_renderer , 
@@ -257,7 +261,23 @@ class YEditor{
                 Transforms.insertNodes(me.slate , node)
             }
         }
-        if(nodetype == "inline"){}
+        if(nodetype == "inline"){
+            let style = me.core.inlinestyles[stylename]
+            if(style == undefined)
+                return (e:any) => undefined
+            
+            return (e:any)=>{
+                Transforms.setNodes(
+                    me.slate , 
+                    style.makenode() , 
+                    { 
+                        match: (n:Node)=>Text.isText(n) , 
+                        split: true , 
+                    }
+                )
+            }
+
+        }
 
         return (e:any) => undefined
     }
