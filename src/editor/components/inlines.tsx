@@ -15,6 +15,7 @@ import Stack from '@mui/material/Stack'
 import ButtonGroup from '@mui/material/ButtonGroup'
 import CodeIcon from '@mui/icons-material/Code'
 import FilterVintageIcon from '@mui/icons-material/FilterVintage';
+import IconButton from '@mui/material/IconButton'
 
 import { InlineStyle , EditorCore} from "../core/editor/editor_core"
 import { InlineNode , StyledNode } from "../core/elements"
@@ -64,13 +65,13 @@ function strong(editor: YEditor, name:string = "strong"): [InlineStyle,Renderer_
                 display: "inline-block" , 
             }}
         >
-            <Grid container>
-                <Grid item xs={10}>{props.children}</Grid>
-                <Grid item xs={ 2} {...non_selectable_prop}><ButtonGroup orientation="vertical">
-                    <Button><CodeIcon/></Button>
-                    <Button><FilterVintageIcon/></Button>
-                </ButtonGroup></Grid>
-            </Grid>
+            <Stack direction="row" spacing={1}>
+                {props.children}
+                <ButtonGroup variant="text" {...non_selectable_prop}>
+                    <IconButton ><CodeIcon sx={{ fontSize: 10 }}/></IconButton >
+                    <IconButton ><FilterVintageIcon sx={{ fontSize: 10 }}/></IconButton >
+                </ButtonGroup>
+            </Stack>
         </Card></Box>
     }
     
