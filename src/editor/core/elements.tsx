@@ -47,7 +47,7 @@ type BaseStyledNode = _BaseStyledNode & Node
 
 
 interface _InlineNode extends _BaseStyledNode{
-    text: string
+    children: [Node] // InlineNode只能有一个子节点
 }
 type InlineNode = _InlineNode & Node
 
@@ -96,7 +96,7 @@ function inline_prototype(name: string, parameter_proto: any): InlineNode{
         type: "inline" , 
         name: name , 
         parameters: parameter_proto , 
-        text: "" , 
+        children: [ text_prototype("") ]
     }
 }
 
@@ -141,9 +141,7 @@ function support_prototype(name: string , parameter_proto: any): SupportNode{
 /** 这个函数给出一个字符串表示一个节点的类型 */
 function get_node_type(node: Node): NodeType{
 
-    // 我觉得typescript好智障啊
-    let hasType = (node: any): node is {type: StyleType} => "type" in node
-    if(hasType(node))
+    if(is_styled(node))
         return node.type
 
     // 如果一个没有style的节点有children，就判断为段落，否则是文本

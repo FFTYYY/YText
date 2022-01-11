@@ -15,7 +15,7 @@ import type { StyleType , NodeType } from "../elements"
 import { get_node_type , is_styled } from "../elements"
 import { EditorCore } from "./editor_core"
 import { is_same_node } from "../../utils"
-
+import { withAllYEditorPlugins } from "../plugins/apply_all"
 
 export type { Renderer_Func , Renderer_Props }
 export { YEditor }
@@ -74,7 +74,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
      * @param props.children 下层节点，这是slate要求的。
      * @private
      */
-    renderElement(props: YEditorComponent_RenderElement_Props){
+     renderElement(props: YEditorComponent_RenderElement_Props){
         let element = props.element || props.leaf
 
         let type = get_node_type(element)
@@ -86,13 +86,16 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
         let R = this.editor.get_renderer(type , name)
         return <R {...props}></R>
     }
-
+    renderLeaf(props: YEditorComponent_RenderElement_Props){
+        let R = this.editor.get_renderer("text")
+        return <R {...props}></R>
+    }
     render(){
         let me = this
         return <Slate editor={me.slate} value={me.core.root.children} onChange={value => me.update_value(value)}>
             <Editable
                 renderElement={me.renderElement.bind(me)}
-                renderLeaf   ={me.renderElement.bind(me)}
+                renderLeaf   ={me.renderLeaf.bind(me)}
                 />
         </Slate>
     }
@@ -120,8 +123,8 @@ function default_renderer(props: Renderer_Props):any{
 
 class YEditor{
     core: EditorCore
-    default_renderers: {[nd: string]: Renderer_Func}
-    style_renderers  : {[nd: string]: {[sty: string]: Renderer_Func}}
+    default_renderers: {[nd in NodeType]: Renderer_Func}
+    style_renderers  : {[nd in StyleType]: {[sty: string]: Renderer_Func}}
     slate: ReactEditor
     static Component = _YEditorComponent
 
@@ -130,6 +133,7 @@ class YEditor{
 
         this.default_renderers = {
             text      : (props: Renderer_Props)=><span {...props.attributes}>{props.children}</span> , 
+            inline    : (props: Renderer_Props)=><span {...props.attributes}>{props.children}</span> , 
             paragraph : (props: Renderer_Props)=><div {...props.attributes}>{props.children}</div> , 
             group     : default_renderer , 
             struct    : default_renderer , 
@@ -142,75 +146,8 @@ class YEditor{
             "support"   : {} , 
         }
 
-        this.slate  = withReact(createEditor() as ReactEditor)
+        this.slate  = withAllYEditorPlugins( withReact(createEditor() as ReactEditor) ) as ReactEditor
     }
-
-    /** 根据给定的节点类型，给默认的渲染器赋值。 */
-    set_default_renderer(nodetype: NodeType, renderer: Renderer_Func): void{
-        if(nodetype == "inline" || nodetype == "text")
-            this.default_renderers.text = renderer
-        if(nodetype == "paragraph")
-            this.default_renderers.paragraph = renderer
-        if(nodetype == "group")
-            this.default_renderers.group = renderer
-        if(nodetype == "struct")
-            this.default_renderers.struct = renderer
-        if(nodetype == "support")
-            this.default_renderers.support = renderer
-    }
-
-
-    /** 根据给定的节点类型，给出默认的渲染器。 */
-    get_default_renderer(nodetype: NodeType): Renderer_Func{
-        if(nodetype == "inline" || nodetype == "text")
-            return this.default_renderers.text
-        if(nodetype == "paragraph")
-            return this.default_renderers.paragraph
-        if(nodetype == "group")
-            return this.default_renderers.group
-        if(nodetype == "struct")
-            return this.default_renderers.struct
-        if(nodetype == "support")
-            return this.default_renderers.support
-        
-        return default_renderer
-    }
-
-    /** 根据给定的样式节点类型和样式名，给出对应样式的渲染器。 
-     * @param nodetype 节点的类型。
-     * @param stylename 样式名称。
-    */
-     get_style_renderer(nodetype: StyleType, stylename: string): Renderer_Func{
-        let r: Renderer_Func | undefined = undefined
-        if(nodetype == "inline")
-            r = this.style_renderers.inline[stylename]
-        if(nodetype == "group")
-            r = this.style_renderers.group[stylename]
-        if(nodetype == "struct")
-            r = this.style_renderers.struct[stylename]
-        if(nodetype == "support")
-            r = this.style_renderers.support[stylename]
-        if(r == undefined) // 没有找到样式
-            r = this.get_default_renderer(nodetype)
-        return r
-    }
-
-    /** 根据给定的样式节点类型和样式名，设置对应样式的渲染器。 
-     * @param nodetype 节点的类型。
-     * @param stylename 样式名称。
-     * @param renderer 渲染器。
-    */
-    set_style_renderer(nodetype: StyleType, stylename: string, renderer: Renderer_Func): void{
-        if(nodetype == "inline")
-            this.style_renderers.inline[stylename] = renderer
-        if(nodetype == "group")
-            this.style_renderers.group[stylename] = renderer
-        if(nodetype == "struct")
-            this.style_renderers.struct[stylename] = renderer
-        if(nodetype == "support")
-            this.style_renderers.support[stylename] = renderer
-    }
-
         
     /** 确定一个渲染器。
      * @param nodetype 
@@ -220,12 +157,13 @@ class YEditor{
      */
     get_renderer(nodetype: NodeType, stylename: string | undefined = undefined): Renderer_Func{
         if(stylename == undefined){
-            return this.get_default_renderer(nodetype)
+            return this.default_renderers[nodetype]
         }
         if(nodetype == "text" || nodetype == "paragraph")
-            throw new Error(`当 nodetype = ${nodetype}，stylename 不能不为 undefined。`)
+            throw new Error(`当 nodetype = ${nodetype}，stylename 不能不为 undefined。（stylename = ${stylename}）`)
         
-        return this.get_style_renderer(nodetype, stylename)
+        // 如果没找到默认 renderer，就返回这个 nodetype 的默认renderer。
+        return this.style_renderers[nodetype][stylename] || this.default_renderers[nodetype] 
     }
 
     /** 更新渲染器。
@@ -235,12 +173,12 @@ class YEditor{
      */
     update_renderer(renderer: Renderer_Func, nodetype: NodeType, stylename: string | undefined = undefined){
         if(stylename == undefined){
-            this.set_default_renderer(nodetype, renderer)
+            this.default_renderers[nodetype] = renderer
         }
         if(nodetype == "text" || nodetype == "paragraph")
-            throw new Error(`当 nodetype = ${nodetype}，stylename 不能不为 undefined。`)
+        throw new Error(`当 nodetype = ${nodetype}，stylename 不能不为 undefined。（stylename = ${stylename}）`)
 
-        this.set_style_renderer(nodetype , stylename , renderer)
+        this.style_renderers[nodetype][stylename] = renderer
     }
     
     /** 这个函数帮助用户构建按钮。返回一个函数，这个函数表示要新建对应*样式*节点时的行为。
@@ -265,11 +203,13 @@ class YEditor{
             let style = me.core.inlinestyles[stylename]
             if(style == undefined)
                 return (e:any) => undefined
+
             
             return (e:any)=>{
-                Transforms.setNodes(
+                let node: InlineNode = style.makenode()
+                Transforms.wrapNodes(
                     me.slate , 
-                    style.makenode() , 
+                    node as InlineNode , 
                     { 
                         match: (n:Node)=>Text.isText(n) , 
                         split: true , 

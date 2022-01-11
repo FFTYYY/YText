@@ -74,37 +74,36 @@ class EditorCore{
 }
 
 /** 编辑器所使用的样式描述的基类 。*/
-class Style{
+class Style<NT>{
     name: string
     parameter_prototype: any
-    prototype: ()=>StyledNode
+    prototype: ()=>NT
     
     /** 
      * @param name 这个样式的名称。
      * @param parameter_prototype 这个样式的参数的原型。
      * @param prototype 一个函数，调用返回这个样式的原型。
      */
-    constructor(name: string, parameter_prototype: any, prototype: ()=>StyledNode){
+    constructor(name: string, parameter_prototype: any, prototype: ()=>NT){
         this.name = name
         this.parameter_prototype = parameter_prototype
         this.prototype = prototype
     }
 
     /** 根据所拥有的原型信息生成一个原型节点 */
-    makenode(){
+    makenode(): NT{
         return this.prototype()
     }
 
     /** 给prototype赋值 */
-    update_prototype(prototype:()=>StyledNode){
+    update_prototype(prototype:()=>NT){
         this.prototype = prototype
     }
 
 }
 
 /** 描述一个内联样式的类 */
-class InlineStyle extends Style{
-    declare prototype: ()=>InlineNode
+class InlineStyle extends Style<InlineNode>{
 
     constructor(name: string , parameter_prototype: any){
         super(name, parameter_prototype, ()=>inline_prototype(name , parameter_prototype))
@@ -113,9 +112,7 @@ class InlineStyle extends Style{
 }
 
 /** 描述一个组样式的类 */
-class GroupStyle extends Style{
-    declare prototype: ()=>GroupNode
-
+class GroupStyle extends Style<GroupNode>{
     constructor(name: string , parameter_prototype: any){
         super(name, parameter_prototype, ()=>group_prototype(name , parameter_prototype))
     }
@@ -123,7 +120,7 @@ class GroupStyle extends Style{
 }
 
 /** 描述一个结构样式的类 */
-class StructStyle extends Style{
+class StructStyle extends Style<StructNode>{
     declare prototype: ()=>StructNode
 
     constructor(name: string , parameter_prototype: any){
@@ -133,7 +130,7 @@ class StructStyle extends Style{
 }
 
 /** 描述一个辅助节点的类 */
-class SupportStyle extends Style{
+class SupportStyle extends Style<SupportNode>{
     declare prototype: ()=>SupportNode
 
     constructor(name: string , parameter_prototype: any){
