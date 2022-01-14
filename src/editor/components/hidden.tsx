@@ -114,15 +114,26 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
 				onClick = {e => me.subeditor.get_onClick("group" , name)(e)}
 			>{name}</Button>
 		)
-		        
+		
         let props = this.props
         let element: StyledNode = props.element
 		return <div>
             <IconButton onClick={e=>me.setState({drawer_open: true})}><SportsMartialArtsIcon/></IconButton>
             <Drawer
-                anchor={"right"}
+                anchor={"left"}
                 open={this.state.drawer_open}
-                onClose={e=>me.setState({drawer_open: false})}
+                onClose={e=>{
+                    
+                    // 关闭抽屉
+                    me.setState({drawer_open: false})
+
+                    // 上传状态
+                    Transforms.setNodes<StyledNode>(
+                        props.editor.slate , 
+                        { hidden: {...element.hidden , ...{children: me.subeditor.core.root.children}} } , 
+                        { match: n=>is_same_node(n,element)}
+                    )
+                }}
                 
                 ModalProps = {{
                     keepMounted: true,
@@ -137,13 +148,6 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
                 <div>
                     <YEditor.Component 
                         editor={me.subeditor}
-                        onUpdate={val=>{
-                            Transforms.setNodes<StyledNode>(
-                                props.editor.slate , 
-                                { hidden: {...element.hidden , ...{children: val}} } , 
-                                { match: n=>is_same_node(n,element)}
-                            )
-                        }}
                     />
                 </div></Drawer>
         </div> 

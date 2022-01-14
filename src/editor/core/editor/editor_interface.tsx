@@ -41,7 +41,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     editor: YEditor
     core: EditorCore
     slate: ReactEditor
-    onUpdate: (v: any) => any
+    onUpdate: (v: any) => void
 
     /**
      * @param props.editor 与这个组件对应的YEditor。
@@ -54,9 +54,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
         this.core = this.editor.core
         this.slate = this.editor.slate
 
-        this.onUpdate = (v)=>null
-        if(props.hasOwnProperty("onUpdate"))
-            this.onUpdate = props.onUpdate
+        this.onUpdate = props.onUpdate || ( (v: any) => {} )
     }
 
     /** 当文档的值改变时调用这个函数。
@@ -66,6 +64,8 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     update_value(value: Node[]){
         this.core.root = {...this.core.root , ...{children:value}}
         this.onUpdate(value)
+
+        console.log(this.core.root)
     }
 
     /** 渲染函数
@@ -98,7 +98,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
             <Editable
                 renderElement={me.renderElement.bind(me)}
                 renderLeaf   ={me.renderLeaf.bind(me)}
-                />
+            />
         </Slate>
     }
     
