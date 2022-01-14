@@ -218,6 +218,17 @@ class YEditor{
             }
 
         }
+        if(nodetype == "support")
+        {        
+            let style = me.core.supportstyles[stylename]
+            if(style == undefined)
+                return (e:any) => undefined
+
+            return (e:any) => {
+                let node = style.makenode()
+                Transforms.insertNodes(me.slate , node)
+            }
+        }
 
         return (e:any) => undefined
     }

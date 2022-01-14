@@ -1,5 +1,5 @@
-import { Node } from "slate"
-import { is_styled } from "./core/elements"
+import { Node , Path } from "slate"
+import { is_styled , StyledNode} from "./core/elements"
 import React from "react"
 
 /** 给一个组件分配这个 prop 可以防止其被 slate 视为可编辑文本。
@@ -16,4 +16,13 @@ function is_same_node(node1: Node, node2: Node): boolean{
     return node1.idx == node2.idx
 }
 
-export { non_selectable_prop , is_same_node}
+function node2path(root: Node, node: Node): Path{
+    for(let [nd , path] of Node.descendants(root)){
+        if(is_same_node(nd,node)){
+            return path
+        }
+    }
+    return undefined
+}
+
+export { non_selectable_prop , is_same_node , node2path}

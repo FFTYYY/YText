@@ -6,6 +6,7 @@ import { YEditor } from "./editor/core/editor/editor_interface"
 import { EditorCore , GroupStyle , AbstractStyle} from "./editor/core/editor/editor_core"
 import { theorem } from "./editor/components/groups"
 import { strong } from "./editor/components/inlines"
+import { newparagraph } from "./editor/components/supports"
 
 class App extends React.Component {
 	editorcore: EditorCore
@@ -25,6 +26,9 @@ class App extends React.Component {
 		this.editor.core.add_inlinestyle(strongstyle)
 		this.editor.update_renderer(strongrenderer , "inline" , strongstyle.name)
 
+		let [npstyle , nprenderer] = newparagraph(this.editor)
+		this.editor.core.add_supportstyle(npstyle)
+		this.editor.update_renderer(nprenderer , "support" , npstyle.name)
 
 		this.editor.core.add_abstractstyle(new AbstractStyle("comment" , {}))
 
@@ -44,10 +48,16 @@ class App extends React.Component {
 				onClick = {e => me.editor.get_onClick("inline" , name)(e)}
 			>{name}</Button>
 		)
+		const buttons_spt = Object.keys(this.editor.core.supportstyles).map( (name) => 
+			<Button 
+				key = {name}
+				onClick = {e => me.editor.get_onClick("support" , name)(e)}
+			>{name}</Button>
+		)
 		
 		return <div>
 			<div>
-				{buttons_grp}{buttons_inl}
+				{buttons_grp}{buttons_inl}{buttons_spt}
 			</div>
 			<div>
 				<YEditor.Component editor={me.editor}/>

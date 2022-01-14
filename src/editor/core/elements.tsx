@@ -134,7 +134,7 @@ function support_prototype(name: string , parameter_proto: any): SupportNode{
         type: "support" , 
         name: name , 
         parameters: parameter_proto , 
-        children: [],
+        children: [ text_prototype() ],
     }
 }
 

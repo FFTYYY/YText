@@ -36,7 +36,7 @@ function DefaultInlineParameter(props: {editor: YEditor, element: InlineNode}){
     return <DefaultParameterContainer 
         initval={props.element.parameters} 
         onUpdate={val=>{
-            Transforms.setNodes<GroupNode>(
+            Transforms.setNodes<InlineNode>(
                 props.editor.slate , 
                 { parameters: val },
                 { match: n=> is_same_node(n,props.element) }

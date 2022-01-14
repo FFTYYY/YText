@@ -134,7 +134,7 @@ class SupportStyle extends Style<SupportNode>{
     declare prototype: ()=>SupportNode
 
     constructor(name: string , parameter_prototype: any){
-        super(name, parameter_prototype, ()=>struct_prototype(name , parameter_prototype))
+        super(name, parameter_prototype, ()=>support_prototype(name , parameter_prototype))
     }
 
 }
