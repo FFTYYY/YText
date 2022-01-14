@@ -15,6 +15,10 @@ import Menu from "@mui/material/Menu"
 import MenuItem from "@mui/material/MenuItem"
 import Drawer from "@mui/material/Drawer"
 import { makeStyles , styled } from "@material-ui/styles"
+import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
+import SwipeVerticalIcon from '@mui/icons-material/SwipeVertical';
+import IconButton from '@mui/material/IconButton';
+
 
 import { StyledNode } from "../core/elements"
 import { EditorCore} from "../core/editor/editor_core"
@@ -51,7 +55,7 @@ function DefaultNewHidden(props: {editor: YEditor, element: StyledNode}){
     }
 
     return <div>
-        <Button onClick={e=>set_anchor_element(e.currentTarget)}>Add Hidden</Button>
+        <IconButton onClick={e=>set_anchor_element(e.currentTarget)}><SwipeVerticalIcon/></IconButton>
         <Menu
             anchorEl={anchor_element}
             open={anchor_element != undefined}
@@ -114,7 +118,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
         let props = this.props
         let element: StyledNode = props.element
 		return <div>
-            <Button onClick={e=>me.setState({drawer_open: true})}>Edit</Button>
+            <IconButton onClick={e=>me.setState({drawer_open: true})}><SportsMartialArtsIcon/></IconButton>
             <Drawer
                 anchor={"right"}
                 open={this.state.drawer_open}

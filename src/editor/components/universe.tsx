@@ -10,42 +10,41 @@ import TextField    from "@mui/material/TextField"
 import { GroupStyle , EditorCore} from "../core/editor/editor_core"
 import type { Renderer_Func , Renderer_Props } from "../core/editor/editor_interface"
 import { YEditor } from "../core/editor/editor_interface"
+import { HiveTwoTone } from "@mui/icons-material"
 
 export { DefaultParameterContainer }
 
 interface DefaultParameterContainer_Props{
     initval: any
-    onUpdate: (parameters: any) => void
+    onUpdate?: (newval: any) => void
 }
-interface DefaultParameterContainer_State{
+
+/** 这个类定义一个组件，作为默认的参数更新器。 
+ * 注意，这个组件更新参数有两种方式：通过回调函数立刻更新（ onUpdate ），或者像父组件暴露本对象，期望父组件来调用
+ * 自身的 parameter_values() 方法获得更新后的值。具体使用哪一种方法是可选的。但是注意，使用立刻更新的方法有可能
+ * 会导致本组件重新渲染从而丢失焦点。
+*/
+class DefaultParameterContainer extends React.Component <DefaultParameterContainer_Props >{
     parameters: any
-}
+    onUpdate: (newval: any) => void
 
-
-/** 这个类定义一个组件，作为默认的参数更新器。 */
-class DefaultParameterContainer extends React.Component <
-        DefaultParameterContainer_Props , DefaultParameterContainer_State
->{
-    onUpdate: (parameters: any) => void
-    
     /**
      * @param props.initval 所有参数的初始值。
-     * @param props.onUpdate 当参数更新时的回调函数。
+     * @param onUpdate 在自身更新时的回调。如果为 undefined 则不会干任何事。
      */
     constructor(props: DefaultParameterContainer_Props){
         super(props)
 
-        this.state = {
-            parameters: this.props.initval
-        }
-
-        this.onUpdate = props.onUpdate
+        this.parameters = this.props.initval
+        this.onUpdate = props.onUpdate || ( (newval: any) => {} )
     }
 
-    /** 如果参数的当前项是一个字符串，则渲染一个输入框。
-     * TODO：当前的方案是使用onBlur，即失去焦点时才更新。理想情况下，应该在有任何输入时就更新，但是因为这里接收val作为参数，
-     * TODO：当onChange调用时，会导致此组件重新渲染而失去焦点。需要考虑如何解决这个问题。
-     * 
+    /** 父组件调用这个函数来获得更新过的parameters */
+    parameter_values(){
+        return this.parameters
+    }
+
+    /** 如果参数的当前项是一个字符串，则渲染一个输入框。     * 
      * @param props.name 参数项的名称。
      * @param props.val 参数的当前值。
      * @param onChange 当值改变时的回调函数。
@@ -53,7 +52,7 @@ class DefaultParameterContainer extends React.Component <
     renderString(props: {name: string, val: string, onChange: (newval:string)=>void}){
         return <TextField 
             defaultValue = {props.val} 
-            onBlur  = {e=>props.onChange(e.target.value)}
+            onChange  = {e=>props.onChange(e.target.value)}
             label   = {props.name}
             variant = "standard"
             sx      = {{marginLeft: "5%"}}
@@ -118,10 +117,10 @@ class DefaultParameterContainer extends React.Component <
 
         return <R
             name="Parameters"
-            val={me.state.parameters}
+            val={me.parameters}
             onChange={(newval:any)=>{
-                me.setState({parameters:newval})
-                me.onUpdate(newval)
+                me.parameters = newval
+                me.onUpdate(newval) // 向父组件通知自己的更新
             }}
         ></R>
     }

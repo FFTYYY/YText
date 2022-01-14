@@ -75,6 +75,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
      * @private
      */
      renderElement(props: YEditorComponent_RenderElement_Props){
+        let me = this
         let element = props.element || props.leaf
 
         let type = get_node_type(element)
@@ -84,11 +85,12 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
         }
         
         let R = this.editor.get_renderer(type , name)
-        return <R {...props}></R>
+        return <R {...props} editor={me.editor}></R>
     }
     renderLeaf(props: YEditorComponent_RenderElement_Props){
+        let me = this
         let R = this.editor.get_renderer("text")
-        return <R {...props}></R>
+        return <R {...props} editor={me.editor}></R>
     }
     render(){
         let me = this
@@ -109,6 +111,7 @@ interface YEditorToolbox_Props{
 interface Renderer_Props<NT = Node>{
     attributes: any
     children: any[]
+    editor: YEditor
     element?: NT
     leaf?: NT
 }

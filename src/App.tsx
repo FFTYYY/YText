@@ -4,7 +4,7 @@ import Button from "@mui/material/Button"
 import "./App.css"
 import { YEditor } from "./editor/core/editor/editor_interface"
 import { EditorCore , GroupStyle , AbstractStyle} from "./editor/core/editor/editor_core"
-import { theorem } from "./editor/components/groups"
+import { new_default_group } from "./editor/components/groups"
 import { strong } from "./editor/components/inlines"
 import { newparagraph } from "./editor/components/supports"
 
@@ -18,17 +18,21 @@ class App extends React.Component {
 
 		this.editor = new YEditor(new EditorCore())
 
-		let [theoremstyle, theoremrenderer] = theorem(this.editor)
+		let [theoremstyle, theoremrenderer] = new_default_group(
+			"theorem" , 
+			{title: "Theorem 1" , other_param: "xxx" , sub_par: {a: "1", b: "2"}}
+		)
+		
 		this.editor.core.add_groupstyle(theoremstyle)
 		this.editor.update_renderer(theoremrenderer , "group" , theoremstyle.name)
 		
-		let [strongstyle, strongrenderer] = strong(this.editor)
-		this.editor.core.add_inlinestyle(strongstyle)
-		this.editor.update_renderer(strongrenderer , "inline" , strongstyle.name)
+		// let [strongstyle, strongrenderer] = strong(this.editor)
+		// this.editor.core.add_inlinestyle(strongstyle)
+		// this.editor.update_renderer(strongrenderer , "inline" , strongstyle.name)
 
-		let [npstyle , nprenderer] = newparagraph(this.editor)
-		this.editor.core.add_supportstyle(npstyle)
-		this.editor.update_renderer(nprenderer , "support" , npstyle.name)
+		// let [npstyle , nprenderer] = newparagraph(this.editor)
+		// this.editor.core.add_supportstyle(npstyle)
+		// this.editor.update_renderer(nprenderer , "support" , npstyle.name)
 
 		this.editor.core.add_abstractstyle(new AbstractStyle("comment" , {}))
 
