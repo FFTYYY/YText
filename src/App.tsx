@@ -30,9 +30,9 @@ class App extends React.Component {
 		// this.editor.core.add_inlinestyle(strongstyle)
 		// this.editor.update_renderer(strongrenderer , "inline" , strongstyle.name)
 
-		// let [npstyle , nprenderer] = newparagraph(this.editor)
-		// this.editor.core.add_supportstyle(npstyle)
-		// this.editor.update_renderer(nprenderer , "support" , npstyle.name)
+		let [npstyle , nprenderer] = newparagraph()
+		this.editor.core.add_supportstyle(npstyle)
+		this.editor.update_renderer(nprenderer , "support" , npstyle.name)
 
 		this.editor.core.add_abstractstyle(new AbstractStyle("comment" , {}))
 
