@@ -22,7 +22,6 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 
 
 import { StyledNode , NodeType , StyleType } from "../core/elements"
-import type { Renderer_Func , Renderer_Props } from "../core/editor/editor_interface"
 import { YEditor } from "../core/editor/editor_interface"
 import { non_selectable_prop , is_same_node , node2path } from "../utils"
 import { DefaultEditor } from "./editor"

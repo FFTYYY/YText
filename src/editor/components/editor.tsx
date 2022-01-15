@@ -10,7 +10,6 @@ import type { StyleType , NodeType } from "../core/elements"
 import { Node } from "slate"
 
 
-import { Renderer_Func } from "../core/editor/editor_interface"
 import { YEditor } from "../core/editor/editor_interface"
 import { new_default_group } from "./groups"
 import { new_default_iniline } from "./inlines"

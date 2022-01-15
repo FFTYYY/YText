@@ -2,8 +2,8 @@ import React from "react"
 import Button from "@mui/material/Button"
 
 import "./App.css"
-import { YEditor , Renderer_Props , Renderer_Func } from "./editor/core/editor/editor_interface"
-import { StyledNode , NodeType , StyleType } from "./editor/core/elements"
+import { YEditor } from "./editor/core/editor/editor_interface"
+import { StyledNode , NodeType , StyleType , GroupNode , group_prototype} from "./editor/core/elements"
 import { new_default_group } from "./editor/components/groups"
 import { new_default_iniline } from "./editor/components/inlines"
 import { newparagraph } from "./editor/components/supports"
@@ -31,18 +31,23 @@ import {DefaultHidden} from "./editor/components/hidden"
 import {DefaultParameterWithEditorWithDrawer} from "./editor/components/universe"
 import {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle} from "./editor/core/editor/editor_core"
 import { DefaultEditor } from "./editor/components/editor"
+import { OutRenderer } from "./editor/core/output/out_renderer"
+import { Node } from "slate"
 
 interface App_State{
-	acc_expd: {[key in StyleType]: boolean}
-	param_drawer_open: boolean
+	value: Node[]
 }
 class App extends React.Component<any,App_State> {
 	editor: YEditor
+	outputer: OutRenderer
+	core: EditorCore
 	
 	constructor(props: any) {
 		super(props)
+		this.state = {
+			value: []
+		}
 
-		
 		let [theoremstyle, theoremrenderer] = new_default_group(
 			"theorem" , 
 			{title: "Theorem 1" , other_param: "xxx" , sub_par: {a: "1", b: "2"}}
@@ -50,25 +55,58 @@ class App extends React.Component<any,App_State> {
 		let [strongstyle, strongrenderer] = new_default_iniline("strong" , {test: "haha"})
 		let [npstyle , nprenderer] = newparagraph("newparagraph")
 
-
-		this.editor = new YEditor(new EditorCore(
+		this.core = new EditorCore(
 			[strongstyle]      , 
 			[theoremstyle]       , 
 			[] , 
             [npstyle]     , 
             [new AbstractStyle("comment" , {}) , new AbstractStyle("comment 2" , {})]      , 
-        ))
-        
+        )
+
+		this.editor = new YEditor( this.core )
 		this.editor.update_renderer(theoremrenderer , "group" , "theorem")
 		this.editor.update_renderer(strongrenderer  , "inline" , "strong")
 		this.editor.update_renderer(nprenderer , "support" , "newparagraph")
+		
+		this.outputer = new OutRenderer( this.core )
 
+		this.setState( {value: this.core.root.children} )
 	}
+
 	render() {
 		let me = this
-		return <DefaultEditor 
-			editor = {me.editor}
-		/>
+		let OutputRenderer = this.outputer._Component.bind(this.outputer)
+		let default_group = group_prototype("root" , {})
+		return <div>
+			<div 
+				style={{
+					position: "absolute" , 
+					width: "50%" ,
+					left: "0" , 
+				}}
+			>
+				<DefaultEditor 
+					editor = {me.editor}
+					onUpdate={newval => {
+						me.setState({value: newval})
+					}}
+				/>
+			</div>
+
+			<div 
+				style={{
+					position: "absolute" , 
+					width: "50%" ,
+					left: "50%" , 
+					height: "100%" , 
+					backgroundColor: "#AABBCC"
+				}}
+			>
+				<OutputRenderer 
+					element = {{...default_group , ...{children: me.state.value}}}
+				/>
+			</div>
+		</div>
 	}
 }
 

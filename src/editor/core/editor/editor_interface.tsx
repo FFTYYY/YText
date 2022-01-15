@@ -16,10 +16,10 @@ import { get_node_type , is_styled } from "../elements"
 import { EditorCore } from "./editor_core"
 import { is_same_node } from "../../utils"
 import { withAllYEditorPlugins } from "../plugins/apply_all"
+import { Renderer } from "../renderer"
 
-export type { Renderer_Func , Renderer_Props }
 export { YEditor }
-
+export type { EditorRenderer_Props , EditorRenderer_Func}
 interface YEditorComponent_Props{
     editor: YEditor                 // 目标YEditor对象
     onUpdate?: (newval:any)=>any    // 当节点改变时的回调函数
@@ -108,7 +108,8 @@ interface YEditorToolbox_Props{
     editor: YEditor
 }
 
-interface Renderer_Props<NT = Node>{
+/** Editor 的 renderer 可以接受的参数列表。继承自 renderer.Renderer_Props。 */
+interface EditorRenderer_Props<NT extends Node = Node>{
     attributes: any
     children: any[]
     editor: YEditor
@@ -116,45 +117,22 @@ interface Renderer_Props<NT = Node>{
     leaf?: NT
 }
 
+/** Editor 的 renderer 函数接口。继承自 renderer.Renerer_Func。 */
+type EditorRenderer_Func<NT extends Node = Node> = (prop: EditorRenderer_Props<NT>) => void
 
-// TODO：一个可能解决hidden中参数无法编辑的问题的方案是，让renderer接收editor作为参数，不过这样会导致页面刷新，需要考虑
-type Renderer_Func<NT = Node> = (props: Renderer_Props<NT>, editor?:YEditor)=>any
+/** 一个合法的暂存操作函数。 */
 type TemporaryOperation_Func = (slate: Editor) => void
 
-function default_renderer(props: Renderer_Props):any{
-    return <Card {...props.attributes}>{props.children}</Card>
-}
-
-class YEditor{
-    core: EditorCore
-    default_renderers: {[nd in NodeType]: Renderer_Func}
-    style_renderers  : {[nd in StyleType]: {[sty: string]: Renderer_Func}}
+class YEditor extends Renderer<EditorRenderer_Props>{
     operations: TemporaryOperation_Func[]
     slate: ReactEditor
     static Component = _YEditorComponent
     
     constructor(core: EditorCore){
-        this.core = core
-
-        this.default_renderers = {
-            text      : (props: Renderer_Props)=><span {...props.attributes}>{props.children}</span> , 
-            inline    : (props: Renderer_Props)=><span {...props.attributes}>{props.children}</span> , 
-            paragraph : (props: Renderer_Props)=><div {...props.attributes}>{props.children}</div> , 
-            group     : default_renderer , 
-            struct    : default_renderer , 
-            support   : default_renderer , 
-        }
-        this.style_renderers = {
-            "inline"    : {} , 
-            "group"     : {} , 
-            "struct"    : {} , 
-            "support"   : {} , 
-        }
+        super(core)
 
         this.slate  = withAllYEditorPlugins( withReact(createEditor() as ReactEditor) ) as ReactEditor
-
         this.operations = []
-
     }
 
     /** 这个函数添加一个临时操作。 */
@@ -168,38 +146,6 @@ class YEditor{
             let opr = this.operations.shift()
             opr(this.slate)
         }
-    }
-
-    /** 确定一个渲染器。
-     * @param nodetype 
-     * 节点类型。如果 stylename 为 undefined 则必须为 text 或 paragraph，否则必须为 inline、group、struct、support 之一。
-     * @param stylename 样式名。如果为 undefined 就表示无样式（使用默认渲染器）。
-     * @returns 如果 stylename 是 undefined 或者没有找到渲染器，就范围这个节点类型的默认渲染器，否则返回找到的渲染器。
-     */
-    get_renderer(nodetype: NodeType, stylename: string | undefined = undefined): Renderer_Func{
-        if(stylename == undefined){
-            return this.default_renderers[nodetype]
-        }
-        if(nodetype == "text" || nodetype == "paragraph")
-            throw new Error(`当 nodetype = ${nodetype}，stylename 不能不为 undefined。（stylename = ${stylename}）`)
-        
-        // 如果没找到默认 renderer，就返回这个 nodetype 的默认renderer。
-        return this.style_renderers[nodetype][stylename] || this.default_renderers[nodetype] 
-    }
-
-    /** 更新渲染器。
-     * @param renderer 要传入的渲染器。
-     * @param nodetype 节点类型。
-     * @param stylename 样式名。如果为 undefined 就表示更新默认渲染器。
-     */
-    update_renderer(renderer: Renderer_Func, nodetype: NodeType, stylename: string | undefined = undefined){
-        if(stylename == undefined){
-            this.default_renderers[nodetype] = renderer
-        }
-        if(nodetype == "text" || nodetype == "paragraph")
-        throw new Error(`当 nodetype = ${nodetype}，stylename 不能不为 undefined。（stylename = ${stylename}）`)
-
-        this.style_renderers[nodetype][stylename] = renderer
     }
     
     /** 这个函数帮助用户构建按钮。返回一个函数，这个函数表示要新建对应*样式*节点时的行为。

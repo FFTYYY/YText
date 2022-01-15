@@ -41,7 +41,7 @@ import Switch from '@mui/material/Switch';
 
 import { GroupStyle , EditorCore} from "../core/editor/editor_core"
 import { GroupNode , StyledNode , paragraph_prototype , get_node_type } from "../core/elements"
-import type { Renderer_Func , Renderer_Props } from "../core/editor/editor_interface"
+import type { EditorRenderer_Func , EditorRenderer_Props } from "../core/editor/editor_interface"
 import { YEditor } from "../core/editor/editor_interface"
 
 import { non_selectable_prop , is_same_node , node2path } from "../utils"
@@ -61,7 +61,7 @@ export {new_default_group}
 function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_key:string){
     
 
-    return (props: Renderer_Props<GroupNode>) => {
+    return (props: EditorRenderer_Props<GroupNode>) => {
         let element = props.element
         let title = (title_key != undefined) ? (element.parameters[title_key] || "") : ""
         let editor = props.editor
@@ -146,14 +146,14 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
 }
 
 function new_default_group(name:string = "theorem" , init_parameters:{title?:string} & any = {} , title_key = "title")
-    : [GroupStyle,Renderer_Func<GroupNode>]
+    : [GroupStyle,EditorRenderer_Func<GroupNode>]
 {
 
     // 样式说明
     let style = new GroupStyle(name , init_parameters)
         
     // 渲染器
-    let renderer = (props: Renderer_Props<GroupNode>) => {
+    let renderer = (props: EditorRenderer_Props<GroupNode>) => {
         let R = get_DefaultGroup(name , init_parameters , title_key)
         return <R {...props}></R> //有病吧
     }

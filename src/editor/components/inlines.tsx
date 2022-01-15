@@ -24,7 +24,7 @@ import IconButton from '@mui/material/IconButton'
 
 import { InlineStyle , EditorCore} from "../core/editor/editor_core"
 import { InlineNode , StyledNode } from "../core/elements"
-import type { Renderer_Func , Renderer_Props } from "../core/editor/editor_interface"
+import type { EditorRenderer_Func , EditorRenderer_Props } from "../core/editor/editor_interface"
 import { YEditor } from "../core/editor/editor_interface"
 
 import { non_selectable_prop , is_same_node} from "../utils"
@@ -34,11 +34,11 @@ import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawer} from 
 export { new_default_iniline }
 
 function new_default_iniline(name:string = "strong" , init_parameters:{title?:string} & any = {})
-    : [InlineStyle,Renderer_Func<InlineNode>]
+    : [InlineStyle,EditorRenderer_Func<InlineNode>]
 {
     let style = new InlineStyle(name , init_parameters)
 
-    let renderer = (props: Renderer_Props<InlineNode>) => {
+    let renderer = (props: EditorRenderer_Props<InlineNode>) => {
         let element = props.element
         let editor  = props.editor
         let [ open , set_open ] = useState(false) // 抽屉是否打开

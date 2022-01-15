@@ -11,7 +11,6 @@ import Drawer       from "@mui/material/Drawer"
 
 import { StyledNode } from "../core/elements"
 import { GroupStyle , EditorCore} from "../core/editor/editor_core"
-import type { Renderer_Func , Renderer_Props } from "../core/editor/editor_interface"
 import { YEditor } from "../core/editor/editor_interface"
 import { HiveTwoTone } from "@mui/icons-material"
 import { non_selectable_prop , is_same_node , node2path } from "../utils"

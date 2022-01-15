@@ -5,7 +5,7 @@
 
 import { SupportNode , paragraph_prototype} from "../core/elements"
 import { SupportStyle , EditorCore} from "../core/editor/editor_core"
-import type { Renderer_Func , Renderer_Props } from "../core/editor/editor_interface"
+import type { EditorRenderer_Func , EditorRenderer_Props } from "../core/editor/editor_interface"
 import { YEditor } from "../core/editor/editor_interface"
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
@@ -20,10 +20,10 @@ import Grid         from "@mui/material/Grid"
 
 export { newparagraph }
 
-function newparagraph(name:string = "newparagraph"): [SupportStyle,Renderer_Func<SupportNode>]{
+function newparagraph(name:string = "newparagraph"): [SupportStyle,EditorRenderer_Func<SupportNode>]{
     let style = new SupportStyle(name , {})
 
-    let renderer = (props: Renderer_Props<SupportNode>) => {
+    let renderer = (props: EditorRenderer_Props<SupportNode>) => {
         let editor = props.editor
         return <ButtonGroup  
                 {...non_selectable_prop} 
