@@ -64,8 +64,6 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     update_value(value: Node[]){
         this.core.root = {...this.core.root , ...{children:value}}
         this.onUpdate(value)
-
-        console.log(this.core.root)
     }
 
     /** 渲染函数
@@ -119,6 +117,7 @@ interface Renderer_Props<NT = Node>{
 
 // TODO：一个可能解决hidden中参数无法编辑的问题的方案是，让renderer接收editor作为参数，不过这样会导致页面刷新，需要考虑
 type Renderer_Func<NT = Node> = (props: Renderer_Props<NT>, editor?:YEditor)=>any
+type TemporaryOperation_Func = (slate: Editor) => void
 
 function default_renderer(props: Renderer_Props):any{
     return <Card {...props.attributes}>{props.children}</Card>
@@ -128,9 +127,10 @@ class YEditor{
     core: EditorCore
     default_renderers: {[nd in NodeType]: Renderer_Func}
     style_renderers  : {[nd in StyleType]: {[sty: string]: Renderer_Func}}
+    operations: TemporaryOperation_Func[]
     slate: ReactEditor
     static Component = _YEditorComponent
-
+    
     constructor(core: EditorCore){
         this.core = core
 
@@ -150,8 +150,24 @@ class YEditor{
         }
 
         this.slate  = withAllYEditorPlugins( withReact(createEditor() as ReactEditor) ) as ReactEditor
+
+        this.operations = []
+
     }
-        
+
+    /** 这个函数添加一个临时操作。 */
+    add_operation(opr: TemporaryOperation_Func){
+        this.operations.push(opr)
+    }
+
+    /** 这个函数应用所有临时操作。 */
+    apply_all(){
+        while(this.operations.length > 0){
+            let opr = this.operations.shift()
+            opr(this.slate)
+        }
+    }
+
     /** 确定一个渲染器。
      * @param nodetype 
      * 节点类型。如果 stylename 为 undefined 则必须为 text 或 paragraph，否则必须为 inline、group、struct、support 之一。
@@ -214,7 +230,7 @@ class YEditor{
                     me.slate , 
                     node as InlineNode , 
                     { 
-                        match: (n:Node)=>Text.isText(n) , 
+                        match: (n:Node)=>Text.isText(n) , // 所有子节点中是文本的那些。
                         split: true , 
                     }
                 )

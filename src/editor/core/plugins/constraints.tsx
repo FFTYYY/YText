@@ -75,27 +75,27 @@ function constraint_inline(editor: Editor):Editor{
 
             // 修复有若干子节点的情况
             if(now_node.children.length > 1){
+                // 删除原来的节点。
+                Transforms.removeNodes(editor , {at: path})
                 // 在原位置插入一个节点
                 Transforms.insertNodes<InlineNode>(
                     editor , 
                     { ...now_node , children: [ text_prototype(Node.string(now_node)) ] } , 
                     { at: path }
                 )
-                // 删除原来的节点，注意这里用节点匹配，因为路径已经变了。
-                Transforms.removeNodes(editor , {match: n=>is_same_node(n,now_node)})
                 return
             }
 
             //修复子节点不是text的情况
             if(get_node_type(now_node.children[0]) != "text"){
+                // 删除原来的节点。
+                Transforms.removeNodes(editor , {at: path})
                 // 在原位置插入一个节点
                 Transforms.insertNodes<InlineNode>(
                     editor , 
                     { ...now_node , children: [ text_prototype(Node.string(now_node)) ] } , 
                     { at: path }
                 )
-                // 删除原来的节点，注意这里用节点匹配，因为路径已经变了。
-                Transforms.removeNodes(editor , {match: n=>is_same_node(n,now_node)})
                 return
             }
         }

@@ -67,8 +67,7 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
      * @param props.onChange 当值改变时的回调函数。
      */
     renderDict(props: {name: string, val:object, onChange: (newval:object)=>void}){
-        let newval = {}
-        Object.assign(newval , props.val)
+        let newval = {...props.val}
 
         let RS = this.renderString.bind(this)   // 渲染一个文本框。
         let RO = this.renderDict.bind(this)     // 递归地渲染一个菜单。

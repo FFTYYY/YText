@@ -24,7 +24,7 @@ import { StyledNode } from "../core/elements"
 import { EditorCore} from "../core/editor/editor_core"
 import type { Renderer_Func , Renderer_Props } from "../core/editor/editor_interface"
 import { YEditor } from "../core/editor/editor_interface"
-import { non_selectable_prop , is_same_node} from "../utils"
+import { non_selectable_prop , is_same_node , node2path } from "../utils"
 
 export {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden}
 export type {DefaultHiddenEditor_Props}
@@ -49,7 +49,7 @@ function DefaultNewHidden(props: {editor: YEditor, element: StyledNode}){
             Transforms.setNodes<StyledNode>(
                 editor.slate , 
                 abstractstyles[selection].makehidden() , 
-                {match: n=>is_same_node(n , element)} // 我觉得这样好慢啊，但是这是slate官方示例的写法
+                { at: node2path(editor.slate , element ) }
             )
         }
     }
@@ -104,6 +104,19 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
         this.subeditor.core.root = {...this.subeditor.core.root , ...{children:props.element.hidden.children}}
     }
 
+    update_value(newval){
+        let me = this
+        let element: StyledNode = this.props.element
+
+        this.props.editor.add_operation((slate)=>{
+            Transforms.setNodes<StyledNode>(
+                slate , 
+                { hidden: {...element.hidden , ...{children: newval}} } , 
+                { at: node2path(slate , this.props.element) }
+            )
+        })
+    }
+
 	render() {
 
 		let me = this
@@ -116,7 +129,6 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
 		)
 		
         let props = this.props
-        let element: StyledNode = props.element
 		return <div>
             <IconButton onClick={e=>me.setState({drawer_open: true})}><SportsMartialArtsIcon/></IconButton>
             <Drawer
@@ -128,11 +140,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
                     me.setState({drawer_open: false})
 
                     // 上传状态
-                    Transforms.setNodes<StyledNode>(
-                        props.editor.slate , 
-                        { hidden: {...element.hidden , ...{children: me.subeditor.core.root.children}} } , 
-                        { match: n=>is_same_node(n,element)}
-                    )
+                    props.editor.apply_all()
                 }}
                 
                 ModalProps = {{
@@ -148,6 +156,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
                 <div>
                     <YEditor.Component 
                         editor={me.subeditor}
+                        onUpdate = { newval => me.update_value(newval)}
                     />
                 </div></Drawer>
         </div> 

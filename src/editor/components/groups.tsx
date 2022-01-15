@@ -38,7 +38,7 @@ import { GroupNode , StyledNode } from "../core/elements"
 import type { Renderer_Func , Renderer_Props } from "../core/editor/editor_interface"
 import { YEditor } from "../core/editor/editor_interface"
 
-import { non_selectable_prop , is_same_node} from "../utils"
+import { non_selectable_prop , is_same_node , node2path } from "../utils"
 import { DefaultHidden } from "./hidden"
 import { DefaultParameterContainer } from "./universe"
 
@@ -54,30 +54,29 @@ interface  DefaultGroupParameter_Props{
  * @param element 这个组件所服务的节点。
  */
 class DefaultGroupParameter extends React.Component<DefaultGroupParameter_Props>{
-    sub_comp: any
-
     constructor(props: DefaultGroupParameter_Props){
         super(props)
-
-        this.sub_comp = createRef()
     }
 
-    /** 调用这个函数，则自动更新文档的参数。 */
-    update_value(){
+    /** 这个函数为编辑器添加一个临时操作。 */
+    temp_update_value(newval: any){
         let props = this.props
-        let value = this.sub_comp.current.parameter_values()
-        Transforms.setNodes<GroupNode>(
-            props.editor.slate , 
-            { parameters: value },
-            { match: n=>is_same_node(n,props.element) }
-        )    
+
+        props.editor.add_operation( (slate) => {
+            Transforms.setNodes<GroupNode>(
+                slate , 
+                { parameters: newval },
+                { at: node2path(slate , props.element) }
+            )
+        })
     }
+
     render(){
         let me = this
         let props = this.props
         return <DefaultParameterContainer
             initval = { props.element.parameters }
-            ref = {me.sub_comp} //获得子组件对象
+            onUpdate = { newval=>me.temp_update_value(newval) }
         />
     }
 }
@@ -96,8 +95,6 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
         let title = (title_key != undefined) ? (element.parameters[title_key] || "") : ""
         let editor = props.editor
         let [ open , set_open ] = useState(false) // 抽屉是否打开
-
-        let param_container = createRef<DefaultGroupParameter>()
 
         return <div
             style={{
@@ -122,14 +119,13 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
             open = {open}
             onClose={e=>{
                 set_open(false)
-                console.log(param_container.current)
-                param_container.current.update_value()
+                editor.apply_all()
             }}
             ModalProps={{
                 keepMounted: true,
             }}
         >
-            <DefaultGroupParameter editor={editor} element={element} ref={param_container}/>
+            <DefaultGroupParameter editor={editor} element={element}/>
         </Drawer>
         </div>
     }
