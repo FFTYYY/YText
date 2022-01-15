@@ -5,7 +5,7 @@ import "./App.css"
 import { YEditor } from "./editor/core/editor/editor_interface"
 import { EditorCore , GroupStyle , AbstractStyle} from "./editor/core/editor/editor_core"
 import { new_default_group } from "./editor/components/groups"
-import { strong } from "./editor/components/inlines"
+import { new_default_iniline } from "./editor/components/inlines"
 import { newparagraph } from "./editor/components/supports"
 
 class App extends React.Component {
@@ -22,13 +22,12 @@ class App extends React.Component {
 			"theorem" , 
 			{title: "Theorem 1" , other_param: "xxx" , sub_par: {a: "1", b: "2"}}
 		)
-		
 		this.editor.core.add_groupstyle(theoremstyle)
 		this.editor.update_renderer(theoremrenderer , "group" , theoremstyle.name)
 		
-		// let [strongstyle, strongrenderer] = strong(this.editor)
-		// this.editor.core.add_inlinestyle(strongstyle)
-		// this.editor.update_renderer(strongrenderer , "inline" , strongstyle.name)
+		let [strongstyle, strongrenderer] = new_default_iniline("strong" , {test: "haha"})
+		this.editor.core.add_inlinestyle(strongstyle)
+		this.editor.update_renderer(strongrenderer , "inline" , strongstyle.name)
 
 		let [npstyle , nprenderer] = newparagraph()
 		this.editor.core.add_supportstyle(npstyle)

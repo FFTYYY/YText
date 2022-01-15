@@ -64,6 +64,8 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     update_value(value: Node[]){
         this.core.root = {...this.core.root , ...{children:value}}
         this.onUpdate(value)
+
+        console.log(this.core.root)
     }
 
     /** 渲染函数

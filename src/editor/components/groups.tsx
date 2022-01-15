@@ -40,51 +40,15 @@ import { YEditor } from "../core/editor/editor_interface"
 
 import { non_selectable_prop , is_same_node , node2path } from "../utils"
 import { DefaultHidden } from "./hidden"
-import { DefaultParameterContainer } from "./universe"
+import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawer} from "./universe"
 
 export {new_default_group}
 
-interface  DefaultGroupParameter_Props{
-    editor: YEditor
-    element: GroupNode
-}
-
-/** 这是一个默认的Parameter容器组件，和特定的节点关联，会自动修改对应节点的属性。
- * @param props.editor 这个组件所服务的编辑器。
- * @param element 这个组件所服务的节点。
- */
-class DefaultGroupParameter extends React.Component<DefaultGroupParameter_Props>{
-    constructor(props: DefaultGroupParameter_Props){
-        super(props)
-    }
-
-    /** 这个函数为编辑器添加一个临时操作。 */
-    temp_update_value(newval: any){
-        let props = this.props
-
-        props.editor.add_operation( (slate) => {
-            Transforms.setNodes<GroupNode>(
-                slate , 
-                { parameters: newval },
-                { at: node2path(slate , props.element) }
-            )
-        })
-    }
-
-    render(){
-        let me = this
-        let props = this.props
-        return <DefaultParameterContainer
-            initval = { props.element.parameters }
-            onUpdate = { newval=>me.temp_update_value(newval) }
-        />
-    }
-}
-
-/** 默认的group组件，但是还需要一系列额外属性。
- * @param props.name 这个组件的名称。
- * @param props.init_parameters 组件的初始参数列表。
- * @param props.title_key 要显示的标题在init_parameters中的名称，如果为undefined则没有标题。
+/** 这个函数返回一个默认的group组件。
+ * 之所以再套一层函数，只是不想塞在一起让一个函数写得太长罢了。
+ * @param name 这个组件的名称。
+ * @param init_parameters 组件的初始参数列表。
+ * @param title_key 要显示的标题在init_parameters中的名称，如果为undefined则没有标题。
  * 
  * @returns 一个用于渲染group的组件。
 */
@@ -106,30 +70,19 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
         >
             <AppBar {...non_selectable_prop} position="static">
                 <Toolbar>
-                    <Typography>{title}</Typography>
                     <IconButton onClick={e=>set_open(true)}>  <SettingsIcon/> </IconButton>          
-                    <DefaultHidden  editor={editor} element={element} />
+                    <DefaultHidden editor={editor} element={element} />
                 </Toolbar>
             </AppBar >
             {props.children}
+            <DefaultParameterWithEditorWithDrawer open={open} editor={editor} element={element}
+                onClose = { (e)=>{set_open(false)}}
+            />
         </Card>
-        <Drawer 
-            {...non_selectable_prop} 
-            anchor = {"left"}
-            open = {open}
-            onClose={e=>{
-                set_open(false)
-                editor.apply_all()
-            }}
-            ModalProps={{
-                keepMounted: true,
-            }}
-        >
-            <DefaultGroupParameter editor={editor} element={element}/>
-        </Drawer>
         </div>
     }
 }
+                    // <Typography>{title}</Typography>
 
 function new_default_group(name:string = "theorem" , init_parameters:{title?:string} & any = {} , title_key = "title")
     : [GroupStyle,Renderer_Func<GroupNode>]

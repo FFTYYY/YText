@@ -6,23 +6,29 @@ import React, {useState} from "react"
 
 import Card         from "@mui/material/Card"
 import TextField    from "@mui/material/TextField"
+import Drawer       from "@mui/material/Drawer"
 
+import { StyledNode } from "../core/elements"
 import { GroupStyle , EditorCore} from "../core/editor/editor_core"
 import type { Renderer_Func , Renderer_Props } from "../core/editor/editor_interface"
 import { YEditor } from "../core/editor/editor_interface"
 import { HiveTwoTone } from "@mui/icons-material"
+import { non_selectable_prop , is_same_node , node2path } from "../utils"
+import { Transforms, Node, Editor } from "slate"
 
-export { DefaultParameterContainer }
+export { DefaultParameterContainer , DefaultParameterWithEditorWithDrawer}
 
 interface DefaultParameterContainer_Props{
     initval: any
     onUpdate?: (newval: any) => void
 }
 
-/** 这个类定义一个组件，作为默认的参数更新器。 
+/** 这个类定义一个菜单组件，作为默认的参数更新器。 
  * 注意，这个组件更新参数有两种方式：通过回调函数立刻更新（ onUpdate ），或者像父组件暴露本对象，期望父组件来调用
  * 自身的 parameter_values() 方法获得更新后的值。具体使用哪一种方法是可选的。但是注意，使用立刻更新的方法有可能
- * 会导致本组件重新渲染从而丢失焦点。
+ * 会导致slate更新抢占焦点，而使用延迟更新则可能会导致保存不及时等问题。建议是使用 YEditor 提供的 operations 功能。
+ * 
+ * 注意，这个类是一个菜单，不包含打开菜单的逻辑。
 */
 class DefaultParameterContainer extends React.Component <DefaultParameterContainer_Props >{
     parameters: any
@@ -125,3 +131,59 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
     }
 }
 
+
+
+/** 这个组件向具体的编辑器和具体的节点提供 DefaultParameterContainer ，并使用 YEditor 提供的 operations 功能延迟更新。
+ * 注意，这个组件不包含打开菜单的逻辑。
+ * @param props.editor 这个组件所服务的编辑器。
+ * @param props.element 这个组件所服务的节点。
+ */
+function DefaultParameterWithEditor(props: {editor: YEditor, element: StyledNode}){
+
+    function temp_update_value(newval: any){
+
+        props.editor.add_operation( (slate) => {
+            Transforms.setNodes<StyledNode>(
+                slate , 
+                { parameters: newval },
+                { at: node2path(slate , props.element) }
+            )
+        })
+    }
+
+    return <DefaultParameterContainer
+        initval = { props.element.parameters }
+        onUpdate = { newval=>temp_update_value(newval) }
+    />
+}
+
+/**
+ * 这个组件向具体的编辑器和具体的节点提供  DefaultParameterContainer ，并包含一个抽屉来打开关闭编辑界面。抽屉关闭时会调用 
+ * editor.apply_all() 来应用所有更新。
+ * @param props.editor 这个组件所服务的编辑器。
+ * @param props.element 这个组件所服务的节点。
+ * @param props.open 抽屉是否打开。
+ * @param props.onClose 抽屉关闭时的行为。
+ */
+function DefaultParameterWithEditorWithDrawer(props: {
+    editor: YEditor , 
+    element: StyledNode , 
+    open: boolean , 
+    onClose?: (e:any)=>void
+}){
+    let onClose = props.onClose || ((e:any)=>{})
+    return <Drawer 
+        {...non_selectable_prop} 
+        anchor = {"left"}
+        open = {props.open}
+        onClose={e=>{
+            onClose(e)
+            props.editor.apply_all()
+        }}
+        ModalProps={{
+            keepMounted: true,
+        }}
+    >
+        <DefaultParameterWithEditor editor={props.editor} element={props.element}/>
+    </Drawer>
+}

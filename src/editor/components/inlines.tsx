@@ -24,42 +24,21 @@ import { YEditor } from "../core/editor/editor_interface"
 
 import { non_selectable_prop , is_same_node} from "../utils"
 import { DefaultHidden } from "./hidden"
-import { DefaultParameterContainer } from "./universe"
+import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawer} from "./universe"
 
-export { strong }
+export { new_default_iniline }
 
-/** 这是一个Inline的默认的Parameter容器组件，和特定的节点关联，会自动修改对应节点的属性。
- * @param props.editor 这个组件所服务的编辑器。
- * @param element 这个组件所服务的节点。
- */
-function DefaultInlineParameter(props: {editor: YEditor, element: InlineNode}){
-    return <DefaultParameterContainer 
-        initval={props.element.parameters} 
-        onUpdate={val=>{
-            Transforms.setNodes<InlineNode>(
-                props.editor.slate , 
-                { parameters: val },
-                { match: n=> is_same_node(n,props.element) }
-            )    
-        }}
-    />
-}
+function new_default_iniline(name:string = "strong" , init_parameters:{title?:string} & any = {})
+    : [InlineStyle,Renderer_Func<InlineNode>]
+{
+    let style = new InlineStyle(name , init_parameters)
 
-function strong(editor: YEditor, name:string = "strong"): [InlineStyle,Renderer_Func<InlineNode>]{
-    let style = new InlineStyle(name , {
-        "words": "haha，草" , 
-        "test1": "haha" , 
-        "test2": {
-            "oo": "as" , 
-            "ss": "ass" , 
-        }
-    })
-
-    // TODO: 让renderer和editor解耦，否则hidden中的子editor无法继承到正确的renderer
     let renderer = (props: Renderer_Props<InlineNode>) => {
         let element = props.element
-        return <Box component="span"><Card 
-            {...props.attributes}
+        let editor  = props.editor
+        let [ open , set_open ] = useState(false) // 抽屉是否打开
+
+        return <Box component="span" {...props.attributes}><Card 
             style={{
                 backgroundColor: "#AABBCC" , 
                 display: "inline-block" , 
@@ -68,10 +47,13 @@ function strong(editor: YEditor, name:string = "strong"): [InlineStyle,Renderer_
             <Stack direction="row" spacing={1}>
                 {props.children}
                 <ButtonGroup variant="text" {...non_selectable_prop}>
-                    <IconButton ><CodeIcon sx={{ fontSize: 10 }}/></IconButton >
-                    <IconButton ><FilterVintageIcon sx={{ fontSize: 10 }}/></IconButton >
+                    <IconButton onClick = {e=>set_open(true)}><CodeIcon sx={{ fontSize: 10 }}/></IconButton >
+                    <DefaultHidden editor = {editor} element = {element}/>
                 </ButtonGroup>
             </Stack>
+            <DefaultParameterWithEditorWithDrawer open={open} editor={editor} element={element}
+                onClose = { (e)=>{set_open(false)} }
+            />
         </Card></Box>
     }
     
