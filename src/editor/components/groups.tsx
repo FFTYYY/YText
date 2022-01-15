@@ -1,3 +1,8 @@
+/** 
+ * 这个模块提供一些默认的 Group 的渲染器。
+ * @module
+ */
+
 import React, {useState , createRef} from "react"
 
 import { Transforms, Node, Editor } from "slate"
@@ -63,6 +68,7 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
         let [ open , set_open ] = useState(false) // 抽屉是否打开
         let [ checked , set_checked ] = useState(element.relation == "chaining") // 开关是否打开
 
+        /** 处理开关的逻辑。 */
         function switch_check_change(e: any & {target: any & {checked: boolean}}){
             let checked = e.target.checked
             set_checked(checked)
@@ -87,7 +93,7 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
                     {at: node2path(editor.slate , element)} , 
                 )
 
-                
+
                 let node_path = node2path(editor.slate , element)
                 let depth = node_path.length - 1
                 let bro_path = undefined
@@ -129,7 +135,8 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
                     <Switch checked={checked} onChange={switch_check_change}></Switch>
                 </Toolbar>
             </AppBar >
-            {props.children}
+            <div style={{marginLeft: "1%", marginRight: "1%",}}>{props.children}</div>
+            
             <DefaultParameterWithEditorWithDrawer open={open} editor={editor} element={element}
                 onClose = { (e)=>{set_open(false)}}
             />

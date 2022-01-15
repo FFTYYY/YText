@@ -1,3 +1,8 @@
+/** 
+ * 这个模块提供一些默认的 Inline 的渲染器。
+ * @module
+ */
+
 import React, {useState} from "react"
 
 import { Transforms, Node, Editor } from "slate"

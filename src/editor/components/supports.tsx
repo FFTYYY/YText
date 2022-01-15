@@ -1,3 +1,8 @@
+/** 
+ * 这个模块提供一些默认的 Support 节点的渲染器。
+ * @module
+ */
+
 import { SupportNode , paragraph_prototype} from "../core/elements"
 import { SupportStyle , EditorCore} from "../core/editor/editor_core"
 import type { Renderer_Func , Renderer_Props } from "../core/editor/editor_interface"

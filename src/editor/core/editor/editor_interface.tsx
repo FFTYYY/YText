@@ -188,9 +188,9 @@ class YEditor{
     }
 
     /** 更新渲染器。
+     * @param renderer 要传入的渲染器。
      * @param nodetype 节点类型。
      * @param stylename 样式名。如果为 undefined 就表示更新默认渲染器。
-     * @param renderer 要传入的渲染器。
      */
     update_renderer(renderer: Renderer_Func, nodetype: NodeType, stylename: string | undefined = undefined){
         if(stylename == undefined){

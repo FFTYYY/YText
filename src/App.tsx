@@ -2,70 +2,89 @@ import React from "react"
 import Button from "@mui/material/Button"
 
 import "./App.css"
-import { YEditor } from "./editor/core/editor/editor_interface"
-import { EditorCore , GroupStyle , AbstractStyle} from "./editor/core/editor/editor_core"
+import { YEditor , Renderer_Props , Renderer_Func } from "./editor/core/editor/editor_interface"
+import { StyledNode , NodeType , StyleType } from "./editor/core/elements"
 import { new_default_group } from "./editor/components/groups"
 import { new_default_iniline } from "./editor/components/inlines"
 import { newparagraph } from "./editor/components/supports"
+import Box from '@mui/material/Box';
+import SpeedDial from '@mui/material/SpeedDial';
+import SpeedDialIcon from '@mui/material/SpeedDialIcon';
+import SpeedDialAction from '@mui/material/SpeedDialAction';
+import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
+import SaveIcon from '@mui/icons-material/Save';
+import PrintIcon from '@mui/icons-material/Print';
+import ShareIcon from '@mui/icons-material/Share';
+import Stack from '@mui/material/Stack';
+import Grid from '@mui/material/Grid';
+import ButtonGroup from '@mui/material/ButtonGroup';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import IconButton from '@mui/material/IconButton';
 
-class App extends React.Component {
-	editorcore: EditorCore
-	editor: YEditor
+import SettingsIcon from '@mui/icons-material/Settings';
+import Switch from '@mui/material/Switch';
+import {DefaultHidden} from "./editor/components/hidden"
+import {DefaultParameterWithEditorWithDrawer} from "./editor/components/universe"
+import {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle} from "./editor/core/editor/editor_core"
+import { DefaultEditor } from "./editor/components/editor"
+
+interface App_State{
+	acc_expd: {[key in StyleType]: boolean}
+	param_drawer_open: boolean
+}
+class App extends React.Component<any,App_State> {
+    inlinestyles    : InlineStyle   []
+    groupstyles     : GroupStyle    []
+    structstyles    : StructStyle   []
+    supportstyles   : SupportStyle  []
+    abstractstyles  : AbstractStyle []
+    default_renderers: {[nd in NodeType]?: Renderer_Func}
+    style_renderers  : {[nd in StyleType]?: {[sty: string]: Renderer_Func}}
 
 	constructor(props: any) {
 		super(props)
-		this.state = {}
 
-		this.editor = new YEditor(new EditorCore())
-
+		
 		let [theoremstyle, theoremrenderer] = new_default_group(
 			"theorem" , 
 			{title: "Theorem 1" , other_param: "xxx" , sub_par: {a: "1", b: "2"}}
 		)
-		this.editor.core.add_groupstyle(theoremstyle)
-		this.editor.update_renderer(theoremrenderer , "group" , theoremstyle.name)
-		
 		let [strongstyle, strongrenderer] = new_default_iniline("strong" , {test: "haha"})
-		this.editor.core.add_inlinestyle(strongstyle)
-		this.editor.update_renderer(strongrenderer , "inline" , strongstyle.name)
+		let [npstyle , nprenderer] = newparagraph("newparagraph")
 
-		let [npstyle , nprenderer] = newparagraph()
-		this.editor.core.add_supportstyle(npstyle)
-		this.editor.update_renderer(nprenderer , "support" , npstyle.name)
 
-		this.editor.core.add_abstractstyle(new AbstractStyle("comment" , {}))
-
+		this.abstractstyles = [new AbstractStyle("comment" , {})]
+		this.groupstyles  = [theoremstyle]
+		this.inlinestyles = [strongstyle]
+		this.supportstyles = [npstyle]
+		this.structstyles = []
+		this.style_renderers = {
+			"group": {
+				"theorem": theoremrenderer , 
+			} , 
+			"inline": {
+				"strong": strongrenderer , 
+			} , 
+			"support": {
+				"newparagraph": nprenderer , 
+			} , 
+		}
 	}
 	render() {
-
 		let me = this
-		const buttons_grp = Object.keys(this.editor.core.groupstyles).map( (name) => 
-			<Button 
-				key = {name}
-				onClick = {e => me.editor.get_onClick("group" , name)(e)}
-			>{name}</Button>
-		)
-		const buttons_inl = Object.keys(this.editor.core.inlinestyles).map( (name) => 
-			<Button 
-				key = {name}
-				onClick = {e => me.editor.get_onClick("inline" , name)(e)}
-			>{name}</Button>
-		)
-		const buttons_spt = Object.keys(this.editor.core.supportstyles).map( (name) => 
-			<Button 
-				key = {name}
-				onClick = {e => me.editor.get_onClick("support" , name)(e)}
-			>{name}</Button>
-		)
-		
-		return <div>
-			<div>
-				{buttons_grp}{buttons_inl}{buttons_spt}
-			</div>
-			<div>
-				<YEditor.Component editor={me.editor}/>
-			</div>
-		</div> 
+		return <DefaultEditor 
+			inlinestyles = {me.inlinestyles}
+			groupstyles = {me.groupstyles}
+			structstyles = {me.structstyles}
+			supportstyles = {me.supportstyles}
+			abstractstyles = {me.abstractstyles}
+			default_renderers = {me.default_renderers}
+			style_renderers = {me.style_renderers}
+		/>
 	}
 }
 
