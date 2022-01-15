@@ -2,7 +2,7 @@
  * @module
  */
 
-import React, {useState} from "react"
+import React, {useState , createRef} from "react"
 
 import { Transforms , Node, Editor } from "slate"
 
@@ -18,13 +18,15 @@ import { makeStyles , styled } from "@material-ui/styles"
 import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
 import SwipeVerticalIcon from '@mui/icons-material/SwipeVertical';
 import IconButton from '@mui/material/IconButton';
+import ButtonGroup from '@mui/material/ButtonGroup';
 
 
-import { StyledNode } from "../core/elements"
-import { EditorCore} from "../core/editor/editor_core"
+import { StyledNode , NodeType , StyleType } from "../core/elements"
 import type { Renderer_Func , Renderer_Props } from "../core/editor/editor_interface"
 import { YEditor } from "../core/editor/editor_interface"
 import { non_selectable_prop , is_same_node , node2path } from "../utils"
+import { DefaultEditor } from "./editor"
+import {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle} from "../core/editor/editor_core"
 
 export {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden}
 export type {DefaultHiddenEditor_Props}
@@ -62,7 +64,7 @@ function DefaultNewHidden(props: {editor: YEditor, element: StyledNode}){
             onClose={get_onClose(undefined)}
         >
             {Object.keys(abstractstyles).map(name=>{
-                return <MenuItem onClick={get_onClose(name)} key={name}>{name}</MenuItem>
+                return <MenuItem onClick={get_onClose(name)} key={name}>{name}</ MenuItem>
             })}
         </Menu>
     </div>  
@@ -80,6 +82,7 @@ interface DefaultHiddenEditor_State{
 class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , DefaultHiddenEditor_State>{
     subeditor: YEditor
 
+
     /**
      * @param props.editor 这个组件所服务的编辑器。
      * @param props.element 这个组件所依附的节点。
@@ -90,7 +93,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
         this.state = {
             drawer_open: false
         }
-
+        
         this.subeditor = new YEditor(new EditorCore(
             Object.values(props.editor.core.inlinestyles    ) , 
             Object.values(props.editor.core.groupstyles     ) , 
@@ -102,9 +105,9 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
         this.subeditor.default_renderers = props.editor.default_renderers
         this.subeditor.style_renderers   = props.editor.style_renderers
         this.subeditor.core.root = {...this.subeditor.core.root , ...{children:props.element.hidden.children}}
-    }
+    }  
 
-    update_value(newval){
+    update_value(newval: Node[]){
         let me = this
         let element: StyledNode = this.props.element
 
@@ -112,22 +115,13 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             Transforms.setNodes<StyledNode>(
                 slate , 
                 { hidden: {...element.hidden , ...{children: newval}} } , 
-                { at: node2path(slate , this.props.element) }
+                { at: node2path(slate , me.props.element) }
             )
         })
     }
 
 	render() {
-
-		let me = this
-		let groupstyles = this.subeditor.core.groupstyles
-		const buttons_grp = Object.keys(groupstyles).map( (name) => 
-			<Button  
-				key = {name}
-				onClick = {e => me.subeditor.get_onClick("group" , name)(e)}
-			>{name}</Button>
-		)
-		
+		let me = this		
         let props = this.props
 		return <div>
             <IconButton onClick={e=>me.setState({drawer_open: true})}><SportsMartialArtsIcon/></IconButton>
@@ -135,30 +129,17 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
                 anchor={"left"}
                 open={this.state.drawer_open}
                 onClose={e=>{
-                    
-                    // 关闭抽屉
-                    me.setState({drawer_open: false})
-
-                    // 上传状态
-                    props.editor.apply_all()
+                    me.setState({drawer_open: false}) // 关闭抽屉
+                    props.editor.apply_all() // 上传状态
                 }}
-                
-                ModalProps = {{
-                    keepMounted: true,
-                }}
-
-                PaperProps={{
-                    sx: { width: "40%" },
-                }}
-                
+                ModalProps = {{keepMounted: true}}
+                PaperProps={{sx: { width: "40%" }}}
             >
-                <div>{buttons_grp} </div>
-                <div>
-                    <YEditor.Component 
-                        editor={me.subeditor}
-                        onUpdate = { newval => me.update_value(newval)}
-                    />
-                </div></Drawer>
+                <DefaultEditor 
+                    editor = { me.subeditor }
+                    onUpdate = { (newval: Node[]) => me.update_value(newval) }
+                />
+            </Drawer>
         </div> 
 	}
 }

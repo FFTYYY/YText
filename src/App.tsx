@@ -37,14 +37,8 @@ interface App_State{
 	param_drawer_open: boolean
 }
 class App extends React.Component<any,App_State> {
-    inlinestyles    : InlineStyle   []
-    groupstyles     : GroupStyle    []
-    structstyles    : StructStyle   []
-    supportstyles   : SupportStyle  []
-    abstractstyles  : AbstractStyle []
-    default_renderers: {[nd in NodeType]?: Renderer_Func}
-    style_renderers  : {[nd in StyleType]?: {[sty: string]: Renderer_Func}}
-
+	editor: YEditor
+	
 	constructor(props: any) {
 		super(props)
 
@@ -57,33 +51,23 @@ class App extends React.Component<any,App_State> {
 		let [npstyle , nprenderer] = newparagraph("newparagraph")
 
 
-		this.abstractstyles = [new AbstractStyle("comment" , {})]
-		this.groupstyles  = [theoremstyle]
-		this.inlinestyles = [strongstyle]
-		this.supportstyles = [npstyle]
-		this.structstyles = []
-		this.style_renderers = {
-			"group": {
-				"theorem": theoremrenderer , 
-			} , 
-			"inline": {
-				"strong": strongrenderer , 
-			} , 
-			"support": {
-				"newparagraph": nprenderer , 
-			} , 
-		}
+		this.editor = new YEditor(new EditorCore(
+			[strongstyle]      , 
+			[theoremstyle]       , 
+			[] , 
+            [npstyle]     , 
+            [new AbstractStyle("comment" , {}) , new AbstractStyle("comment 2" , {})]      , 
+        ))
+        
+		this.editor.update_renderer(theoremrenderer , "group" , "theorem")
+		this.editor.update_renderer(strongrenderer  , "inline" , "strong")
+		this.editor.update_renderer(nprenderer , "support" , "newparagraph")
+
 	}
 	render() {
 		let me = this
 		return <DefaultEditor 
-			inlinestyles = {me.inlinestyles}
-			groupstyles = {me.groupstyles}
-			structstyles = {me.structstyles}
-			supportstyles = {me.supportstyles}
-			abstractstyles = {me.abstractstyles}
-			default_renderers = {me.default_renderers}
-			style_renderers = {me.style_renderers}
+			editor = {me.editor}
 		/>
 	}
 }

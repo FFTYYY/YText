@@ -7,6 +7,9 @@
 
 import type { StyleType , NodeType } from "../core/elements"
 
+import { Node } from "slate"
+
+
 import { Renderer_Func } from "../core/editor/editor_interface"
 import { YEditor } from "../core/editor/editor_interface"
 import { new_default_group } from "./groups"
@@ -44,13 +47,8 @@ interface DefaultEditor_State{
 }
 
 interface DefaultEditor_Props{
-    inlinestyles    : InlineStyle   []
-    groupstyles     : GroupStyle    []
-    structstyles    : StructStyle   []
-    supportstyles   : SupportStyle  []
-    abstractstyles  : AbstractStyle []
-    default_renderers: {[nd in NodeType]?: Renderer_Func}
-    style_renderers  : {[nd in StyleType]?: {[sty: string]: Renderer_Func}}
+	editor: YEditor
+	onUpdate?: (newval: Node[]) => void
 }
 
 /** 
@@ -58,7 +56,7 @@ interface DefaultEditor_Props{
  */
 class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor_State> {
 	editor: YEditor
-
+	onUpdate: (newval: Node[]) => void
 	constructor(props: DefaultEditor_Props) {
 		super(props)
 		this.state = {
@@ -71,29 +69,15 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 			param_drawer_open: false , 
 		}
 
-		this.editor = new YEditor(new EditorCore(
-            props.inlinestyles      , 
-            props.groupstyles       , 
-            props.structstyles      , 
-            props.supportstyles     , 
-            props.abstractstyles    , 
-        ))
-        
-        for(let ndtype in props.default_renderers)
-            this.editor.update_renderer( props.default_renderers[ndtype] , ndtype as NodeType)
-
-        for(let ndtype in props.style_renderers){
-            for(let stname in props.style_renderers[ndtype]){
-                this.editor.update_renderer( props.style_renderers[ndtype][stname] , ndtype as StyleType , stname)
-            }
-        }
+		this.editor = props.editor
+		this.onUpdate = props.onUpdate || ((newval: Node[])=>{})
     }
 	render() {
 
 		let me = this
 		
 		return <div style={{marginLeft: "1%", marginRight: "1%"}}><Grid container>
-			<Grid item xs={10}><YEditor.Component editor={me.editor}/></Grid>
+			<Grid item xs={10}><YEditor.Component editor={me.editor} onUpdate={me.onUpdate}/></Grid>
 			<Grid item xs={2}><Stack spacing={2}>
 				<ButtonGroup>
 					<IconButton onClick={e=>me.setState({param_drawer_open: true})}>  <SettingsIcon/> </IconButton> 
