@@ -40,11 +40,12 @@ function constraint_group(editor: Editor): Editor{
                     return
                 }
 
+                // TODO：设置这个条件会导致无法设置 relation 属性（要么在move的时候会被加一个paragraph，要么在修改属性的时候会被改回去...
                 // 不允许一个关系是 chaining 的 group 节点前面不是 group
-                if(get_node_type(last_node) != "group" && now_node.relation == "chaining"){
-                    Transforms.setNodes<GroupNode>(editor , {relation: "separating"}, {at: [...path,subidx]})
-                    return
-                }
+                // if(get_node_type(last_node) != "group" && now_node.relation == "chaining"){
+                //     Transforms.setNodes<GroupNode>(editor , {relation: "separating"}, {at: [...path,subidx]})
+                //     return
+                // }
             }
         }
         normalizeNode(entry)

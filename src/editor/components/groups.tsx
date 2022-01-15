@@ -32,9 +32,10 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SettingsIcon from '@mui/icons-material/Settings';
+import Switch from '@mui/material/Switch';
 
 import { GroupStyle , EditorCore} from "../core/editor/editor_core"
-import { GroupNode , StyledNode } from "../core/elements"
+import { GroupNode , StyledNode , paragraph_prototype , get_node_type } from "../core/elements"
 import type { Renderer_Func , Renderer_Props } from "../core/editor/editor_interface"
 import { YEditor } from "../core/editor/editor_interface"
 
@@ -54,12 +55,63 @@ export {new_default_group}
 */
 function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_key:string){
     
+
     return (props: Renderer_Props<GroupNode>) => {
         let element = props.element
         let title = (title_key != undefined) ? (element.parameters[title_key] || "") : ""
         let editor = props.editor
         let [ open , set_open ] = useState(false) // 抽屉是否打开
+        let [ checked , set_checked ] = useState(element.relation == "chaining") // 开关是否打开
 
+        function switch_check_change(e: any & {target: any & {checked: boolean}}){
+            let checked = e.target.checked
+            set_checked(checked)
+
+            if(checked == false){ // 从开到关
+                Transforms.insertNodes(
+                    editor.slate , 
+                    paragraph_prototype() , 
+                    {at: node2path(editor.slate , element)} , 
+                )
+                Transforms.setNodes<GroupNode>(
+                    editor.slate , 
+                    { relation: "separating" } , 
+                    {at: node2path(editor.slate , element)} , 
+                )
+            }
+            if(checked == true){ // 从关到开
+                
+                Transforms.setNodes<GroupNode>(
+                    editor.slate , 
+                    { relation: "chaining" } , 
+                    {at: node2path(editor.slate , element)} , 
+                )
+
+                
+                let node_path = node2path(editor.slate , element)
+                let depth = node_path.length - 1
+                let bro_path = undefined
+                for(let i = node_path[depth]-1;i >= 0;i--){
+                    let new_path = [...node_path]
+                    new_path[depth] = i
+
+                    let tar_node = Node.descendant(editor.slate , new_path)
+                    if(get_node_type(tar_node) == "group"){
+                        bro_path = new_path
+                        break
+                    }
+                }
+                if(bro_path != undefined){
+                    bro_path[depth] ++
+                    Transforms.moveNodes(editor.slate, {
+                        at: node_path , 
+                        to: bro_path , 
+                    })
+                }
+            }
+
+        }
+    
         return <div
             style={{
                 marginLeft: "1%",
@@ -70,8 +122,11 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
         >
             <AppBar {...non_selectable_prop} position="static">
                 <Toolbar>
+                    <Typography>{title}</Typography>
                     <IconButton onClick={e=>set_open(true)}>  <SettingsIcon/> </IconButton>          
                     <DefaultHidden editor={editor} element={element} />
+
+                    <Switch checked={checked} onChange={switch_check_change}></Switch>
                 </Toolbar>
             </AppBar >
             {props.children}
@@ -82,7 +137,6 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
         </div>
     }
 }
-                    // <Typography>{title}</Typography>
 
 function new_default_group(name:string = "theorem" , init_parameters:{title?:string} & any = {} , title_key = "title")
     : [GroupStyle,Renderer_Func<GroupNode>]
