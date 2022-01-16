@@ -2,8 +2,7 @@ import { Node , Path } from "slate"
 import { is_styled , StyledNode} from "./core/elements"
 import React from "react"
 
-/** 给一个组件分配这个 prop 可以防止其被 slate 视为可编辑文本。
- */ 
+/** 给一个组件分配这个 prop 可以防止其被 slate 视为可编辑文本。*/ 
 const non_selectable_prop = {
     style: { userSelect: "none" } as React.CSSProperties,
     contentEditable: false , 
@@ -16,6 +15,8 @@ function is_same_node(node1: Node, node2: Node): boolean{
     return node1.idx == node2.idx
 }
 
+// TODO：这个函数的实现太沙雕了，应该换一个更有效率的实现。
+/** 获得一个节点在节点树中的路径。 */
 function node2path(root: Node, node: Node): Path{
     for(let [nd , path] of Node.descendants(root)){
         if(is_same_node(nd,node)){
@@ -25,4 +26,4 @@ function node2path(root: Node, node: Node): Path{
     return undefined
 }
 
-export { non_selectable_prop , is_same_node , node2path}
+export { non_selectable_prop , is_same_node , node2path }

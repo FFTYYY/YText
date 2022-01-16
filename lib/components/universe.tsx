@@ -158,7 +158,7 @@ function DefaultParameterWithEditor(props: {editor: YEditor, element: StyledNode
 }
 
 /**
- * 这个组件向具体的编辑器和具体的节点提供  DefaultParameterContainer ，并包含一个抽屉来打开关闭编辑界面。抽屉关闭时会调用 
+ * 这个组件向具体的编辑器和具体的节点提供 DefaultParameterContainer ，并包含一个抽屉来打开关闭编辑界面。抽屉关闭时会调用 
  * editor.apply_all() 来应用所有更新。
  * @param props.editor 这个组件所服务的编辑器。
  * @param props.element 这个组件所服务的节点。

@@ -28,7 +28,6 @@ import { DefaultEditor } from "./editor"
 import {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle} from "../core/editor_core"
 
 export {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden}
-export type {DefaultHiddenEditor_Props}
 
 /** 这个组件提供一个按钮，让 element 选择其 hidden style 。
  * @param props.editor 这个组件所服务的编辑器。
@@ -84,7 +83,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
 
     /**
      * @param props.editor 这个组件所服务的编辑器。
-     * @param props.element 这个组件所依附的节点。
+     * @param props.element 这个组件所服务的节点。
      */
     constructor(props: DefaultHiddenEditor_Props){
         super(props)

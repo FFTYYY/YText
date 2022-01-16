@@ -16,7 +16,7 @@
 		"noEmit": true,
 		"jsx": "react-jsx"
 	},
-	"include": ["./src"] , 
+	"include": ["./src", "lib/__init__.tsx", "lib/utils.tsx", "lib/out_renderer.tsx", "lib/editor_interface.tsx", "lib/plugins", "lib/exceptions", "lib/core"] , 
 
 	"typedocOptions": {
 		"entryPoints": [
