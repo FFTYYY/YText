@@ -22,10 +22,10 @@ import CodeIcon from '@mui/icons-material/Code'
 import FilterVintageIcon from '@mui/icons-material/FilterVintage';
 import IconButton from '@mui/material/IconButton'
 
-import { InlineStyle , EditorCore} from "../core/editor/editor_core"
+import { InlineStyle , EditorCore} from "../core/editor_core"
 import { InlineNode , StyledNode } from "../core/elements"
-import type { EditorRenderer_Func , EditorRenderer_Props } from "../core/editor/editor_interface"
-import { YEditor } from "../core/editor/editor_interface"
+import type { EditorRenderer_Func , EditorRenderer_Props } from "../editor_interface"
+import { YEditor } from "../editor_interface"
 
 import { non_selectable_prop , is_same_node} from "../utils"
 import { DefaultHidden } from "./hidden"

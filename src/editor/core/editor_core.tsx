@@ -4,8 +4,8 @@
 */
 
 import { Editor } from "slate"
-import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , AbstractNode , } from "../elements"
-import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "../elements"
+import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , AbstractNode , } from "./elements"
+import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./elements"
 
 export {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle}
 

@@ -39,10 +39,10 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Switch from '@mui/material/Switch';
 
-import { GroupStyle , EditorCore} from "../core/editor/editor_core"
+import { GroupStyle , EditorCore} from "../core/editor_core"
 import { GroupNode , StyledNode , paragraph_prototype , get_node_type } from "../core/elements"
-import type { EditorRenderer_Func , EditorRenderer_Props } from "../core/editor/editor_interface"
-import { YEditor } from "../core/editor/editor_interface"
+import type { EditorRenderer_Func , EditorRenderer_Props } from "../editor_interface"
+import { YEditor } from "../editor_interface"
 
 import { non_selectable_prop , is_same_node , node2path } from "../utils"
 import { DefaultHidden } from "./hidden"

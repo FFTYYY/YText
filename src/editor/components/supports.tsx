@@ -4,9 +4,9 @@
  */
 
 import { SupportNode , paragraph_prototype} from "../core/elements"
-import { SupportStyle , EditorCore} from "../core/editor/editor_core"
-import type { EditorRenderer_Func , EditorRenderer_Props } from "../core/editor/editor_interface"
-import { YEditor } from "../core/editor/editor_interface"
+import { SupportStyle , EditorCore} from "../core/editor_core"
+import type { EditorRenderer_Func , EditorRenderer_Props } from "../editor_interface"
+import { YEditor } from "../editor_interface"
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { Transforms , Node } from "slate"

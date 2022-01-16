@@ -10,11 +10,11 @@ import type { StyleType , NodeType } from "../core/elements"
 import { Node } from "slate"
 
 
-import { YEditor } from "../core/editor/editor_interface"
+import { YEditor } from "../editor_interface"
 import { new_default_group } from "./groups"
 import { new_default_iniline } from "./inlines"
 import { newparagraph } from "./supports"
-import {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle} from "../core/editor/editor_core"
+import {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle} from "../core/editor_core"
 import Box from '@mui/material/Box';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';

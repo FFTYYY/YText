@@ -4,7 +4,7 @@
  */
 
 import { Transforms, Element, Node , Editor } from "slate"
-import { get_node_type , GroupNode , paragraph_prototype } from "../elements"
+import { get_node_type , GroupNode , paragraph_prototype } from "../core/elements"
 
 export { set_inline , set_support }
 

@@ -5,7 +5,7 @@ import { text_prototype , paragraph_prototype , inline_prototype , group_prototy
 import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , AbstractNode , } from "./elements"
 import type { StyleType , NodeType } from "./elements"
 import { get_node_type , is_styled } from "./elements"
-import { EditorCore } from "./editor/editor_core"
+import { EditorCore } from "./editor_core"
 import Card from "@mui/material/Card"
 import {Node} from "slate"
 

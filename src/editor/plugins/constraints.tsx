@@ -4,8 +4,8 @@
  */
 
 import { Transforms, Element, Node , Editor } from "slate"
-import { get_node_type , GroupNode , paragraph_prototype , text_prototype, InlineNode , inline_prototype } from "../elements"
-import { is_same_node } from "../../utils"
+import { get_node_type , GroupNode , paragraph_prototype , text_prototype, InlineNode , inline_prototype } from "../core/elements"
+import { is_same_node } from "../utils"
 
 export { constraint_group , constraint_inline }
 

@@ -22,10 +22,10 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 
 
 import { StyledNode , NodeType , StyleType } from "../core/elements"
-import { YEditor } from "../core/editor/editor_interface"
+import { YEditor } from "../editor_interface"
 import { non_selectable_prop , is_same_node , node2path } from "../utils"
 import { DefaultEditor } from "./editor"
-import {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle} from "../core/editor/editor_core"
+import {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle} from "../core/editor_core"
 
 export {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden}
 export type {DefaultHiddenEditor_Props}

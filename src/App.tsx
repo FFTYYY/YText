@@ -2,7 +2,7 @@ import React from "react"
 import Button from "@mui/material/Button"
 
 import "./App.css"
-import { YEditor } from "./editor/core/editor/editor_interface"
+import { YEditor } from "./editor/editor_interface"
 import { StyledNode , NodeType , StyleType , GroupNode , group_prototype} from "./editor/core/elements"
 import { new_default_group } from "./editor/components/groups"
 import { new_default_iniline } from "./editor/components/inlines"
@@ -29,9 +29,9 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import Switch from '@mui/material/Switch';
 import {DefaultHidden} from "./editor/components/hidden"
 import {DefaultParameterWithEditorWithDrawer} from "./editor/components/universe"
-import {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle} from "./editor/core/editor/editor_core"
+import {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle} from "./editor/core/editor_core"
 import { DefaultEditor } from "./editor/components/editor"
-import { OutRenderer } from "./editor/core/output/out_renderer"
+import { OutRenderer } from "./editor/out_renderer"
 import { Node } from "slate"
 
 interface App_State{
