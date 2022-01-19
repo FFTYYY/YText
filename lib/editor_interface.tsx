@@ -118,7 +118,7 @@ interface EditorRenderer_Props<NT extends Node = Node>{
 }
 
 /** Editor 的 renderer 函数接口。继承自 renderer.Renerer_Func。 */
-type EditorRenderer_Func<NT extends Node = Node> = (prop: EditorRenderer_Props<NT>) => void
+type EditorRenderer_Func<NT extends Node = Node> = (props: EditorRenderer_Props<NT>) => void
 
 /** 一个合法的暂存操作函数。 */
 type TemporaryOperation_Func = (slate: Editor) => void

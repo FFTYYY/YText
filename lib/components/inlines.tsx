@@ -34,12 +34,12 @@ import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawer} from 
 export { new_default_iniline }
 
 function new_default_iniline(name:string = "strong" , init_parameters:{title?:string} & any = {})
-    : [InlineStyle,EditorRenderer_Func<InlineNode>]
+    : [InlineStyle,EditorRenderer_Func]
 {
     let style = new InlineStyle(name , init_parameters)
 
-    let renderer = (props: EditorRenderer_Props<InlineNode>) => {
-        let element = props.element
+    let renderer = (props: EditorRenderer_Props) => {
+        let element = props.element as InlineNode
         let editor  = props.editor
         let [ open , set_open ] = useState(false) // 抽屉是否打开
 

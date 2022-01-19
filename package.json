@@ -1,16 +1,18 @@
 {
 	"name": "@ftyyy/ytext",
-	"version": "0.0.0",
-	"files": ["dist"],
-	"main": "./dist/my-lib.umd.js",
-	"module": "./dist/my-lib.es.js",
+	"version": "0.0.2",
+	"files": [
+		"dist"
+	],
+	"main": "./dist/ytext.umd.js",
+	"types": "./dist/lib/index.d.js" , 
+	"module": "./dist/ytext.es.js",
 	"exports": {
 		".": {
-			"import": "./dist/my-lib.es.js",
-			"require": "./dist/my-lib.umd.js"
+			"import": "./dist/ytext.es.js",
+			"require": "./dist/ytext.umd.js"
 		}
 	},
-
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
@@ -36,6 +38,7 @@
 		"@types/react-dom": "^17.0.10",
 		"@vitejs/plugin-react": "^1.0.7",
 		"typescript": "^4.4.4",
-		"vite": "^2.7.2"
+		"vite": "^2.7.2",
+		"vite-plugin-dts": "^0.9.9"
 	}
 }

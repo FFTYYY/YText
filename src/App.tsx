@@ -2,11 +2,7 @@ import React from "react"
 import Button from "@mui/material/Button"
 
 import "./App.css"
-import { YEditor } from "../lib/editor_interface"
-import { StyledNode , NodeType , StyleType , GroupNode , group_prototype} from "../lib/core/elements"
-import { new_default_group } from "../lib/components/groups"
-import { new_default_iniline } from "../lib/components/inlines"
-import { newparagraph } from "../lib/components/supports"
+
 import Box from '@mui/material/Box';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
@@ -27,16 +23,10 @@ import IconButton from '@mui/material/IconButton';
 
 import SettingsIcon from '@mui/icons-material/Settings';
 import Switch from '@mui/material/Switch';
-import * as yeditor from "../lib/__init__"
+import {YEditor , EditorCore , OutRenderer , AbstractStyle , new_default_group , new_default_iniline , newparagraph} from "../lib"
+import {group_prototype , DefaultEditor} from "../lib"
 
 import { Node } from "slate"
-
-const EditorCore = yeditor.core.editor_core.EditorCore
-type EditorCore = yeditor.core.editor_core.EditorCore
-const OutRenderer = yeditor.out_renderer.OutRenderer
-type OutRenderer = yeditor.out_renderer.OutRenderer
-const AbstractStyle = yeditor.core.editor_core.AbstractStyle
-const DefaultEditor = yeditor.components.editor.DefaultEditor
 
 interface App_State{
 	value: Node[]

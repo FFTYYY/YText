@@ -58,11 +58,10 @@ export {new_default_group}
  * 
  * @returns 一个用于渲染group的组件。
 */
-function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_key:string){
-    
-
-    return (props: EditorRenderer_Props<GroupNode>) => {
-        let element = props.element
+function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_key:string)
+{
+    return (props: EditorRenderer_Props) => {
+        let element = props.element as GroupNode
         let title = (title_key != undefined) ? (element.parameters[title_key] || "") : ""
         let editor = props.editor
         let [ open , set_open ] = useState(false) // 抽屉是否打开
@@ -146,14 +145,14 @@ function get_DefaultGroup(name:string , init_parameters:{title?:string} , title_
 }
 
 function new_default_group(name:string = "theorem" , init_parameters:{title?:string} & any = {} , title_key = "title")
-    : [GroupStyle,EditorRenderer_Func<GroupNode>]
+    : [GroupStyle,EditorRenderer_Func]
 {
 
     // 样式说明
     let style = new GroupStyle(name , init_parameters)
         
     // 渲染器
-    let renderer = (props: EditorRenderer_Props<GroupNode>) => {
+    let renderer = (props: EditorRenderer_Props) => {
         let R = get_DefaultGroup(name , init_parameters , title_key)
         return <R {...props}></R> //有病吧
     }

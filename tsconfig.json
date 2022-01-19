@@ -14,10 +14,13 @@
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"noEmit": true,
-		"jsx": "react-jsx"
+		"jsx": "react-jsx" , 
+		"types": ["vite/client"] , 
 	},
-	"include": ["./src", "lib/__init__.tsx", "lib/utils.tsx", "lib/out_renderer.tsx", "lib/editor_interface.tsx", "lib/plugins", "lib/exceptions", "lib/core"] , 
-
+	"include": [
+		// "./src", 
+		"./lib/", 
+	] , 
 	"typedocOptions": {
 		"entryPoints": [
 			"src/editor/utils.tsx" , 

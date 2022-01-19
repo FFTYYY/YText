@@ -25,6 +25,8 @@ function default_renderer(props: Renderer_Props_base & any):any{
 
 /** 一个合法的 Renderer 函数。 */
 type Renderer_Func<RP = Renderer_Props_base> = (props: RP)=>any
+
+//TODO：这个泛型没有实际上用上
 class Renderer<Renderer_Props extends Renderer_Props_base>{
     core: EditorCore
     default_renderers: {[nd in NodeType]: Renderer_Func<Renderer_Props>}

@@ -20,10 +20,11 @@ import Grid         from "@mui/material/Grid"
 
 export { newparagraph }
 
-function newparagraph(name:string = "newparagraph"): [SupportStyle,EditorRenderer_Func<SupportNode>]{
+function newparagraph(name:string = "newparagraph"): [SupportStyle,EditorRenderer_Func]{
     let style = new SupportStyle(name , {})
 
-    let renderer = (props: EditorRenderer_Props<SupportNode>) => {
+    let renderer = (props: EditorRenderer_Props) => {
+        let element = props.element as SupportNode
         let editor = props.editor
         return <ButtonGroup  
                 {...non_selectable_prop} 
@@ -38,7 +39,7 @@ function newparagraph(name:string = "newparagraph"): [SupportStyle,EditorRendere
             > 
             <Button 
                 onClick = { e => {
-                    let my_path = node2path(editor.core.root , props.element) // 获取本节点的位置
+                    let my_path = node2path(editor.core.root , element) // 获取本节点的位置
                     if(my_path == undefined)
                         warning("节点不在节点树中！")
                     Transforms.insertNodes(editor.slate , paragraph_prototype() , {at: my_path})
@@ -48,7 +49,7 @@ function newparagraph(name:string = "newparagraph"): [SupportStyle,EditorRendere
             ></Button>
             <Button 
                 onClick = { e => {
-                    let my_path = node2path(editor.core.root , props.element) // 获取本节点的位置
+                    let my_path = node2path(editor.core.root , element) // 获取本节点的位置
                     if(my_path == undefined)
                         warning("节点不在节点树中！")
                     my_path[my_path.length - 1] ++ // 在下一个节点处插入

@@ -1,13 +1,20 @@
 import { defineConfig } from "vite"
 import react from "@vitejs/plugin-react"
 import path from "path"
+import dts from "vite-plugin-dts"
 
 // https://vitejs.dev/config/
 export default defineConfig({
-	plugins: [react()] , 
+	optimizeDeps:{
+		exclude: ["_node_modules" , "__node_modules" , ],
+	} , 
+	plugins: [react() , dts({
+		"skipDiagnostics" : false , 
+		"logDiagnostics": true , 
+	})] , 
 	build: {
 		lib: {
-			entry: path.resolve(__dirname, "lib/__init__.tsx"),
+			entry: path.resolve(__dirname, "lib/index.tsx"),
 			name: "ytext" , 
 			fileName: (format) => `ytext.${format}.js` ,
 		} , 
