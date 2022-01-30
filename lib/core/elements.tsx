@@ -145,7 +145,7 @@ function get_node_type(node: Node): NodeType{
         return node.type
 
     // 如果一个没有style的节点有children，就判断为段落，否则是文本
-    let hasChildren = (node:any): node is {children: Node[]} => "children" in node
+    let hasChildren = (node:any): node is {children: Node[]} => node["children"] != undefined
     if(hasChildren(node))
         return "paragraph"
     return "text"
@@ -153,5 +153,5 @@ function get_node_type(node: Node): NodeType{
 
 /** 这个函数判断一个节点是否是样式节点 */
 function is_styled(node: Node): node is BaseStyledNode{
-    return "type" in node
+    return node["type"] != undefined
 }
