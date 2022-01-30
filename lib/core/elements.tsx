@@ -83,9 +83,9 @@ function text_prototype(text: string = ""): Node{
 }
 
 /** 总之新建一个段落。 */
-function paragraph_prototype(): Node{
+function paragraph_prototype(text:string = ""): Node{
     return {
-        children: [text_prototype("")] , 
+        children: [text_prototype(text)] , 
     }
 }
 

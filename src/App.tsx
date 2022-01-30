@@ -24,9 +24,9 @@ import IconButton from '@mui/material/IconButton';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Switch from '@mui/material/Switch';
 import {YEditor , EditorCore , OutRenderer , AbstractStyle , new_default_group , new_default_iniline , newparagraph} from "../lib"
-import {group_prototype , DefaultEditor} from "../lib"
+import {group_prototype , DefaultEditor , paragraph_prototype} from "../lib"
 
-import { Node } from "slate"
+import { Node , Transforms } from "slate"
 
 interface App_State{
 	value: Node[]
@@ -38,9 +38,6 @@ class App extends React.Component<any,App_State> {
 	
 	constructor(props: any) {
 		super(props)
-		this.state = {
-			value: []
-		}
 
 		let [theoremstyle, theoremrenderer] = new_default_group(
 			"theorem" , 
@@ -63,15 +60,17 @@ class App extends React.Component<any,App_State> {
 		this.editor.update_renderer(nprenderer , "support" , "newparagraph")
 		
 		this.outputer = new OutRenderer( this.core )
+	}
 
-		this.setState( {value: this.core.root.children} )
+	extra_button(){
+		Transforms.insertNodes( this.editor.slate , [paragraph_prototype("桀桀") , paragraph_prototype("!!")] )
 	}
 
 	render() {
 		let me = this
-		let OutputRenderer = this.outputer._Component.bind(this.outputer)
 		let default_group = group_prototype("root" , {})
 		return <div>
+			<Button onClick={me.extra_button.bind(this)}>Extra_Edit</Button>
 			<div 
 				style={{
 					position: "absolute" , 
@@ -81,9 +80,6 @@ class App extends React.Component<any,App_State> {
 			>
 				<DefaultEditor 
 					editor = {me.editor}
-					onUpdate={newval => {
-						me.setState({value: newval})
-					}}
 				/>
 			</div>
 
@@ -96,8 +92,8 @@ class App extends React.Component<any,App_State> {
 					backgroundColor: "#AABBCC"
 				}}
 			>
-				<OutputRenderer 
-					element = {{...default_group , ...{children: me.state.value}}}
+				<OutRenderer.Component
+					renderer = {this.outputer}
 				/>
 			</div>
 		</div>

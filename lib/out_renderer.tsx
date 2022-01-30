@@ -7,39 +7,61 @@ import Card from "@mui/material/Card"
 import { Renderer } from "./core/renderer"
 import { Editor } from "slate"
 import { Node , BaseText , BaseElement} from "slate"
+import React from "react"
 
 export { OutRenderer }
 export type { OutRenderer_Props }
 
-interface OutRenderer_Props<NT = Node>{
-    attributes: any
-    children: any[]
-    element: NT
+interface OutRendererComponent_Props{
+    renderer: OutRenderer
 }
 
-class OutRenderer extends Renderer<OutRenderer_Props>{
+interface OutRendererComponent_State{
+    root: GroupNode
+}
 
-    constructor(core: EditorCore){
-        super(core)
+
+/** 这个类是 OutRenderer 的组件类。*/
+class _OutRendererComponent extends React.Component<OutRendererComponent_Props , OutRendererComponent_State>{
+    renderer: OutRenderer
+    core: EditorCore
+
+    /**
+     * 
+     * @param props.renderer 这个组件对应的渲染器。
+     */
+    constructor(props: OutRendererComponent_Props){
+        super(props)
+
+        this.state = {
+            root: group_prototype("root" , {})
+        }
+
+        this.renderer = props.renderer
+        this.core = this.renderer.core
+        
+        this.core.add_notificatioon( this.root_notification.bind(this) )
+        this.setState({root: this.core.root})
     }
 
-    Component(){
-        let me = this
-        let R = this._Component.bind(this)
-        return <R element={me.core.root}></R>
+    /** core 通知自身改变的方法。 */
+    root_notification(new_root: GroupNode){
+        this.setState({root: new_root})
     }
 
-    _Component(props: {element: Node}){
+    /** 递归地渲染节点。 */
+    _sub_component(props: {element: Node}){
         let element = props.element
         let me = this
-        let ThisFunction = this._Component.bind(this)
+        let ThisFunction = this._sub_component.bind(this)
+        let renderer = this.renderer
 
         type has_children = Node & {children: Node[]}
         type has_text = Node & {text: string}
 
         let type = get_node_type(element)
         if(type == "text"){
-            let R = this.get_renderer("text")
+            let R = renderer.get_renderer("text")
             let text:any = (element as has_text).text
             if(text == "")
                 text = <br />
@@ -52,7 +74,7 @@ class OutRenderer extends Renderer<OutRenderer_Props>{
         }
         
         let children = (element as has_children).children
-        let R = this.get_renderer(type , name)
+        let R = renderer.get_renderer(type , name)
         return <R 
             attributes={{}}
             element={element}
@@ -64,5 +86,31 @@ class OutRenderer extends Renderer<OutRenderer_Props>{
             }
         />
     }
+
+    render(){
+        let me = this
+        let R = this._sub_component.bind(this)
+        return <R element={me.state.root}></R>
+    }
+}
+
+interface OutRenderer_Props<NT = Node>{
+    attributes: any
+    children: any[]
+    element: NT
+}
+
+interface OutRenderer_State{
+    value: Node[]
+}
+
+class OutRenderer extends Renderer<OutRenderer_Props>{
+
+    static Component = _OutRendererComponent
+
+    constructor(core: EditorCore){
+        super(core)
+    }
+
 }
 

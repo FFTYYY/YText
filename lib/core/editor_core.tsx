@@ -3,12 +3,13 @@
  * @module
 */
 
-import { Editor } from "slate"
+import { Editor , Node } from "slate"
 import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , AbstractNode , } from "./elements"
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./elements"
 
 export {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle}
 
+type RootNotification_Function = (new_root: GroupNode)=>void
 
 /** 描述一个抽象的编辑器，维护节点树和使用的样式 */
 class EditorCore{
@@ -18,6 +19,7 @@ class EditorCore{
     supportstyles   : { [sty: string] : SupportStyle    }
     abstractstyles  : { [sty: string] : AbstractStyle   }
     root: GroupNode
+    notifications: RootNotification_Function[]
 
     /**
      * 
@@ -52,6 +54,24 @@ class EditorCore{
             this.add_abstractstyle(style)
 
         this.root = group_prototype("root" , {}) //节点树
+        this.notifications = [] // 当root修改时要通知的人的列表
+    }
+
+    /** 等价于 update_root({children: children}) */
+    update_children(children: Node[]){
+        return this.update_root({children: children})
+    }
+
+    /** 这个函数是外部改变 root 的唯一方式。 */
+    update_root(new_root: any){
+        this.root = {...this.root, ...new_root}
+        for(let notif of this.notifications)
+            notif(this.root)
+    }
+
+    /** 添加一个通知函数。 */
+    add_notificatioon(notif: RootNotification_Function){
+        this.notifications.push(notif)
     }
 
     add_inlinestyle(style: InlineStyle){

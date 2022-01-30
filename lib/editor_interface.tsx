@@ -24,7 +24,6 @@ interface YEditorComponent_Props{
     editor: YEditor                 // 目标YEditor对象
     onUpdate?: (newval:any)=>any    // 当节点改变时的回调函数
 }
-
 interface YEditorComponent_RenderElement_Props{
     attributes: any
     children: Node[]
@@ -54,18 +53,15 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
         this.core = this.editor.core
         this.slate = this.editor.slate
 
-        this.onUpdate = props.onUpdate || ( (v: any) => {} )
+        this.onUpdate = props.onUpdate || ( (v: any) => {} ) // 这个函数用于通知外部自身的改变
     }
 
-    /** 当文档的值改变时调用这个函数。
-     * @param value 改变的值。注意这个值是YEditorCore.root的children。
-     * @private
+    /** 
+     * 当 slate 改变 value 时通知自身的函数。
      */
     update_value(value: Node[]){
-        this.core.root = {...this.core.root , ...{children:value}}
+        this.core.update_children(value)
         this.onUpdate(value)
-
-        console.log(this.core.root)
     }
 
     /** 渲染函数
@@ -94,7 +90,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     }
     render(){
         let me = this
-        return <Slate editor={me.slate} value={me.core.root.children} onChange={value => me.update_value(value)}>
+        return <Slate editor={me.slate} value={[paragraph_prototype("")]} onChange={value => me.update_value(value)}>
             <Editable
                 renderElement={me.renderElement.bind(me)}
                 renderLeaf   ={me.renderLeaf.bind(me)}
