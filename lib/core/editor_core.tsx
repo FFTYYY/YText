@@ -4,7 +4,7 @@
 */
 
 import { Editor , Node } from "slate"
-import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , AbstractNode , } from "./elements"
+import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , } from "./elements"
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./elements"
 
 export {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle}
@@ -170,10 +170,8 @@ class AbstractStyle{
         this.parameter_prototype = parameter_prototype
     }
 
-    /** 生成一个默认抽象节点的属性 */
+    /** 生成一个下级抽象节点。 */
     makehidden(){
-        return {
-            hidden: group_prototype("hidden_root" , this.parameter_prototype) , 
-        }
+        return group_prototype("hidden_root" , this.parameter_prototype)    
     }
 }

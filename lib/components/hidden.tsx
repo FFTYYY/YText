@@ -7,6 +7,7 @@ import React, {useState , createRef} from "react"
 import { Transforms , Node, Editor } from "slate"
 
 import Button from "@mui/material/Button"
+import Box from "@mui/material/Box"
 import Card from "@mui/material/Card"
 import TextField from "@mui/material/TextField"
 import Grid from "@mui/material/Grid"
@@ -21,11 +22,11 @@ import IconButton from '@mui/material/IconButton';
 import ButtonGroup from '@mui/material/ButtonGroup';
 
 
-import { StyledNode , NodeType , StyleType } from "../core/elements"
+import { StyledNode , NodeType , StyleType ,  GroupNode } from "../core/elements"
 import { YEditor } from "../editor_interface"
-import { non_selectable_prop , is_same_node , node2path } from "../utils"
+import { non_selectable_prop , is_same_node , node2path , update_kth} from "../utils"
 import { DefaultEditor } from "./editor"
-import {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle} from "../core/editor_core"
+import { EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle } from "../core/editor_core"
 
 export {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden}
 
@@ -40,15 +41,17 @@ function DefaultNewHidden(props: {editor: YEditor, element: StyledNode}){
     let editor = props.editor
     let abstractstyles = editor.core.abstractstyles 
 
-    function get_onClose(selection: string | undefined){
+    function get_onClose(choice: string | undefined){
         return (e: any)=>{
             set_anchor_element(undefined)
-            if(abstractstyles[selection] == undefined)
+            if(choice == undefined || abstractstyles[choice] == undefined)
                 return 
-                
+            
+            let new_hiddens = [...element.hiddens , ...[abstractstyles[choice].makehidden()]]
+
             Transforms.setNodes<StyledNode>(
                 editor.slate , 
-                abstractstyles[selection].makehidden() , 
+                {...element, ...{hiddens: new_hiddens}} , // 向 hiddens 中添加节点。 
                 { at: node2path(editor.slate , element ) }
             )
         }
@@ -70,7 +73,10 @@ function DefaultNewHidden(props: {editor: YEditor, element: StyledNode}){
 
 interface DefaultHiddenEditor_Props{
     editor: YEditor
-    element: StyledNode
+    father: StyledNode
+
+    /** 要编辑的 hidden 节点。 */
+    son: GroupNode
 }
 interface DefaultHiddenEditor_State{
     drawer_open: boolean
@@ -79,11 +85,13 @@ interface DefaultHiddenEditor_State{
 /** 这个组件提供默认的hidden编辑页面。 */
 class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , DefaultHiddenEditor_State>{
     subeditor: YEditor
+    hiddenid: number
 
 
     /**
      * @param props.editor 这个组件所服务的编辑器。
-     * @param props.element 这个组件所服务的节点。
+     * @param props.father 这个组件所服务的节点。
+     * @param props.son 要编辑的 hidden 节点。
      */
     constructor(props: DefaultHiddenEditor_Props){
         super(props)
@@ -99,23 +107,22 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             Object.values(props.editor.core.supportstyles   ) , 
             Object.values(props.editor.core.abstractstyles  ) , 
         ))
-
+        
         this.subeditor.default_renderers = props.editor.default_renderers
         this.subeditor.style_renderers   = props.editor.style_renderers
-        this.subeditor.core.root = {...this.subeditor.core.root , ...{children:props.element.hidden.children}}
-    }  
+        // this.subeditor.core.root = {...this.subeditor.core.root , ...{children:props.son.children}}
 
-    update_value(newval: Node[]){
-        let me = this
-        let element: StyledNode = this.props.element
+        this.subeditor.set_sub_info(props.father , props.son)
+        this.props.editor.add_subeditor(this.subeditor)
 
-        this.props.editor.add_operation((slate)=>{
-            Transforms.setNodes<StyledNode>(
-                slate , 
-                { hidden: {...element.hidden , ...{children: newval}} } , 
-                { at: node2path(slate , me.props.element) }
-            )
-        })
+        console.log("constructing..." , props.son)
+    }
+
+    componentDidMount(): void {
+        // Transforms.removeNodes(this.subeditor.slate , {at: [0]})
+        Transforms.insertNodes(this.subeditor.slate ,  this.props.son.children , {at: [0]})
+
+        console.log("mounting..." , this.props.son.children)    
     }
 
 	render() {
@@ -128,14 +135,13 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
                 open={this.state.drawer_open}
                 onClose={e=>{
                     me.setState({drawer_open: false}) // 关闭抽屉
-                    props.editor.apply_all() // 上传状态
+                    // me.props.editor.apply_all()
                 }}
                 ModalProps = {{keepMounted: true}}
                 PaperProps={{sx: { width: "40%" }}}
             >
                 <DefaultEditor 
                     editor = { me.subeditor }
-                    onUpdate = { (newval: Node[]) => me.update_value(newval) }
                 />
             </Drawer>
         </div> 
@@ -149,9 +155,14 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
  * @returns 若 props.element 有hidden属性，则返回一个 DefaultHiddenEditor ，否则返回一个 DefaultNewHidden。
 */
 function DefaultHidden(props: {editor: YEditor , element: StyledNode}){
-    let R:any = DefaultNewHidden
-    if(props.element.hidden != undefined)
-        R = DefaultHiddenEditor 
-    return <R editor={props.editor} element={props.element}/>
+    let eidtor = props.editor
+    let element = props.element
+    return <Box>
+        <Box><DefaultNewHidden editor={eidtor} element={element}/></Box>
+        <Box>
+        {Object.keys(element.hiddens).map((idx)=>{
+            return <DefaultHiddenEditor key={idx} editor={eidtor} father={element} son={element.hiddens[idx]}/>
+        })}</Box>
+    </Box>
 }
 

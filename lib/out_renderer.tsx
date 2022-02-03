@@ -1,5 +1,5 @@
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./core/elements"
-import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , AbstractNode } from "./core/elements"
+import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode  } from "./core/elements"
 import type { StyleType , NodeType } from "./core/elements"
 import { get_node_type , is_styled } from "./core/elements"
 import { EditorCore } from "./core/editor_core"

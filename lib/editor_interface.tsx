@@ -10,13 +10,14 @@ import { Editor, Transforms , Point , Text } from "slate"
 import Card from "@mui/material/Card"
 
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./core/elements"
-import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , AbstractNode , } from "./core/elements"
+import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , } from "./core/elements"
 import type { StyleType , NodeType } from "./core/elements"
 import { get_node_type , is_styled } from "./core/elements"
 import { EditorCore } from "./core/editor_core"
-import { is_same_node } from "./utils"
+import { is_same_node , update_kth , get_hidden_idx } from "./utils"
 import { withAllYEditorPlugins } from "./plugins/apply_all"
 import { Renderer } from "./core/renderer"
+import { node2path } from ".";
 
 export { YEditor }
 export type { EditorRenderer_Props , EditorRenderer_Func}
@@ -62,6 +63,8 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     update_value(value: Node[]){
         this.core.update_children(value)
         this.onUpdate(value)
+
+        // console.log(this.core.root)
     }
 
     /** 渲染函数
@@ -90,10 +93,15 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     }
     render(){
         let me = this
-        return <Slate editor={me.slate} value={[paragraph_prototype("")]} onChange={value => me.update_value(value)}>
+        return <Slate 
+            editor = {me.slate} 
+            value = {[paragraph_prototype("")]} 
+            onChange = {value => me.update_value(value)} 
+        >
             <Editable
                 renderElement={me.renderElement.bind(me)}
                 renderLeaf   ={me.renderLeaf.bind(me)}
+                // onFocus = {e=>me.editor.apply_all()}
             />
         </Slate>
     }
@@ -120,27 +128,69 @@ type EditorRenderer_Func<NT extends Node = Node> = (props: EditorRenderer_Props<
 type TemporaryOperation_Func = (slate: Editor) => void
 
 class YEditor extends Renderer<EditorRenderer_Props>{
-    operations: TemporaryOperation_Func[]
+    subeditors: { [subnode_idx: number]: YEditor }
     slate: ReactEditor
+    subinfo: {father: StyledNode, son: GroupNode} | undefined
     static Component = _YEditorComponent
     
     constructor(core: EditorCore){
         super(core)
 
         this.slate  = withAllYEditorPlugins( withReact(createEditor() as ReactEditor) ) as ReactEditor
-        this.operations = []
+        this.subeditors = {}
+
+        this.subinfo = undefined
+    }
+
+    is_sub(){
+        return this.subinfo != undefined
     }
 
     /** 这个函数添加一个临时操作。 */
-    add_operation(opr: TemporaryOperation_Func){
-        this.operations.push(opr)
+    add_subeditor(subeditor: YEditor){
+        this.subeditors[subeditor.subinfo.son.idx] = subeditor
     }
 
     /** 这个函数应用所有临时操作。 */
     apply_all(){
-        while(this.operations.length > 0){
-            let opr = this.operations.shift()
-            opr(this.slate)
+        console.log("enter..." , this.subeditors)
+        let me = this
+        Object.values(this.subeditors).map((subeditor: YEditor)=>{
+            subeditor.sub_apply(me)
+        } )
+        this.subeditors = {}
+        console.log("exit..." , this.subeditors)
+
+    }
+
+    /** 这个函数只能被子编辑器调用，通过这个函数来将子编辑器的修改应用到父编辑器上。 */
+    sub_apply(father_editor: YEditor){
+
+        if(this.subinfo == undefined)
+            throw new Error("this.subinfo == undefined") 
+
+        let father = this.subinfo.father
+        let son = this.subinfo.son
+        let hidden_idx = get_hidden_idx(father , son)
+        let new_son = {...son , ...{children: this.core.root.children}} // 更新之后的son。
+        let new_hiddens = update_kth(father.hiddens , hidden_idx , new_son) // 更新之后的 father.hiddens。
+
+        // 应用变换。
+        Transforms.setNodes(
+            father_editor.slate , 
+            {...father , ...{hiddens: new_hiddens}} , 
+            {at: node2path(father_editor.slate , father)}
+        )
+    }
+
+    /** 通过调用这个函数来告知一个编辑器组件其是子编辑器。 
+     * @param father 这个子编辑器挂载到父编辑器的哪个节点上。
+     * @param son 这个子编辑器对应的 hidden 节点。
+    */
+    set_sub_info(father: StyledNode, son: GroupNode){
+        this.subinfo = {
+            father: father ,
+            son: son , 
         }
     }
     

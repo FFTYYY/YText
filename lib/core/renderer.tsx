@@ -2,7 +2,7 @@
  * @module
  */
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./elements"
-import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , AbstractNode , } from "./elements"
+import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , } from "./elements"
 import type { StyleType , NodeType } from "./elements"
 import { get_node_type , is_styled } from "./elements"
 import { EditorCore } from "./editor_core"

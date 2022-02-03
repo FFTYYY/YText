@@ -1,6 +1,20 @@
 import { Node , Path } from "slate"
-import { is_styled , StyledNode} from "./core/elements"
+import { is_styled , StyledNode , GroupNode } from "./core/elements"
 import React from "react"
+
+
+function get_hidden_idx(fathernode: StyledNode, sonnode: GroupNode){
+    for(let i = 0; i < fathernode.hiddens.length;i++){
+        if(is_same_node(fathernode.hiddens[i],sonnode))
+            return i
+    }
+    return -1
+}
+
+/** 返回一个 list 修改了第 k 个元素后的版本。 */
+function update_kth(li: any[], k: number, new_k: any){
+    return [...li.slice(0,k) , ...[new_k] , ...li.slice(k+1,li.length)]
+}
 
 /** 给一个组件分配这个 prop 可以防止其被 slate 视为可编辑文本。*/ 
 const non_selectable_prop = {
@@ -26,4 +40,4 @@ function node2path(root: Node, node: Node): Path{
     return undefined
 }
 
-export { non_selectable_prop , is_same_node , node2path }
+export { non_selectable_prop , is_same_node , node2path , get_hidden_idx , update_kth}

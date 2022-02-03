@@ -2,7 +2,7 @@
  * @module
  */
 
-import { Node } from 'slate'
+import { Node } from "slate"
 
 export {
     text_prototype , 
@@ -21,7 +21,6 @@ export type {
     GroupNode , 
     StructNode , 
     SupportNode , 
-    AbstractNode , 
 
     StyleType , 
     NodeType , 
@@ -39,7 +38,7 @@ type GroupRelationType = "chaining" | "separating"
 interface _BaseStyledNode{
     idx: number 
     type: StyleType 
-    hidden?: GroupNode 
+    hiddens: GroupNode[] 
     name: string
     parameters: any
 }
@@ -64,10 +63,6 @@ type StructNode = _StructNode & Node
 
 
 type SupportNode = _BaseStyledNode & Node
-
-interface AbstractNode{
-    hidden: GroupNode
-}
 
 /** 这个函数为每个节点生成一个唯一的id */
 var nodeid_count = 0
@@ -96,7 +91,8 @@ function inline_prototype(name: string, parameter_proto: any): InlineNode{
         type: "inline" , 
         name: name , 
         parameters: parameter_proto , 
-        children: [ text_prototype("") ]
+        children: [ text_prototype("") ] , 
+        hiddens: [] , 
     }
 }
 
@@ -111,6 +107,7 @@ function group_prototype(name: string , parameter_proto: any): GroupNode{
         relation: "separating" , 
 
         children: [paragraph_prototype()] , 
+        hiddens: [] , 
     }
 }
 
@@ -124,6 +121,7 @@ function struct_prototype(name: string , parameter_proto: any): StructNode{
         parameters: parameter_proto , 
 
         children: [] , 
+        hiddens: [] , 
     }
 }
 
@@ -135,6 +133,7 @@ function support_prototype(name: string , parameter_proto: any): SupportNode{
         name: name , 
         parameters: parameter_proto , 
         children: [ text_prototype() ],
+        hiddens: [] , 
     }
 }
 
