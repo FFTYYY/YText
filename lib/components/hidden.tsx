@@ -110,19 +110,8 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
         
         this.subeditor.default_renderers = props.editor.default_renderers
         this.subeditor.style_renderers   = props.editor.style_renderers
-        // this.subeditor.core.root = {...this.subeditor.core.root , ...{children:props.son.children}}
 
-        this.subeditor.set_sub_info(props.father , props.son)
-        this.props.editor.add_subeditor(this.subeditor)
-
-        console.log("constructing..." , props.son)
-    }
-
-    componentDidMount(): void {
-        // Transforms.removeNodes(this.subeditor.slate , {at: [0]})
-        Transforms.insertNodes(this.subeditor.slate ,  this.props.son.children , {at: [0]})
-
-        console.log("mounting..." , this.props.son.children)    
+        this.subeditor.set_sub_info(props.editor, props.father , props.son)
     }
 
 	render() {
@@ -142,6 +131,12 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             >
                 <DefaultEditor 
                     editor = { me.subeditor }
+                    onMount={()=>{ // 这个函数需要等到子组件 mount 再调用....
+                        Transforms.removeNodes(me.subeditor.slate , {at: [0]})
+                        Transforms.insertNodes(me.subeditor.slate ,  me.props.son.children , {at: [0]})
+                        me.props.editor.add_subeditor(me.subeditor)
+                    }}
+
                 />
             </Drawer>
         </div> 

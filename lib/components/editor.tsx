@@ -48,6 +48,7 @@ interface DefaultEditor_State{
 interface DefaultEditor_Props{
 	editor: YEditor
 	onUpdate?: (newval: Node[]) => void
+	onMount?: () => void
 }
 
 /** 
@@ -56,6 +57,8 @@ interface DefaultEditor_Props{
 class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor_State> {
 	editor: YEditor
 	onUpdate: (newval: Node[]) => void
+	onMount: ()=>void
+
 	constructor(props: DefaultEditor_Props) {
 		super(props)
 		this.state = {
@@ -70,7 +73,11 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 
 		this.editor = props.editor
 		this.onUpdate = props.onUpdate || ((newval: Node[])=>{})
+		this.onMount  = props.onMount || (()=>{})
     }
+	componentDidMount(): void {
+		this.onMount()	
+	}
 	render() {
 
 		let me = this

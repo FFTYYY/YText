@@ -63,8 +63,6 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     update_value(value: Node[]){
         this.core.update_children(value)
         this.onUpdate(value)
-
-        // console.log(this.core.root)
     }
 
     /** 渲染函数
@@ -101,7 +99,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
             <Editable
                 renderElement={me.renderElement.bind(me)}
                 renderLeaf   ={me.renderLeaf.bind(me)}
-                // onFocus = {e=>me.editor.apply_all()}
+                onFocus = {e=>me.editor.apply_all()}
             />
         </Slate>
     }
@@ -130,7 +128,7 @@ type TemporaryOperation_Func = (slate: Editor) => void
 class YEditor extends Renderer<EditorRenderer_Props>{
     subeditors: { [subnode_idx: number]: YEditor }
     slate: ReactEditor
-    subinfo: {father: StyledNode, son: GroupNode} | undefined
+    subinfo: {feditor: YEditor, father: StyledNode, son: GroupNode} | undefined
     static Component = _YEditorComponent
     
     constructor(core: EditorCore){
@@ -153,14 +151,11 @@ class YEditor extends Renderer<EditorRenderer_Props>{
 
     /** 这个函数应用所有临时操作。 */
     apply_all(){
-        console.log("enter..." , this.subeditors)
         let me = this
         Object.values(this.subeditors).map((subeditor: YEditor)=>{
             subeditor.sub_apply(me)
         } )
         this.subeditors = {}
-        console.log("exit..." , this.subeditors)
-
     }
 
     /** 这个函数只能被子编辑器调用，通过这个函数来将子编辑器的修改应用到父编辑器上。 */
@@ -187,8 +182,9 @@ class YEditor extends Renderer<EditorRenderer_Props>{
      * @param father 这个子编辑器挂载到父编辑器的哪个节点上。
      * @param son 这个子编辑器对应的 hidden 节点。
     */
-    set_sub_info(father: StyledNode, son: GroupNode){
+    set_sub_info(feditor: YEditor , father: StyledNode, son: GroupNode){
         this.subinfo = {
+            feditor: feditor , 
             father: father ,
             son: son , 
         }
