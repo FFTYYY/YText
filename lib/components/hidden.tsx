@@ -119,7 +119,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
         this.son = props.son
     }
 
-    /** 这个函数只能被子编辑器调用，通过这个函数来将子编辑器的修改应用到父编辑器上。 */
+    /** 这个函数将子编辑器的修改应用到父编辑器上。 */
     sub_apply(father_editor: YEditor){
 
         let father = this.father
@@ -129,9 +129,9 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
         let new_hiddens = update_kth(father.hiddens , hidden_idx , new_son) // 更新之后的 father.hiddens。
 
         // 应用变换。
-        Transforms.setNodes(
+        Transforms.setNodes<StyledNode>(
             father_editor.slate , 
-            {...father , ...{hiddens: new_hiddens}} , 
+            { hiddens: new_hiddens } , 
             {at: node2path(father_editor.slate , father)}
         )
     }

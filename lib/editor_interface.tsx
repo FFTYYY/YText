@@ -146,12 +146,15 @@ class YEditor extends Renderer<EditorRenderer_Props>{
         return this.subinfo != undefined
     }
 
-    /** 这个函数添加一个临时操作。 */
+    /** 这个函数为编辑器添加一个「稍后应用」的操作。大多数情况是一个子编辑器进行的修改，为了防止焦点丢失等问题无法立刻应用。
+     * @param idx 应用关涉的节点编号。节点编号相同的操作会被覆盖。
+     * @param subapply 等修改时调用的函数。
+     */
     add_suboperation(idx: number, subapply: (fat: YEditor)=>void){
         this.subeditors[idx] = subapply
     }
 
-    /** 这个函数应用所有临时操作。 */
+    /** 这个函数应用临时操作。 */
     apply_all(){
         let me = this
         Object.values(this.subeditors).map((subapply)=>{
