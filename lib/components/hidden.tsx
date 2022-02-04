@@ -24,7 +24,7 @@ import ButtonGroup from '@mui/material/ButtonGroup';
 
 import { StyledNode , NodeType , StyleType ,  GroupNode } from "../core/elements"
 import { YEditor } from "../editor_interface"
-import { non_selectable_prop , is_same_node , node2path , update_kth} from "../utils"
+import { non_selectable_prop , is_same_node , node2path , update_kth , get_hidden_idx } from "../utils"
 import { DefaultEditor } from "./editor"
 import { EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle } from "../core/editor_core"
 
@@ -86,6 +86,9 @@ interface DefaultHiddenEditor_State{
 class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , DefaultHiddenEditor_State>{
     subeditor: YEditor
     hiddenid: number
+    father_editor: YEditor
+    father: StyledNode
+    son: GroupNode
 
 
     /**
@@ -110,8 +113,27 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
         
         this.subeditor.default_renderers = props.editor.default_renderers
         this.subeditor.style_renderers   = props.editor.style_renderers
+        
+        this.father_editor = props.editor
+        this.father = props.father
+        this.son = props.son
+    }
 
-        this.subeditor.set_sub_info(props.editor, props.father , props.son)
+    /** 这个函数只能被子编辑器调用，通过这个函数来将子编辑器的修改应用到父编辑器上。 */
+    sub_apply(father_editor: YEditor){
+
+        let father = this.father
+        let son = this.son
+        let hidden_idx = get_hidden_idx(father , son)
+        let new_son = {...son , ...{children: this.subeditor.core.root.children}} // 更新之后的son。
+        let new_hiddens = update_kth(father.hiddens , hidden_idx , new_son) // 更新之后的 father.hiddens。
+
+        // 应用变换。
+        Transforms.setNodes(
+            father_editor.slate , 
+            {...father , ...{hiddens: new_hiddens}} , 
+            {at: node2path(father_editor.slate , father)}
+        )
     }
 
 	render() {
@@ -134,7 +156,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
                     onMount={()=>{ // 这个函数需要等到子组件 mount 再调用....
                         Transforms.removeNodes(me.subeditor.slate , {at: [0]})
                         Transforms.insertNodes(me.subeditor.slate ,  me.props.son.children , {at: [0]})
-                        me.props.editor.add_subeditor(me.subeditor)
+                        me.props.editor.add_suboperation(me.son.idx , me.sub_apply.bind(me))
                     }}
 
                 />

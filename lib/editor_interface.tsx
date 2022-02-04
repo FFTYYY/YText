@@ -21,6 +21,8 @@ import { node2path } from ".";
 
 export { YEditor }
 export type { EditorRenderer_Props , EditorRenderer_Func}
+
+
 interface YEditorComponent_Props{
     editor: YEditor                 // 目标YEditor对象
     onUpdate?: (newval:any)=>any    // 当节点改变时的回调函数
@@ -126,7 +128,7 @@ type EditorRenderer_Func<NT extends Node = Node> = (props: EditorRenderer_Props<
 type TemporaryOperation_Func = (slate: Editor) => void
 
 class YEditor extends Renderer<EditorRenderer_Props>{
-    subeditors: { [subnode_idx: number]: YEditor }
+    subeditors: { [subnode_idx: number]: (fat: YEditor)=>void }
     slate: ReactEditor
     subinfo: {feditor: YEditor, father: StyledNode, son: GroupNode} | undefined
     static Component = _YEditorComponent
@@ -145,49 +147,17 @@ class YEditor extends Renderer<EditorRenderer_Props>{
     }
 
     /** 这个函数添加一个临时操作。 */
-    add_subeditor(subeditor: YEditor){
-        this.subeditors[subeditor.subinfo.son.idx] = subeditor
+    add_suboperation(idx: number, subapply: (fat: YEditor)=>void){
+        this.subeditors[idx] = subapply
     }
 
     /** 这个函数应用所有临时操作。 */
     apply_all(){
         let me = this
-        Object.values(this.subeditors).map((subeditor: YEditor)=>{
-            subeditor.sub_apply(me)
+        Object.values(this.subeditors).map((subapply)=>{
+            subapply(me)
         } )
         this.subeditors = {}
-    }
-
-    /** 这个函数只能被子编辑器调用，通过这个函数来将子编辑器的修改应用到父编辑器上。 */
-    sub_apply(father_editor: YEditor){
-
-        if(this.subinfo == undefined)
-            throw new Error("this.subinfo == undefined") 
-
-        let father = this.subinfo.father
-        let son = this.subinfo.son
-        let hidden_idx = get_hidden_idx(father , son)
-        let new_son = {...son , ...{children: this.core.root.children}} // 更新之后的son。
-        let new_hiddens = update_kth(father.hiddens , hidden_idx , new_son) // 更新之后的 father.hiddens。
-
-        // 应用变换。
-        Transforms.setNodes(
-            father_editor.slate , 
-            {...father , ...{hiddens: new_hiddens}} , 
-            {at: node2path(father_editor.slate , father)}
-        )
-    }
-
-    /** 通过调用这个函数来告知一个编辑器组件其是子编辑器。 
-     * @param father 这个子编辑器挂载到父编辑器的哪个节点上。
-     * @param son 这个子编辑器对应的 hidden 节点。
-    */
-    set_sub_info(feditor: YEditor , father: StyledNode, son: GroupNode){
-        this.subinfo = {
-            feditor: feditor , 
-            father: father ,
-            son: son , 
-        }
     }
     
     /** 这个函数帮助用户构建按钮。返回一个函数，这个函数表示要新建对应*样式*节点时的行为。

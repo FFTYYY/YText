@@ -142,11 +142,12 @@ function DefaultParameterWithEditor(props: {editor: YEditor, element: StyledNode
 
     function temp_update_value(newval: any){
 
-        props.editor.add_operation( (slate) => {
+        props.editor.add_suboperation( props.element.idx , (father_editor: YEditor) => {
+
             Transforms.setNodes<StyledNode>(
-                slate , 
+                father_editor.slate , 
                 { parameters: newval },
-                { at: node2path(slate , props.element) }
+                { at: node2path(father_editor.slate , props.element) }
             )
         })
     }
@@ -178,7 +179,6 @@ function DefaultParameterWithEditorWithDrawer(props: {
         open = {props.open}
         onClose={e=>{
             onClose(e)
-            props.editor.apply_all()
         }}
         ModalProps={{
             keepMounted: true,
