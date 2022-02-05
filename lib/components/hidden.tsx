@@ -27,6 +27,7 @@ import { YEditor } from "../editor_interface"
 import { non_selectable_prop , is_same_node , node2path , update_kth , get_hidden_idx } from "../utils"
 import { DefaultEditor } from "./editor"
 import { EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle } from "../core/editor_core"
+import { editor } from "."
 
 export {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden}
 
@@ -34,16 +35,17 @@ export {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden}
  * @param props.editor 这个组件所服务的编辑器。
  * @param props.element 这个组件所服务的节点。注意只有 StyledNode 可以有 hidden 属性。
  */
-function DefaultNewHidden(props: {editor: YEditor, element: StyledNode}){
-    const [anchor_element, set_anchor_element] = React.useState<undefined | HTMLElement>(undefined)
+function DefaultNewHidden(props: {editor: YEditor, element: StyledNode, anchor_element: any, open: boolean, onClose?: (e:any)=>void}){
 
     let element = props.element 
     let editor = props.editor
     let abstractstyles = editor.core.abstractstyles 
+    let onClose = props.onClose || ((e:any)=>{})
 
-    function get_onClose(choice: string | undefined){
+    function get_onClick(choice: string | undefined){
         return (e: any)=>{
-            set_anchor_element(undefined)
+            onClose(e)
+
             if(choice == undefined || abstractstyles[choice] == undefined)
                 return 
             
@@ -57,18 +59,15 @@ function DefaultNewHidden(props: {editor: YEditor, element: StyledNode}){
         }
     }
 
-    return <div>
-        <IconButton onClick={e=>set_anchor_element(e.currentTarget)}><SwipeVerticalIcon/></IconButton>
-        <Menu
-            anchorEl={anchor_element}
-            open={anchor_element != undefined}
-            onClose={get_onClose(undefined)}
-        >
-            {Object.keys(abstractstyles).map(name=>{
-                return <MenuItem onClick={get_onClose(name)} key={name}>{name}</ MenuItem>
-            })}
-        </Menu>
-    </div>  
+    return <Menu
+        anchorEl = {props.anchor_element}
+        open = {props.open}
+        onClose = {onClose}
+    >
+        {Object.keys(abstractstyles).map(name=>{
+            return <MenuItem onClick={get_onClick(name)} key={name}>{name}</ MenuItem>
+        })}
+    </Menu>
 }
 
 interface DefaultHiddenEditor_Props{
@@ -77,6 +76,12 @@ interface DefaultHiddenEditor_Props{
 
     /** 要编辑的 hidden 节点。 */
     son: GroupNode
+
+    /** 抽屉是否打开 */
+    open: boolean
+
+    /** 抽屉关闭时的行为 */
+    onClose?: (e:any)=>void
 }
 interface DefaultHiddenEditor_State{
     drawer_open: boolean
@@ -122,64 +127,112 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
     /** 这个函数将子编辑器的修改应用到父编辑器上。 */
     sub_apply(father_editor: YEditor){
 
+        
         let father = this.father
         let son = this.son
         let hidden_idx = get_hidden_idx(father , son)
         let new_son = {...son , ...{children: this.subeditor.core.root.children}} // 更新之后的son。
         let new_hiddens = update_kth(father.hiddens , hidden_idx , new_son) // 更新之后的 father.hiddens。
-
+        
+        // TODO：这里有个bug，slate的setNodes并不会立刻应用，这导致如果有多个setNodes，后面修改的会覆盖前面的。
         // 应用变换。
         Transforms.setNodes<StyledNode>(
             father_editor.slate , 
             { hiddens: new_hiddens } , 
-            {at: node2path(father_editor.slate , father)}
+            { at: node2path(father_editor.slate , father) }
         )
     }
 
 	render() {
 		let me = this		
         let props = this.props
-		return <div>
-            <IconButton onClick={e=>me.setState({drawer_open: true})}><SportsMartialArtsIcon/></IconButton>
-            <Drawer
-                anchor={"left"}
-                open={this.state.drawer_open}
-                onClose={e=>{
-                    me.setState({drawer_open: false}) // 关闭抽屉
-                    // me.props.editor.apply_all()
+		return <Drawer
+            anchor      = {"left"}
+            open        = {me.props.open}
+            onClose     = {me.props.onClose}
+            ModalProps  = {{keepMounted: true}}
+            PaperProps  = {{sx: { width: "40%" }}}
+        >
+            <DefaultEditor 
+                editor = { me.subeditor }
+                onMount={()=>{ // 这个函数需要等到子组件 mount 再调用....
+                    Transforms.removeNodes(me.subeditor.slate , {at: [0]})
+                    Transforms.insertNodes(me.subeditor.slate ,  me.props.son.children , {at: [0]})
+                    me.props.editor.add_suboperation(me.son.idx , me.sub_apply.bind(me))
                 }}
-                ModalProps = {{keepMounted: true}}
-                PaperProps={{sx: { width: "40%" }}}
-            >
-                <DefaultEditor 
-                    editor = { me.subeditor }
-                    onMount={()=>{ // 这个函数需要等到子组件 mount 再调用....
-                        Transforms.removeNodes(me.subeditor.slate , {at: [0]})
-                        Transforms.insertNodes(me.subeditor.slate ,  me.props.son.children , {at: [0]})
-                        me.props.editor.add_suboperation(me.son.idx , me.sub_apply.bind(me))
-                    }}
 
-                />
-            </Drawer>
-        </div> 
+            />
+        </Drawer>
 	}
 }
 
+/** 这个组件是一个点开按钮展开的菜单，菜单的每项是编辑一个 hidden 属性的按钮。 */
+function DefaultHiddenEditorGroup(props: {editor:YEditor , element: StyledNode, anchor_element: any, open: boolean, onClose?: (e:any)=>void}){
+
+    let element = props.element 
+    let editor = props.editor
+    let hiddens = element.hiddens 
+    let onClose = props.onClose || ( (e:any)=>{} )
+
+    let [drawer_open, set_drawer_open] = useState<undefined | string>(undefined) // 哪个抽屉打开，注意一次只能有一个抽屉打开。
+
+    return <>
+        <Menu
+            anchorEl = {props.anchor_element}
+            open = {props.open}
+            onClose = {props.onClose}
+        >
+            {Object.keys(hiddens).map((idx)=>{
+                return <MenuItem key={idx} onClick={e=>{set_drawer_open(idx);onClose(e)}}>
+                    abstract-{idx}
+                </ MenuItem>
+            })}
+        </Menu>
+
+        {Object.keys(hiddens).map((idx)=>{
+            return <DefaultHiddenEditor 
+                key = {idx}
+                editor = {editor} 
+                father = {element} 
+                son = {element.hiddens[idx]} 
+                open = {drawer_open==idx} 
+                onClose = {(e:any)=>{set_drawer_open(undefined)}}
+            />
+        })}
+    </>  
+}
 
 /** 如果目标节点有hidden，则这个节点提供编辑界面，否则提供选择hidden的界面。
  * @param props.editor 这个组件所服务的编辑器。
  * @param props.element 这个组件所服务的节点。
- * @returns 若 props.element 有hidden属性，则返回一个 DefaultHiddenEditor ，否则返回一个 DefaultNewHidden。
+ * @param props.button_new 用来新建抽象节点的按钮。
+ * @param props.button_edit 用来编辑一个抽象节点的按钮。
+ * @returns 一个渲染了两个 Button 的 
 */
 function DefaultHidden(props: {editor: YEditor , element: StyledNode}){
-    let eidtor = props.editor
+    let editor = props.editor
     let element = props.element
-    return <Box>
-        <Box><DefaultNewHidden editor={eidtor} element={element}/></Box>
-        <Box>
-        {Object.keys(element.hiddens).map((idx)=>{
-            return <DefaultHiddenEditor key={idx} editor={eidtor} father={element} son={element.hiddens[idx]}/>
-        })}</Box>
-    </Box>
+
+    let [menu_new_ae, set_menu_new_ae]   = useState<undefined | HTMLElement>(undefined)
+    let [menu_edit_ae, set_menu_edit_ae] = useState<undefined | HTMLElement>(undefined)
+
+    return <ButtonGroup >
+        <Button onClick={e=>set_menu_new_ae(e.currentTarget)} variant="contained">New</Button>
+        <Button onClick={e=>set_menu_edit_ae(e.currentTarget)} variant="contained">Edit</Button>
+        <DefaultNewHidden 
+            editor = {editor} 
+            element = {element} 
+            anchor_element = {menu_new_ae}
+            open = {menu_new_ae != undefined} 
+            onClose = {e=>set_menu_new_ae(undefined)}
+        />
+        <DefaultHiddenEditorGroup 
+            editor = {editor} 
+            element = {element} 
+            anchor_element = {menu_edit_ae}
+            open = {menu_edit_ae != undefined} 
+            onClose = {e=>{ set_menu_edit_ae(undefined) }}
+        />
+    </ButtonGroup >
 }
 

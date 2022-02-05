@@ -87,7 +87,10 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 			<Grid item xs={2}><Stack spacing={2}>
 				<ButtonGroup>
 					<IconButton onClick={e=>me.setState({param_drawer_open: true})}>  <SettingsIcon/> </IconButton> 
-					<DefaultHidden editor={me.editor} element={me.editor.core.root} />
+					<DefaultHidden 
+						editor = {me.editor} 
+						element = {me.editor.core.root} 
+					/>
 				</ButtonGroup>
 				{["group" , "inline" , "support" , "struct"].map((typename: StyleType)=>{
 					return <Accordion 

@@ -146,7 +146,7 @@ class YEditor extends Renderer<EditorRenderer_Props>{
         return this.subinfo != undefined
     }
 
-    /** 这个函数为编辑器添加一个「稍后应用」的操作。大多数情况是一个子编辑器进行的修改，为了防止焦点丢失等问题无法立刻应用。
+    /** 这个函数为编辑器的某个节点添加一个「稍后修改」。大多数情况是一个子编辑器进行的修改，为了防止焦点丢失等问题无法立刻应用。
      * @param idx 应用关涉的节点编号。节点编号相同的操作会被覆盖。
      * @param subapply 等修改时调用的函数。
      */
