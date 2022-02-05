@@ -172,6 +172,6 @@ class AbstractStyle{
 
     /** 生成一个下级抽象节点。 */
     makehidden(){
-        return group_prototype("hidden_root" , this.parameter_prototype)    
+        return group_prototype(this.name , this.parameter_prototype)    
     }
 }

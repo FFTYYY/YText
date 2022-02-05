@@ -184,7 +184,7 @@ function DefaultHiddenEditorGroup(props: {editor:YEditor , element: StyledNode, 
         >
             {Object.keys(hiddens).map((idx)=>{
                 return <MenuItem key={idx} onClick={e=>{set_drawer_open(idx);onClose(e)}}>
-                    abstract-{idx}
+                    {hiddens[idx].name}-{idx}
                 </ MenuItem>
             })}
         </Menu>
