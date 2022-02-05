@@ -101,7 +101,6 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
             <Editable
                 renderElement={me.renderElement.bind(me)}
                 renderLeaf   ={me.renderLeaf.bind(me)}
-                onFocus = {e=>me.editor.apply_all()}
             />
         </Slate>
     }

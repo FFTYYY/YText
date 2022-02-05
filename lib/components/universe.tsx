@@ -177,12 +177,16 @@ function DefaultParameterWithEditorWithDrawer(props: {
         {...non_selectable_prop} 
         anchor = {"left"}
         open = {props.open}
-        onClose={e=>{
-            onClose(e)
-        }}
+        onClose={onClose}
         ModalProps={{
             keepMounted: true,
         }}
+        SlideProps = {{
+            onExited: () => {
+                props.editor.apply_all()
+            }
+        }}
+
     >
         <DefaultParameterWithEditor editor={props.editor} element={props.element}/>
     </Drawer>

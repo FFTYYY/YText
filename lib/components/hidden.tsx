@@ -127,7 +127,6 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
     /** 这个函数将子编辑器的修改应用到父编辑器上。 */
     sub_apply(father_editor: YEditor){
 
-        
         let father = this.father
         let son = this.son
         let hidden_idx = get_hidden_idx(father , son)
@@ -152,6 +151,11 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             onClose     = {me.props.onClose}
             ModalProps  = {{keepMounted: true}}
             PaperProps  = {{sx: { width: "40%" }}}
+            SlideProps = {{
+                onExited: () => {
+                    me.father_editor.apply_all()
+                }
+            }}
         >
             <DefaultEditor 
                 editor = { me.subeditor }
@@ -190,7 +194,7 @@ function DefaultHiddenEditorGroup(props: {editor:YEditor , element: StyledNode, 
         </Menu>
 
         {Object.keys(hiddens).map((idx)=>{
-            return <DefaultHiddenEditor 
+            return <DefaultHiddenEditor
                 key = {idx}
                 editor = {editor} 
                 father = {element} 
