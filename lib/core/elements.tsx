@@ -14,6 +14,7 @@ export {
 
     get_node_type , 
     is_styled , 
+    type_and_name_is , 
 }
 export type {
     BaseStyledNode as StyledNode, 
@@ -143,13 +144,17 @@ function get_node_type(node: Node): NodeType{
         return node.type
 
     // 如果一个没有style的节点有children，就判断为段落，否则是文本
-    let hasChildren = (node:any): node is {children: Node[]} => node["children"] != undefined
-    if(hasChildren(node))
+    if("children" in node)
         return "paragraph"
     return "text"
 }
 
 /** 这个函数判断一个节点是否是样式节点 */
 function is_styled(node: Node): node is BaseStyledNode{
-    return node["type"] != undefined
+    return "type" in node
+}
+
+/** 这个函数判断一个节点的名称是否是给定类型和名称。如果不是有样式的节点就直接判否。 */
+function type_and_name_is(node: Node , type: StyleType, name: string):boolean{
+    return get_node_type(node) == type && (node as BaseStyledNode).name == name
 }
