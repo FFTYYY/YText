@@ -65,9 +65,8 @@ type StructNode = _StructNode & Node
 type SupportNode = _BaseStyledNode & Node
 
 /** 这个函数为每个节点生成一个唯一的id */
-var nodeid_count = 0
 function gene_idx(){
-    return nodeid_count ++
+    return Math.random() * 23333333
 }
 
 /** 总之新建一个text node。*/
