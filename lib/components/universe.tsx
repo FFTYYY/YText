@@ -16,6 +16,7 @@ import { HiveTwoTone } from "@mui/icons-material"
 import { non_selectable_prop , is_same_node , node2path } from "../utils"
 import { Transforms, Node, Editor } from "slate"
 import IconButton from '@mui/material/IconButton';
+import { set_node } from "../behaviours"
 
 import SettingsIcon from '@mui/icons-material/Settings';
 
@@ -146,12 +147,7 @@ function DefaultParameterWithEditor(props: {editor: YEditor, element: StyledNode
     function temp_update_value(newval: any){
 
         props.editor.add_suboperation( props.element.idx , (father_editor: YEditor) => {
-
-            Transforms.setNodes<StyledNode>(
-                father_editor.slate , 
-                { parameters: newval },
-                { at: node2path(father_editor.slate , props.element) }
-            )
+            set_node( father_editor , props.element , { parameters: newval })
         })
     }
 
@@ -215,7 +211,7 @@ function DefaultParameterWithEditorWithDrawer(props: {
             editor = {props.editor} 
             element = {props.element} 
             open = {open} 
-            onClose={e=>{ onClose(e); set_open(false); }} 
+            onClose = {e=>{ onClose(e); set_open(false); }} 
         />
     </>
 }

@@ -53,6 +53,7 @@ class App extends React.Component<any,App_State> {
 			[] , 
             [npstyle , sectionerstyle]     , 
             [new AbstractStyle("comment" , {}) , new AbstractStyle("comment 2" , {})]      , 
+			{test: "haha"} , 
         )
 
 		this.editor = new YEditor( this.core )
@@ -83,11 +84,14 @@ class App extends React.Component<any,App_State> {
 			>
 				<DefaultEditor 
 					editor = {me.editor}
+					onUpdate = {(newval)=>{
+						console.log(me.editor.core.root)
+					}}
 				/>
 			</div>
 
 			<div 
-				style={{
+				style = {{
 					position: "absolute" , 
 					width: "50%" ,
 					left: "50%" , 
