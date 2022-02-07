@@ -4,7 +4,7 @@
 
 import React, {useState , createRef} from "react"
 
-import { Transforms , Node, Editor } from "slate"
+import { Node, Editor } from "slate"
 
 import Button from "@mui/material/Button"
 import Box from "@mui/material/Box"
@@ -20,7 +20,7 @@ import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
 import SwipeVerticalIcon from '@mui/icons-material/SwipeVertical';
 import IconButton from '@mui/material/IconButton';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import { set_node } from "../behaviours"
+import { set_node , replace_nodes } from "../behaviours"
 
 
 import { StyledNode , NodeType , StyleType ,  GroupNode } from "../core/elements"
@@ -152,8 +152,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             <DefaultEditor 
                 editor = { me.subeditor }
                 onMount={()=>{ // 这个函数需要等到子组件 mount 再调用....
-                    Transforms.removeNodes(me.subeditor.slate , {at: [0]})
-                    Transforms.insertNodes(me.subeditor.slate ,  me.props.son.children , {at: [0]})
+                    replace_nodes(me.subeditor , me.subeditor.core.root , me.props.son.children)
                     me.props.editor.add_suboperation(me.son.idx , me.sub_apply.bind(me))
                 }}
 
@@ -214,7 +213,7 @@ function DefaultHidden(props: {editor: YEditor , element: StyledNode , orientati
 
     // TODO：root的hiddens不能正常更新。
 
-    return <ButtonGroup orientation="vertical">
+    return <>
         <Button onClick={e=>set_menu_new_ae(e.currentTarget)} variant="contained">New</Button>
         <Button onClick={e=>set_menu_edit_ae(e.currentTarget)} variant="contained">Edit</Button>
         <DefaultNewHidden 
@@ -231,6 +230,6 @@ function DefaultHidden(props: {editor: YEditor , element: StyledNode , orientati
             open = {menu_edit_ae != undefined} 
             onClose = {e=>{ set_menu_edit_ae(undefined) }}
         />
-    </ButtonGroup >
+    </>
 }
 

@@ -84,7 +84,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 		return <div style={{marginLeft: "1%", marginRight: "1%"}}><Grid container>
 			<Grid item xs={10}><YEditor.Component editor={me.editor} onUpdate={me.onUpdate}/></Grid>
 			<Grid item xs={2}><Stack spacing={2}>
-				<ButtonGroup>
+				<ButtonGroup orientation="vertical">
 					<IconButton onClick={e=>me.setState({param_drawer_open: true})}>  <SettingsIcon/> </IconButton> 
 					<DefaultHidden 
 						editor = {me.editor} 

@@ -76,7 +76,7 @@ class App extends React.Component<any,App_State> {
 		return <div>
 			<Button onClick={me.extra_button.bind(this)}>Extra_Edit</Button>
 			<div 
-				style={{
+				style = {{
 					position: "absolute" , 
 					width: "50%" ,
 					left: "0" , 
