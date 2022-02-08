@@ -23,7 +23,7 @@ import IconButton from '@mui/material/IconButton';
 
 import SettingsIcon from '@mui/icons-material/Settings';
 import Switch from '@mui/material/Switch';
-import {YEditor , EditorCore , OutRenderer , AbstractStyle , new_default_group , new_default_iniline , newparagraph} from "../lib"
+import {YEditor , EditorCore , OutRenderer , AbstractStyle , new_default_group , new_default_iniline , newparagraph , new_displayer} from "../lib"
 import {group_prototype , DefaultEditor , paragraph_prototype , new_splitter , OutRenderer_Props} from "../lib"
 
 import { Node , Transforms } from "slate"
@@ -46,12 +46,13 @@ class App extends React.Component<any,App_State> {
 		let [strongstyle, strongrenderer] = new_default_iniline("strong" , {test: "haha"})
 		let [npstyle , nprenderer] = newparagraph("newparagraph")
 		let [sectionerstyle , sectrionrenderer] = new_splitter("new-section" , {alias: ""})
+		let [imagestyle , imagerenderer] = new_displayer("image" , {url: "" , title: ""})
 
 		this.core = new EditorCore(
 			[strongstyle]      , 
 			[theoremstyle]       , 
 			[] , 
-            [npstyle , sectionerstyle]     , 
+            [imagestyle , npstyle , sectionerstyle]     , 
             [new AbstractStyle("comment" , {}) , new AbstractStyle("comment 2" , {})]      , 
 			{test: "haha"} , 
         )
@@ -61,6 +62,7 @@ class App extends React.Component<any,App_State> {
 		this.editor.update_renderer(strongrenderer  , "inline" , "strong")
 		this.editor.update_renderer(nprenderer , "support" , "newparagraph")
 		this.editor.update_renderer(sectrionrenderer , "support" , "new-section")
+		this.editor.update_renderer(imagerenderer , "support" , "image")
 		
 		this.outputer = new OutRenderer( this.core )
 		this.outputer.update_renderer( sectrionrenderer, "support" , "new-section" )
