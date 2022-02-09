@@ -11,11 +11,16 @@ var list_out_renderer = {
         return <Card sx={{marginLeft: "1%"}}>{my_idx}:{props.children}</Card>
     } , 
     pre_effect_exit: (_element: Node, env: any) => {
+        let element = _element as GroupNode
+
+        env.list_idx = env[element.idx] 
+
         return env
     } , 
     pre_effect_enter: (_element: Node, env: any) => {
         let element = _element as GroupNode
-        
+
+
         if(env["list_idx"] == undefined){
             env["list_idx"] = [1]
         }
@@ -28,6 +33,11 @@ var list_out_renderer = {
             }
             env["list_idx"] = list_idx
         }
+                
+        if(env[element.idx] == undefined){
+            env[element.idx] = env["list_idx"]
+        }
+
         return env
     }
 }

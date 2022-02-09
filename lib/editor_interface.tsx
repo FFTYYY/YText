@@ -108,30 +108,30 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     
 }
 
-interface YEditorToolbox_Props{
-    editor: YEditor
-}
 
-/** Editor 的 renderer 可以接受的参数列表。继承自 renderer.Renderer_Props。 */
-interface EditorRenderer_Props<NT extends Node = Node>{
+/** Editor 的 renderer 可以接受的参数列表。 */
+interface EditorRenderer_Props{
     attributes: any
     children: any[]
     editor: YEditor
-    element?: NT
-    leaf?: NT
+    element?: Node
+    leaf?: Node
 }
 
 
-/** Editor 的 renderer 函数接口。继承自 renderer.Renerer_Func。 */
-type EditorRenderer_Func<NT extends Node = Node> = (props: EditorRenderer_Props<NT>) => any
+/** Editor 的子渲染组件的类型。*/
+type EditorRenderer_Func = (props: EditorRenderer_Props) => any
 
-/** 一个合法的暂存操作函数。 */
-type TemporaryOperation_Func = (slate: Editor) => void
 
+/** 这个组件定义一个编辑器。 */
 class YEditor extends Renderer<EditorRenderer_Func>{
-    subeditors: { [subnode_idx: number]: (fat: YEditor)=>void }
+
+    /** 所有需要『稍后应用』的操作。 */
+    suboperations: { [subnode_idx: number]: (fat: YEditor)=>void }
+
+    /** slate 编辑器。 */
     slate: ReactEditor
-    subinfo: {feditor: YEditor, father: StyledNode, son: GroupNode} | undefined
+
     static Component = _YEditorComponent
     
     constructor(core: EditorCore){
@@ -147,13 +147,7 @@ class YEditor extends Renderer<EditorRenderer_Func>{
         )
 
         this.slate  = withAllYEditorPlugins( withReact(createEditor() as ReactEditor) ) as ReactEditor
-        this.subeditors = {}
-
-        this.subinfo = undefined
-    }
-
-    is_sub(){
-        return this.subinfo != undefined
+        this.suboperations = {}
     }
 
     /** 这个函数为编辑器的某个节点添加一个「稍后修改」。大多数情况是一个子编辑器进行的修改，为了防止焦点丢失等问题无法立刻应用。
@@ -161,16 +155,16 @@ class YEditor extends Renderer<EditorRenderer_Func>{
      * @param subapply 等修改时调用的函数。
      */
     add_suboperation(idx: number, subapply: (fat: YEditor)=>void){
-        this.subeditors[idx] = subapply
+        this.suboperations[idx] = subapply
     }
 
     /** 这个函数应用临时操作。 */
     apply_all(){
         let me = this
-        Object.values(this.subeditors).map((subapply)=>{
+        Object.values(this.suboperations).map((subapply)=>{
             subapply(me)
         } )
-        this.subeditors = {}
+        this.suboperations = {}
     }
     
     /** 这个函数帮助用户构建按钮。返回一个函数，这个函数表示要新建对应*样式*节点时的行为。

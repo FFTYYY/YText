@@ -10,20 +10,14 @@ import Card from "@mui/material/Card"
 import {Node} from "slate"
 
 export {Renderer , default_renderer}
-export type { Renderer_Props_base}
 
- interface Renderer_Props_base{
-    attributes: any
-    children: any[]
-    element?: Node
-    leaf?: Node
-}
 
-function default_renderer<Props extends Renderer_Props_base>(props: Props):any{
+/** 这个组件定义一个通用的默认渲染器。 */
+function default_renderer(props: {attributes: any , children: any}):any{
     return <Card {...props.attributes} sx={{marginLeft: "1%", marginRight: "1%"}}>{props.children}</Card>
 }
 
-//TODO：这个泛型没有实际上用上
+/** 这个函数定义一个渲染器的基类。主要包括管理渲染组件的名称和类型到具体的渲染组件的映射。 */
 class Renderer<RendererImplementation>{
     core: EditorCore
     default_renderers: {[nd in NodeType]: RendererImplementation}

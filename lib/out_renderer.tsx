@@ -95,6 +95,7 @@ class _OutRendererComponent extends React.Component<OutRendererComponent_Props ,
         />
     }
 
+    /** 这个函数在实际渲染组件之前，获得每个组件的环境。 */
     build_envs(_node: Node, now_env: any = {}){
         if(!is_styled(_node)){
             if("children" in _node){
@@ -110,6 +111,7 @@ class _OutRendererComponent extends React.Component<OutRendererComponent_Props ,
         let renderer = this.renderer
         let R = renderer.get_renderer(node.type , node.name)
 
+        // TODO 换成深复制。
         now_env = R.pre_effect_enter(node , {...now_env})
         this.env_enters[node.idx] = now_env
 
@@ -128,8 +130,8 @@ class _OutRendererComponent extends React.Component<OutRendererComponent_Props ,
 
         this.env_enters = {} // 初始化环境
         this.env_exits  = {} // 初始化环境
-        console.log(this.env_enters)
         this.build_envs(me.state.root)
+        console.log(this.env_enters)
 
         return <R element={me.state.root}></R>
     }
@@ -159,10 +161,15 @@ interface OutRenderer_Props<NT = Node>{
 
 
 /** 输出渲染器的渲染器实例。
+ * 注意，在所有 pre_effect 方法中，允许直接修改 env 的成员，但不允许修改 env 的成员的成员。
  */
 interface RendererImp{
     renderer_func: (props: OutRenderer_Props) => any
+    
+    /** 这个函数在进入节点时，提供一个环境。 */
     pre_effect_enter: (element: Node, env: any) => any
+
+    /** 这个节点在退出节点时，提供一个环境。 */
     pre_effect_exit: (element: Node, env: any) => any
 }
 

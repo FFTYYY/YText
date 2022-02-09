@@ -33,7 +33,6 @@ import { DefaultHidden } from "./hidden"
 
 import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawer , DefaultCloseButton} from "./universe"
 
-import { Renderer_Props_base } from "..";
 import Divider from '@mui/material/Divider';
 import {DefaultParameterWithEditorWithDrawerWithButton} from "./universe"
 import Stack from '@mui/material/Stack';
