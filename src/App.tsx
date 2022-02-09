@@ -27,7 +27,7 @@ import {YEditor , EditorCore , OutRenderer , AbstractStyle , new_default_group ,
 import {group_prototype , DefaultEditor , paragraph_prototype , new_splitter , OutRenderer_Props} from "../lib"
 
 import { Node , Transforms } from "slate"
-
+import * as O from "./out_renderers"
 interface App_State{
 	value: Node[]
 }
@@ -47,10 +47,11 @@ class App extends React.Component<any,App_State> {
 		let [npstyle , nprenderer] = newparagraph("newparagraph")
 		let [sectionerstyle , sectrionrenderer] = new_splitter("new-section" , {alias: ""})
 		let [imagestyle , imagerenderer] = new_displayer("image" , {url: "" , title: ""})
+		let [liststyle, listrenderer] = new_default_group("list" , {title: "list"})
 
 		this.core = new EditorCore(
 			[strongstyle]      , 
-			[theoremstyle]       , 
+			[theoremstyle , liststyle]       , 
 			[] , 
             [imagestyle , npstyle , sectionerstyle]     , 
             [new AbstractStyle("comment" , {}) , new AbstractStyle("comment 2" , {})]      , 
@@ -63,9 +64,11 @@ class App extends React.Component<any,App_State> {
 		this.editor.update_renderer(nprenderer , "support" , "newparagraph")
 		this.editor.update_renderer(sectrionrenderer , "support" , "new-section")
 		this.editor.update_renderer(imagerenderer , "support" , "image")
+		this.editor.update_renderer(listrenderer , "group" , "list")
 		
 		this.outputer = new OutRenderer( this.core )
-		this.outputer.update_renderer( sectrionrenderer, "support" , "new-section" )
+		// this.outputer.update_renderer( sectrionrenderer, "support" , "new-section" )
+		this.outputer.update_renderer( O.list_out_renderer, "group" , "list" )
 	}
 
 	extra_button(){
@@ -87,7 +90,7 @@ class App extends React.Component<any,App_State> {
 				<DefaultEditor 
 					editor = {me.editor}
 					onUpdate = {(newval)=>{
-						console.log(me.editor.core.root)
+						// console.log(me.editor.core.root)
 					}}
 				/>
 			</div>

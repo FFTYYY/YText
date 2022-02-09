@@ -16,7 +16,7 @@ import { get_node_type , is_styled } from "./core/elements"
 import { EditorCore } from "./core/editor_core"
 import { is_same_node , update_kth , get_hidden_idx } from "./utils"
 import { withAllYEditorPlugins } from "./plugins/apply_all"
-import { Renderer } from "./core/renderer"
+import { Renderer ,default_renderer } from "./core/renderer"
 import { node2path } from ".";
 import { ThreeSixty } from "@mui/icons-material";
 
@@ -121,20 +121,30 @@ interface EditorRenderer_Props<NT extends Node = Node>{
     leaf?: NT
 }
 
+
 /** Editor 的 renderer 函数接口。继承自 renderer.Renerer_Func。 */
-type EditorRenderer_Func<NT extends Node = Node> = (props: EditorRenderer_Props<NT>) => void
+type EditorRenderer_Func<NT extends Node = Node> = (props: EditorRenderer_Props<NT>) => any
 
 /** 一个合法的暂存操作函数。 */
 type TemporaryOperation_Func = (slate: Editor) => void
 
-class YEditor extends Renderer<EditorRenderer_Props>{
+class YEditor extends Renderer<EditorRenderer_Func>{
     subeditors: { [subnode_idx: number]: (fat: YEditor)=>void }
     slate: ReactEditor
     subinfo: {feditor: YEditor, father: StyledNode, son: GroupNode} | undefined
     static Component = _YEditorComponent
     
     constructor(core: EditorCore){
-        super(core)
+        super(core , 
+            {
+                text      : (props: EditorRenderer_Props)=><span {...props.attributes}>{props.children}</span> , 
+                inline    : (props: EditorRenderer_Props)=><span {...props.attributes}>{props.children}</span> , 
+                paragraph : (props: EditorRenderer_Props)=><div {...props.attributes}>{props.children}</div> , 
+                group     : default_renderer , 
+                struct    : default_renderer , 
+                support   : default_renderer , 
+            }
+        )
 
         this.slate  = withAllYEditorPlugins( withReact(createEditor() as ReactEditor) ) as ReactEditor
         this.subeditors = {}

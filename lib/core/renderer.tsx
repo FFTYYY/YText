@@ -9,8 +9,8 @@ import { EditorCore } from "./editor_core"
 import Card from "@mui/material/Card"
 import {Node} from "slate"
 
-export {Renderer}
-export type { Renderer_Props_base , Renderer_Func}
+export {Renderer , default_renderer}
+export type { Renderer_Props_base}
 
  interface Renderer_Props_base{
     attributes: any
@@ -19,30 +19,20 @@ export type { Renderer_Props_base , Renderer_Func}
     leaf?: Node
 }
 
-function default_renderer(props: Renderer_Props_base & any):any{
+function default_renderer<Props extends Renderer_Props_base>(props: Props):any{
     return <Card {...props.attributes} sx={{marginLeft: "1%", marginRight: "1%"}}>{props.children}</Card>
 }
 
-/** 一个合法的 Renderer 函数。 */
-type Renderer_Func<RP = Renderer_Props_base> = (props: RP)=>any
-
 //TODO：这个泛型没有实际上用上
-class Renderer<Renderer_Props extends Renderer_Props_base>{
+class Renderer<RendererImplementation>{
     core: EditorCore
-    default_renderers: {[nd in NodeType]: Renderer_Func<Renderer_Props>}
-    style_renderers  : {[nd in StyleType]: {[sty: string]: Renderer_Func<Renderer_Props>}}
+    default_renderers: {[nd in NodeType]: RendererImplementation}
+    style_renderers  : {[nd in StyleType]: {[sty: string]: RendererImplementation}}
     
-    constructor(core: EditorCore){
+    constructor(core: EditorCore , default_renderers: {[nd in NodeType]: RendererImplementation}){
         this.core = core
 
-        this.default_renderers = {
-            text      : (props: Renderer_Props)=><span {...props.attributes}>{props.children}</span> , 
-            inline    : (props: Renderer_Props)=><span {...props.attributes}>{props.children}</span> , 
-            paragraph : (props: Renderer_Props)=><div {...props.attributes}>{props.children}</div> , 
-            group     : default_renderer , 
-            struct    : default_renderer , 
-            support   : default_renderer , 
-        }
+        this.default_renderers = default_renderers
         this.style_renderers = {
             "inline"    : {} , 
             "group"     : {} , 
@@ -58,7 +48,7 @@ class Renderer<Renderer_Props extends Renderer_Props_base>{
      * @param stylename 样式名。如果为 undefined 就表示无样式（使用默认渲染器）。
      * @returns 如果 stylename 是 undefined 或者没有找到渲染器，就范围这个节点类型的默认渲染器，否则返回找到的渲染器。
      */
-    get_renderer(nodetype: NodeType, stylename: string | undefined = undefined): Renderer_Func<Renderer_Props>{
+    get_renderer(nodetype: NodeType, stylename: string | undefined = undefined): RendererImplementation{
         if(stylename == undefined){
             return this.default_renderers[nodetype]
         }
@@ -74,7 +64,7 @@ class Renderer<Renderer_Props extends Renderer_Props_base>{
      * @param nodetype 节点类型。
      * @param stylename 样式名。如果为 undefined 就表示更新默认渲染器。
      */
-    update_renderer(renderer: Renderer_Func<Renderer_Props>, nodetype: NodeType, stylename: string | undefined = undefined){
+    update_renderer(renderer: RendererImplementation, nodetype: NodeType, stylename: string | undefined = undefined){
         if(stylename == undefined){
             this.default_renderers[nodetype] = renderer
         }
