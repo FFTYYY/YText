@@ -5,17 +5,17 @@
  import React from "react"
  import Button from "@mui/material/Button"
 
-import type { StyleType , NodeType } from "../core/elements"
+import type { StyleType , NodeType } from "../../core/elements"
 
 import { Node } from "slate"
 
 
-import { YEditor } from "../editor_interface"
-import { new_default_group } from "./groups"
+import { YEditor } from "../../editor_interface"
 import { new_default_iniline } from "./inlines"
 import { newparagraph } from "./supports"
-import {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle} from "../core/editor_core"
+import {EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle} from "../../core/editor_core"
 import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
 import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
@@ -36,7 +36,7 @@ import Grid from '@mui/material/Grid';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Switch from '@mui/material/Switch';
 import {DefaultHidden} from "./hidden"
-import {DefaultParameterWithEditorWithDrawer} from "./universe"
+import {DefaultParameterWithEditorWithDrawerWithButton} from "./universe"
 
 
 export { DefaultEditor }
@@ -81,16 +81,12 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 	render() {
 
 		let me = this
-		return <div style={{marginLeft: "1%", marginRight: "1%"}}><Grid container>
+		return <Container style={{marginLeft: "1%", marginRight: "1%"}}><Grid container>
 			<Grid item xs={10}><YEditor.Component editor={me.editor} onUpdate={me.onUpdate}/></Grid>
 			<Grid item xs={2}><Stack spacing={2}>
 				<ButtonGroup orientation="vertical">
-					<IconButton onClick={e=>me.setState({param_drawer_open: true})}>  <SettingsIcon/> </IconButton> 
-					<DefaultHidden 
-						editor = {me.editor} 
-						element = {me.editor.core.root} 
-						orientation = "vertical"
-					/>
+					<DefaultParameterWithEditorWithDrawerWithButton editor = {me.editor} element = {me.editor.core.root} />
+					<DefaultHidden editor={me.editor} element={me.editor.core.root} />
 				</ButtonGroup>
 				{["group" , "inline" , "support" , "struct"].map((typename: StyleType)=>{
 					return <Accordion 
@@ -113,12 +109,6 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 				})}
 			</Stack></Grid>
 		</Grid> 
-		<DefaultParameterWithEditorWithDrawer 
-			open = {me.state.param_drawer_open} 
-			editor = {me.editor} 
-			element = {me.editor.core.root}
-            onClose = { e=>{me.setState({param_drawer_open: false})}}
-        />
-		</div>
+		</Container>
 	}
 }

@@ -10,14 +10,14 @@ import TextField    from "@mui/material/TextField"
 import Drawer       from "@mui/material/Drawer"
 import CloseIcon from '@mui/icons-material/Close';
 
-import { StyledNode } from "../core/elements"
-import { GroupStyle , EditorCore} from "../core/editor_core"
-import { YEditor } from "../editor_interface"
+import { StyledNode } from "../../core/elements"
+import { GroupStyle , EditorCore} from "../../core/editor_core"
+import { YEditor } from "../../editor_interface"
 import { HiveTwoTone } from "@mui/icons-material"
-import { non_selectable_prop , is_same_node , node2path } from "../utils"
+import { non_selectable_prop , is_same_node , node2path } from "../../utils"
 import { Node, Editor } from "slate"
 import IconButton from '@mui/material/IconButton';
-import { set_node , delete_node } from "../behaviours"
+import { set_node , delete_node } from "../../behaviours"
 
 import SettingsIcon from '@mui/icons-material/Settings';
 
@@ -26,6 +26,9 @@ export {
     DefaultParameterWithEditorWithDrawer , 
     DefaultParameterWithEditorWithDrawerWithButton , 
     DefaultCloseButton , 
+}
+export type {
+    UniversalComponent_Props
 }
 
 interface DefaultParameterContainer_Props{
@@ -141,14 +144,17 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
     }
 }
 
-
+interface UniversalComponent_Props{
+    editor: YEditor
+    element: StyledNode
+}
 
 /** 这个组件向具体的编辑器和具体的节点提供 DefaultParameterContainer ，并使用 YEditor 提供的 operations 功能延迟更新。
  * 注意，这个组件不包含打开菜单的逻辑。
  * @param props.editor 这个组件所服务的编辑器。
  * @param props.element 这个组件所服务的节点。
  */
-function DefaultParameterWithEditor(props: {editor: YEditor, element: StyledNode}){
+function DefaultParameterWithEditor(props: UniversalComponent_Props){
 
     function temp_update_value(newval: any){
 
@@ -171,9 +177,7 @@ function DefaultParameterWithEditor(props: {editor: YEditor, element: StyledNode
  * @param props.open 抽屉是否打开。
  * @param props.onClose 抽屉关闭时的行为。
  */
-function DefaultParameterWithEditorWithDrawer(props: {
-    editor: YEditor , 
-    element: StyledNode , 
+function DefaultParameterWithEditorWithDrawer(props: UniversalComponent_Props & {
     open: boolean , 
     onClose?: (e:any)=>void
 }){
@@ -204,11 +208,7 @@ function DefaultParameterWithEditorWithDrawer(props: {
  * @param props.open 抽屉是否打开。
  * @param props.onClose 抽屉关闭时的行为。
  */
- function DefaultParameterWithEditorWithDrawerWithButton(props: {
-    editor: YEditor , 
-    element: StyledNode , 
-    onClose?: (e:any)=>void
-}){
+ function DefaultParameterWithEditorWithDrawerWithButton(props: UniversalComponent_Props & {onClose?: (e:any)=>void}){
     let [ open , set_open ] = useState(false) // 抽屉是否打开
     let onClose = props.onClose || ((e:any)=>{})
     return <>
@@ -227,8 +227,9 @@ function DefaultParameterWithEditorWithDrawer(props: {
  * @param props.editor 这个组件所服务的编辑器。
  * @param props.element 这个组件所服务的节点。
 */
-function DefaultCloseButton(props: {editor: YEditor , element: StyledNode}){
+function DefaultCloseButton(props: UniversalComponent_Props){
     return <IconButton onClick={e=>{
         delete_node(props.editor , props.element) 
     }}><CloseIcon /></IconButton>
 }
+

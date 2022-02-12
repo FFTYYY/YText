@@ -1,14 +1,3 @@
-export * as editor from "./editor"
-export * as groups from "./groups"
-export * as hidden from "./hidden"
-export * as inlines from "./inlines"
-export * as supports from "./supports"
-export * as universe from "./universe"
+export * from "./default_outer"
 
-
-export * from "./editor"
-export * from "./groups"
-export * from "./hidden"
-export * from "./inlines"
-export * from "./supports"
-export * from "./universe"
+export * as default_outer from "./default_outer"
