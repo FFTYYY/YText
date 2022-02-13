@@ -147,9 +147,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             open        = {me.props.open}
             onClose     = {me.props.onClose}
             ModalProps  = {{keepMounted: true}}
-            PaperProps  = {{sx: { 
-                width: "60%" ,
-            }}}
+            PaperProps  = {{sx: { width: "60%"}}}
             SlideProps = {{
                 onExited: () => {
                     me.father_editor.apply_all()

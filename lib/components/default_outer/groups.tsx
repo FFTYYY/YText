@@ -62,9 +62,9 @@ import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPop
 
 export { get_DefaultGroup_with_AppBar , get_DefaultGroup_with_RightBar}
 
-/** 这个函数返回一个默认的group组件。
- * @param get_title 从参数列表获得title的方法。
- * @param appbar_extra 要额外向appbar里添加的组件。
+/** 这个函数返回一个默认的带应用栏的 group 组件。用于比较大的 group 组件。
+ * @param get_title 从参数列表获得 title 的方法。
+ * @param appbar_extra 要额外向 appbar 里添加的组件。
  * @returns 一个用于渲染group的组件。
 */
 function get_DefaultGroup_with_AppBar(
@@ -90,10 +90,10 @@ function get_DefaultGroup_with_AppBar(
                 <Toolbar><AutoStack force_direction="row">
                     <Typography>{title}</Typography>
                     <DefaultParameterEditButton editor={editor} element={element}/>         
-                    <DefaultHidden      editor={editor} element={element} />
-                    <DefaultGroupSwicth editor={editor} element={element} />
-                    <DefaultCloseButton editor={editor} element={element} />
-                    <E editor={editor} element={element}/>
+                    <DefaultHidden              editor={editor} element={element} />
+                    <DefaultGroupSwicth         editor={editor} element={element} />
+                    <DefaultCloseButton         editor={editor} element={element} />
+                    <E                          editor={editor} element={element}/>
                 </AutoStack></Toolbar>
             </AppBar >
             <Box sx={{marginLeft: "1%", marginRight: "1%",}}>{props.children}</Box>
@@ -101,24 +101,26 @@ function get_DefaultGroup_with_AppBar(
     }
 }
 
-/** 这个函数返回一个默认的group组件，但是各种选项等都被折叠在右边。
+/** 这个函数返回一个默认的group组件，但是各种选项等都被折叠在右侧的一个小按钮内。用于比较小的group。
  * @param get_title 从参数列表获得title的方法。
- * @param appbar_extra 要额外向appbar里添加的组件。
+ * @param rightbar_extra 要额外向添加的组件。
  * @returns 一个用于渲染group的组件。
 */
 function get_DefaultGroup_with_RightBar(
     get_title:((parameters:any)=>string) = ((parameters:any)=>parameters.title) , 
     rightbar_extra: (props: UniversalComponent_Props) => any = (props:UniversalComponent_Props) => <></>
 ): EditorRenderer_Func{
-    // 渲染器
+
     return (props: EditorRenderer_Props) => {
         let element = props.element as GroupNode
         let title = get_title(element.parameters)
         let editor = props.editor
         let E = rightbar_extra
 
-        let [menu_anchor, set_menu_anchor] = React.useState<null | HTMLElement>(null);
+        // 展开栏挂载的元素。
+        let [menu_anchor, set_menu_anchor] = React.useState<null | HTMLElement>(null)
 
+        // 用于展开的按钮。
         const expand_button = <Box {...non_selectable_prop}><SimpleAutoStack force_direction="column">
             
             <Typography>{title}</Typography>
@@ -147,14 +149,13 @@ function get_DefaultGroup_with_RightBar(
                 marginRight: "1%",
             }}
             {...props.attributes}
-            variant="outlined"
+            variant = "outlined"
             color = "secondary"
         >
             <Box>
                 <Grid container columns={24}>
                 <Grid item xs={21} md={22} xl={23}><Box sx={{marginLeft: "1%", marginRight: "1%",}}>{props.children}</Box></Grid>
                 <Grid item xs={3}  md={2}  xl={1}>{expand_button}</Grid>
-                
                 </Grid>
             </Box>
         </Paper>
@@ -162,7 +163,10 @@ function get_DefaultGroup_with_RightBar(
 }
 
 
-/** 这个组件给一个 Group 组件提供一个开关，用于控制 Group 的 relation 。 */
+/** 这个组件给一个 Group 组件提供一个开关，用于控制 Group 的 relation 。 
+ * @param props.editor 服务的编辑器。
+ * @param props.element 服务的节点。
+*/
 function DefaultGroupSwicth(props: {editor: YEditor , element: Node}){
     let element = props.element as GroupNode
     let editor = props.editor
