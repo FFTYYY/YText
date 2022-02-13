@@ -39,6 +39,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
+import Portal from '@mui/material/Portal';
+import Popper from '@mui/material/Popper';
 
 import Switch from '@mui/material/Switch';
 import Container from '@mui/material/Container';
@@ -72,6 +74,7 @@ function get_DefaultGroup_with_AppBar(
         let title = get_title(element.parameters)
         let editor = props.editor
         let E = appbar_extra
+        let container = React.useRef(null)
 
         return <Paper
             sx={{
@@ -79,6 +82,7 @@ function get_DefaultGroup_with_AppBar(
                 marginRight: "1%",
             }}
             {...props.attributes}
+            ref = {container}
         >
             <AppBar {...non_selectable_prop} position="static">
                 <Toolbar>
@@ -123,24 +127,24 @@ function get_DefaultGroup_with_RightBar(
             <Stack direction="row" >
                 <Container sx={{marginLeft: "1%", marginRight: "1%",}}>{props.children}</Container>
 
-                <Box {...non_selectable_prop}>
-                    <E editor={editor} element={element}/>
+                <Box {...non_selectable_prop}><Stack direction="column-reverse" sx={{bottom: 0}}>
                     <Button onClick = {
-                        e => set_menu_anchor(e.currentTarget)
+                        e => set_menu_anchor(menu_anchor == undefined ? e.currentTarget : undefined)
                     }
                     >D</Button>
-                    <Menu 
+                    <Popper 
                         anchorEl = {menu_anchor} 
                         open = {menu_anchor != undefined}
-                        onClose = {e => set_menu_anchor(undefined)}
-                    ><Card>
+                    ><Paper><Stack>
                         <Typography>{title}</Typography>
                         <DefaultParameterWithEditorWithDrawerWithButton editor={editor} element={element}/>
                         <DefaultHidden      editor={editor} element={element} />
                         <DefaultGroupSwicth editor={editor} element={element} />
                         <DefaultCloseButton editor={editor} element={element} />
-                    </Card></Menu>
-                </Box>
+                    </Stack></Paper></Popper>
+
+                    <E editor={editor} element={element}/>
+                </Stack></Box>
 
             </Stack>
         </Paper>

@@ -9,6 +9,7 @@ import Card         from "@mui/material/Card"
 import TextField    from "@mui/material/TextField"
 import Drawer       from "@mui/material/Drawer"
 import CloseIcon from '@mui/icons-material/Close';
+import Portal from '@mui/material/Portal';
 
 import { StyledNode } from "../../core/elements"
 import { GroupStyle , EditorCore} from "../../core/editor_core"
@@ -208,17 +209,23 @@ function DefaultParameterWithEditorWithDrawer(props: UniversalComponent_Props & 
  * @param props.open 抽屉是否打开。
  * @param props.onClose 抽屉关闭时的行为。
  */
- function DefaultParameterWithEditorWithDrawerWithButton(props: UniversalComponent_Props & {onClose?: (e:any)=>void}){
+function DefaultParameterWithEditorWithDrawerWithButton(props: UniversalComponent_Props & {
+    onClose?: (e:any)=>void , 
+    container?: any , 
+}){
     let [ open , set_open ] = useState(false) // 抽屉是否打开
     let onClose = props.onClose || ((e:any)=>{})
+
     return <>
-        <IconButton onClick={e=>set_open(true)}>  <SettingsIcon/> </IconButton>       
-        <DefaultParameterWithEditorWithDrawer 
-            editor = {props.editor} 
-            element = {props.element} 
-            open = {open} 
-            onClose = {e=>{ onClose(e); set_open(false); }} 
-        />
+        <IconButton onClick={e=>set_open(true)}>  <SettingsIcon/> </IconButton>
+        <Portal container={props.container}>
+            <DefaultParameterWithEditorWithDrawer 
+                editor = {props.editor} 
+                element = {props.element} 
+                open = {open} 
+                onClose = {e=>{ onClose(e); set_open(false); }} 
+            />
+        </Portal>
     </>
 }
 
