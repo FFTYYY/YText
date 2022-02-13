@@ -10,6 +10,8 @@ import TextField    from "@mui/material/TextField"
 import Drawer       from "@mui/material/Drawer"
 import CloseIcon from '@mui/icons-material/Close';
 import Portal from '@mui/material/Portal';
+import Button from '@mui/material/Button';
+import { Typography } from '@mui/material';
 
 import { StyledNode } from "../../core/elements"
 import { GroupStyle , EditorCore} from "../../core/editor_core"
@@ -19,17 +21,36 @@ import { non_selectable_prop , is_same_node , node2path } from "../../utils"
 import { Node, Editor } from "slate"
 import IconButton from '@mui/material/IconButton';
 import { set_node , delete_node } from "../../behaviours"
+import { styled } from '@material-ui/styles';
+import { Tooltip } from '@mui/material';
+import type { TooltipProps , ButtonProps } from '@mui/material';
 
 import SettingsIcon from '@mui/icons-material/Settings';
+import SettingsApplicationsOutlinedIcon from '@mui/icons-material/SettingsApplicationsOutlined';
+import SettingsApplicationsTwoToneIcon from '@mui/icons-material/SettingsApplicationsTwoTone';
 
 export { 
     DefaultParameterContainer , 
     DefaultParameterWithEditorWithDrawer , 
     DefaultParameterWithEditorWithDrawerWithButton , 
     DefaultCloseButton , 
+    SubButton , 
 }
 export type {
     UniversalComponent_Props
+}
+
+const SubButton = (props: {
+    onClick: (e:any)=>any , 
+    title: string, 
+    children: any, 
+    title_direction?: TooltipProps["placement"] , 
+    size?: ButtonProps["size"] , 
+}) => {
+    let title_direction = props.title_direction || "top"
+    return <Tooltip title={props.title} placement={title_direction}>
+        <IconButton onClick={props.onClick} color="primary" size={props.size}>{props.children}</IconButton>
+    </Tooltip>
 }
 
 interface DefaultParameterContainer_Props{
@@ -217,7 +238,7 @@ function DefaultParameterWithEditorWithDrawerWithButton(props: UniversalComponen
     let onClose = props.onClose || ((e:any)=>{})
 
     return <>
-        <IconButton onClick={e=>set_open(true)}>  <SettingsIcon/> </IconButton>
+        <SubButton onClick={e=>set_open(true)} title="设置参数">  <SettingsIcon/> </SubButton>
         <Portal container={props.container}>
             <DefaultParameterWithEditorWithDrawer 
                 editor = {props.editor} 
@@ -235,8 +256,9 @@ function DefaultParameterWithEditorWithDrawerWithButton(props: UniversalComponen
  * @param props.element 这个组件所服务的节点。
 */
 function DefaultCloseButton(props: UniversalComponent_Props){
-    return <IconButton onClick={e=>{
-        delete_node(props.editor , props.element) 
-    }}><CloseIcon /></IconButton>
+    return <SubButton onClick={e=>{delete_node(props.editor , props.element) }} title="删除组件"> <CloseIcon /> </SubButton>
 }
 
+function MyImg(props: {img_url: string}){
+    return <img src={props.img_url}></img>
+}

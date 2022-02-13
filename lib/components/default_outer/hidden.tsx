@@ -7,6 +7,7 @@ import React, {useState , createRef} from "react"
 import { Node, Editor } from "slate"
 
 import Button from "@mui/material/Button"
+import Container from "@mui/material/Container"
 import Box from "@mui/material/Box"
 import Card from "@mui/material/Card"
 import TextField from "@mui/material/TextField"
@@ -20,15 +21,19 @@ import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
 import SwipeVerticalIcon from '@mui/icons-material/SwipeVertical';
 import IconButton from '@mui/material/IconButton';
 import ButtonGroup from '@mui/material/ButtonGroup';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import FilterNoneIcon from '@mui/icons-material/FilterNone';
 import { set_node , replace_nodes } from "../../behaviours"
 
 
+import { SubButton } from "./universe"
 import { StyledNode , NodeType , StyleType ,  GroupNode } from "../../core/elements"
 import { YEditor } from "../../editor_interface"
 import { non_selectable_prop , is_same_node , node2path , update_kth , get_hidden_idx } from "../../utils"
 import { DefaultEditor } from "./editor"
 import { EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle } from "../../core/editor_core"
 import { editor } from "."
+import new_url from "../../statics/new.png"
 
 export {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden}
 
@@ -214,8 +219,8 @@ function DefaultHidden(props: {editor: YEditor , element: StyledNode}){
     // TODO：root的hiddens不能正常更新。
 
     return <>
-        <Button onClick={e=>set_menu_new_ae(e.currentTarget)} variant="contained">New</Button>
-        <Button onClick={e=>set_menu_edit_ae(e.currentTarget)} variant="contained">Edit</Button>
+        <SubButton onClick={e=>set_menu_new_ae(e.currentTarget)} title="新建抽象"><AddBoxIcon/></SubButton>
+        <SubButton onClick={e=>set_menu_edit_ae(e.currentTarget)} title="编辑抽象"><FilterNoneIcon/></SubButton>
         <DefaultNewHidden 
             editor = {editor} 
             element = {element} 

@@ -41,6 +41,8 @@ import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
 import Portal from '@mui/material/Portal';
 import Popper from '@mui/material/Popper';
+import { Tooltip } from '@mui/material';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 import Switch from '@mui/material/Switch';
 import Container from '@mui/material/Container';
@@ -54,7 +56,7 @@ import { YEditor } from "../../editor_interface"
 import { add_nodes , set_node , add_nodes_before , move_node } from "../../behaviours"
 import { non_selectable_prop , is_same_node , node2path } from "../../utils"
 import { DefaultHidden } from "./hidden"
-import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawerWithButton , DefaultCloseButton } from "./universe"
+import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawerWithButton , DefaultCloseButton , SubButton} from "./universe"
 import type { UniversalComponent_Props } from "./universe" 
 export { get_DefaultGroup_with_AppBar , get_DefaultGroup_with_RightBar}
 
@@ -74,17 +76,16 @@ function get_DefaultGroup_with_AppBar(
         let title = get_title(element.parameters)
         let editor = props.editor
         let E = appbar_extra
-        let container = React.useRef(null)
 
-        return <Paper
+        return <Card
             sx={{
                 marginLeft: "1%",
                 marginRight: "1%",
             }}
             {...props.attributes}
-            ref = {container}
+            variant="outlined"
         >
-            <AppBar {...non_selectable_prop} position="static">
+            <AppBar {...non_selectable_prop} position="static" color="primary">
                 <Toolbar>
                     <Typography>{title}</Typography>
                     <DefaultParameterWithEditorWithDrawerWithButton editor={editor} element={element}/>         
@@ -95,7 +96,7 @@ function get_DefaultGroup_with_AppBar(
                 </Toolbar>
             </AppBar >
             <Box sx={{marginLeft: "1%", marginRight: "1%",}}>{props.children}</Box>
-        </Paper>
+        </Card>
     }
 }
 
@@ -117,36 +118,45 @@ function get_DefaultGroup_with_RightBar(
 
         let [menu_anchor, set_menu_anchor] = React.useState<null | HTMLElement>(null);
 
+        const expand_button = <Box {...non_selectable_prop}><Stack direction="column">
+            
+            <Typography>{title}</Typography>
+
+            <E editor={editor} element={element}/>
+
+            <SubButton 
+                onClick = {e => set_menu_anchor(menu_anchor == undefined ? e.currentTarget : undefined)}
+                title = "展开"
+                size = "small"
+            ><KeyboardArrowDownIcon /></SubButton>
+            <Popper 
+                anchorEl = {menu_anchor} 
+                open = {menu_anchor != undefined}
+            ><Paper><Stack>
+                <DefaultParameterWithEditorWithDrawerWithButton editor={editor} element={element}/>
+                <DefaultHidden      editor={editor} element={element} />
+                <DefaultGroupSwicth editor={editor} element={element} />
+                <DefaultCloseButton editor={editor} element={element} />
+            </Stack></Paper></Popper>
+
+        </Stack></Box>
+
         return <Paper
             sx={{
                 marginLeft: "1%",
                 marginRight: "1%",
             }}
             {...props.attributes}
+            variant="outlined"
+            color = "secondary"
         >
-            <Stack direction="row" >
-                <Container sx={{marginLeft: "1%", marginRight: "1%",}}>{props.children}</Container>
-
-                <Box {...non_selectable_prop}><Stack direction="column-reverse" sx={{bottom: 0}}>
-                    <Button onClick = {
-                        e => set_menu_anchor(menu_anchor == undefined ? e.currentTarget : undefined)
-                    }
-                    >D</Button>
-                    <Popper 
-                        anchorEl = {menu_anchor} 
-                        open = {menu_anchor != undefined}
-                    ><Paper><Stack>
-                        <Typography>{title}</Typography>
-                        <DefaultParameterWithEditorWithDrawerWithButton editor={editor} element={element}/>
-                        <DefaultHidden      editor={editor} element={element} />
-                        <DefaultGroupSwicth editor={editor} element={element} />
-                        <DefaultCloseButton editor={editor} element={element} />
-                    </Stack></Paper></Popper>
-
-                    <E editor={editor} element={element}/>
-                </Stack></Box>
-
-            </Stack>
+            <Box>
+                <Grid container columns={24}>
+                <Grid item xs={21} md={22} xl={23}><Box sx={{marginLeft: "1%", marginRight: "1%",}}>{props.children}</Box></Grid>
+                <Grid item xs={3}  md={2}  xl={1}>{expand_button}</Grid>
+                
+                </Grid>
+            </Box>
         </Paper>
     }
 }

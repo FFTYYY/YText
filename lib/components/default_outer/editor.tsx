@@ -37,7 +37,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import Switch from '@mui/material/Switch';
 import {DefaultHidden} from "./hidden"
 import {DefaultParameterWithEditorWithDrawerWithButton} from "./universe"
-
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import {my_theme} from "../theme"
 
 export { DefaultEditor }
 interface DefaultEditor_State{
@@ -81,7 +82,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 	render() {
 
 		let me = this
-		return <Container style={{marginLeft: "1%", marginRight: "1%"}}><Grid container>
+		return <ThemeProvider theme={my_theme}><Container style={{marginLeft: "1%", marginRight: "1%"}}><Grid container>
 			<Grid item xs={10}><YEditor.Component editor={me.editor} onUpdate={me.onUpdate}/></Grid>
 			<Grid item xs={2}><Stack spacing={2}>
 				<ButtonGroup orientation="vertical">
@@ -109,6 +110,6 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 				})}
 			</Stack></Grid>
 		</Grid> 
-		</Container>
+		</Container></ThemeProvider>
 	}
 }
