@@ -123,7 +123,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 					{["group" , "inline" , "support" , "struct"].map ( (typename: StyleType)=>{
 						let Icon = icons[typename]
 						return <React.Fragment key={typename}>
-							<AutoTooltip title = {typename}>
+							<AutoTooltip title={typename}>
 								<IconButton onClick={e=>{
 									let new_anchor = (anchors[typename] == undefined) ? e.currentTarget : undefined
 									let new_state = {...anchors , ...{[typename]: new_anchor}}

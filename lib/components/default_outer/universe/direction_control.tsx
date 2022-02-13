@@ -30,12 +30,15 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SettingsApplicationsOutlinedIcon from '@mui/icons-material/SettingsApplicationsOutlined';
 import SettingsApplicationsTwoToneIcon from '@mui/icons-material/SettingsApplicationsTwoTone';
 
-export {AutoTooltip  , Direction , AutoStack , SimpleAutoStack , AutoStackedPopper , AutoStackButtons}
+export {AutoTooltip  , Direction , AutoStack , SimpleAutoStack , AutoStackedPopper , AutoStackButtons , ForceContain}
 
 type DirectionValues = "row" | "column"
 
 /** 这个上下文对象指示一个元素以何种方向布局。 */
-const Direction = React.createContext<DirectionValues>("row");
+const Direction = React.createContext<DirectionValues>("row")
+
+/** 这个上下文对象指示是否可以将元素渲染到窗口外。 */
+const ForceContain = React.createContext<boolean>(false)
 
 
 /** 这个元素创建一个为一个对象创建 Tooltip ，但是会自动决定方向。 */
@@ -115,23 +118,25 @@ function AutoStackedPopper(props:{
     force_direction?: DirectionValues
     children?: any
     stacker?: any 
-    anchorEl: any , 
-    open: boolean , 
-    container?: any
+    anchorEl: any
+    open: boolean
+    component?: any 
 }){
     let S = props.stacker || AutoStack
-    
-    let C = props.container || Paper
+    let C = props.component || Paper
 
-    let subcomponent = (nowdir: DirectionValues) => <Popper 
+    let subcomponent = (nowdir: DirectionValues) => {
+        return <ForceContain.Consumer>{force_contain => <Popper 
             anchorEl = {props.anchorEl} 
             open = {props.open}
             placement = {nowdir == "row" ? "right" : "bottom"}
+            disablePortal = {force_contain}
         >
-        <C><S>
-            {props.children}
-        </S></C>
-    </Popper>
+            <C><S>
+                {props.children}
+            </S></C>
+        </Popper>}</ForceContain.Consumer>
+    }
 
     if(props.force_direction != undefined){
         return subcomponent(props.force_direction)

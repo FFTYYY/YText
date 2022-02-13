@@ -26,7 +26,7 @@ import FilterNoneIcon from '@mui/icons-material/FilterNone';
 import { set_node , replace_nodes } from "../../behaviours"
 
 
-import { AutoTooltip } from "./universe/direction_control"
+import { AutoTooltip , ForceContain } from "./universe"
 import { StyledNode , NodeType , StyleType ,  GroupNode } from "../../core/elements"
 import { YEditor } from "../../editor_interface"
 import { non_selectable_prop , is_same_node , node2path , update_kth , get_hidden_idx } from "../../utils"
@@ -147,21 +147,25 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
             open        = {me.props.open}
             onClose     = {me.props.onClose}
             ModalProps  = {{keepMounted: true}}
-            PaperProps  = {{sx: { width: "40%" }}}
+            PaperProps  = {{sx: { 
+                width: "60%" ,
+            }}}
             SlideProps = {{
                 onExited: () => {
                     me.father_editor.apply_all()
                 }
             }}
         >
-            <DefaultEditor 
-                editor = { me.subeditor }
-                onMount={()=>{ // 这个函数需要等到子组件 mount 再调用....
-                    replace_nodes(me.subeditor , me.subeditor.core.root , me.props.son.children)
-                    me.props.editor.add_suboperation(me.son.idx , me.sub_apply.bind(me))
-                }}
-
-            />
+            <ForceContain.Provider value={true}>
+                <DefaultEditor 
+                    
+                    editor = { me.subeditor }
+                    onMount={()=>{ // 这个函数需要等到子组件 mount 再调用....
+                        replace_nodes(me.subeditor , me.subeditor.core.root , me.props.son.children)
+                        me.props.editor.add_suboperation(me.son.idx , me.sub_apply.bind(me))
+                    }}
+                />
+            </ForceContain.Provider>
         </Drawer>
 	}
 }
