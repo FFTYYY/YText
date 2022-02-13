@@ -26,10 +26,9 @@ import Switch from '@mui/material/Switch';
 import {YEditor , EditorCore , OutRenderer , AbstractStyle , newparagraph , new_displayer} from "../lib"
 import { get_DefaultGroup_with_AppBar , GroupStyle , get_DefaultGroup_with_RightBar} from "../lib"
 import {group_prototype , DefaultEditor , paragraph_prototype , new_splitter , OutRenderer_Props} from "../lib"
-import { InlineStyle , get_DefaultInline} from "../lib"
+import { InlineStyle , get_DefaultInline , DefaultRenderer , list_out_renderer} from "../lib"
 
 import { Node , Transforms } from "slate"
-import * as O from "./out_renderers"
 interface App_State{
 	value: Node[]
 }
@@ -72,7 +71,7 @@ class App extends React.Component<any,App_State> {
 		
 		this.outputer = new OutRenderer( this.core )
 		// this.outputer.update_renderer( sectrionrenderer, "support" , "new-section" )
-		this.outputer.update_renderer( O.list_out_renderer, "group" , "list" )
+		this.outputer.update_renderer( list_out_renderer, "group" , "list" )
 	}
 
 	extra_button(){
@@ -84,14 +83,12 @@ class App extends React.Component<any,App_State> {
 		let default_group = group_prototype("root" , {})
 		return <Box>
 			<Button onClick={me.extra_button.bind(this)}>Extra_Edit</Button>
-			<Box 
-				sx = {{
-					position: "absolute" , 
-					width: "50%" ,
-					left: "0" , 
-					height: "90%" , 
-				}}
-			>
+			<Box sx = {{
+				position: "absolute" , 
+				width: "49%" ,
+				left: "0" , 
+				height: "90%" , 
+			}}>
 				<DefaultEditor 
 					editor = {me.editor}
 					onUpdate = {(newval)=>{
@@ -100,19 +97,17 @@ class App extends React.Component<any,App_State> {
 				/>
 			</Box>
 
-			<Box 
-				sx = {{
+			<Box sx = {{
 					position: "absolute" , 
-					width: "50%" ,
-					left: "50%" , 
+					width: "49%" ,
+					left: "51%" , 
 					height: "90%" , 
 					backgroundColor: "#AABBCC" , 
-					overflow: "scroll" , 
-				}}
-			>
-				<OutRenderer.Component
-					renderer = {this.outputer}
-				></OutRenderer.Component>
+					overflow: "auto" , 
+			}}>
+				<DefaultRenderer
+					outer = {this.outputer}
+				/>
 			</Box>
 		</Box>
 	}

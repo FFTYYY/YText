@@ -1,4 +1,5 @@
-import { OutRenderer_Props , GroupNode} from "../lib"
+import { OutRenderer_Props} from "../../out_renderer"
+import { GroupNode} from "../../core/elements"
 import { Node } from "slate"
 export { list_out_renderer }
 import Card from '@mui/material/Card'
