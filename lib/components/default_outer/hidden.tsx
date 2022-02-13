@@ -27,6 +27,7 @@ import { set_node , replace_nodes } from "../../behaviours"
 
 
 import { AutoTooltip , ForceContain } from "./universe"
+import { AutoStackedPopper } from "./universe"
 import { StyledNode , NodeType , StyleType ,  GroupNode } from "../../core/elements"
 import { YEditor } from "../../editor_interface"
 import { non_selectable_prop , is_same_node , node2path , update_kth , get_hidden_idx } from "../../utils"
@@ -168,7 +169,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
 	}
 }
 
-/** 这个组件是一个点开按钮展开的菜单，菜单的每项是编辑一个 hidden 属性的按钮。 */
+/** 这个组件是一个菜单，菜单的每项是编辑一个 hidden 属性的按钮。 */
 function DefaultHiddenEditorGroup(props: {editor:YEditor , element: StyledNode, anchor_element: any, open: boolean, onClose?: (e:any)=>void}){
 
     let element = props.element 
@@ -204,11 +205,9 @@ function DefaultHiddenEditorGroup(props: {editor:YEditor , element: StyledNode, 
     </>  
 }
 
-/** 如果目标节点有hidden，则这个节点提供编辑界面，否则提供选择hidden的界面。
+/** 这个组件提供两个按钮，分别是新建抽象和编辑抽象。
  * @param props.editor 这个组件所服务的编辑器。
  * @param props.element 这个组件所服务的节点。
- * @param props.button_new 用来新建抽象节点的按钮。
- * @param props.button_edit 用来编辑一个抽象节点的按钮。
  * @returns 一个渲染了两个 Button 的 
 */
 function DefaultHidden(props: {editor: YEditor , element: StyledNode}){

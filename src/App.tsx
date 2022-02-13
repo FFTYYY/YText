@@ -23,9 +23,10 @@ import IconButton from '@mui/material/IconButton';
 
 import SettingsIcon from '@mui/icons-material/Settings';
 import Switch from '@mui/material/Switch';
-import {YEditor , EditorCore , OutRenderer , AbstractStyle , new_default_iniline , newparagraph , new_displayer} from "../lib"
+import {YEditor , EditorCore , OutRenderer , AbstractStyle , newparagraph , new_displayer} from "../lib"
 import { get_DefaultGroup_with_AppBar , GroupStyle , get_DefaultGroup_with_RightBar} from "../lib"
 import {group_prototype , DefaultEditor , paragraph_prototype , new_splitter , OutRenderer_Props} from "../lib"
+import { InlineStyle , get_DefaultInline} from "../lib"
 
 import { Node , Transforms } from "slate"
 import * as O from "./out_renderers"
@@ -45,7 +46,9 @@ class App extends React.Component<any,App_State> {
 		let theoremrenderer = get_DefaultGroup_with_AppBar()
 		let listrenderer    = get_DefaultGroup_with_RightBar()
 
-		let [strongstyle, strongrenderer] = new_default_iniline("strong" , {test: "haha"})
+		let strongstyle = new InlineStyle("strong" , {test: "2333"})
+		let strongrenderer = get_DefaultInline()
+
 		let [npstyle , nprenderer] = newparagraph("newparagraph")
 		let [sectionerstyle , sectrionrenderer] = new_splitter("new-section" , {alias: ""})
 		let [imagestyle , imagerenderer] = new_displayer("image" , {url: "" , title: ""})

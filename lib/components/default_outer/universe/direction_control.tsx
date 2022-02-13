@@ -31,6 +31,7 @@ import type { TooltipProps , ButtonProps , PaperProps } from '@mui/material';
 import SettingsIcon from '@mui/icons-material/Settings';
 import SettingsApplicationsOutlinedIcon from '@mui/icons-material/SettingsApplicationsOutlined';
 import SettingsApplicationsTwoToneIcon from '@mui/icons-material/SettingsApplicationsTwoTone';
+import { render } from "react-dom";
 
 export {AutoTooltip  , Direction , AutoStack , SimpleAutoStack , AutoStackedPopper , AutoStackButtons , ForceContain}
 
@@ -134,40 +135,51 @@ function SimpleAutoStack(props: {
     return <Direction.Consumer>{nowdir => subcomponent(nowdir)}</Direction.Consumer> 
 }
 
-/** 创建一个弹出框，但其会自动按照当前方向布局和定位。 
- * @param force_direction 强制设置一个当前方向。
- * @param children 子元素。由 React 自动提供。
- * @param stacker 用什么组件来堆叠元素。默认为 AutoStack 。用户可以提供自己的堆叠方式。
- * @param anchorEl 定位元素。
- * @param open 是否打开。
- * @param component 用什么元素来作为弹出框的实体。默认为 Paper 。
-*/
-function AutoStackedPopper(props:{
+interface AutoStackedPopper_Props{
     force_direction?: DirectionValues
     children?: any
     stacker?: any 
     anchorEl: any
     open: boolean
     component?: any 
-}){
-    let S = props.stacker || AutoStack
-    let C = props.component || Paper
+}
 
-    let subcomponent = (nowdir: DirectionValues) => {
-        return <ForceContain.Consumer>{force_contain => <Popper 
-            anchorEl = {props.anchorEl} 
-            open = {props.open}
-            placement = {nowdir == "row" ? "right" : "bottom"}
-            disablePortal = {force_contain}
-        >
-            <C><S>
-                {props.children}
-            </S></C>
-        </Popper>}</ForceContain.Consumer>
-    }
+/** 一个弹出框，但其会自动按照当前方向布局和定位。 */
+class AutoStackedPopper extends React.Component<AutoStackedPopper_Props>{
 
-    if(props.force_direction != undefined){
-        return subcomponent(props.force_direction)
+    /**  
+     * @param force_direction 强制设置一个当前方向。
+     * @param children 子元素。由 React 自动提供。
+     * @param stacker 用什么组件来堆叠元素。默认为 AutoStack 。用户可以提供自己的堆叠方式。
+     * @param anchorEl 定位元素。
+     * @param open 是否打开。
+     * @param component 用什么元素来作为弹出框的实体。默认为 Paper 。
+    */
+    constructor(props: AutoStackedPopper_Props){
+        super(props)
     }
-    return <Direction.Consumer>{nowdir => subcomponent(nowdir)}</Direction.Consumer> 
+    render(){
+        let props = this.props
+        let S = props.stacker || AutoStack
+        let C = props.component || Paper
+    
+        let subcomponent = (nowdir: DirectionValues) => {
+            return <ForceContain.Consumer>{force_contain => <Popper 
+                anchorEl = {props.anchorEl} 
+                open = {props.open}
+                placement = {nowdir == "row" ? "right" : "bottom"}
+                disablePortal = {force_contain}
+            >
+                <C><S>
+                    {props.children}
+                </S></C>
+            </Popper>}</ForceContain.Consumer>
+        }
+    
+        if(props.force_direction != undefined){
+            return subcomponent(props.force_direction)
+        }
+        return <Direction.Consumer>{nowdir => subcomponent(nowdir)}</Direction.Consumer> 
+    
+    }
 }
