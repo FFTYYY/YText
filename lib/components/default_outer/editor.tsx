@@ -32,11 +32,12 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
+import { Paper } from '@mui/material';
 
 import SettingsIcon from '@mui/icons-material/Settings';
 import Switch from '@mui/material/Switch';
 import {DefaultHidden} from "./hidden"
-import {DefaultParameterWithEditorWithDrawerWithButton} from "./universe"
+import {DefaultParameterEditButton} from "./universe"
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import {my_theme} from "../theme"
 
@@ -82,34 +83,35 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 	render() {
 
 		let me = this
-		return <ThemeProvider theme={my_theme}><Container style={{marginLeft: "1%", marginRight: "1%"}}><Grid container>
-			<Grid item xs={10}><YEditor.Component editor={me.editor} onUpdate={me.onUpdate}/></Grid>
-			<Grid item xs={2}><Stack spacing={2}>
-				<ButtonGroup orientation="vertical">
-					<DefaultParameterWithEditorWithDrawerWithButton editor = {me.editor} element = {me.editor.core.root} />
-					<DefaultHidden editor={me.editor} element={me.editor.core.root} />
-				</ButtonGroup>
-				{["group" , "inline" , "support" , "struct"].map((typename: StyleType)=>{
-					return <Accordion 
-						key = {typename}
-						expanded = {me.state.acc_expd[typename]}
-						onChange = {(_,e)=>me.setState({acc_expd : {...me.state.acc_expd , ...{[typename]: e}}})}
-					>
-						<AccordionSummary>{typename}</AccordionSummary>
-						<AccordionDetails>
-							<ButtonGroup variant="contained" fullWidth orientation="vertical">
-								{Object.keys(this.editor.core[`${typename}styles`]).map( (stylename) => 
-									<Button 
-										key = {stylename}
-										onClick = {e => me.editor.get_onClick(typename , stylename)(e)}
-									>{stylename}</Button>
-								)}
-							</ButtonGroup>
-						</AccordionDetails>
-					</Accordion>
-				})}
-			</Stack></Grid>
+		return <ThemeProvider theme={my_theme}><Paper><Container style={{marginLeft: "1%", marginRight: "1%"}}>
+			<Grid container>
+				<Grid item xs={10}><YEditor.Component editor={me.editor} onUpdate={me.onUpdate}/></Grid>
+				<Grid item xs={2}><Stack spacing={2}>
+					<ButtonGroup orientation="vertical">
+						<DefaultParameterEditButton editor = {me.editor} element = {me.editor.core.root} />
+						<DefaultHidden editor={me.editor} element={me.editor.core.root} />
+					</ButtonGroup>
+					{["group" , "inline" , "support" , "struct"].map((typename: StyleType)=>{
+						return <Accordion 
+							key = {typename}
+							expanded = {me.state.acc_expd[typename]}
+							onChange = {(_,e)=>me.setState({acc_expd : {...me.state.acc_expd , ...{[typename]: e}}})}
+						>
+							<AccordionSummary>{typename}</AccordionSummary>
+							<AccordionDetails>
+								<ButtonGroup variant="contained" fullWidth orientation="vertical">
+									{Object.keys(this.editor.core[`${typename}styles`]).map( (stylename) => 
+										<Button 
+											key = {stylename}
+											onClick = {e => me.editor.get_onClick(typename , stylename)(e)}
+										>{stylename}</Button>
+									)}
+								</ButtonGroup>
+							</AccordionDetails>
+						</Accordion>
+					})}
+				</Stack></Grid>
 		</Grid> 
-		</Container></ThemeProvider>
+		</Container></Paper></ThemeProvider>
 	}
 }

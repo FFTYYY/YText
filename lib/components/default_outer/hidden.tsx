@@ -26,7 +26,7 @@ import FilterNoneIcon from '@mui/icons-material/FilterNone';
 import { set_node , replace_nodes } from "../../behaviours"
 
 
-import { SubButton } from "./universe"
+import { AutoTooltip } from "./universe/direction_control"
 import { StyledNode , NodeType , StyleType ,  GroupNode } from "../../core/elements"
 import { YEditor } from "../../editor_interface"
 import { non_selectable_prop , is_same_node , node2path , update_kth , get_hidden_idx } from "../../utils"
@@ -219,8 +219,8 @@ function DefaultHidden(props: {editor: YEditor , element: StyledNode}){
     // TODO：root的hiddens不能正常更新。
 
     return <>
-        <SubButton onClick={e=>set_menu_new_ae(e.currentTarget)} title="新建抽象"><AddBoxIcon/></SubButton>
-        <SubButton onClick={e=>set_menu_edit_ae(e.currentTarget)} title="编辑抽象"><FilterNoneIcon/></SubButton>
+        <AutoTooltip title="新建抽象"><IconButton onClick={e=>set_menu_new_ae(e.currentTarget)}><AddBoxIcon/></IconButton></AutoTooltip>
+        <AutoTooltip title="编辑抽象"><IconButton onClick={e=>set_menu_edit_ae(e.currentTarget)}><FilterNoneIcon/></IconButton></AutoTooltip>
         <DefaultNewHidden 
             editor = {editor} 
             element = {element} 

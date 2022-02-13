@@ -29,7 +29,7 @@ import { YEditor } from "../../editor_interface"
 
 import { non_selectable_prop , is_same_node} from "../../utils"
 import { DefaultHidden } from "./hidden"
-import { DefaultParameterWithEditorWithDrawerWithButton , DefaultCloseButton} from "./universe"
+import { DefaultParameterEditButton , DefaultCloseButton} from "./universe"
 
 export { new_default_iniline }
 
@@ -51,7 +51,7 @@ function new_default_iniline(name:string = "strong" , init_parameters:{title?:st
             <Stack direction="row" spacing={1}>
                 {props.children}
                 <ButtonGroup variant="text" {...non_selectable_prop}>
-                    <DefaultParameterWithEditorWithDrawerWithButton editor={editor} element={element}/>
+                    <DefaultParameterEditButton editor={editor} element={element}/>
                     <DefaultHidden editor = {editor} element = {element}/>
                     <DefaultCloseButton editor={editor} element={element} />
                 </ButtonGroup>

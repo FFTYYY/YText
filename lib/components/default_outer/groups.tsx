@@ -56,10 +56,11 @@ import { YEditor } from "../../editor_interface"
 import { add_nodes , set_node , add_nodes_before , move_node } from "../../behaviours"
 import { non_selectable_prop , is_same_node , node2path } from "../../utils"
 import { DefaultHidden } from "./hidden"
-import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawerWithButton , DefaultCloseButton , SubButton} from "./universe"
-import type { UniversalComponent_Props } from "./universe" 
-export { get_DefaultGroup_with_AppBar , get_DefaultGroup_with_RightBar}
+import { DefaultParameterContainer , DefaultParameterEditButton , DefaultCloseButton } from "./universe"
+import type { UniversalComponent_Props } from "./universe/parameter_container" 
+import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "./universe/direction_control"
 
+export { get_DefaultGroup_with_AppBar , get_DefaultGroup_with_RightBar}
 
 /** 这个函数返回一个默认的group组件。
  * @param get_title 从参数列表获得title的方法。
@@ -77,7 +78,7 @@ function get_DefaultGroup_with_AppBar(
         let editor = props.editor
         let E = appbar_extra
 
-        return <Card
+        return <Paper
             sx={{
                 marginLeft: "1%",
                 marginRight: "1%",
@@ -86,17 +87,17 @@ function get_DefaultGroup_with_AppBar(
             variant="outlined"
         >
             <AppBar {...non_selectable_prop} position="static" color="primary">
-                <Toolbar>
+                <Toolbar><AutoStack force_direction="row">
                     <Typography>{title}</Typography>
-                    <DefaultParameterWithEditorWithDrawerWithButton editor={editor} element={element}/>         
+                    <DefaultParameterEditButton editor={editor} element={element}/>         
                     <DefaultHidden      editor={editor} element={element} />
                     <DefaultGroupSwicth editor={editor} element={element} />
                     <DefaultCloseButton editor={editor} element={element} />
                     <E editor={editor} element={element}/>
-                </Toolbar>
+                </AutoStack></Toolbar>
             </AppBar >
             <Box sx={{marginLeft: "1%", marginRight: "1%",}}>{props.children}</Box>
-        </Card>
+        </Paper>
     }
 }
 
@@ -118,28 +119,27 @@ function get_DefaultGroup_with_RightBar(
 
         let [menu_anchor, set_menu_anchor] = React.useState<null | HTMLElement>(null);
 
-        const expand_button = <Box {...non_selectable_prop}><Stack direction="column">
+        const expand_button = <Box {...non_selectable_prop}><SimpleAutoStack force_direction="column">
             
             <Typography>{title}</Typography>
 
             <E editor={editor} element={element}/>
 
-            <SubButton 
+            <AutoTooltip title = "展开"><IconButton 
                 onClick = {e => set_menu_anchor(menu_anchor == undefined ? e.currentTarget : undefined)}
-                title = "展开"
                 size = "small"
-            ><KeyboardArrowDownIcon /></SubButton>
-            <Popper 
+            ><KeyboardArrowDownIcon /></IconButton></AutoTooltip>
+            <AutoStackedPopper 
                 anchorEl = {menu_anchor} 
                 open = {menu_anchor != undefined}
-            ><Paper><Stack>
-                <DefaultParameterWithEditorWithDrawerWithButton editor={editor} element={element}/>
+            >
+                <DefaultParameterEditButton editor={editor} element={element}/>
                 <DefaultHidden      editor={editor} element={element} />
                 <DefaultGroupSwicth editor={editor} element={element} />
                 <DefaultCloseButton editor={editor} element={element} />
-            </Stack></Paper></Popper>
+            </AutoStackedPopper>
 
-        </Stack></Box>
+        </SimpleAutoStack></Box>
 
         return <Paper
             sx={{
@@ -203,6 +203,6 @@ function DefaultGroupSwicth(props: {editor: YEditor , element: Node}){
 
     }
 
-    return <Switch checked={checked} onChange={switch_check_change}></Switch>
+    return <AutoTooltip title = "贴合"><Switch checked={checked} onChange={switch_check_change}></Switch></AutoTooltip>
 }
 

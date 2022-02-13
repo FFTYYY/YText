@@ -34,7 +34,7 @@ import { DefaultHidden } from "./hidden"
 import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawer , DefaultCloseButton} from "./universe"
 
 import Divider from '@mui/material/Divider';
-import {DefaultParameterWithEditorWithDrawerWithButton} from "./universe"
+import {DefaultParameterEditButton} from "./universe"
 import Stack from '@mui/material/Stack';
 import { add_nodes } from "../../behaviours"
 
@@ -104,7 +104,7 @@ function new_splitter(name: string = "splitter", init_parameters:any = {}): [Sup
         >
             <Paper><Stack direction="row">
                 <Box>{name}</Box>
-                <DefaultParameterWithEditorWithDrawerWithButton editor={props.editor} element={props.element as SupportNode} />
+                <DefaultParameterEditButton editor={props.editor} element={props.element as SupportNode} />
                 </Stack></Paper>
             {props.children /* 对于一个void组件，其children也必须被渲染，否则会报错。*/} 
 
@@ -144,7 +144,7 @@ function new_displayer(
             {props.children}
             <R url={url} />
             <ButtonGroup variant="text" {...non_selectable_prop}>
-                <DefaultParameterWithEditorWithDrawerWithButton editor={editor} element={element} />
+                <DefaultParameterEditButton editor={editor} element={element} />
                 <DefaultCloseButton editor={editor} element={element} />
             </ButtonGroup>
         </Stack>

@@ -1,5 +1,5 @@
 /** 
- * 这个文件提供一些通用的组件的默认渲染。
+ * 这个文件提供一个通用的参数编辑器。
  * @module
  */
 
@@ -13,14 +13,14 @@ import Portal from '@mui/material/Portal';
 import Button from '@mui/material/Button';
 import { Typography } from '@mui/material';
 
-import { StyledNode } from "../../core/elements"
-import { GroupStyle , EditorCore} from "../../core/editor_core"
-import { YEditor } from "../../editor_interface"
+import { StyledNode } from "../../../core/elements"
+import { GroupStyle , EditorCore} from "../../../core/editor_core"
+import { YEditor } from "../../../editor_interface"
 import { HiveTwoTone } from "@mui/icons-material"
-import { non_selectable_prop , is_same_node , node2path } from "../../utils"
+import { non_selectable_prop , is_same_node , node2path } from "../../../utils"
 import { Node, Editor } from "slate"
 import IconButton from '@mui/material/IconButton';
-import { set_node , delete_node } from "../../behaviours"
+import { set_node , delete_node } from "../../../behaviours"
 import { styled } from '@material-ui/styles';
 import { Tooltip } from '@mui/material';
 import type { TooltipProps , ButtonProps } from '@mui/material';
@@ -32,25 +32,9 @@ import SettingsApplicationsTwoToneIcon from '@mui/icons-material/SettingsApplica
 export { 
     DefaultParameterContainer , 
     DefaultParameterWithEditorWithDrawer , 
-    DefaultParameterWithEditorWithDrawerWithButton , 
-    DefaultCloseButton , 
-    SubButton , 
 }
 export type {
     UniversalComponent_Props
-}
-
-const SubButton = (props: {
-    onClick: (e:any)=>any , 
-    title: string, 
-    children: any, 
-    title_direction?: TooltipProps["placement"] , 
-    size?: ButtonProps["size"] , 
-}) => {
-    let title_direction = props.title_direction || "top"
-    return <Tooltip title={props.title} placement={title_direction}>
-        <IconButton onClick={props.onClick} color="primary" size={props.size}>{props.children}</IconButton>
-    </Tooltip>
 }
 
 interface DefaultParameterContainer_Props{
@@ -223,42 +207,3 @@ function DefaultParameterWithEditorWithDrawer(props: UniversalComponent_Props & 
     </Drawer>
 }
 
-/**
- * 这个组件向具体的编辑器和具体的节点提供 DefaultParameterContainer ，同时还提供一个按钮。
- * @param props.editor 这个组件所服务的编辑器。
- * @param props.element 这个组件所服务的节点。
- * @param props.open 抽屉是否打开。
- * @param props.onClose 抽屉关闭时的行为。
- */
-function DefaultParameterWithEditorWithDrawerWithButton(props: UniversalComponent_Props & {
-    onClose?: (e:any)=>void , 
-    container?: any , 
-}){
-    let [ open , set_open ] = useState(false) // 抽屉是否打开
-    let onClose = props.onClose || ((e:any)=>{})
-
-    return <>
-        <SubButton onClick={e=>set_open(true)} title="设置参数">  <SettingsIcon/> </SubButton>
-        <Portal container={props.container}>
-            <DefaultParameterWithEditorWithDrawer 
-                editor = {props.editor} 
-                element = {props.element} 
-                open = {open} 
-                onClose = {e=>{ onClose(e); set_open(false); }} 
-            />
-        </Portal>
-    </>
-}
-
-
-/** 这个组件提供一个直接删除节点的按钮。 
- * @param props.editor 这个组件所服务的编辑器。
- * @param props.element 这个组件所服务的节点。
-*/
-function DefaultCloseButton(props: UniversalComponent_Props){
-    return <SubButton onClick={e=>{delete_node(props.editor , props.element) }} title="删除组件"> <CloseIcon /> </SubButton>
-}
-
-function MyImg(props: {img_url: string}){
-    return <img src={props.img_url}></img>
-}
