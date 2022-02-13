@@ -79,13 +79,14 @@ class App extends React.Component<any,App_State> {
 	render() {
 		let me = this
 		let default_group = group_prototype("root" , {})
-		return <div>
+		return <Box>
 			<Button onClick={me.extra_button.bind(this)}>Extra_Edit</Button>
-			<div 
-				style = {{
+			<Box 
+				sx = {{
 					position: "absolute" , 
 					width: "50%" ,
 					left: "0" , 
+					height: "90%" , 
 				}}
 			>
 				<DefaultEditor 
@@ -94,22 +95,23 @@ class App extends React.Component<any,App_State> {
 						// console.log(me.editor.core.root)
 					}}
 				/>
-			</div>
+			</Box>
 
-			<div 
-				style = {{
+			<Box 
+				sx = {{
 					position: "absolute" , 
 					width: "50%" ,
 					left: "50%" , 
-					height: "100%" , 
-					backgroundColor: "#AABBCC"
+					height: "90%" , 
+					backgroundColor: "#AABBCC" , 
+					overflow: "scroll" , 
 				}}
 			>
 				<OutRenderer.Component
 					renderer = {this.outputer}
-				/>
-			</div>
-		</div>
+				></OutRenderer.Component>
+			</Box>
+		</Box>
 	}
 }
 

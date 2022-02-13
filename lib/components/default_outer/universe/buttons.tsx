@@ -61,21 +61,18 @@ function AutoIconButton(props:{
  */
 function DefaultParameterEditButton(props: UniversalComponent_Props & {
     onClose?: (e:any)=>void , 
-    container?: any , 
 }){
     let [ open , set_open ] = useState(false) // 抽屉是否打开
     let onClose = props.onClose || ((e:any)=>{})
 
     return <>
         <AutoIconButton onClick={e=>set_open(true)} title="设置参数" icon={SettingsIcon} />
-        <Portal container={props.container}>
-            <DefaultParameterWithEditorWithDrawer 
-                editor = {props.editor} 
-                element = {props.element} 
-                open = {open} 
-                onClose = {e=>{ onClose(e); set_open(false); }} 
-            />
-        </Portal>
+        <DefaultParameterWithEditorWithDrawer 
+            editor = {props.editor} 
+            element = {props.element} 
+            open = {open} 
+            onClose = {e=>{ onClose(e); set_open(false); }} 
+        />
     </>
 }
 

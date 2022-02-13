@@ -11,7 +11,7 @@ import Drawer       from "@mui/material/Drawer"
 import CloseIcon from '@mui/icons-material/Close';
 import Portal from '@mui/material/Portal';
 import Button from '@mui/material/Button';
-import { Typography , Paper } from '@mui/material';
+import { Typography , Paper , ButtonGroup } from '@mui/material';
 import Popper from '@mui/material/Popper';
 
 import { StyledNode } from "../../../core/elements"
@@ -30,7 +30,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import SettingsApplicationsOutlinedIcon from '@mui/icons-material/SettingsApplicationsOutlined';
 import SettingsApplicationsTwoToneIcon from '@mui/icons-material/SettingsApplicationsTwoTone';
 
-export {AutoTooltip  , Direction , AutoStack , SimpleAutoStack , AutoStackedPopper}
+export {AutoTooltip  , Direction , AutoStack , SimpleAutoStack , AutoStackedPopper , AutoStackButtons}
 
 type DirectionValues = "row" | "column"
 
@@ -49,6 +49,29 @@ const AutoTooltip = (props: {
             {props.children}
         </Tooltip>
     }}</Direction.Consumer>
+}
+
+/** 这个组件用于创建一个自动堆叠的对象。 */
+function AutoStackButtons(props: {
+    force_direction?: DirectionValues
+    children?: any
+    simple?: boolean
+}){
+    let flip_direction = ! props.simple // 如果是简单版本，就不翻转方向，否则翻转
+
+    let subcomponent = (nowdir: DirectionValues) => {
+        let orientation: "horizontal"|"vertical" = (nowdir == "row") ? "horizontal" : "vertical"
+        let new_val = flip_direction ? (nowdir == "row" ? "column" : "row") : nowdir
+        return <Direction.Provider value={new_val}><ButtonGroup orientation={orientation}>{
+            props.children
+        }</ButtonGroup></Direction.Provider>
+    }
+    
+    if(props.force_direction != undefined){
+        return subcomponent(props.force_direction)
+    }
+
+    return <Direction.Consumer>{nowdir => subcomponent(nowdir)}</Direction.Consumer> 
 }
 
 
@@ -91,15 +114,12 @@ function SimpleAutoStack(props: {
 function AutoStackedPopper(props:{
     force_direction?: DirectionValues
     children?: any
-    force_flip?: boolean
+    stacker?: any 
     anchorEl: any , 
     open: boolean , 
     container?: any
 }){
-    let force_flip = props.force_flip != undefined ? props.force_flip : true
-    let S = SimpleAutoStack //不自动翻转方向
-    if(force_flip)
-        S = AutoStack // 自动翻转方向
+    let S = props.stacker || AutoStack
     
     let C = props.container || Paper
 

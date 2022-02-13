@@ -32,19 +32,27 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
-import { Paper } from '@mui/material';
-
+import { Paper , Divider } from '@mui/material';
+import CalendarViewDayIcon from '@mui/icons-material/CalendarViewDay';
+import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
+import CoffeeIcon from '@mui/icons-material/Coffee';
 import SettingsIcon from '@mui/icons-material/Settings';
+import QrCodeIcon from '@mui/icons-material/QrCode';
+
+
+
 import Switch from '@mui/material/Switch';
 import {DefaultHidden} from "./hidden"
 import {DefaultParameterEditButton} from "./universe"
+import {AutoStack , SimpleAutoStack , AutoTooltip , AutoStackedPopper , AutoStackButtons } from "./universe"
+import {OnlyFixedComponent , OnlyScrollFixedComponent , FixedComponent , ScrollFixedComponent } from "./universe"
+
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import {my_theme} from "../theme"
 
 export { DefaultEditor }
 interface DefaultEditor_State{
-	acc_expd: {[key in StyleType]: boolean}
-	param_drawer_open: boolean
+	poper_anchor: {[key in StyleType]: any}
 }
 
 interface DefaultEditor_Props{
@@ -63,14 +71,14 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 
 	constructor(props: DefaultEditor_Props) {
 		super(props)
+
 		this.state = {
-			acc_expd: {
-				group: true , 
-				inline: true , 
-				support: true , 
-				struct: true , 
-			} , 
-			param_drawer_open: false , 
+			poper_anchor: {
+				group: undefined, 
+				inline: undefined, 
+				support: undefined, 
+				struct: undefined, 
+			}
 		}
 
 		this.editor = props.editor
@@ -82,36 +90,55 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 	}
 	render() {
 
+		let icons = {
+			group: CalendarViewDayIcon , 
+			inline: CloseFullscreenIcon , 
+			support: CoffeeIcon , 
+			struct: QrCodeIcon , 
+		}
+		let anchors = this.state.poper_anchor
+
 		let me = this
-		return <ThemeProvider theme={my_theme}><Paper><Container style={{marginLeft: "1%", marginRight: "1%"}}>
-			<Grid container>
-				<Grid item xs={10}><YEditor.Component editor={me.editor} onUpdate={me.onUpdate}/></Grid>
-				<Grid item xs={2}><Stack spacing={2}>
-					<ButtonGroup orientation="vertical">
-						<DefaultParameterEditButton editor = {me.editor} element = {me.editor.core.root} />
-						<DefaultHidden editor={me.editor} element={me.editor.core.root} />
-					</ButtonGroup>
-					{["group" , "inline" , "support" , "struct"].map((typename: StyleType)=>{
-						return <Accordion 
-							key = {typename}
-							expanded = {me.state.acc_expd[typename]}
-							onChange = {(_,e)=>me.setState({acc_expd : {...me.state.acc_expd , ...{[typename]: e}}})}
-						>
-							<AccordionSummary>{typename}</AccordionSummary>
-							<AccordionDetails>
-								<ButtonGroup variant="contained" fullWidth orientation="vertical">
-									{Object.keys(this.editor.core[`${typename}styles`]).map( (stylename) => 
-										<Button 
-											key = {stylename}
-											onClick = {e => me.editor.get_onClick(typename , stylename)(e)}
-										>{stylename}</Button>
-									)}
-								</ButtonGroup>
-							</AccordionDetails>
-						</Accordion>
+		return <ThemeProvider theme={my_theme}><Paper sx={OnlyFixedComponent}>
+
+			<Box sx={{...ScrollFixedComponent , ...{width: "80%"}}}>
+				<YEditor.Component editor={me.editor} onUpdate={me.onUpdate}/>
+			</Box>
+
+			<Box sx={{...ScrollFixedComponent , ...{left: "80%", width: "20%"}}}>
+
+				<AutoStack force_direction="column">
+					<DefaultParameterEditButton editor = {me.editor} element = {me.editor.core.root} />
+					<DefaultHidden editor={me.editor} element={me.editor.core.root} />
+					<Divider />
+					{["group" , "inline" , "support" , "struct"].map ( (typename: StyleType)=>{
+						let Icon = icons[typename]
+						return <React.Fragment key={typename}>
+							<AutoTooltip title = {typename}>
+								<IconButton onClick={e=>{
+									let new_anchor = (anchors[typename] == undefined) ? e.currentTarget : undefined
+									let new_state = {...anchors , ...{[typename]: new_anchor}}
+									me.setState({poper_anchor: new_state})
+								}}><Icon /></IconButton>
+							</AutoTooltip>
+
+							<AutoStackedPopper
+								anchorEl = {anchors[typename]}
+								open = {anchors[typename] != undefined}
+								stacker = {AutoStackButtons}
+							>{
+								Object.keys(me.editor.core[`${typename}styles`]).map( (stylename) => 
+									<Button 
+										key = {stylename}
+										onClick = {e => me.editor.get_onClick(typename , stylename)(e)}
+									>{stylename}</Button>
+								)
+							}</AutoStackedPopper>
+						</React.Fragment>
 					})}
-				</Stack></Grid>
-		</Grid> 
-		</Container></Paper></ThemeProvider>
+				</AutoStack>
+			</Box>
+
+			</Paper></ThemeProvider>
 	}
 }
