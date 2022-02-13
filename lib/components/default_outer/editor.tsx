@@ -8,7 +8,7 @@
 import type { StyleType , NodeType } from "../../core/elements"
 
 import { Node } from "slate"
-
+import {object_foreach} from "../../utils"
 
 import { YEditor } from "../../editor_interface"
 import { new_default_iniline } from "./inlines"
@@ -45,7 +45,7 @@ import Switch from '@mui/material/Switch';
 import {DefaultHidden} from "./hidden"
 import {DefaultParameterEditButton} from "./universe"
 import {AutoStack , SimpleAutoStack , AutoTooltip , AutoStackedPopper , AutoStackButtons } from "./universe"
-import {OnlyFixedComponent , OnlyScrollFixedComponent , FixedComponent , ScrollFixedComponent } from "./universe"
+import {FilledStyle , ScrollFilledStyle } from "./universe"
 
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import {my_theme} from "../theme"
@@ -98,14 +98,23 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 		}
 		let anchors = this.state.poper_anchor
 
-		let me = this
-		return <ThemeProvider theme={my_theme}><Paper sx={OnlyFixedComponent}>
+		let toolbar_width = {
+			xs: 0.15 , 
+			md: 0.10 , 
+			xl: 0.05 , 
+		}
+		let complement_width = object_foreach(toolbar_width , (x:number)=>1-x)
+		// number2percent 用来将小数形式的表示转为字符串形式。MUI的sx的left属性不接受小数点表示。
+		let number2percent = (obj: {[k:string]:number}) => object_foreach(obj , x=>`${Math.floor(x*100)%100}%`)
 
-			<Box sx={{...ScrollFixedComponent , ...{width: "80%"}}}>
+		let me = this
+		return <ThemeProvider theme={my_theme}><Paper sx={FilledStyle}>
+
+			<Box sx={{position: "absolute" , height: "100%" , width:  complement_width, overflow: "auto"}}>
 				<YEditor.Component editor={me.editor} onUpdate={me.onUpdate}/>
 			</Box>
 
-			<Box sx={{...ScrollFixedComponent , ...{left: "80%", width: "20%"}}}>
+			<Box sx={{position: "absolute" , height: "100%" , left: number2percent(complement_width), width: toolbar_width}}>
 
 				<AutoStack force_direction="column">
 					<DefaultParameterEditButton editor = {me.editor} element = {me.editor.core.root} />
