@@ -2,20 +2,25 @@
  * 这个模块提供一些默认的 Support 节点的渲染器。
  * @module
  */
-
- import {
+import React from "react"
+import {
+    Typography , 
     Paper , 
     Card , 
     Box , 
     Stack , 
-    Divider , 
     Button , 
     ButtonGroup , 
+    Divider , 
+    IconButton , 
+    Grid , 
+    Skeleton  , 
 }
 from "@mui/material"
 import {
     South as SouthIcon , 
     North as NorthIcon , 
+    KeyboardArrowDown as KeyboardArrowDownIcon , 
 }
 from "@mui/icons-material"
 
@@ -29,7 +34,8 @@ import { non_selectable_prop , is_same_node} from "../../utils"
 import { warning } from "../../exceptions/warning";
 import { node2path } from "../../utils"
 
-import {  DefaultCloseButton , DefaultParameterEditButton} from "./universe"
+import {  AutoStack , AutoTooltip , Direction} from "./universe"
+import {  DefaultCloseButton , DefaultParameterEditButton , AutoStackedPopperWithButton } from "./universe"
 import { add_nodes } from "../../behaviours"
 
 export { newparagraph , new_splitter , new_displayer}
@@ -38,44 +44,66 @@ export { newparagraph , new_splitter , new_displayer}
 function newparagraph(name:string = "newparagraph"): [SupportStyle,EditorRenderer_Func]{
     let style = new SupportStyle(name , {})
 
+    
     let renderer = (props: EditorRenderer_Props) => {
         let element = props.element as SupportNode
         let editor = props.editor
-        return <ButtonGroup  
-                {...non_selectable_prop} 
-                {...props.attributes} 
-                sx={{
-                    width: "98%" , 
-                    marginLeft: "1%" , 
-                    marginRight: "1%" , 
-                }}
-                variant = "outlined"
-                size = "small"
-            > 
-            <Button 
-                onClick = { e => {
-                    let my_path = node2path(editor.core.root , element) // 获取本节点的位置
-                    if(my_path == undefined)
-                        warning("节点不在节点树中！")
-                    add_nodes(editor , paragraph_prototype() , my_path)
-                }}
-                startIcon={<NorthIcon fontSize="small" />}
-                fullWidth
-            ></Button>
-            <Button 
-                onClick = { e => {
-                    let my_path = node2path(editor.core.root , element) // 获取本节点的位置
-                    if(my_path == undefined)
-                        warning("节点不在节点树中！")
-                    my_path[my_path.length - 1] ++ // 在下一个节点处插入
-                    add_nodes(editor , paragraph_prototype() , my_path)
-                }}
-                
-                startIcon={<SouthIcon fontSize="small" />}
-                fullWidth
-            ></Button>
-            {props.children}
-        </ButtonGroup >
+
+        let [left_active  , set_left_active ] = React.useState<boolean>(false)
+        let [right_active , set_right_active] = React.useState<boolean>(false)
+        let placeholder = <Paper sx ={{height: "5px"}} variant="outlined"/>
+        
+        return <Box 
+            {...non_selectable_prop} 
+            {...props.attributes} 
+            sx = {{
+                width: "98%" , 
+                marginLeft: "1%" , 
+                marginRight: "1%" , 
+            }}
+        ><Direction.Provider value="row">{props.children}<Grid container spacing={2}>
+            <Grid item xs={6}>
+                <Box 
+                    onMouseOver = {()=>set_left_active(true)}
+                    onMouseOut  = {()=>set_left_active(false)}
+                >{(()=>{
+                    if(left_active)
+                        return <AutoTooltip title="向上添加段落"><Button 
+                            onClick = { e => {
+                                let my_path = node2path(editor.core.root , element) // 获取本节点的位置
+                                if(my_path == undefined)
+                                    warning("节点不在节点树中！")
+                                add_nodes(editor , paragraph_prototype() , my_path)
+                            }}
+                            size = "small"
+                            variant = "outlined"
+                            fullWidth
+                        ><NorthIcon fontSize="small" /></Button></AutoTooltip>
+                    return placeholder
+                })()}</Box>
+            </Grid>
+            <Grid item xs={6}>
+                <Box 
+                    onMouseOver = {()=>set_right_active(true)}
+                    onMouseOut  = {()=>set_right_active(false)}
+                >{(()=>{
+                    if(right_active)
+                        return <AutoTooltip title="向下添加段落"><Button 
+                            onClick = { e => {
+                                let my_path = node2path(editor.core.root , element) // 获取本节点的位置
+                                if(my_path == undefined)
+                                    warning("节点不在节点树中！")
+                                my_path[my_path.length - 1] ++ // 在下一个节点处插入
+                                add_nodes(editor , paragraph_prototype() , my_path)
+                            }}
+                            size = "small"
+                            variant = "outlined"
+                            fullWidth
+                        ><SouthIcon fontSize="small" /></Button></AutoTooltip>
+                    return placeholder
+                })()}</Box>
+            </Grid>
+        </Grid></Direction.Provider></Box>
     }
     
     return [style , renderer]
@@ -86,6 +114,8 @@ function new_splitter(name: string = "splitter", init_parameters:any = {}): [Sup
     let style = new SupportStyle(name , init_parameters)
 
     let renderer = (props: EditorRenderer_Props) => {
+        let editor = props.editor
+        let element = props.element as SupportNode
         return <Divider   
             {...non_selectable_prop}
             {...props.attributes} 
@@ -96,10 +126,21 @@ function new_splitter(name: string = "splitter", init_parameters:any = {}): [Sup
                 marginBottom: "1%" , 
             }}
         >
-            <Paper><Stack direction="row">
-                <Box>{name}</Box>
-                <DefaultParameterEditButton editor={props.editor} element={props.element as SupportNode} />
-                </Stack></Paper>
+            <Paper variant="outlined"><AutoStack force_direction="row">
+                <Typography>{name}</Typography>
+                <AutoStackedPopperWithButton
+                    close_on_otherclick
+                    button_class = {IconButton}
+                    button_props = {{
+                        size: "small" , 
+                        children: <KeyboardArrowDownIcon fontSize="small"/> , 
+                    }}
+                    title = "展开"
+                >
+                    <DefaultParameterEditButton editor={props.editor} element={props.element as SupportNode} />
+                    <DefaultCloseButton         editor={editor} element={element} />
+                </AutoStackedPopperWithButton>
+            </AutoStack></Paper>
             {props.children /* 对于一个void组件，其children也必须被渲染，否则会报错。*/} 
 
         </Divider>
@@ -129,20 +170,20 @@ function new_displayer(
         let R = render_element
 
         return <Box component="span" {...props.attributes} {...non_selectable_prop}><Card 
-        style={{
-            backgroundColor: "#77CC99" , 
-            display: "inline-block" , 
-        }}
-    >
-        <Stack direction="row" spacing={1}>
-            {props.children}
-            <R url={url} />
-            <ButtonGroup variant="text" {...non_selectable_prop}>
-                <DefaultParameterEditButton editor={editor} element={element} />
-                <DefaultCloseButton editor={editor} element={element} />
-            </ButtonGroup>
-        </Stack>
-    </Card></Box>
+            style={{
+                backgroundColor: "#77CC99" , 
+                display: "inline-block" , 
+            }}
+        >
+            <Stack direction="row" spacing={1}>
+                {props.children}
+                <R url={url} />
+                <ButtonGroup variant="text" {...non_selectable_prop}>
+                    <DefaultParameterEditButton editor={editor} element={element} />
+                    <DefaultCloseButton editor={editor} element={element} />
+                </ButtonGroup>
+            </Stack>
+        </Card></Box>
     }
 
     return [style , renderer]

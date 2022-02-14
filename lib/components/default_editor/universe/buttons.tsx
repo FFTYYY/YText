@@ -13,6 +13,8 @@ import {
     Typography , 
     Tooltip , 
     IconButton , 
+    ClickAwayListener  , 
+    Box , 
 } from "@mui/material"
 import type { IconButtonProps } from "@mui/material"
 
@@ -89,13 +91,14 @@ function AutoStackedPopperWithButton(props: {
     button_props?: any , 
     title?: string ,  
     children?: any , 
+    close_on_otherclick?: boolean,
 }){
     let B = props.button_class
     let [menu_open, set_menu_open] = React.useState<boolean>(false)
     // 展开栏挂载的元素。
     let menu_anchor = React.useRef()
 
-    return <React.Fragment>
+    let poper = <React.Fragment>
         <AutoTooltip title={props.title}><B 
             onClick = {e => set_menu_open(!menu_open)}
             ref = {menu_anchor}
@@ -107,6 +110,11 @@ function AutoStackedPopperWithButton(props: {
             {...props.poper_props}
         >{props.children}</AutoStackedPopper>
     </React.Fragment>
+
+    if(props.close_on_otherclick){
+        return <ClickAwayListener onClickAway={()=>{set_menu_open(false)}}><Box>{poper}</Box></ ClickAwayListener>
+    }
+    return poper
 }
 
 

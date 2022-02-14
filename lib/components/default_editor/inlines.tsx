@@ -51,27 +51,26 @@ function get_DefaultInline(
             }}
             {...props.attributes}
         >
-            <Grid container columns={24}>
-                <Grid item xs={21} md={22} xl={23}>{props.children}</Grid>
-                <Grid item xs={3}  md={2}  xl={1}>
-                    <Box {...non_selectable_prop}><AutoStack force_direction="row">
-                        <E editor={editor} element={element}/>
-                        <AutoStackedPopperWithButton
-                            button_class = {IconButton}
-                            button_props = {{
-                                size: "small" , 
-                                children: <KeyboardArrowDownIcon /> ,
-                            }} 
-                            title = "展开"
-                        >
-                            <Typography>{element.name}</Typography>
-                            <DefaultParameterEditButton editor={editor} element={element}/>
-                            <DefaultHidden      editor={editor} element={element} />
-                            <DefaultCloseButton editor={editor} element={element} />
-                        </AutoStackedPopperWithButton>
-                    </AutoStack></Box>
-                </Grid>
-            </Grid>
+            <AutoStack force_direction="row">
+                <Box sx={{minWidth: "30px"}}>{props.children}</Box>
+                <Box {...non_selectable_prop}><AutoStack force_direction="row">
+                    <E editor={editor} element={element}/>
+                    <AutoStackedPopperWithButton
+                        close_on_otherclick
+                        button_class = {IconButton}
+                        button_props = {{
+                            size: "small" , 
+                            children: <KeyboardArrowDownIcon fontSize="small"/> ,
+                        }} 
+                        title = "展开"
+                    >
+                        <Typography>{element.name}</Typography>
+                        <DefaultParameterEditButton editor={editor} element={element}/>
+                        <DefaultHidden      editor={editor} element={element} />
+                        <DefaultCloseButton editor={editor} element={element} />
+                    </AutoStackedPopperWithButton>
+                </AutoStack></Box>
+            </AutoStack>
         </Paper>
     }
 }

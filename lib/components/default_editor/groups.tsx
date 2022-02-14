@@ -22,6 +22,7 @@ import {
     Paper , 
     Grid , 
     IconButton , 
+    Divider  , 
 } 
 from "@mui/material"
 
@@ -39,6 +40,7 @@ import { YEditor } from "../../editor_interface"
 import { add_nodes , set_node , add_nodes_before , move_node } from "../../behaviours"
 import { non_selectable_prop , is_same_node , node2path } from "../../utils"
 import { DefaultParameterEditButton , DefaultCloseButton , AutoStackedPopperWithButton } from "./universe/buttons"
+import { ComponentStyle } from "./universe"
 import { DefaultHidden } from "./hidden"
 import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "./universe/direction_control"
 import type { UniversalComponent_Props } from "./universe/parameter_container" 
@@ -62,10 +64,7 @@ function get_DefaultGroup_with_AppBar(
         let E = appbar_extra
 
         return <Paper
-            sx={{
-                marginLeft: "1%",
-                marginRight: "1%",
-            }}
+            sx={ComponentStyle}
             {...props.attributes}
             variant = "outlined"
         >
@@ -102,26 +101,24 @@ function get_DefaultGroup_with_RightBar(
 
 
         return <Paper
-            sx={{
-                marginLeft: "1%",
-                marginRight: "1%",
-            }}
+            sx = {ComponentStyle}
             {...props.attributes}
             variant = "outlined"
             color = "secondary"
         >
             <Box>
                 <Grid container columns={24}>
-                <Grid item xs={21} md={22} xl={23}><Box sx={{marginLeft: "1%", marginRight: "1%",}}>{props.children}</Box></Grid>
+                <Grid item xs={21} md={22} xl={23}><Box>{props.children}</Box></Grid>
                 <Grid item xs={3}  md={2}  xl={1}>
                     <Box {...non_selectable_prop}><SimpleAutoStack force_direction="column">
                         <Typography>{title}</Typography>
                         <E editor={editor} element={element}/>
                         <AutoStackedPopperWithButton
+                            close_on_otherclick
                             button_class = {IconButton}
                             button_props = {{
                                 size: "small" , 
-                                children: <KeyboardArrowDownIcon /> , 
+                                children: <KeyboardArrowDownIcon fontSize="small"/> , 
                             }}
                             title = "展开"
                         >

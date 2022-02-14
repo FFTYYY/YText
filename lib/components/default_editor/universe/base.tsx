@@ -4,7 +4,7 @@
 
 import React from "react"
 
-export {FilledStyle , ScrollFilledStyle}
+export {FilledStyle , ScrollFilledStyle , ComponentStyle}
 
 /**
  * 一个填满父元素的元素。
@@ -23,3 +23,9 @@ let ScrollFilledStyle = {
     overflow: "auto" ,     
 } as React.CSSProperties
 
+let ComponentStyle = {
+    marginLeft: "10px" , 
+    marginRight: "10px" , 
+    marginBottom: "10px" , 
+    marginTop: "10px" , 
+} as React.CSSProperties

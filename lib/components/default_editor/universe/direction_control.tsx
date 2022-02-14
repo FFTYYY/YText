@@ -142,12 +142,12 @@ interface AutoStackedPopper_Props{
 class AutoStackedPopper extends React.Component<AutoStackedPopper_Props>{
 
     /**  
-     * @param force_direction 强制设置一个当前方向。
-     * @param children 子元素。由 React 自动提供。
-     * @param stacker 用什么组件来堆叠元素。默认为 AutoStack 。用户可以提供自己的堆叠方式。
-     * @param anchorEl 定位元素。
-     * @param open 是否打开。
-     * @param component 用什么元素来作为弹出框的实体。默认为 Paper 。
+     * @param props.force_direction 强制设置一个当前方向。
+     * @param props.children 子元素。由 React 自动提供。
+     * @param props.stacker 用什么组件来堆叠元素。默认为 AutoStack 。用户可以提供自己的堆叠方式。
+     * @param props.anchorEl 定位元素。
+     * @param props.open 是否打开。
+     * @param props.component 用什么元素来作为弹出框的实体。默认为 Paper 。
     */
     constructor(props: AutoStackedPopper_Props){
         super(props)
