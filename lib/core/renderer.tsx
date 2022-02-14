@@ -58,12 +58,14 @@ class Renderer<RendererImplementation>{
      * @param nodetype 节点类型。
      * @param stylename 样式名。如果为 undefined 就表示更新默认渲染器。
      */
-    update_renderer(renderer: RendererImplementation, nodetype: NodeType, stylename: string | undefined = undefined){
+    update_renderer(renderer: RendererImplementation, nodetype: NodeType, stylename: string | undefined = undefined){        
         if(stylename == undefined){
             this.default_renderers[nodetype] = renderer
+            return 
         }
-        if(nodetype == "text" || nodetype == "paragraph")
-        throw new Error(`当 nodetype = ${nodetype}，stylename 不能不为 undefined。（stylename = ${stylename}）`)
+        if(nodetype == "text" || nodetype == "paragraph"){
+            throw new Error(`当 nodetype = ${nodetype}，stylename 不能不为 undefined。（stylename = ${stylename}）`)
+        }
 
         this.style_renderers[nodetype][stylename] = renderer
     }

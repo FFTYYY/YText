@@ -31,6 +31,7 @@ import {
 	get_DefaultInline , 
 	get_DefaultSplitter , 
 	get_DefaultDisplayer ,
+	DefaultParagraph , 
 
 	list_printer , 
 } from "../lib"
@@ -80,6 +81,7 @@ class App extends React.Component<any,App_State> {
         )
 
 		this.editor = new YEditor( this.core )
+		this.editor.update_renderer(DefaultParagraph , "paragraph")
 		this.editor.update_renderer(theoremrenderer , "group" , "theorem")
 		this.editor.update_renderer(strongrenderer  , "inline" , "strong")
 		this.editor.update_renderer(nprenderer , "support" , "newparagraph")
@@ -103,8 +105,8 @@ class App extends React.Component<any,App_State> {
 			<Button onClick={me.outer_act.bind(this)}>Outer_Edit</Button>
 			<Box sx = {{
 				position: "absolute" , 
-				width: "49%" ,
-				left: "0" , 
+				width: "48%" ,
+				left: "1%" , 
 				height: "90%" , 
 			}}>
 				<DefaultEditor 
@@ -117,8 +119,8 @@ class App extends React.Component<any,App_State> {
 
 			<Box sx = {{
 					position: "absolute" , 
-					width: "49%" ,
-					left: "51%" , 
+					width: "48%" ,
+					left: "52%" , 
 					height: "90%" , 
 					backgroundColor: "#AABBCC" , 
 					overflow: "auto" , 

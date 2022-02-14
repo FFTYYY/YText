@@ -28,8 +28,10 @@ import { YEditor } from "../../editor"
 import { non_selectable_prop , is_same_node} from "../../utils"
 import { DefaultHidden } from "./hidden"
 import { DefaultParameterEditButton , DefaultCloseButton } from "./universe"
-import { AutoStackedPopper , SimpleAutoStack , AutoStack , UniversalComponent_Props , AutoTooltip , } from "./universe"
+import { UniversalComponent_Props , } from "./universe"
+import { AutoStackedPopper , SimpleAutoStack , AutoStack , AutoTooltip  } from "./basic"
 import { AutoStackedPopperWithButton } from "./universe"
+import { InlineComponentPaper } from "./basic"
 
 export { get_DefaultInline }
 
@@ -42,16 +44,8 @@ function get_DefaultInline(
         let editor  = props.editor
         let E = rightbar_extra
 
-        return <Paper 
-            sx={{
-                backgroundColor: "#AABBCC" , 
-                display: "inline-block" , 
-                marginLeft: "1%",
-                marginRight: "1%",
-            }}
-            {...props.attributes}
-        >
-            <AutoStack force_direction="row">
+        return <Box  {...props.attributes} sx={{display: "inline-block"}}>
+            <InlineComponentPaper><AutoStack force_direction="row">
                 <Box sx={{minWidth: "30px"}}>{props.children}</Box>
                 <Box {...non_selectable_prop}><AutoStack force_direction="row">
                     <E editor={editor} element={element}/>
@@ -59,8 +53,12 @@ function get_DefaultInline(
                         close_on_otherclick
                         button_class = {IconButton}
                         button_props = {{
-                            size: "small" , 
-                            children: <KeyboardArrowDownIcon fontSize="small"/> ,
+                            sx: {
+                                height: "1rem" , 
+                                width: "1rem" , 
+                                margin: "0",
+                            } , 
+                            children: <KeyboardArrowDownIcon sx={{height: "1rem"}}/> ,
                         }} 
                         title = "展开"
                     >
@@ -70,7 +68,7 @@ function get_DefaultInline(
                         <DefaultCloseButton editor={editor} element={element} />
                     </AutoStackedPopperWithButton>
                 </AutoStack></Box>
-            </AutoStack>
-        </Paper>
+            </AutoStack></InlineComponentPaper>
+        </Box>
     }
 }

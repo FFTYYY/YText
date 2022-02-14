@@ -2,7 +2,16 @@ import { Node , Path } from "slate"
 import { is_styled , StyledNode , GroupNode } from "./core/elements"
 import React from "react"
 
+export { 
+    non_selectable_prop , 
+    is_same_node , 
+    node2path , 
+    get_hidden_idx , 
+    update_kth , 
+    object_foreach
+}
 
+/** 询问一个节点在另一个节点的 hidden 数组中的位置。 */
 function get_hidden_idx(fathernode: StyledNode, sonnode: GroupNode){
     for(let i = 0; i < fathernode.hiddens.length;i++){
         if(is_same_node(fathernode.hiddens[i],sonnode))
@@ -49,4 +58,3 @@ function node2path(root: Node, node: Node): Path{
     return undefined
 }
 
-export { non_selectable_prop , is_same_node , node2path , get_hidden_idx , update_kth , object_foreach}

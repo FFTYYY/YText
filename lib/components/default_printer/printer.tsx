@@ -15,10 +15,9 @@ import {
 	Divider ,  
 } from "@mui/material"
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-import { my_theme } from "../default_theme"
+import { my_theme } from "../default_editor/basic"
 import { Printer } from "../../printer"
 import type { PrinterRenderer_Props } from "../../printer"
-import { FilledStyle , ScrollFilledStyle } from "../default_editor/universe" // TODO 这个文件需要换个位置。
 
 export { DefaultPrinter }
 
@@ -40,7 +39,12 @@ class DefaultPrinter extends React.Component <DefaultPrinter_Props> {
     }
 
     render() {
-        return <ThemeProvider theme={my_theme}><Paper sx={FilledStyle}>
+        return <ThemeProvider theme={my_theme}><Paper sx={{
+			position: "absolute" , 
+			height: "100%" , 
+			width: "100%" , 
+			overflow: "auto" , 
+		}}>
             <Printer.Component
 			    renderer = {this.printer}
 		    />

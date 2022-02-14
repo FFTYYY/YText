@@ -1,6 +1,6 @@
 export * as utils from "./utils"
-export * as out_renderer from "./printer"
-export * as editor_interface from "./editor"
+export * as printer from "./printer"
+export * as editor from "./editor"
 export * as plugins from "./plugins"
 export * as core from "./core"
 export * as components from "./components"

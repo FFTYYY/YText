@@ -21,7 +21,7 @@ import { Node, Editor } from "slate"
 import { set_node , replace_nodes } from "../../behaviours"
 
 
-import { AutoTooltip , ForceContain , AutoStackedPopper } from "./universe"
+import { AutoTooltip , ForceContain , AutoStackedPopper } from "./basic"
 import { StyledNode , NodeType , StyleType ,  GroupNode } from "../../core/elements"
 import { YEditor } from "../../editor"
 import { non_selectable_prop , is_same_node , node2path , update_kth , get_hidden_idx } from "../../utils"

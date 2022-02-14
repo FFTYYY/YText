@@ -34,7 +34,7 @@ import { non_selectable_prop , is_same_node} from "../../utils"
 import { warning } from "../../exceptions/warning";
 import { node2path } from "../../utils"
 
-import {  AutoStack , AutoTooltip , Direction} from "./universe"
+import {  AutoStack , AutoTooltip , Direction} from "./basic"
 import {  DefaultCloseButton , DefaultParameterEditButton , AutoStackedPopperWithButton } from "./universe"
 import { add_nodes } from "../../behaviours"
 
