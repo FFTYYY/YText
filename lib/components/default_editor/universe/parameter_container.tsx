@@ -28,7 +28,7 @@ import { Node, Editor } from "slate"
 
 import { StyledNode , is_validleaf} from "../../../core/elements"
 import type { ValidParameters , ValidLeaf } from "../../../core/elements"
-import { YEditor } from "../../../editor_interface"
+import { YEditor } from "../../../editor"
 import { non_selectable_prop , is_same_node , node2path } from "../../../utils"
 import { set_node , delete_node } from "../../../behaviours"
 

@@ -22,8 +22,8 @@ import {
 
 import { InlineStyle , EditorCore} from "../../core/editor_core"
 import { InlineNode , StyledNode } from "../../core/elements"
-import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor_interface"
-import { YEditor } from "../../editor_interface"
+import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
+import { YEditor } from "../../editor"
 
 import { non_selectable_prop , is_same_node} from "../../utils"
 import { DefaultHidden } from "./hidden"

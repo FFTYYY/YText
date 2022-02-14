@@ -1,11 +1,11 @@
-import { OutRenderer_Props} from "../../out_renderer"
+import type  { PrinterRenderer_Props} from "../../printer"
 import { GroupNode} from "../../core/elements"
 import { Node } from "slate"
-export { list_out_renderer }
+export { list_printer }
 import Card from '@mui/material/Card'
 
-var list_out_renderer = { 
-    renderer_func: (props: OutRenderer_Props) => {
+var list_printer = { 
+    renderer_func: (props: PrinterRenderer_Props) => {
         let list_idx = props.env_enter.list_idx
         let my_idx = list_idx[list_idx.length-1]
 

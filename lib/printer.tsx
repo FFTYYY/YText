@@ -7,21 +7,21 @@ import { get_node_type , is_styled } from "./core/elements"
 import { EditorCore } from "./core/editor_core"
 import { Renderer , default_renderer } from "./core/renderer"
 
-export { OutRenderer }
-export type { OutRenderer_Props }
+export { Printer , make_printer}
+export type { PrinterComponent_Props , PrinterRenderer_Props }
 
-interface OutRendererComponent_Props{
-    renderer: OutRenderer
+interface PrinterComponent_Props{
+    renderer: Printer
 }
 
-interface OutRendererComponent_State{
+interface PrinterComponent_State{
     root: GroupNode
 }
 
 
-/** 这个类是 OutRenderer 的组件类。*/
-class _OutRendererComponent extends React.Component<OutRendererComponent_Props , OutRendererComponent_State>{
-    renderer: OutRenderer
+/** 这个类是 Printer 的组件类。*/
+class _PrinterComponent extends React.Component<PrinterComponent_Props , PrinterComponent_State>{
+    renderer: Printer
     core: EditorCore
     env_enters: { [idx: number]: any }
     env_exits : { [idx: number]: any }
@@ -30,7 +30,7 @@ class _OutRendererComponent extends React.Component<OutRendererComponent_Props ,
      * 
      * @param props.renderer 这个组件对应的渲染器。
      */
-    constructor(props: OutRendererComponent_Props){
+    constructor(props: PrinterComponent_Props){
         super(props)
 
         this.state = {
@@ -134,8 +134,8 @@ class _OutRendererComponent extends React.Component<OutRendererComponent_Props ,
     }
 }
 
-function make_out_renderer(
-    renderer_func: (props: OutRenderer_Props) => any, 
+function make_printer(
+    renderer_func: (props: PrinterRenderer_Props) => any, 
     pre_effect_enter?: (element: Node, env: any) => any , 
     pre_effect_exit?: (element: Node, env: any) => any , 
 ): RendererImp{
@@ -148,7 +148,7 @@ function make_out_renderer(
     }
 }
 
-interface OutRenderer_Props<NT = Node>{
+interface PrinterRenderer_Props<NT = Node>{
     attributes: any
     children: any[]
     element: NT
@@ -161,7 +161,7 @@ interface OutRenderer_Props<NT = Node>{
  * 注意，在所有 pre_effect 方法中，允许直接修改 env 的成员，但不允许修改 env 的成员的成员。
  */
 interface RendererImp{
-    renderer_func: (props: OutRenderer_Props) => any
+    renderer_func: (props: PrinterRenderer_Props) => any
     
     /** 这个函数在进入节点时，提供一个环境。 */
     pre_effect_enter: (element: Node, env: any) => any
@@ -172,19 +172,19 @@ interface RendererImp{
 
 
 
-class OutRenderer extends Renderer<RendererImp>{
+class Printer extends Renderer<RendererImp>{
 
-    static Component = _OutRendererComponent
+    static Component = _PrinterComponent
 
     constructor(core: EditorCore){
         super(core , 
             {
-                text      : make_out_renderer( (props: OutRenderer_Props)=><span {...props.attributes}>{props.children}</span>) , 
-                inline    : make_out_renderer( (props: OutRenderer_Props)=><span {...props.attributes}>{props.children}</span>) , 
-                paragraph : make_out_renderer( (props: OutRenderer_Props)=><div {...props.attributes}>{props.children}</div>) , 
-                group     : make_out_renderer( default_renderer) , 
-                struct    : make_out_renderer( default_renderer) , 
-                support   : make_out_renderer( default_renderer) , 
+                text      : make_printer( (props: PrinterRenderer_Props)=><span {...props.attributes}>{props.children}</span>) , 
+                inline    : make_printer( (props: PrinterRenderer_Props)=><span {...props.attributes}>{props.children}</span>) , 
+                paragraph : make_printer( (props: PrinterRenderer_Props)=><div {...props.attributes}>{props.children}</div>) , 
+                group     : make_printer( default_renderer) , 
+                struct    : make_printer( default_renderer) , 
+                support   : make_printer( default_renderer) , 
             }
         )
     }

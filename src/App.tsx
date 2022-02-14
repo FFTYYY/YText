@@ -3,39 +3,44 @@ import Button from "@mui/material/Button"
 
 import "./App.css"
 
-import Box from '@mui/material/Box';
-import SpeedDial from '@mui/material/SpeedDial';
-import SpeedDialIcon from '@mui/material/SpeedDialIcon';
-import SpeedDialAction from '@mui/material/SpeedDialAction';
-import FileCopyIcon from '@mui/icons-material/FileCopyOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import PrintIcon from '@mui/icons-material/Print';
-import ShareIcon from '@mui/icons-material/Share';
-import Stack from '@mui/material/Stack';
-import Grid from '@mui/material/Grid';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-
-import SettingsIcon from '@mui/icons-material/Settings';
-import Switch from '@mui/material/Switch';
-import {YEditor , EditorCore , OutRenderer , AbstractStyle} from "../lib"
-import { get_DefaultGroup_with_AppBar , GroupStyle , get_DefaultGroup_with_RightBar} from "../lib"
-import { group_prototype , DefaultEditor , paragraph_prototype , OutRenderer_Props} from "../lib"
-import { InlineStyle , get_DefaultInline , DefaultRenderer , list_out_renderer} from "../lib"
-import { DefaultNewParagraph , get_DefaultSplitter , get_DefaultDisplayer , SupportStyle} from "../lib"
+import { 
+	Box ,
+} 
+from "@mui/material"
 
 import { Node , Transforms } from "slate"
+
+import {
+	YEditor , 
+	EditorCore , 
+	Printer , 
+	
+	GroupStyle , 
+	AbstractStyle , 
+	SupportStyle ,
+	InlineStyle , 
+
+	group_prototype ,
+	paragraph_prototype , 
+
+	DefaultEditor , 
+	DefaultPrinter , 
+	DefaultNewParagraph , 
+	get_DefaultGroup_with_AppBar , 
+	get_DefaultGroup_with_RightBar , 
+	get_DefaultInline , 
+	get_DefaultSplitter , 
+	get_DefaultDisplayer ,
+
+	list_printer , 
+} from "../lib"
+
 interface App_State{
 	value: Node[]
 }
 class App extends React.Component<any,App_State> {
-	editor: YEditor
-	outputer: OutRenderer
+	editor : YEditor
+	printer: Printer
 	core: EditorCore
 	
 	constructor(props: any) {
@@ -82,20 +87,20 @@ class App extends React.Component<any,App_State> {
 		this.editor.update_renderer(imagerenderer , "support" , "image")
 		this.editor.update_renderer(listrenderer , "group" , "list")
 		
-		this.outputer = new OutRenderer( this.core )
+		this.printer = new Printer( this.core )
 		// this.outputer.update_renderer( sectrionrenderer, "support" , "new-section" )
-		this.outputer.update_renderer( list_out_renderer, "group" , "list" )
+		this.printer.update_renderer( list_printer, "group" , "list" )
 	}
 
-	extra_button(){
+	outer_act(){
 		Transforms.insertNodes( this.editor.slate , [paragraph_prototype("桀桀") , paragraph_prototype("!!")] )
 	}
 
 	render() {
 		let me = this
-		let default_group = group_prototype("root" , {})
+
 		return <Box>
-			<Button onClick={me.extra_button.bind(this)}>Extra_Edit</Button>
+			<Button onClick={me.outer_act.bind(this)}>Outer_Edit</Button>
 			<Box sx = {{
 				position: "absolute" , 
 				width: "49%" ,
@@ -118,8 +123,8 @@ class App extends React.Component<any,App_State> {
 					backgroundColor: "#AABBCC" , 
 					overflow: "auto" , 
 			}}>
-				<DefaultRenderer
-					outer = {this.outputer}
+				<DefaultPrinter
+					printer = {this.printer}
 				/>
 			</Box>
 		</Box>

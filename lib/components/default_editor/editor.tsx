@@ -26,7 +26,7 @@ import { ThemeProvider } from "@mui/material/styles"
 
 import { Node } from "slate"
 
-import { YEditor } from "../../editor_interface"
+import { YEditor } from "../../editor"
 import { object_foreach } from "../../utils"
 import type { StyleType , NodeType } from "../../core/elements"
 
@@ -35,7 +35,7 @@ import { AutoStack , AutoTooltip , AutoStackedPopper , AutoStackButtons , Filled
 	AutoStackedPopperWithButton
 } from "./universe"
 
-import { my_theme } from "../theme"
+import { my_theme } from "../default_theme"
 
 export { DefaultEditor }
 interface DefaultEditor_State{
