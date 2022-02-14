@@ -38,84 +38,77 @@ import {  AutoStack , AutoTooltip , Direction} from "./universe"
 import {  DefaultCloseButton , DefaultParameterEditButton , AutoStackedPopperWithButton } from "./universe"
 import { add_nodes } from "../../behaviours"
 
-export { newparagraph , new_splitter , new_displayer}
+export { DefaultNewParagraph , get_DefaultSplitter , get_DefaultDisplayer}
 
 /** 这个函数返回一个用来新建段落的辅助节点。 */
-function newparagraph(name:string = "newparagraph"): [SupportStyle,EditorRenderer_Func]{
-    let style = new SupportStyle(name , {})
+function DefaultNewParagraph(props: EditorRenderer_Props){
+    let element = props.element as SupportNode
+    let editor = props.editor
 
+    let [left_active  , set_left_active ] = React.useState<boolean>(false)
+    let [right_active , set_right_active] = React.useState<boolean>(false)
+    let placeholder = <Paper sx ={{height: "5px"}} variant="outlined"/>
     
-    let renderer = (props: EditorRenderer_Props) => {
-        let element = props.element as SupportNode
-        let editor = props.editor
-
-        let [left_active  , set_left_active ] = React.useState<boolean>(false)
-        let [right_active , set_right_active] = React.useState<boolean>(false)
-        let placeholder = <Paper sx ={{height: "5px"}} variant="outlined"/>
-        
-        return <Box 
-            {...non_selectable_prop} 
-            {...props.attributes} 
-            sx = {{
-                width: "98%" , 
-                marginLeft: "1%" , 
-                marginRight: "1%" , 
-            }}
-        ><Direction.Provider value="row">{props.children}<Grid container spacing={2}>
-            <Grid item xs={6}>
-                <Box 
-                    onMouseOver = {()=>set_left_active(true)}
-                    onMouseOut  = {()=>set_left_active(false)}
-                >{(()=>{
-                    if(left_active)
-                        return <AutoTooltip title="向上添加段落"><Button 
-                            onClick = { e => {
-                                let my_path = node2path(editor.core.root , element) // 获取本节点的位置
-                                if(my_path == undefined)
-                                    warning("节点不在节点树中！")
-                                add_nodes(editor , paragraph_prototype() , my_path)
-                            }}
-                            size = "small"
-                            variant = "outlined"
-                            fullWidth
-                        ><NorthIcon fontSize="small" /></Button></AutoTooltip>
-                    return placeholder
-                })()}</Box>
-            </Grid>
-            <Grid item xs={6}>
-                <Box 
-                    onMouseOver = {()=>set_right_active(true)}
-                    onMouseOut  = {()=>set_right_active(false)}
-                >{(()=>{
-                    if(right_active)
-                        return <AutoTooltip title="向下添加段落"><Button 
-                            onClick = { e => {
-                                let my_path = node2path(editor.core.root , element) // 获取本节点的位置
-                                if(my_path == undefined)
-                                    warning("节点不在节点树中！")
-                                my_path[my_path.length - 1] ++ // 在下一个节点处插入
-                                add_nodes(editor , paragraph_prototype() , my_path)
-                            }}
-                            size = "small"
-                            variant = "outlined"
-                            fullWidth
-                        ><SouthIcon fontSize="small" /></Button></AutoTooltip>
-                    return placeholder
-                })()}</Box>
-            </Grid>
-        </Grid></Direction.Provider></Box>
-    }
-    
-    return [style , renderer]
+    return <Box 
+        {...non_selectable_prop} 
+        {...props.attributes} 
+        sx = {{
+            width: "98%" , 
+            marginLeft: "1%" , 
+            marginRight: "1%" , 
+        }}
+    ><Direction.Provider value="row">{props.children}<Grid container spacing={2}>
+        <Grid item xs={6}>
+            <Box 
+                onMouseOver = {()=>set_left_active(true)}
+                onMouseOut  = {()=>set_left_active(false)}
+            >{(()=>{
+                if(left_active)
+                    return <AutoTooltip title="向上添加段落"><Button 
+                        onClick = { e => {
+                            let my_path = node2path(editor.core.root , element) // 获取本节点的位置
+                            if(my_path == undefined)
+                                warning("节点不在节点树中！")
+                            add_nodes(editor , paragraph_prototype() , my_path)
+                        }}
+                        size = "small"
+                        variant = "outlined"
+                        fullWidth
+                    ><NorthIcon fontSize="small" /></Button></AutoTooltip>
+                return placeholder
+            })()}</Box>
+        </Grid>
+        <Grid item xs={6}>
+            <Box 
+                onMouseOver = {()=>set_right_active(true)}
+                onMouseOut  = {()=>set_right_active(false)}
+            >{(()=>{
+                if(right_active)
+                    return <AutoTooltip title="向下添加段落"><Button 
+                        onClick = { e => {
+                            let my_path = node2path(editor.core.root , element) // 获取本节点的位置
+                            if(my_path == undefined)
+                                warning("节点不在节点树中！")
+                            my_path[my_path.length - 1] ++ // 在下一个节点处插入
+                            add_nodes(editor , paragraph_prototype() , my_path)
+                        }}
+                        size = "small"
+                        variant = "outlined"
+                        fullWidth
+                    ><SouthIcon fontSize="small" /></Button></AutoTooltip>
+                return placeholder
+            })()}</Box>
+        </Grid>
+    </Grid></Direction.Provider></Box>
 }
 
 /** 这个函数返回一个默认的分界符组件。 */
-function new_splitter(name: string = "splitter", init_parameters:any = {}): [SupportStyle,EditorRenderer_Func]{
-    let style = new SupportStyle(name , init_parameters)
+function get_DefaultSplitter(get_title: (parameters:any)=>string = (parameters:any)=>parameters.name){
+    return (props: EditorRenderer_Props) => {
 
-    let renderer = (props: EditorRenderer_Props) => {
         let editor = props.editor
         let element = props.element as SupportNode
+        let title = get_title(element.parameters)
         return <Divider   
             {...non_selectable_prop}
             {...props.attributes} 
@@ -127,7 +120,7 @@ function new_splitter(name: string = "splitter", init_parameters:any = {}): [Sup
             }}
         >
             <Paper variant="outlined"><AutoStack force_direction="row">
-                <Typography>{name}</Typography>
+                <Typography>{title}</Typography>
                 <AutoStackedPopperWithButton
                     close_on_otherclick
                     button_class = {IconButton}
@@ -142,11 +135,9 @@ function new_splitter(name: string = "splitter", init_parameters:any = {}): [Sup
                 </AutoStackedPopperWithButton>
             </AutoStack></Paper>
             {props.children /* 对于一个void组件，其children也必须被渲染，否则会报错。*/} 
-
+    
         </Divider>
     }
-
-    return [style , renderer]
 }
 
 /** 这个函数返回一个用来显示元素的 *行内* 组件。 
@@ -155,15 +146,11 @@ function new_splitter(name: string = "splitter", init_parameters:any = {}): [Sup
  * @param get_url 如何从参数中获得要显示元素的url，默认为取 url 这个参数。
  * @param render_element 如何在编辑视图中渲染元素。默认为用 <img> 来渲染。
 */
-function new_displayer(
-    name: string = "displayer" , 
-    init_parameters:any = {url: ""}, 
+function get_DefaultDisplayer(
     get_url:((parameters: any)=>string)=((p)=>p.url) , 
     render_element: ((props: {url: string, parameters?: any})=>any) = ((props: {url: string})=><img src={props.url}/> ), 
-): [SupportStyle , EditorRenderer_Func]{
-    let style = new SupportStyle(name , init_parameters , {forceInline: true})
-
-    let renderer = (props: EditorRenderer_Props) => {
+){
+    return (props: EditorRenderer_Props) => {
         let editor = props.editor
         let element = props.element as SupportNode
         let url = get_url(element.parameters)
@@ -185,6 +172,4 @@ function new_displayer(
             </Stack>
         </Card></Box>
     }
-
-    return [style , renderer]
 }

@@ -23,10 +23,11 @@ import IconButton from '@mui/material/IconButton';
 
 import SettingsIcon from '@mui/icons-material/Settings';
 import Switch from '@mui/material/Switch';
-import {YEditor , EditorCore , OutRenderer , AbstractStyle , newparagraph , new_displayer} from "../lib"
+import {YEditor , EditorCore , OutRenderer , AbstractStyle} from "../lib"
 import { get_DefaultGroup_with_AppBar , GroupStyle , get_DefaultGroup_with_RightBar} from "../lib"
-import {group_prototype , DefaultEditor , paragraph_prototype , new_splitter , OutRenderer_Props} from "../lib"
+import { group_prototype , DefaultEditor , paragraph_prototype , OutRenderer_Props} from "../lib"
 import { InlineStyle , get_DefaultInline , DefaultRenderer , list_out_renderer} from "../lib"
+import { DefaultNewParagraph , get_DefaultSplitter , get_DefaultDisplayer , SupportStyle} from "../lib"
 
 import { Node , Transforms } from "slate"
 interface App_State{
@@ -57,9 +58,12 @@ class App extends React.Component<any,App_State> {
 		let strongstyle = new InlineStyle("strong" , {test: "2333"})
 		let strongrenderer = get_DefaultInline()
 
-		let [npstyle , nprenderer] = newparagraph("newparagraph")
-		let [sectionerstyle , sectrionrenderer] = new_splitter("new-section" , {alias: ""})
-		let [imagestyle , imagerenderer] = new_displayer("image" , {url: "" , title: ""})
+		let npstyle = new SupportStyle("newparagraph" , {})
+		let sectionerstyle = new SupportStyle("new-section" , {alias: ""})
+		let imagestyle = new SupportStyle("image" , {url: "" , title: ""})
+		let nprenderer = DefaultNewParagraph
+		let sectrionrenderer = get_DefaultSplitter((parameters)=>parameters.alias)
+		let imagerenderer = get_DefaultDisplayer((parameters)=>parameters.url)
 
 		this.core = new EditorCore(
 			[strongstyle]      , 

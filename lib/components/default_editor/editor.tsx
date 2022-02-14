@@ -39,7 +39,6 @@ import { my_theme } from "../theme"
 
 export { DefaultEditor }
 interface DefaultEditor_State{
-	poper_open  : {[key in StyleType]: boolean}
 }
 
 interface DefaultEditor_Props{
@@ -55,28 +54,9 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 	editor: YEditor
 	onUpdate: (newval: Node[]) => void
 	onMount: ()=>void
-	button_refs: {[key in StyleType]: React.RefObject<any>}
 
 	constructor(props: DefaultEditor_Props) {
 		super(props)
-
-		// 为了让过渡动画正确显示，必须让 anchorEl 和 open 单独处理。
-		// 这里 anchorEl 实现为 Ref ，而 open 实现为 stete 。
-		this.state = {
-			poper_open: { 
-				group: false, 
-				inline: false, 
-				support: false, 
-				struct: false, 
-			} , 
-		}
-
-		this.button_refs = {
-			group: React.createRef(), 
-			inline: React.createRef(), 
-			support: React.createRef(), 
-			struct: React.createRef(), 
-		}
 
 		this.editor = props.editor
 		this.onUpdate = props.onUpdate || ((newval: Node[])=>{})
@@ -93,7 +73,6 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 			support: CoffeeIcon , 
 			struct: QrCodeIcon , 
 		}
-		let opens   = this.state.poper_open
 
 		// 工具栏的宽度
 		let toolbar_width = {
