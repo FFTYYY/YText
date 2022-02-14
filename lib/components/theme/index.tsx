@@ -1,4 +1,4 @@
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 
 export {my_theme}
 

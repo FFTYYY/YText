@@ -5,60 +5,44 @@
 
 import React, {useState , createRef} from "react"
 
+
+import {
+    Typography , 
+    Button , 
+    Menu , 
+    MenuItem , 
+    Drawer , 
+    AppBar , 
+    Box , 
+    AccordionDetails , 
+    Portal , 
+    Popper , 
+    Tooltip , 
+    Switch , 
+    Toolbar , 
+    Paper , 
+    Grid , 
+    IconButton , 
+} 
+from "@mui/material"
+
+import {
+    KeyboardArrowDown as KeyboardArrowDownIcon
+ } from "@mui/icons-material"
+
+
 import { Node, Editor } from "slate"
 
-import Button       from "@mui/material/Button"
-import Card         from "@mui/material/Card"
-import TextField    from "@mui/material/TextField"
-import Grid         from "@mui/material/Grid"
-import CardHeader   from "@mui/material/CardHeader"
-import Menu         from "@mui/material/Menu"
-import MenuItem     from "@mui/material/MenuItem"
-import Drawer       from "@mui/material/Drawer"
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
-import CssBaseline from '@mui/material/CssBaseline';
-import List from '@mui/material/List';
-import Divider from '@mui/material/Divider';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import SettingsIcon from '@mui/icons-material/Settings';
-import Paper from '@mui/material/Paper';
-import Stack from '@mui/material/Stack';
-import Portal from '@mui/material/Portal';
-import Popper from '@mui/material/Popper';
-import { Tooltip } from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-
-import Switch from '@mui/material/Switch';
-import Container from '@mui/material/Container';
-import Popover from '@mui/material/Popover';
-
-import { GroupStyle , EditorCore} from "../../core/editor_core"
 import { GroupNode , StyledNode , paragraph_prototype , get_node_type } from "../../core/elements"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor_interface"
 import { YEditor } from "../../editor_interface"
 
 import { add_nodes , set_node , add_nodes_before , move_node } from "../../behaviours"
 import { non_selectable_prop , is_same_node , node2path } from "../../utils"
+import { DefaultParameterEditButton , DefaultCloseButton } from "./universe/buttons"
 import { DefaultHidden } from "./hidden"
-import { DefaultParameterContainer , DefaultParameterEditButton , DefaultCloseButton } from "./universe"
-import type { UniversalComponent_Props } from "./universe/parameter_container" 
 import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "./universe/direction_control"
+import type { UniversalComponent_Props } from "./universe/parameter_container" 
 
 export { get_DefaultGroup_with_AppBar , get_DefaultGroup_with_RightBar}
 

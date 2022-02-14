@@ -7,25 +7,18 @@ import React, {useState} from "react"
 
 import { Node, Editor } from "slate"
 
-import Button       from "@mui/material/Button"
-import Card         from "@mui/material/Card"
-import TextField    from "@mui/material/TextField"
-import Grid         from "@mui/material/Grid"
-import CardHeader   from "@mui/material/CardHeader"
-import Menu         from "@mui/material/Menu"
-import MenuItem     from "@mui/material/MenuItem"
-import Drawer       from "@mui/material/Drawer"
-import Box from '@mui/material/Box'
-import Stack from '@mui/material/Stack'
-import ButtonGroup from '@mui/material/ButtonGroup'
-import CodeIcon from '@mui/icons-material/Code'
-import FilterVintageIcon from '@mui/icons-material/FilterVintage';
-import IconButton from '@mui/material/IconButton'
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import {Paper} from '@mui/material';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import {
+    Grid , 
+    Box , 
+    Stack , 
+    IconButton , 
+    Typography , 
+    Paper , 
+} from "@mui/material"
+import {
+    KeyboardArrowDown as KeyboardArrowDownIcon , 
+} from "@mui/icons-material"
+
 
 import { InlineStyle , EditorCore} from "../../core/editor_core"
 import { InlineNode , StyledNode } from "../../core/elements"

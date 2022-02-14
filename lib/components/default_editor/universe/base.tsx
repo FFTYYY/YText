@@ -2,9 +2,7 @@
  * @module
  */
 
-import Box from '@mui/material/Box';
-import { createTheme, ThemeProvider, styled , makeStyles } from '@mui/material/styles';
-import React from "react";
+import React from "react"
 
 export {FilledStyle , ScrollFilledStyle}
 

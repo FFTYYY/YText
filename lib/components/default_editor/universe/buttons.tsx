@@ -5,30 +5,26 @@
 
 import React, {useState} from "react"
 
-import Card         from "@mui/material/Card"
-import TextField    from "@mui/material/TextField"
-import Drawer       from "@mui/material/Drawer"
-import CloseIcon from '@mui/icons-material/Close';
-import Portal from '@mui/material/Portal';
-import Button from '@mui/material/Button';
-import { Typography } from '@mui/material';
+import { 
+    Card , 
+    TextField ,
+    Drawer , 
+    Portal , 
+    Button , 
+    Typography , 
+    Tooltip , 
+    IconButton , 
+} from "@mui/material"
+import type { IconButtonProps } from "@mui/material"
 
-import { StyledNode } from "../../../core/elements"
-import { GroupStyle , EditorCore} from "../../../core/editor_core"
-import { YEditor } from "../../../editor_interface"
-import { HiveTwoTone } from "@mui/icons-material"
-import { non_selectable_prop , is_same_node , node2path } from "../../../utils"
-import { Node, Editor } from "slate"
-import IconButton from '@mui/material/IconButton';
-import { set_node , delete_node } from "../../../behaviours"
-import { styled } from '@material-ui/styles';
-import { Tooltip } from '@mui/material';
-import type { TooltipProps , ButtonProps , IconButtonProps } from '@mui/material';
+import {
+    Close as CloseIcon , 
+    Settings as SettingsIcon , 
+}
+from "@mui/icons-material"
 
-import SettingsIcon from '@mui/icons-material/Settings';
-import SettingsApplicationsOutlinedIcon from '@mui/icons-material/SettingsApplicationsOutlined';
-import SettingsApplicationsTwoToneIcon from '@mui/icons-material/SettingsApplicationsTwoTone';
 
+import { delete_node } from "../../../behaviours"
 import { AutoTooltip , Direction , AutoStack } from "./direction_control"
 import { DefaultParameterWithEditorWithDrawer , UniversalComponent_Props } from "./parameter_container" 
 

@@ -3,39 +3,33 @@
  * @module
  */
 
+ import {
+    Paper , 
+    Card , 
+    Box , 
+    Stack , 
+    Divider , 
+    Button , 
+    ButtonGroup , 
+}
+from "@mui/material"
+import {
+    South as SouthIcon , 
+    North as NorthIcon , 
+}
+from "@mui/icons-material"
+
+import { Node } from "slate"
+
 import { SupportNode , paragraph_prototype} from "../../core/elements"
 import { SupportStyle , EditorCore} from "../../core/editor_core"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor_interface"
 import { YEditor } from "../../editor_interface"
-import Button from '@mui/material/Button';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import { Node } from "slate"
 import { non_selectable_prop , is_same_node} from "../../utils"
 import { warning } from "../../exceptions/warning";
 import { node2path } from "../../utils"
 
-import SouthIcon from '@mui/icons-material/South';
-import NorthIcon from '@mui/icons-material/North';
-import Paper         from "@mui/material/Paper"
-import Card         from "@mui/material/Card"
-import Box         from "@mui/material/Box"
-import TextField    from "@mui/material/TextField"
-import CardHeader   from "@mui/material/CardHeader"
-import Menu         from "@mui/material/Menu"
-import MenuItem     from "@mui/material/MenuItem"
-import Drawer       from "@mui/material/Drawer"
-import CodeIcon from '@mui/icons-material/Code'
-import FilterVintageIcon from '@mui/icons-material/FilterVintage';
-import IconButton from '@mui/material/IconButton'
-import AirlineSeatReclineNormalIcon from '@mui/icons-material/AirlineSeatReclineNormal';
-
-import { DefaultHidden } from "./hidden"
-
-import { DefaultParameterContainer , DefaultParameterWithEditorWithDrawer , DefaultCloseButton} from "./universe"
-
-import Divider from '@mui/material/Divider';
-import {DefaultParameterEditButton} from "./universe"
-import Stack from '@mui/material/Stack';
+import {  DefaultCloseButton , DefaultParameterEditButton} from "./universe"
 import { add_nodes } from "../../behaviours"
 
 export { newparagraph , new_splitter , new_displayer}

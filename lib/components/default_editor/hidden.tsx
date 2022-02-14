@@ -4,37 +4,29 @@
 
 import React, {useState , createRef} from "react"
 
+
+import {
+    Button ,
+    Menu , 
+    MenuItem , 
+    Drawer , 
+    IconButton , 
+} from "@mui/material"
+import { 
+    AddBox as AddBoxIcon , 
+    FilterNone as FilterNoneIcon , 
+} from "@mui/icons-material"
 import { Node, Editor } from "slate"
 
-import Button from "@mui/material/Button"
-import Container from "@mui/material/Container"
-import Box from "@mui/material/Box"
-import Card from "@mui/material/Card"
-import TextField from "@mui/material/TextField"
-import Grid from "@mui/material/Grid"
-import CardHeader from "@mui/material/CardHeader"
-import Menu from "@mui/material/Menu"
-import MenuItem from "@mui/material/MenuItem"
-import Drawer from "@mui/material/Drawer"
-import { makeStyles , styled } from "@material-ui/styles"
-import SportsMartialArtsIcon from '@mui/icons-material/SportsMartialArts';
-import SwipeVerticalIcon from '@mui/icons-material/SwipeVertical';
-import IconButton from '@mui/material/IconButton';
-import ButtonGroup from '@mui/material/ButtonGroup';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import FilterNoneIcon from '@mui/icons-material/FilterNone';
 import { set_node , replace_nodes } from "../../behaviours"
 
 
-import { AutoTooltip , ForceContain } from "./universe"
-import { AutoStackedPopper } from "./universe"
+import { AutoTooltip , ForceContain , AutoStackedPopper } from "./universe"
 import { StyledNode , NodeType , StyleType ,  GroupNode } from "../../core/elements"
 import { YEditor } from "../../editor_interface"
 import { non_selectable_prop , is_same_node , node2path , update_kth , get_hidden_idx } from "../../utils"
-import { DefaultEditor } from "./editor"
 import { EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle } from "../../core/editor_core"
-import { editor } from "."
-import new_url from "../../statics/new.png"
+import { DefaultEditor } from "./editor"
 
 export {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden}
 
