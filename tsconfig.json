@@ -23,14 +23,7 @@
 	] , 
 	"typedocOptions": {
 		"entryPoints": [
-			"src/editor/utils.tsx" , 
-			"src/editor/core/elements.tsx" , 
-			"src/editor/core/editor/editor_core.tsx" , 
-			"src/editor/core/editor/editor_interface.tsx" , 
-			"src/editor/components/groups.tsx" , 
-			"src/editor/components/hidden.tsx" , 
-			"src/editor/components/supports.tsx" , 
-			"src/editor/components/universe.tsx" , 
+			"lib/index.tsx" , 
 		],
 		"out": "docs" , 
 	} ,
