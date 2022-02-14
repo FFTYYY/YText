@@ -24,12 +24,14 @@ from "@mui/icons-material"
 
 
 import { delete_node } from "../../../behaviours"
-import { AutoTooltip , Direction , AutoStack } from "./direction_control"
+import { AutoTooltip , Direction , AutoStack , AutoStackedPopper } from "./direction_control"
+import type { AutoStackedPopper_Props } from "./direction_control"
 import { DefaultParameterWithEditorWithDrawer , UniversalComponent_Props } from "./parameter_container" 
 
 export {    
     DefaultParameterEditButton , 
     DefaultCloseButton , 
+    AutoStackedPopperWithButton , 
 }
 
 /** 这个函数是一个语法糖，用于自动创建按钮 */
@@ -79,6 +81,34 @@ function DefaultParameterEditButton(props: UniversalComponent_Props & {
 function DefaultCloseButton(props: UniversalComponent_Props){
     return <AutoIconButton onClick={e=>{delete_node(props.editor , props.element)}} title="删除组件" icon={CloseIcon} />
 }
+
+
+function AutoStackedPopperWithButton(props: {
+    button_class: any , 
+    poper_props?: any,
+    button_props?: any , 
+    title?: string ,  
+    children?: any , 
+}){
+    let B = props.button_class
+    let [menu_open, set_menu_open] = React.useState<boolean>(false)
+    // 展开栏挂载的元素。
+    let menu_anchor = React.useRef()
+
+    return <React.Fragment>
+        <AutoTooltip title={props.title}><B 
+            onClick = {e => set_menu_open(!menu_open)}
+            ref = {menu_anchor}
+            {...props.button_props}
+        /></AutoTooltip>
+        <AutoStackedPopper 
+            anchorEl = {menu_anchor.current} 
+            open = {menu_open}
+            {...props.poper_props}
+        >{props.children}</AutoStackedPopper>
+    </React.Fragment>
+}
+
 
 function MyImg(props: {img_url: string}){
     return <img src={props.img_url}></img>

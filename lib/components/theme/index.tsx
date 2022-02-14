@@ -7,4 +7,4 @@ const my_theme = createTheme({
         mode: "dark",
         divider: "#ffffff77"
       },
-});
+})

@@ -12,6 +12,7 @@ import {
     Popper , 
     Tooltip , 
     Stack , 
+    Fade  , 
 } from "@mui/material"
 
 export {
@@ -22,6 +23,10 @@ export {
     AutoStackedPopper , 
     AutoStackButtons , 
     ForceContain , 
+}
+export type {
+    AutoStackedPopper_Props , 
+    DirectionValues , 
 }
 
 type DirectionValues = "row" | "column"
@@ -158,11 +163,12 @@ class AutoStackedPopper extends React.Component<AutoStackedPopper_Props>{
                 open = {props.open}
                 placement = {nowdir == "row" ? "right" : "bottom"}
                 disablePortal = {force_contain}
-            >
+                transition
+            >{({ TransitionProps }) => (<Fade {...TransitionProps} timeout={350}>
                 <C><S>
                     {props.children}
                 </S></C>
-            </Popper>}</ForceContain.Consumer>
+            </Fade>)}</Popper>}</ForceContain.Consumer>
         }
     
         if(props.force_direction != undefined){

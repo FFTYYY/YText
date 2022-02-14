@@ -28,7 +28,8 @@ import { YEditor } from "../../editor_interface"
 import { non_selectable_prop , is_same_node} from "../../utils"
 import { DefaultHidden } from "./hidden"
 import { DefaultParameterEditButton , DefaultCloseButton } from "./universe"
-import { AutoStackedPopper , SimpleAutoStack , UniversalComponent_Props , AutoTooltip , } from "./universe"
+import { AutoStackedPopper , SimpleAutoStack , AutoStack , UniversalComponent_Props , AutoTooltip , } from "./universe"
+import { AutoStackedPopperWithButton } from "./universe"
 
 export { get_DefaultInline }
 
@@ -41,37 +42,36 @@ function get_DefaultInline(
         let editor  = props.editor
         let E = rightbar_extra
 
-        // 展开栏挂载的元素。
-        let [menu_anchor, set_menu_anchor] = React.useState<null | HTMLElement>(null)
-
-        const expand_button = <Box {...non_selectable_prop}><SimpleAutoStack force_direction="column">
-            <E editor={editor} element={element}/>
-            <AutoTooltip title = "展开"><IconButton 
-                onClick = {e => set_menu_anchor(menu_anchor == undefined ? e.currentTarget : undefined)}
-                size = "small"
-            ><KeyboardArrowDownIcon /></IconButton></AutoTooltip>
-            <AutoStackedPopper 
-                anchorEl = {menu_anchor} 
-                open = {menu_anchor != undefined}
-            >
-                <Typography>{element.name}</Typography>
-                <DefaultParameterEditButton editor={editor} element={element}/>
-                <DefaultHidden      editor={editor} element={element} />
-                <DefaultCloseButton editor={editor} element={element} />
-            </AutoStackedPopper>
-        </SimpleAutoStack></Box>
-
-
-        return <Box component="span" {...props.attributes}><Paper 
+        return <Paper 
             sx={{
                 backgroundColor: "#AABBCC" , 
                 display: "inline-block" , 
+                marginLeft: "1%",
+                marginRight: "1%",
             }}
+            {...props.attributes}
         >
             <Grid container columns={24}>
                 <Grid item xs={21} md={22} xl={23}>{props.children}</Grid>
-                <Grid item xs={3}  md={2}  xl={1}>{expand_button}</Grid>
+                <Grid item xs={3}  md={2}  xl={1}>
+                    <Box {...non_selectable_prop}><AutoStack force_direction="row">
+                        <E editor={editor} element={element}/>
+                        <AutoStackedPopperWithButton
+                            button_class = {IconButton}
+                            button_props = {{
+                                size: "small" , 
+                                children: <KeyboardArrowDownIcon /> ,
+                            }} 
+                            title = "展开"
+                        >
+                            <Typography>{element.name}</Typography>
+                            <DefaultParameterEditButton editor={editor} element={element}/>
+                            <DefaultHidden      editor={editor} element={element} />
+                            <DefaultCloseButton editor={editor} element={element} />
+                        </AutoStackedPopperWithButton>
+                    </AutoStack></Box>
+                </Grid>
             </Grid>
-        </Paper></Box>
+        </Paper>
     }
 }
