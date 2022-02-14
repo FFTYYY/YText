@@ -15,7 +15,6 @@ import {
     AppBar , 
     Box , 
     AccordionDetails , 
-    Portal , 
     Popper , 
     Tooltip , 
     Switch , 
@@ -68,7 +67,7 @@ function get_DefaultGroup_with_AppBar(
                 marginRight: "1%",
             }}
             {...props.attributes}
-            variant="outlined"
+            variant = "outlined"
         >
             <AppBar {...non_selectable_prop} position="static" color="primary">
                 <Toolbar><AutoStack force_direction="row">

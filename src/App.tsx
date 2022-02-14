@@ -40,7 +40,16 @@ class App extends React.Component<any,App_State> {
 	constructor(props: any) {
 		super(props)
 
-		let theoremstyle = new GroupStyle("theorem" , {title: "Theorem 1" , other_param: "xxx" , sub_par: {a: "1", b: "2"}})
+		let theoremstyle = new GroupStyle("theorem" , {
+			title: "Theorem 1" , 
+			other_param: "xxx" , 
+			sub_par: {a: "1", b: "2"} , 
+			haha: {
+				a: 123,
+				b: 0.99 , 
+				c: false , 
+			}
+		})
 		let liststyle = new GroupStyle("list" , {title: "list"})
 		let theoremrenderer = get_DefaultGroup_with_AppBar()
 		let listrenderer    = get_DefaultGroup_with_RightBar()

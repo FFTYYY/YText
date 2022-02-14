@@ -11,11 +11,23 @@ import {
     TextField ,
     Button , 
     Drawer , 
+    Box , 
+    Switch , 
+    MenuItem  , 
 } from "@mui/material"
+import { 
+    TreeItem , 
+    TreeView , 
+} from "@mui/lab"
+import { 
+    ExpandMore as ExpandMoreIcon , 
+    ChevronRight as ChevronRightIcon  , 
+} from "@mui/icons-material"
 
 import { Node, Editor } from "slate"
 
-import { StyledNode } from "../../../core/elements"
+import { StyledNode , is_validleaf} from "../../../core/elements"
+import type { ValidParameters , ValidLeaf } from "../../../core/elements"
 import { YEditor } from "../../../editor_interface"
 import { non_selectable_prop , is_same_node , node2path } from "../../../utils"
 import { set_node , delete_node } from "../../../behaviours"
@@ -30,9 +42,10 @@ export type {
 }
 
 interface DefaultParameterContainer_Props{
-    initval: any
-    onUpdate?: (newval: any) => void
+    initval: ValidParameters
+    onUpdate?: (newval: ValidParameters) => void
 }
+
 
 /** 这个类定义一个菜单组件，作为默认的参数更新器。 
  * 注意，这个组件更新参数有两种方式：通过回调函数立刻更新（ onUpdate ），或者像父组件暴露本对象，期望父组件来调用
@@ -56,69 +69,117 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
         this.onUpdate = props.onUpdate || ( (newval: any) => {} )
     }
 
-    /** 父组件调用这个函数来获得更新过的parameters */
-    parameter_values(){
-        return this.parameters
+    /** 这个函数收集所有节点，作为树的初始展开项。 */
+    get_all_treenodes(name: string[] , parameters: any):string[][]{
+        let me = this
+        let ret = []
+        for(let key in parameters){
+            let subname = [...name , key]
+            if(!is_validleaf(parameters[key])){
+                ret.push(subname)
+                ret = [...ret , ...me.get_all_treenodes(subname , parameters[key])]
+            }
+        }
+        return ret
     }
+    
 
-    /** 如果参数的当前项是一个字符串，则渲染一个输入框。     * 
+    /** 如果参数的当前项是一个基本值，则渲染一个输入框。
      * @param props.name 参数项的名称。
      * @param props.val 参数的当前值。
      * @param onChange 当值改变时的回调函数。
      */
-    renderString(props: {name: string, val: string, onChange: (newval:string)=>void}){
-        return <TextField 
-            defaultValue = {props.val} 
-            onChange  = {e=>props.onChange(e.target.value)}
-            label   = {props.name}
-            variant = "standard"
-            sx      = {{marginLeft: "5%"}}
-        ></TextField>
+    renderValue(props: {name: string, val: ValidLeaf , onChange: (newval:ValidLeaf)=>void}){
+
+        let name = props.name
+        let val = props.val
+        let onChange = props.onChange
+        let standard_props = {
+            defaultValue: val ,
+            label: name, 
+            variant: "standard" as "standard" , // ts有毛病
+            sx: {marginLeft: "5%"} , 
+        }
+
+        if(typeof(val) == "string"){
+            return <TextField 
+                onChange  = {e=>onChange(e.target.value)}
+                {...standard_props}
+            />
+        }
+        if(typeof(val) == "number"){
+            return <TextField 
+                onChange  = {e=>onChange(e.target.value)}
+                type = "number"
+                {...standard_props}
+            />
+        }
+        if(typeof(val) == "boolean"){
+            return <TextField 
+                onChange = {e=>{onChange(e.target.value == "true")}}
+                select
+                {...standard_props}
+            >
+                <MenuItem key={0} value="true" >true</MenuItem>
+                <MenuItem key={1} value="false">false</MenuItem>
+            </TextField>
+        }
+        return <></>
     }
 
     /** 如果参数的当前项是一个对象，则渲染一个菜单，并递归地检查每一项，直到遇到字符串。
      * TODO：还应该处理其他基本类型，例如number和boolean，但是目前只考虑了字符串。
      * 
      * @param props.name 参数项的名称。
+     * @param props.father_names 这个参数收集所有父节点的名称，作为唯一的 nodeID。
      * @param props.val 参数项的当前值。应该是一个字典。
      * @param props.onChange 当值改变时的回调函数。
      */
-    renderDict(props: {name: string, val:object, onChange: (newval:object)=>void}){
+    renderDict(props: {name: string, val: ValidParameters, father_names:string[], onChange: (newval:object)=>void}){
         let newval = {...props.val}
 
-        let RS = this.renderString.bind(this)   // 渲染一个文本框。
+        let RV = this.renderValue.bind(this)   // 渲染一个文本框。
         let RO = this.renderDict.bind(this)     // 递归地渲染一个菜单。
+        let my_names = [...props.father_names , props.name]
+        let my_nodeId = JSON.stringify(my_names)
 
-        return <Card key={props.name} sx={{marginLeft: "5%"}}>
-            <p>{props.name}</p>
-            {Object.keys(props.val).map(
-                (subname)=>{
-                    let subval = props.val[subname]
+        return <TreeItem 
+            nodeId = {my_nodeId} 
+            label = {props.name}
+            sx = {{
+                width: "auto" , 
+                overflowX: "hidden" , 
+            }}
+        >
+            {Object.keys(props.val).map( (subname)=>{
+                let subval = props.val[subname]
 
-                    if(typeof subval === "string")
-                    {
-                        return <RS 
-                            key     = {subname}
-                            name    = {subname} 
-                            val     = {subval} 
-                            onChange = {(newsubval:string)=>{
-                                newval[subname] = newsubval
-                                props.onChange(newval)
-                            }} 
-                        />               
-                    }
-
-                    return <RO 
+                // 如果是基本类型，就渲染一个输入框。
+                if(is_validleaf(subval)){
+                    return <RV 
                         key     = {subname}
                         name    = {subname} 
                         val     = {subval} 
-                        onChange = {(newsubval:object)=>{
+                        onChange = {(newsubval:ValidLeaf)=>{
                             newval[subname] = newsubval
                             props.onChange(newval)
                         }} 
-                    />            
-        }
-        )}</Card>
+                    />               
+                }
+
+                // 如果不是，就渲染一个树项。
+                return <RO 
+                    key     = {subname}
+                    name    = {subname} 
+                    val     = {subval} 
+                    father_names = {my_names}
+                    onChange = {(newsubval:ValidParameters)=>{
+                        newval[subname] = newsubval
+                        props.onChange(newval)
+                    }} 
+                />            
+            })}
+        </TreeItem >
 
     }
     
@@ -131,14 +192,25 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
         let R = this.renderDict.bind(this)
         let me = this
 
-        return <R
-            name="Parameters"
-            val={me.parameters}
-            onChange={(newval:any)=>{
+        let root_name = "Parameters"
+        let all_nodeids = Object.values( this.get_all_treenodes([] ,{[root_name]: me.parameters}) ).map(val=>JSON.stringify(val))
+
+        return <TreeView
+            defaultExpanded = {all_nodeids}
+            disableSelection
+            disabledItemsFocusable
+            defaultCollapseIcon = {<ExpandMoreIcon />}
+            defaultExpandIcon = {<ChevronRightIcon />} 
+        ><R
+            name = {root_name}
+            val = {me.parameters}
+            father_names = {[]}
+            
+            onChange = {(newval:ValidParameters)=>{
                 me.parameters = newval
                 me.onUpdate(newval) // 向父组件通知自己的更新
             }}
-        ></R>
+        ></R></TreeView>
     }
 }
 
@@ -154,7 +226,7 @@ interface UniversalComponent_Props{
  */
 function DefaultParameterWithEditor(props: UniversalComponent_Props){
 
-    function temp_update_value(newval: any){
+    function temp_update_value(newval: ValidParameters){
 
         props.editor.add_suboperation( props.element.idx , (father_editor: YEditor) => {
             set_node( father_editor , props.element , { parameters: newval })
