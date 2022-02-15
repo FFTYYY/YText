@@ -7,6 +7,10 @@ import type { EnterEffectFunc , ExitEffectFunc } from "../../../printer"
 import type { PrinterEnv , PrinterContext } from "../../../printer"
 
 export { BasicEffector }
+export type {OptionFunc}
+
+type OptionFunc<NODETYPE,T> = (element: NODETYPE, env: PrinterEnv, context?: PrinterContext) => T
+
 
 class BasicEffector<NODETYPE = Node>{
     env_key: string
@@ -17,7 +21,7 @@ class BasicEffector<NODETYPE = Node>{
         this.context_key = context_key
         this._default_val = default_val
     }
-    enter_effect(element: NODETYPE, env: PrinterEnv): [PrinterEnv,PrinterContext] {
+    enter_effect(element: NODETYPE, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {
         return [env , {}]
     }
     exit_effect(element: NODETYPE, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {
@@ -37,6 +41,7 @@ class BasicEffector<NODETYPE = Node>{
     }
 
     set_env(env: PrinterEnv , val: any){
+        env = this.ensure_env(env)
         env[this.env_key] = val
         return env
     }
@@ -61,7 +66,7 @@ class BasicEffector<NODETYPE = Node>{
     }
 
     enter_fuse( element: NODETYPE, env: PrinterEnv , context: PrinterContext ): [PrinterEnv , PrinterContext]{
-        return this.fuse_result( [env , context] , this.enter_effect(element , env) )
+        return this.fuse_result( [env , context] , this.enter_effect(element , env , context) )
     }
     exit_fuse ( element: NODETYPE, env: PrinterEnv , context: PrinterContext ): [PrinterEnv , PrinterContext]{
         return this.fuse_result( [env , context] , this.exit_effect(element , env , context) )

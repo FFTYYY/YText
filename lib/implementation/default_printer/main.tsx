@@ -41,7 +41,8 @@ class DefaultPrinter extends React.Component <DefaultPrinter_Props> {
 			position: "absolute" , 
 			height: "100%" , 
 			width: "100%" , 
-			overflow: "auto" , 
+			overflowY: "auto" , 
+			wordWrap: "break-word" , 
 		}}>
             <Printer.Component
 			    printer = {this.printer}

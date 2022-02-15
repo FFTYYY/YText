@@ -3,9 +3,12 @@
  * @module
  */
 
- export * from "./base"
- export * from "./order"
+export * from "./base"
+export * from "./order"
+export * from "./injecter"
 
- export * as implementation_printer_effecter_base from "./base"
- export * as implementation_printer_effecter_order from "./order"
+// TODO 想想怎么办
+export * as implementation_printer_effecter_base from "./base"
+export * as implementation_printer_effecter_order from "./order"
+export * as implementation_printer_effecter_injecter from "./injecter"
 

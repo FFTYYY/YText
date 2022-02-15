@@ -92,7 +92,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         let R = printer.get_renderer(type , name)
         return <R.render_func
             element  = { element }
-            context  = { styled ? contexts[(element as StyledNode).idx] : {} }        
+            context  = { contexts[JSON.stringify(element)] }        
         >{
             Object.keys(children).map((num) => <ThisFunction
                 key      = {num}
@@ -104,19 +104,19 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
 
     /** 这个函数在实际渲染组件之前，获得每个组件的环境。 */
     build_envs(_node: Node, now_env: PrinterEnv, contexts: PrinterContext){
-        if(!is_styled(_node)){
-            if("children" in _node){
-                for(let c of _node.children){
-                    [ now_env , contexts ] = this.build_envs(c , now_env , contexts)
-                }
-            }
-            return [ now_env , contexts ]
+        if(!("children" in _node)){
+            return [ now_env , contexts ]            
         }
 
-        let node = _node as StyledNode
+        let node = _node as Node & {children: Node[]}
+        let type = get_node_type(node)
+        let name: string | undefined = undefined
+        if(is_styled(node)){
+            name = node.name
+        }
         
         let printer = this.printer
-        let R = printer.get_renderer(node.type , node.name)
+        let R = printer.get_renderer(type , name)
 
         // 获得进入时的活动结果。
         let [_env , _context] = R.enter_effect(node , now_env)
@@ -130,7 +130,9 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         // 获得退出时的结果。
         let [new_env , new_context] = R.exit_effect(node , now_env , _context)
         
-        contexts[node.idx] = new_context // 更新此节点的上下文。
+        // TODO：你他妈的不能这么做。但是不这么做的话就没法给段落节点记录上下文。
+        // TODO：改成用路径记录。
+        contexts[JSON.stringify(node)] = new_context // 更新此节点的上下文。
 
         return [new_env , contexts]
     }

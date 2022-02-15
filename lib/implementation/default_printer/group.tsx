@@ -1,12 +1,25 @@
+import {
+    Typography , 
+    Box , 
+    Paper , 
+} from "@mui/material"
+import type {
+    TypographyProps , 
+    PaperProps , 
+    BoxProps , 
+} from "@mui/material"
+
+
 import { Node } from "slate"
 import type  { PrinterRenderFunc_Props } from "../../printer"
 import { GroupNode} from "../../core/elements"
-import Card from '@mui/material/Card'
 import type { PrinterRenderer } from "../../printer"
-import { OrderEffector } from "./effecter"
+import { OrderEffector , InjectEffector , ConsumeEffector} from "./effecter"
 import { PrinterGroupBox , PrinterParagraphBox , PrinterInlineTitle } from "./basic/components"
 import type { ValidParameters } from "../../core/elements"
 import type { PrinterEnv , PrinterContext } from "../../printer"
+import { AutoStack } from "../basic"
+
 export { get_DefaultGroupPrinter }
 
 
@@ -19,34 +32,38 @@ function get_DefaultGroupPrinter(
         `order/${key}` , 
         `order/${key}` , 
     )
+    let inject_effector = new InjectEffector<GroupNode>("injector" , "injector" , 
+        (element: GroupNode, env: PrinterEnv , context: PrinterContext) => {
+            let order = order_effector.get_context(context)
+            let title = get_title(element.parameters)            
+            return <span>{title} {order}: </span>
+        }
+    )
 
     return {
         render_func: (props: PrinterRenderFunc_Props) => {
             let element = props.element as GroupNode 
 
-            let order = order_effector.get_context(props.context)
-            let title = get_title(element.parameters)
-
-            return <PrinterGroupBox>
-                <PrinterInlineTitle>{title} {order} {props.children[0]}</PrinterInlineTitle>
-                {props.children}
-            </PrinterGroupBox>
+            return <PrinterGroupBox>{props.children}</PrinterGroupBox>
         } , 
         enter_effect: (element: GroupNode, env: PrinterEnv): [PrinterEnv,PrinterContext] => {    
             let ret: [PrinterEnv , PrinterContext] = [ env , {} ]
     
-            ret = order_effector.fuse_result( ret , order_effector.enter_effect(element , env) )
+            ret = order_effector.enter_fuse(element , ret[0] , ret[1])
+            ret = inject_effector.enter_fuse(element , ret[0] , ret[1])
+
+            console.log("group-enter" , ret[0])
     
             return ret
         } , 
         exit_effect: (element: GroupNode, env: PrinterEnv , context: PrinterContext):[PrinterEnv,PrinterContext] => {    
             let ret: [PrinterEnv , PrinterContext] = [ env , context ]
     
-            ret = order_effector.fuse_result( ret , order_effector.enter_effect(element , env) )
+            ret = order_effector.exit_fuse(element , ret[0] , ret[1])
+            ret = inject_effector.exit_fuse(element , ret[0] , ret[1])
     
             return ret
         } , 
-    
     }
 }
 

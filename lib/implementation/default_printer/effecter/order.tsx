@@ -3,13 +3,12 @@
  */
 import { Node } from "slate"
 import { BasicEffector } from "./base"
+import type { OptionFunc } from "./base"
 import type { EnterEffectFunc , ExitEffectFunc } from "../../../printer"
 import type { PrinterEnv , PrinterContext } from "../../../printer"
 
 
 export { OrderEffector }
-
-type OptionFunc<NODETYPE,T> = (element: NODETYPE, env: PrinterEnv, context?: PrinterContext) => T
 
 class OrderEffector<NODETYPE = Node> extends BasicEffector<NODETYPE>{
     clear_order: OptionFunc<NODETYPE,boolean>
@@ -22,7 +21,7 @@ class OrderEffector<NODETYPE = Node> extends BasicEffector<NODETYPE>{
         super(env_key , context_key , 0)
         this.clear_order = clear_order
     }
-    enter_effect(element: NODETYPE, env: PrinterEnv):[PrinterEnv,PrinterContext] {
+    enter_effect(element: NODETYPE, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {
         env = this.ensure_env(env)
         let order = this.get_env(env)
 

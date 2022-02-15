@@ -35,7 +35,7 @@ import {
 
 	get_DefaultListPrinter , 
 	get_DefaultGroupPrinter , 
-	DefaultParagraphPrinter , 
+	get_DefaultParagraphPrinter , 
 } from "../lib"
 
 import type {
@@ -100,8 +100,9 @@ class App extends React.Component<any,App_State> {
 		
 		let listprinter = get_DefaultListPrinter()
 		let theoremprinter = get_DefaultGroupPrinter("theorem" , (p)=>(p.title as string) , (p)=>(p.alias as string))
+		let paragraphprinter = get_DefaultParagraphPrinter()
 
-		this.printer.update_renderer( DefaultParagraphPrinter, "paragraph" )
+		this.printer.update_renderer( paragraphprinter, "paragraph" )
 		this.printer.update_renderer( listprinter as PrinterRenderer, "group" , "list" )
 		this.printer.update_renderer( theoremprinter as PrinterRenderer, "group" , "theorem" )
 	}
