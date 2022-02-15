@@ -12,7 +12,7 @@ export { constraint_group }
 /**
  * 这个插件修复 group relation 相关的错误。具体来说，任何 relation 为 separating 的 group 节点之前都必须是 paragraph，而
  * 任何 relation 为 chaining 的 group 之前都必须是 group。
- * 如果一个 group 节点本身是兄弟中的第一个，则其 relation 必须是 separating 。
+ * 如果一个 group 节点本身是兄弟中的第一个，则其 relation 是无所谓的。
  * @param editor 这个constraint服务的编辑器。
  * @returns editor
  */
@@ -24,22 +24,11 @@ function constraint_group(editor: Editor): Editor{
         let idx = path.length - 1
 
         if("children" in node){
-            let meet_group_flag = false // 之前是否见过 GroupNode 。
             for(let [subidx, subnode] of node.children.entries()){
 
                 if(get_node_type(subnode) != "group") //不是 group ，我们不关心
                     continue
                 let now_node = subnode as GroupNode
-
-                if(!meet_group_flag){ // 自己是第一个 GroupNode
-
-                    if(now_node.relation != "separating"){
-                        Transforms.setNodes<GroupNode>(editor , {relation: "separating"} , {at: [...path,subidx]})
-                        return
-                    }
-                    meet_group_flag = true
-                    return // 第一个 GroupNode 前面不可能有 GroupNode ，所以直接返回。
-                }
 
                 if(subidx == 0){ // 第一个元素前面不可能有 GroupNode ，直接返回。
                     return 
