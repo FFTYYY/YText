@@ -4,6 +4,7 @@
 import { Node } from "slate"
 import { Printer } from "../../../printer"
 import type { EnterEffectFunc , ExitEffectFunc } from "../../../printer"
+import type { PrinterEnv , PrinterContext } from "../../../printer"
 
 export { BasicEffector }
 
@@ -16,53 +17,53 @@ class BasicEffector{
         this.context_key = context_key
         this._default_val = default_val
     }
-    enter_effect(element: Node, env: any): [any,any] {
+    enter_effect(element: Node, env: PrinterEnv): [PrinterEnv,PrinterContext] {
         return [env , {}]
     }
-    exit_effect(element: Node, env: any, context:any) : [any,any] {
+    exit_effect(element: Node, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {
         return [env , context]
     }
 
-    ensure_env(env: any){
+    ensure_env(env: PrinterEnv): PrinterEnv{
         if(env[this.env_key] == undefined){
             env[this.env_key] = this._default_val
         }
         return env
     }
 
-    get_env(env: any){
+    get_env(env: PrinterEnv): any{
         env = this.ensure_env(env)
         return env[this.env_key]
     }
 
-    set_env(env: any , val: any){
+    set_env(env: PrinterEnv , val: any){
         env[this.env_key] = val
         return env
     }
 
-    get_context(context: any){
+    get_context(context: PrinterContext): any{
         return context[this.context_key]
     }
 
-    set_context(context: any , val: any){
+    set_context(context: PrinterContext , val: any): PrinterContext{
         context[this.context_key] = val
         return context
     }
 
-    make_context(val: any){
+    make_context(val: any): PrinterContext{
         return {[this.context_key]: val}
     }
 
-    fuse_result(old_ret: [any , any], new_ret: [any , any]): [any,any]{
+    fuse_result(old_ret: [PrinterEnv , PrinterContext], new_ret: [PrinterEnv , PrinterContext]): [PrinterEnv , PrinterContext]{
         let [old_env , old_context] = old_ret
         let [new_env , new_context] = new_ret
         return [new_env , {...old_context , ...new_context}]
     }
 
-    enter_fuse( element: Node, env: any , context: any ): [any,any]{
+    enter_fuse( element: Node, env: PrinterEnv , context: PrinterContext ): [PrinterEnv , PrinterContext]{
         return this.fuse_result( [env , context] , this.enter_effect(element , env) )
     }
-    exit_fuse ( element: Node, env: any , context: any ): [any,any]{
+    exit_fuse ( element: Node, env: PrinterEnv , context: PrinterContext ): [PrinterEnv , PrinterContext]{
         return this.fuse_result( [env , context] , this.exit_effect(element , env , context) )
     }
 }

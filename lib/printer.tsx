@@ -16,7 +16,12 @@ export type {
     EnterEffectFunc , 
     ExitEffectFunc , 
     PrinterRenderer , 
+    PrinterContext , 
+    PrinterEnv , 
 }
+
+type PrinterContext = any
+type PrinterEnv = any
 
 interface PrinterComponent_Props{
     printer: Printer
@@ -27,8 +32,8 @@ interface PrinterComponent_State{
 }
 
 
-type EnterEffectFunc = (element: Node, env: any)                => [any , any]
-type ExitEffectFunc  = (element: Node, env: any, context: any)  => [any , any]
+type EnterEffectFunc = (element: Node, env: PrinterEnv)                           => [PrinterEnv , PrinterContext]
+type ExitEffectFunc  = (element: Node, env: PrinterEnv, context: PrinterContext)  => [PrinterEnv , PrinterContext]
 
 
 /** 这个类是 Printer 的组件类。*/
@@ -57,7 +62,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
 
 
     /** 递归地渲染节点。 */
-    _sub_component(props: {element: Node , contexts: {[idx: number]: any}}){
+    _sub_component(props: {element: Node , contexts: {[idx: number]: PrinterContext}}){
         let element = props.element
         let me = this
         let ThisFunction = this._sub_component.bind(this)
@@ -98,7 +103,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
     }
 
     /** 这个函数在实际渲染组件之前，获得每个组件的环境。 */
-    build_envs(_node: Node, now_env: any, contexts: any){
+    build_envs(_node: Node, now_env: PrinterEnv, contexts: PrinterContext){
         if(!is_styled(_node)){
             if("children" in _node){
                 for(let c of _node.children){
@@ -143,7 +148,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
 interface PrinterRenderFunc_Props{
     children: any[]
     element: Node
-    context: any
+    context: PrinterContext
 }
 
 
@@ -181,10 +186,10 @@ class Printer extends Renderer<PrinterRenderer>{
             {
                 text      : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
                 inline    : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
-                paragraph : make_print_renderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
-                group     : make_print_renderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
-                struct    : make_print_renderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
-                support   : make_print_renderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
+                paragraph : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
+                group     : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
+                struct    : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
+                support   : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
             }
         )
     }

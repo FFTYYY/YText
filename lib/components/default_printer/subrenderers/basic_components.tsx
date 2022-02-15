@@ -39,7 +39,7 @@ const GroupBox = (props: BoxProps) => <Box
 const InlineTitle = (props: BoxProps) => <Box 
     {...props}
     sx = {{
-        marginX: (theme:any) => theme.margins.paragraph , 
+        marginTop: (theme:any) => theme.margins.paragraph , 
         display: "inline-block" , 
         ...props.sx
     } as SxProps}
