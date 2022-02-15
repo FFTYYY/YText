@@ -4,7 +4,7 @@ import { GroupNode} from "../../core/elements"
 import Card from '@mui/material/Card'
 import type { PrinterRenderer } from "../../printer"
 import { OrderEffector } from "./effecter"
-import { GroupBox , InlineTitle } from "./basic/components"
+import { PrinterGroupBox , PrinterParagraphBox , PrinterInlineTitle } from "./basic/components"
 import type { ValidParameters } from "../../core/elements"
 import type { PrinterEnv , PrinterContext } from "../../printer"
 export { get_DefaultGroupPrinter }
@@ -27,10 +27,10 @@ function get_DefaultGroupPrinter(
             let order = order_effector.get_context(props.context)
             let title = get_title(element.parameters)
 
-            return <GroupBox>
-                <InlineTitle>{title} {order} {props.children[0]}</InlineTitle>
+            return <PrinterGroupBox>
+                <PrinterInlineTitle>{title} {order} {props.children[0]}</PrinterInlineTitle>
                 {props.children}
-            </GroupBox>
+            </PrinterGroupBox>
         } , 
         enter_effect: (element: GroupNode, env: PrinterEnv): [PrinterEnv,PrinterContext] => {    
             let ret: [PrinterEnv , PrinterContext] = [ env , {} ]

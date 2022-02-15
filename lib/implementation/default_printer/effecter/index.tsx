@@ -6,6 +6,6 @@
  export * from "./base"
  export * from "./order"
 
- export * as base from "./base"
- export * as order from "./order"
+ export * as implementation_printer_effecter_base from "./base"
+ export * as implementation_printer_effecter_order from "./order"
 
