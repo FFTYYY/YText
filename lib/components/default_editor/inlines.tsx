@@ -25,13 +25,13 @@ import { InlineNode , StyledNode } from "../../core/elements"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 import { YEditor } from "../../editor"
 
-import { non_selectable_prop , is_same_node} from "../../utils"
+import { is_same_node} from "../../utils"
 import { DefaultHidden } from "./hidden"
 import { DefaultParameterEditButton , DefaultCloseButton } from "./universe"
 import { UniversalComponent_Props , } from "./universe"
 import { AutoStackedPopper , SimpleAutoStack , AutoStack , AutoTooltip  } from "./basic"
 import { AutoStackedPopperWithButton } from "./universe"
-import { InlineComponentPaper } from "./basic"
+import { InlineComponentPaper , UnselecableBox , ComponentEditorBox } from "./basic"
 
 export { get_DefaultInline }
 
@@ -42,33 +42,35 @@ function get_DefaultInline(
     return (props: EditorRenderer_Props) => {
         let element = props.element as InlineNode
         let editor  = props.editor
-        let E = rightbar_extra
+        let Extra = rightbar_extra
 
-        return <Box  {...props.attributes} sx={{display: "inline-block"}}>
-            <InlineComponentPaper><AutoStack force_direction="row">
-                <Box sx={{minWidth: "30px"}}>{props.children}</Box>
-                <Box {...non_selectable_prop}><AutoStack force_direction="row">
-                    <E editor={editor} element={element}/>
-                    <AutoStackedPopperWithButton
-                        close_on_otherclick
-                        button_class = {IconButton}
-                        button_props = {{
-                            sx: {
-                                height: "1rem" , 
-                                width: "1rem" , 
-                                margin: "0",
-                            } , 
-                            children: <KeyboardArrowDownIcon sx={{height: "1rem"}}/> ,
-                        }} 
-                        title = "展开"
-                    >
-                        <Typography>{element.name}</Typography>
-                        <DefaultParameterEditButton editor={editor} element={element}/>
-                        <DefaultHidden      editor={editor} element={element} />
-                        <DefaultCloseButton editor={editor} element={element} />
-                    </AutoStackedPopperWithButton>
-                </AutoStack></Box>
-            </AutoStack></InlineComponentPaper>
-        </Box>
+        return <InlineComponentPaper>
+            <AutoStack force_direction="row">
+                <ComponentEditorBox>{props.children}</ComponentEditorBox>
+                <UnselecableBox>
+                    <AutoStack force_direction="row">
+                        <Extra editor={editor} element={element}/>
+                        <AutoStackedPopperWithButton
+                            close_on_otherclick
+                            button_class = {IconButton}
+                            button_props = {{
+                                sx: {
+                                    height: "1rem" , 
+                                    width: "1rem" , 
+                                    margin: "0",
+                                } , 
+                                children: <KeyboardArrowDownIcon sx={{height: "1rem"}}/> ,
+                            }} 
+                            title = "展开"
+                        >
+                            <Typography>{element.name}</Typography>
+                            <DefaultParameterEditButton editor={editor} element={element}/>
+                            <DefaultHidden      editor={editor} element={element} />
+                            <DefaultCloseButton editor={editor} element={element} />
+                        </AutoStackedPopperWithButton>
+                    </AutoStack>
+                </UnselecableBox>
+            </AutoStack>
+        </InlineComponentPaper>
     }
 }

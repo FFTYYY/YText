@@ -16,6 +16,6 @@ import { ParagraphBox , ComponentPaper} from "./basic"
 export { DefaultParagraph }
 
 function DefaultParagraph(props: EditorRenderer_Props){
-    return <Box {...props.attributes}><ParagraphBox>{props.children}</ParagraphBox></Box>
+    return <ParagraphBox>{props.children}</ParagraphBox>
 }
 

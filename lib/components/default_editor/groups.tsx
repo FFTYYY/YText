@@ -43,13 +43,13 @@ import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 import { YEditor } from "../../editor"
 import { add_nodes , set_node , add_nodes_before , move_node } from "../../behaviours"
 
-import { non_selectable_prop , is_same_node , node2path } from "../../utils"
+import { is_same_node , node2path } from "../../utils"
 
 import { DefaultParameterEditButton , DefaultCloseButton , AutoStackedPopperWithButton } from "./universe/buttons"
 import { DefaultHidden } from "./hidden"
 
 import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "./basic"
-import { ComponentPaper , ComponentEditorBox } from "./basic"
+import { ComponentPaper , ComponentEditorBox , UnselecableBox} from "./basic"
 
 import type { UniversalComponent_Props } from "./universe" 
 
@@ -76,10 +76,10 @@ function get_DefaultGroup_with_AppBar(
         let editor = props.editor
         let E = appbar_extra
 
-        return <Box {...props.attributes}>
-            <GroupPaper element={element}>
-                <Box {...non_selectable_prop}>
-                    <Toolbar><AutoStack force_direction="row">
+        return <GroupPaper element={element}>
+            <AutoStack force_direction="column">
+                <UnselecableBox>
+                    <Toolbar><AutoStack>
                         <Typography>{title}</Typography>
                         <DefaultParameterEditButton editor={editor} element={element}/>         
                         <DefaultHidden              editor={editor} element={element} />
@@ -87,11 +87,11 @@ function get_DefaultGroup_with_AppBar(
                         <DefaultCloseButton         editor={editor} element={element} />
                         <E                          editor={editor} element={element}/>
                     </AutoStack></Toolbar>
-                </Box >
+                </UnselecableBox >
                 <Divider />
-                <ComponentEditorBox>{props.children}</ComponentEditorBox>
-            </GroupPaper>
-        </Box>
+                <ComponentEditorBox autogrow>{props.children}</ComponentEditorBox>
+            </AutoStack>
+        </GroupPaper>
     }
 }
 
@@ -111,33 +111,31 @@ function get_DefaultGroup_with_RightBar(
         let editor = props.editor
         let E = rightbar_extra
 
-        return <Box {...props.attributes}>
-            <GroupPaper element={element}>
-                <Grid container columns={24}>
-                    <Grid item xs={21} md={22} xl={23}><ComponentEditorBox>{props.children}</ComponentEditorBox></Grid>
-                    <Grid item xs={3}  md={2}  xl={1}><Box {...non_selectable_prop}>
-                        <SimpleAutoStack force_direction="column">
-                            <Typography variant="overline">{title}</Typography>
-                            <E editor={editor} element={element}/>
-                            <AutoStackedPopperWithButton
-                                close_on_otherclick
-                                button_class = {IconButton}
-                                button_props = {{
-                                    size: "small" , 
-                                    children: <KeyboardArrowDownIcon fontSize="small"/> , 
-                                }}
-                                title = "展开"
-                            >
-                                <DefaultParameterEditButton editor={editor} element={element}/>
-                                <DefaultHidden      editor={editor} element={element} />
-                                <DefaultGroupSwicth editor={editor} element={element} />
-                                <DefaultCloseButton editor={editor} element={element} />
-                            </AutoStackedPopperWithButton>
-                        </SimpleAutoStack>
-                    </Box></Grid>
-                </Grid>
-            </GroupPaper>
-        </Box>
+        return <GroupPaper element={element}>
+            <AutoStack force_direction="row">
+                <ComponentEditorBox autogrow>{props.children}</ComponentEditorBox>
+                <UnselecableBox>
+                    <SimpleAutoStack>
+                        <Typography variant="overline">{title}</Typography>
+                        <E editor={editor} element={element}/>
+                        <AutoStackedPopperWithButton
+                            close_on_otherclick
+                            button_class = {IconButton}
+                            button_props = {{
+                                size: "small" , 
+                                children: <KeyboardArrowDownIcon fontSize="small"/> , 
+                            }}
+                            title = "展开"
+                        >
+                            <DefaultParameterEditButton editor={editor} element={element}/>
+                            <DefaultHidden      editor={editor} element={element} />
+                            <DefaultGroupSwicth editor={editor} element={element} />
+                            <DefaultCloseButton editor={editor} element={element} />
+                        </AutoStackedPopperWithButton>
+                    </SimpleAutoStack>
+                </UnselecableBox>
+            </AutoStack>
+        </GroupPaper>
     }
 }
 

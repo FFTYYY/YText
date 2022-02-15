@@ -3,7 +3,6 @@ import { is_styled , StyledNode , GroupNode } from "./core/elements"
 import React from "react"
 
 export { 
-    non_selectable_prop , 
     is_same_node , 
     node2path , 
     get_hidden_idx , 
@@ -32,12 +31,6 @@ function object_foreach(obj: any , func: (o:any)=>any){
 /** 返回一个 list 修改了第 k 个元素后的版本。 */
 function update_kth(li: any[], k: number, new_k: any){
     return [...li.slice(0,k) , ...[new_k] , ...li.slice(k+1,li.length)]
-}
-
-/** 给一个组件分配这个 prop 可以防止其被 slate 视为可编辑文本。*/ 
-const non_selectable_prop = {
-    style: { userSelect: "none" } as React.CSSProperties,
-    contentEditable: false , 
 }
 
 /** 判断两个节点是否为同一个节点。这个函数会直接比较创建节点时分配的节点 idx 。 */

@@ -23,5 +23,8 @@ const my_theme = createTheme({
 	widths: {
 		/** 所有可以弹出的 Drawer 的宽度。 */
 		editable_drawer: "70%" , 
+
+		/** 任何一个有值的元素的最小宽度。 */
+		minimum_content: "10px" , 
 	}
 } as ThemeOptions)
