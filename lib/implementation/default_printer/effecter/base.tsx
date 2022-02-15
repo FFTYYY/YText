@@ -8,7 +8,7 @@ import type { PrinterEnv , PrinterContext } from "../../../printer"
 
 export { BasicEffector }
 
-class BasicEffector{
+class BasicEffector<NODETYPE = Node>{
     env_key: string
     context_key: string
     _default_val: string
@@ -17,10 +17,10 @@ class BasicEffector{
         this.context_key = context_key
         this._default_val = default_val
     }
-    enter_effect(element: Node, env: PrinterEnv): [PrinterEnv,PrinterContext] {
+    enter_effect(element: NODETYPE, env: PrinterEnv): [PrinterEnv,PrinterContext] {
         return [env , {}]
     }
-    exit_effect(element: Node, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {
+    exit_effect(element: NODETYPE, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {
         return [env , context]
     }
 
@@ -60,10 +60,10 @@ class BasicEffector{
         return [new_env , {...old_context , ...new_context}]
     }
 
-    enter_fuse( element: Node, env: PrinterEnv , context: PrinterContext ): [PrinterEnv , PrinterContext]{
+    enter_fuse( element: NODETYPE, env: PrinterEnv , context: PrinterContext ): [PrinterEnv , PrinterContext]{
         return this.fuse_result( [env , context] , this.enter_effect(element , env) )
     }
-    exit_fuse ( element: Node, env: PrinterEnv , context: PrinterContext ): [PrinterEnv , PrinterContext]{
+    exit_fuse ( element: NODETYPE, env: PrinterEnv , context: PrinterContext ): [PrinterEnv , PrinterContext]{
         return this.fuse_result( [env , context] , this.exit_effect(element , env , context) )
     }
 }

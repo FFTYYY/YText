@@ -40,7 +40,7 @@ import {
 	AutoTooltip , 
 	AutoStackedPopper , 
 	AutoStackButtons , 
-} from "./basic"
+} from "../basic"
 
 import { my_theme } from "./basic"
 import { EditorBackgroundPaper , ComponentEditorBox } from "./basic"

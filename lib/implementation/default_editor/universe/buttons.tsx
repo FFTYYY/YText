@@ -26,8 +26,8 @@ from "@mui/icons-material"
 
 
 import { delete_node } from "../../../behaviours"
-import { AutoTooltip , Direction , AutoStack , AutoStackedPopper } from "../basic/direction_control"
-import type { AutoStackedPopper_Props } from "../basic/direction_control"
+import { AutoTooltip , Direction , AutoStack , AutoStackedPopper } from "../../basic/direction_control"
+import type { AutoStackedPopper_Props } from "../../basic/direction_control"
 import { DefaultParameterWithEditorWithDrawer , UniversalComponent_Props } from "./parameter_container" 
 
 export {    

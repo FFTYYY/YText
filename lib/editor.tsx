@@ -14,15 +14,11 @@ import {
 } from "@mui/material"
 
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./core/elements"
-import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , } from "./core/elements"
-import type { StyleType , NodeType } from "./core/elements"
+import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode , StyleType , NodeType } from "./core/elements"
 import { get_node_type , is_styled  } from "./core/elements"
 import { EditorCore } from "./core/editor_core"
-import { is_same_node , update_kth , get_hidden_idx } from "./utils"
 import { withAllYEditorPlugins } from "./plugins/apply_all"
 import { Renderer } from "./core/renderer"
-import { node2path } from ".";
-import { ThreeSixty } from "@mui/icons-material";
 
 export { YEditor }
 export type { EditorRenderer_Props , EditorRenderer_Func}

@@ -29,7 +29,7 @@ import { is_same_node} from "../../utils"
 import { DefaultHidden } from "./hidden"
 import { DefaultParameterEditButton , DefaultCloseButton } from "./universe"
 import { UniversalComponent_Props , } from "./universe"
-import { AutoStackedPopper , SimpleAutoStack , AutoStack , AutoTooltip  } from "./basic"
+import { AutoStackedPopper , SimpleAutoStack , AutoStack , AutoTooltip  } from "../basic"
 import { AutoStackedPopperWithButton } from "./universe"
 import { UnselecableBox , ComponentEditorBox , ComponentPaper } from "./basic"
 

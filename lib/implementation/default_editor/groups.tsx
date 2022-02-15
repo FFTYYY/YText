@@ -48,7 +48,7 @@ import { is_same_node , node2path } from "../../utils"
 import { DefaultParameterEditButton , DefaultCloseButton , AutoStackedPopperWithButton } from "./universe/buttons"
 import { DefaultHidden } from "./hidden"
 
-import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "./basic"
+import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "../basic"
 import { ComponentPaper , ComponentEditorBox , UnselecableBox} from "./basic"
 
 import type { UniversalComponent_Props } from "./universe" 

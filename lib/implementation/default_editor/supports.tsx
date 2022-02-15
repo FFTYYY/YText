@@ -30,10 +30,11 @@ import { SupportNode , paragraph_prototype} from "../../core/elements"
 import { SupportStyle , EditorCore} from "../../core/editor_core"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 import { YEditor } from "../../editor"
-import { warning } from "../../exceptions/warning";
+import { warning } from "../../exceptions/warning"
 import { node2path } from "../../utils"
 
-import {  AutoStack , AutoTooltip , Direction , UnselecableBox , ComponentBox , ComponentPaper} from "./basic"
+import {  AutoStack , AutoTooltip , Direction } from "../basic"
+import {  UnselecableBox , ComponentBox , ComponentPaper} from "./basic"
 import {  DefaultCloseButton , DefaultParameterEditButton , AutoStackedPopperWithButton } from "./universe"
 import { add_nodes } from "../../behaviours"
 

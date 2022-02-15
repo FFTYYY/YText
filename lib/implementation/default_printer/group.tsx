@@ -1,12 +1,12 @@
 import { Node } from "slate"
-import type  { PrinterRenderFunc_Props } from "../../../printer"
-import { GroupNode} from "../../../core/elements"
+import type  { PrinterRenderFunc_Props } from "../../printer"
+import { GroupNode} from "../../core/elements"
 import Card from '@mui/material/Card'
-import type { PrinterRenderer } from "../../../printer"
-import { OrderEffector } from "../effecter"
-import { GroupBox , InlineTitle } from "./basic_components"
-import type { ValidParameters } from "../../../core/elements"
-import type { PrinterEnv , PrinterContext } from "../../../printer"
+import type { PrinterRenderer } from "../../printer"
+import { OrderEffector } from "./effecter"
+import { GroupBox , InlineTitle } from "./basic/components"
+import type { ValidParameters } from "../../core/elements"
+import type { PrinterEnv , PrinterContext } from "../../printer"
 export { get_DefaultGroupPrinter }
 
 
@@ -15,7 +15,7 @@ function get_DefaultGroupPrinter(
     get_title : (parameters: ValidParameters) => string = (p:ValidParameters) => (p.title as string),
     get_prefix: (parameters: ValidParameters) => string = (p:ValidParameters) => ""
 ){
-    let order_effector = new OrderEffector(
+    let order_effector = new OrderEffector<GroupNode>(
         `order/${key}` , 
         `order/${key}` , 
     )
@@ -32,14 +32,14 @@ function get_DefaultGroupPrinter(
                 {props.children}
             </GroupBox>
         } , 
-        enter_effect: (element: PrinterContext, env: PrinterEnv): [PrinterEnv,PrinterContext] => {    
+        enter_effect: (element: GroupNode, env: PrinterEnv): [PrinterEnv,PrinterContext] => {    
             let ret: [PrinterEnv , PrinterContext] = [ env , {} ]
     
             ret = order_effector.fuse_result( ret , order_effector.enter_effect(element , env) )
     
             return ret
         } , 
-        exit_effect: (element: Node, env: PrinterEnv , context: PrinterContext):[PrinterEnv,PrinterContext] => {    
+        exit_effect: (element: GroupNode, env: PrinterEnv , context: PrinterContext):[PrinterEnv,PrinterContext] => {    
             let ret: [PrinterEnv , PrinterContext] = [ env , context ]
     
             ret = order_effector.fuse_result( ret , order_effector.enter_effect(element , env) )

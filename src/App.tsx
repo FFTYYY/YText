@@ -38,6 +38,11 @@ import {
 	DefaultParagraphPrinter , 
 } from "../lib"
 
+import type {
+	PrinterRenderer
+} 
+from "../lib"
+
 interface App_State{
 	value: Node[]
 }
@@ -94,11 +99,11 @@ class App extends React.Component<any,App_State> {
 		this.printer = new Printer( this.core )
 		
 		let listprinter = get_DefaultListPrinter()
-		let theoremprinter = get_DefaultGroupPrinter("theorem" , (p)=>p.title , (p)=>p.alias)
+		let theoremprinter = get_DefaultGroupPrinter("theorem" , (p)=>(p.title as string) , (p)=>(p.alias as string))
 
 		this.printer.update_renderer( DefaultParagraphPrinter, "paragraph" )
-		this.printer.update_renderer( listprinter, "group" , "list" )
-		this.printer.update_renderer( theoremprinter, "group" , "theorem" )
+		this.printer.update_renderer( listprinter as PrinterRenderer, "group" , "list" )
+		this.printer.update_renderer( theoremprinter as PrinterRenderer, "group" , "theorem" )
 	}
 
 	outer_act(){

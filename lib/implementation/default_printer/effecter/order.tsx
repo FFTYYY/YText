@@ -9,21 +9,20 @@ import type { PrinterEnv , PrinterContext } from "../../../printer"
 
 export { OrderEffector }
 
-type OptionFunc<T> = (element: Node, env: PrinterEnv, context?: PrinterContext) => T
-let default_option = (element: Node, env: PrinterEnv, context?: PrinterContext) => false
+type OptionFunc<NODETYPE,T> = (element: NODETYPE, env: PrinterEnv, context?: PrinterContext) => T
 
-class OrderEffector extends BasicEffector{
-    clear_order: OptionFunc<boolean>
+class OrderEffector<NODETYPE = Node> extends BasicEffector<NODETYPE>{
+    clear_order: OptionFunc<NODETYPE,boolean>
 
     constructor(
         env_key: string , 
         context_key: string , 
-        clear_order: OptionFunc<boolean> = (e,v,c)=>false, 
+        clear_order: OptionFunc<NODETYPE,boolean> = (e,v,c)=>false, 
     ){
         super(env_key , context_key , 0)
         this.clear_order = clear_order
     }
-    enter_effect(element: Node, env: PrinterEnv):[PrinterEnv,PrinterContext] {
+    enter_effect(element: NODETYPE, env: PrinterEnv):[PrinterEnv,PrinterContext] {
         env = this.ensure_env(env)
         let order = this.get_env(env)
 
@@ -37,7 +36,7 @@ class OrderEffector extends BasicEffector{
 
         return [env , this.make_context(order)]
     }
-    exit_effect(element: Node, env: PrinterEnv, context:PrinterContext): [PrinterEnv,PrinterContext]{
+    exit_effect(element: NODETYPE, env: PrinterEnv, context:PrinterContext): [PrinterEnv,PrinterContext]{
         let order = this.get_context(context)
 
         env = this.set_env( env , order ) // 还原环境

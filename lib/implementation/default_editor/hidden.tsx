@@ -21,12 +21,12 @@ import { Node, Editor } from "slate"
 import { set_node , replace_nodes } from "../../behaviours"
 
 
-import { AutoTooltip , ForceContain , AutoStackedPopper } from "./basic"
+import { AutoTooltip , ForceContain , AutoStackedPopper } from "../basic"
 import { StyledNode , NodeType , StyleType ,  GroupNode } from "../../core/elements"
 import { YEditor } from "../../editor"
 import { is_same_node , node2path , update_kth , get_hidden_idx } from "../../utils"
 import { EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle } from "../../core/editor_core"
-import { DefaultEditor } from "./editor"
+import { DefaultEditor } from "./main"
 
 export {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden}
 
