@@ -1,3 +1,5 @@
+/** 这个组件提供输出器的基础定义。 */
+
 import { Node } from "slate"
 import React from "react"
 import { text_prototype , paragraph_prototype , inline_prototype , group_prototype , struct_prototype, support_prototype , } from "./core/elements"
@@ -5,13 +7,18 @@ import type { StyledNode , InlineNode , GroupNode , StructNode , SupportNode  } 
 import type { StyleType , NodeType } from "./core/elements"
 import { get_node_type , is_styled } from "./core/elements"
 import { EditorCore } from "./core/editor_core"
-import { Renderer , default_renderer } from "./core/renderer"
+import { Renderer } from "./core/renderer"
 
-export { Printer , make_printer}
-export type { PrinterComponent_Props , PrinterRenderer_Props }
+export { Printer , PrinterRenderer}
+export type { 
+    PrinterComponent_Props , 
+    PrinterRenderFunc_Props , 
+    EnterEffectFunc , 
+    ExitEffectFunc , 
+}
 
 interface PrinterComponent_Props{
-    renderer: Printer
+    printer: Printer
 }
 
 interface PrinterComponent_State{
@@ -19,16 +26,18 @@ interface PrinterComponent_State{
 }
 
 
+type EnterEffectFunc = (element: Node, env: any)                => [any , any]
+type ExitEffectFunc  = (element: Node, env: any, context: any)  => [any , any]
+
+
 /** 这个类是 Printer 的组件类。*/
 class _PrinterComponent extends React.Component<PrinterComponent_Props , PrinterComponent_State>{
-    renderer: Printer
+    printer: Printer
     core: EditorCore
-    env_enters: { [idx: number]: any }
-    env_exits : { [idx: number]: any }
 
     /**
      * 
-     * @param props.renderer 这个组件对应的渲染器。
+     * @param props.printer 这个组件对应的输出器。
      */
     constructor(props: PrinterComponent_Props){
         super(props)
@@ -37,38 +46,33 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
             root: group_prototype("root" , {})
         }
 
-        this.renderer = props.renderer
-        this.core = this.renderer.core
+        this.printer = props.printer
+        this.core = this.printer.core
         
-        this.core.add_notificatioon( this.root_notification.bind(this) )
+        let me = this
+        this.core.add_notificatioon( (new_root: GroupNode)=>me.setState({root: new_root}) )
         this.setState({root: this.core.root})
-
-        this.env_enters = {}
-        this.env_exits  = {}
     }
 
-    /** core 通知自身改变的方法。 */
-    root_notification(new_root: GroupNode){
-        this.setState({root: new_root})
-    }
 
     /** 递归地渲染节点。 */
-    _sub_component(props: {element: Node}){
+    _sub_component(props: {element: Node , contexts: {[idx: number]: any}}){
         let element = props.element
         let me = this
         let ThisFunction = this._sub_component.bind(this)
-        let renderer = this.renderer
+        let printer = this.printer
+        let contexts = props.contexts
         
         type has_children = Node & {children: Node[]}
         type has_text = Node & {text: string}
 
         let type = get_node_type(element)
         if(type == "text"){
-            let R = renderer.get_renderer("text")
+            let R = printer.get_renderer("text")
             let text:any = (element as has_text).text
             if(text == "")
                 text = <br />
-            return <R.renderer_func attributes={{}} element={element} env_enter={{}} env_exit={{}}>{text}</R.renderer_func>
+            return <R.render_func element={element} context={{}}>{text}</R.render_func>
         }
 
         let name = undefined // 如果name是undefined，则get_renderer会返回默认样式。
@@ -78,113 +82,107 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         }
         
         let children = (element as has_children).children
-        let R = renderer.get_renderer(type , name)
-        return <R.renderer_func
-            attributes={{}}
-            element={element}
-            children={
-                Object.keys(children).map((num) => <ThisFunction
-                    element = {children[num]} 
-                    key = {num}
-                />)
-            }
-            env_enter={ styled ? me.env_enters[(element as StyledNode).idx] : {} }        
-            env_exit ={ styled ? me.env_exits [(element as StyledNode).idx] : {} }        
-        />
+        let R = printer.get_renderer(type , name)
+        return <R.render_func
+            element  = { element }
+            context  = { styled ? contexts[(element as StyledNode).idx] : {} }        
+        >{
+            Object.keys(children).map((num) => <ThisFunction
+                key      = {num}
+                element  = {children[num]} 
+                contexts = {contexts}
+            />)
+        }</R.render_func>
     }
 
     /** 这个函数在实际渲染组件之前，获得每个组件的环境。 */
-    build_envs(_node: Node, now_env: any = {}){
+    build_envs(_node: Node, now_env: any, contexts: any){
         if(!is_styled(_node)){
             if("children" in _node){
                 for(let c of _node.children){
-                    now_env = this.build_envs(c , now_env)
+                    [ now_env , contexts ] = this.build_envs(c , now_env , contexts)
                 }
             }
-            return now_env
+            return [ now_env , contexts ]
         }
 
         let node = _node as StyledNode
         
-        let renderer = this.renderer
-        let R = renderer.get_renderer(node.type , node.name)
+        let printer = this.printer
+        let R = printer.get_renderer(node.type , node.name)
 
-        // TODO 换成深复制。
-        now_env = R.pre_effect_enter(node , {...now_env})
-        this.env_enters[node.idx] = now_env
+        // 获得进入时的活动结果。
+        let [_env , _context] = R.enter_effect(node , now_env)
+        now_env = _env // 更新当前环境。
 
+        // 递归地进入子节点。
         for(let c of node.children){
-            now_env = this.build_envs(c , now_env)
+            [now_env , contexts] = this.build_envs(c , now_env , contexts)
         }
-        now_env = R.pre_effect_exit(node , {...now_env})
-        this.env_exits[node.idx] = now_env
 
-        return now_env
+        // 获得退出时的结果。
+        let [new_env , new_context] = R.exit_effect(node , now_env , _context)
+        
+        contexts[node.idx] = new_context // 更新此节点的上下文。
+
+        return [new_env , contexts]
     }
 
     render(){
         let me = this
         let R = this._sub_component.bind(this)
 
-        this.env_enters = {} // 初始化环境
-        this.env_exits  = {} // 初始化环境
-        this.build_envs(me.state.root)
+        let [_ , contexts] = this.build_envs(me.state.root , {} , {})
 
-        return <R element={me.state.root}></R>
+        return <R element={me.state.root} contexts={contexts}></R>
     }
 }
 
-function make_printer(
-    renderer_func: (props: PrinterRenderer_Props) => any, 
-    pre_effect_enter?: (element: Node, env: any) => any , 
-    pre_effect_exit?: (element: Node, env: any) => any , 
-): RendererImp{
-    pre_effect_enter = pre_effect_enter || ((element: Node, env: any)=>env)
-    pre_effect_exit  = pre_effect_exit || ((element: Node, env: any)=>env)
-    return {
-        renderer_func: renderer_func , 
-        pre_effect_enter: pre_effect_enter , 
-        pre_effect_exit: pre_effect_exit , 
-    }
-}
-
-interface PrinterRenderer_Props<NT = Node>{
-    attributes: any
+interface PrinterRenderFunc_Props{
     children: any[]
-    element: NT
-    env_enter: any
-    env_exit: any
+    element: Node
+    context: any
 }
 
 
-/** 输出渲染器的渲染器实例。
- * 注意，在所有 pre_effect 方法中，允许直接修改 env 的成员，但不允许修改 env 的成员的成员。
+/** 一个输出渲染器的渲染器类。
+ * 每个渲染器应该包括三个部分：渲染函数和两个前作用函数。
+ * 前作用函数用来执行必要的带副作用的操作
+ * 在渲染之前，会首先进行前作用生成环境，然后在渲染时可以调用生成的环境。
+ * 所有前作用函数以深度优先的形式调用，在进入一个节点时，调用 enter_effect ， 退出一个节点时，调用 exit_effect 。
+ * 环境是全局共享的，建议把节点的私人属性用节点 id 区分开来。
  */
-interface RendererImp{
-    renderer_func: (props: PrinterRenderer_Props) => any
-    
-    /** 这个函数在进入节点时，提供一个环境。 */
-    pre_effect_enter: (element: Node, env: any) => any
+class PrinterRenderer{
+    render_func: (props: PrinterRenderFunc_Props) => any
+    enter_effect: EnterEffectFunc
+    exit_effect: ExitEffectFunc
 
-    /** 这个节点在退出节点时，提供一个环境。 */
-    pre_effect_exit: (element: Node, env: any) => any
+    constructor(
+        render_func: (props: PrinterRenderFunc_Props) => any = (props: PrinterRenderFunc_Props)=><></> ,
+        enter_effect: EnterEffectFunc = (element: Node, env: any) => [env,{}], 
+        exit_effect: ExitEffectFunc = (element: Node, env: any, context: any) => [env,context]
+    ){
+        this.render_func = render_func.bind(this)
+        this.enter_effect = enter_effect.bind(this)
+        this.exit_effect = exit_effect.bind(this)
+    }
 }
 
 
 
-class Printer extends Renderer<RendererImp>{
+class Printer extends Renderer<PrinterRenderer>{
 
     static Component = _PrinterComponent
 
     constructor(core: EditorCore){
         super(core , 
             {
-                text      : make_printer( (props: PrinterRenderer_Props)=><span {...props.attributes}>{props.children}</span>) , 
-                inline    : make_printer( (props: PrinterRenderer_Props)=><span {...props.attributes}>{props.children}</span>) , 
-                paragraph : make_printer( (props: PrinterRenderer_Props)=><div {...props.attributes}>{props.children}</div>) , 
-                group     : make_printer( default_renderer) , 
-                struct    : make_printer( default_renderer) , 
-                support   : make_printer( default_renderer) , 
+                text      : new PrinterRenderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
+                inline    : new PrinterRenderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
+                paragraph : new PrinterRenderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
+                group     : new PrinterRenderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
+                struct    : new PrinterRenderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
+                support   : new PrinterRenderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
             }
         )
     }

@@ -33,7 +33,7 @@ import {
 	get_DefaultDisplayer ,
 	DefaultParagraph , 
 
-	list_printer , 
+	DefaultListPrinter , 
 } from "../lib"
 
 interface App_State{
@@ -91,7 +91,7 @@ class App extends React.Component<any,App_State> {
 		
 		this.printer = new Printer( this.core )
 		// this.outputer.update_renderer( sectrionrenderer, "support" , "new-section" )
-		this.printer.update_renderer( list_printer, "group" , "list" )
+		this.printer.update_renderer( new DefaultListPrinter(), "group" , "list" )
 	}
 
 	outer_act(){

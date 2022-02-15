@@ -17,7 +17,6 @@ import {
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import { my_theme } from "../default_editor/basic"
 import { Printer } from "../../printer"
-import type { PrinterRenderer_Props } from "../../printer"
 
 export { DefaultPrinter }
 
@@ -46,7 +45,7 @@ class DefaultPrinter extends React.Component <DefaultPrinter_Props> {
 			overflow: "auto" , 
 		}}>
             <Printer.Component
-			    renderer = {this.printer}
+			    printer = {this.printer}
 		    />
         </Paper></ThemeProvider>
 	}

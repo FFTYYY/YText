@@ -32,7 +32,6 @@ export {
     ComponentBox , 
 }
 
-// TODO 加入一个不可选中的Box
 // TODO 加入一个通用抽屉
 
 /** 这个组件定义一个不可被选中的区域。用于 slate 的各种不希望被修改的辅助部分。 */

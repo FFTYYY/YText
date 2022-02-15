@@ -20,7 +20,7 @@ import { get_node_type , is_styled  } from "./core/elements"
 import { EditorCore } from "./core/editor_core"
 import { is_same_node , update_kth , get_hidden_idx } from "./utils"
 import { withAllYEditorPlugins } from "./plugins/apply_all"
-import { Renderer ,default_renderer } from "./core/renderer"
+import { Renderer } from "./core/renderer"
 import { node2path } from ".";
 import { ThreeSixty } from "@mui/icons-material";
 

@@ -1,44 +1,47 @@
-import type  { PrinterRenderer_Props} from "../../printer"
-import { GroupNode} from "../../core/elements"
 import { Node } from "slate"
-export { list_printer }
+import type  { PrinterRenderFunc_Props } from "../../printer"
+import { GroupNode} from "../../core/elements"
 import Card from '@mui/material/Card'
+import { PrinterRenderer } from "../../printer"
+import { OrderEffector } from "./effecter"
 
-var list_printer = { 
-    renderer_func: (props: PrinterRenderer_Props) => {
-        let list_idx = props.env_enter.list_idx
-        let my_idx = list_idx[list_idx.length-1]
-
-        return <Card sx={{marginLeft: "1%"}}>{my_idx}:{props.children}</Card>
-    } , 
-    pre_effect_exit: (_element: Node, env: any) => {
-        let element = _element as GroupNode
-
-        env.list_idx = env[element.idx] 
-
-        return env
-    } , 
-    pre_effect_enter: (_element: Node, env: any) => {
-        let element = _element as GroupNode
+export { DefaultListPrinter }
 
 
-        if(env["list_idx"] == undefined){
-            env["list_idx"] = [1]
-        }
-        else{
-            let list_idx = [... env["list_idx"]]
-            if(element.relation == "separating")
-            list_idx.push(1) // 新建一个
-            else{
-                list_idx[list_idx.length-1] = list_idx[list_idx.length-1] + 1
-            }
-            env["list_idx"] = list_idx
-        }
-                
-        if(env[element.idx] == undefined){
-            env[element.idx] = env["list_idx"]
-        }
+class DefaultListPrinter extends PrinterRenderer{
+    order_effector: OrderEffector
 
-        return env
+    constructor(){
+        super()
+        this.render_func  = this.my_render_func.bind(this)
+        this.enter_effect = this.my_enter_effect.bind(this)
+        this.exit_effect  = this.my_exit_effect.bind(this)
+
+        this.order_effector = new OrderEffector(
+            "order" , 
+            "order" , 
+            (element, env) => element.relation == "separating" , 
+        )
     }
+
+    my_render_func(props: PrinterRenderFunc_Props){
+        let order = props.context.order
+
+        return <Card sx={{marginLeft: "1%"}}>{order}:{props.children}</Card>
+    }
+    my_enter_effect(_element: Node, env: any): [any,any]{
+        let element = _element as GroupNode
+
+        let [new_env , new_context] = this.order_effector.get_enter_effect()(element , env)
+        
+        return [new_env , new_context]
+    } 
+    my_exit_effect(_element: Node, env: any , context: any):[any,any]{
+        let element = _element as GroupNode
+
+        let [new_env , new_context] = this.order_effector.get_exit_effect()(element , env, context )
+
+        return [new_env , new_context]
+    } 
 }
+
