@@ -20,36 +20,30 @@ class OrderEffector extends BasicEffector{
         super(env_key , context_key , 0)
         this.clear_order = clear_order
     }
-    get_enter_effect():EnterEffectFunc {
-        let me = this
-        return (element: Node, env: any) => {
-            env = me.ensure_env(env)
-            let order = me.get_env(env)
+    enter_effect(element: Node, env: any):[any,any] {
+        env = this.ensure_env(env)
+        let order = this.get_env(env)
 
-            // 把当前层级清零。
-            if(me.clear_order(element, env)){
-                order = 0
-            }
-
-            order ++
-            me.set_env(env , order)
-
-            return [env , me.make_context({
-                order: order ,
-            })]
+        // 把当前层级清零。
+        if(this.clear_order(element, env)){
+            order = 0
         }
+
+        order ++
+        this.set_env(env , order)
+
+        return [env , this.make_context({
+            order: order ,
+        })]
     }
-    get_exit_effect(): ExitEffectFunc{
-        let me = this
-        return (element: Node, env: any, context:any ) => { 
-            let my_context = me.get_context(context)
+    exit_effect(element: Node, env: any, context:any): [any,any]{
+        let my_context = this.get_context(context)
 
-            env = me.set_env( env , my_context.order ) // 还原环境
+        env = this.set_env( env , my_context.order ) // 还原环境
 
-            return [env , me.make_context(
-                my_context.order
-            )]
-        }
+        return [env , this.make_context(
+            my_context.order
+        )]
     }
 
 }

@@ -9,12 +9,13 @@ import { get_node_type , is_styled } from "./core/elements"
 import { EditorCore } from "./core/editor_core"
 import { Renderer } from "./core/renderer"
 
-export { Printer , PrinterRenderer}
+export { Printer , make_print_renderer }
 export type { 
     PrinterComponent_Props , 
     PrinterRenderFunc_Props , 
     EnterEffectFunc , 
     ExitEffectFunc , 
+    PrinterRenderer , 
 }
 
 interface PrinterComponent_Props{
@@ -152,23 +153,23 @@ interface PrinterRenderFunc_Props{
  * 所有前作用函数以深度优先的形式调用，在进入一个节点时，调用 enter_effect ， 退出一个节点时，调用 exit_effect 。
  * 环境是全局共享的，建议把节点的私人属性用节点 id 区分开来。
  */
-class PrinterRenderer{
+interface PrinterRenderer{
     render_func: (props: PrinterRenderFunc_Props) => any
     enter_effect: EnterEffectFunc
     exit_effect: ExitEffectFunc
-
-    constructor(
-        render_func: (props: PrinterRenderFunc_Props) => any = (props: PrinterRenderFunc_Props)=><></> ,
-        enter_effect: EnterEffectFunc = (element: Node, env: any) => [env,{}], 
-        exit_effect: ExitEffectFunc = (element: Node, env: any, context: any) => [env,context]
-    ){
-        this.render_func = render_func.bind(this)
-        this.enter_effect = enter_effect.bind(this)
-        this.exit_effect = exit_effect.bind(this)
-    }
 }
 
-
+function make_print_renderer(
+    render_func: (props: PrinterRenderFunc_Props) => any , 
+    enter_effect: EnterEffectFunc = (e,v)=>[e,{}] , 
+    exit_effect: ExitEffectFunc = (e,v,c)=>[v,c] , 
+){
+    return {
+        render_func: render_func , 
+        enter_effect: enter_effect , 
+        exit_effect: exit_effect , 
+    }
+}
 
 class Printer extends Renderer<PrinterRenderer>{
 
@@ -177,12 +178,12 @@ class Printer extends Renderer<PrinterRenderer>{
     constructor(core: EditorCore){
         super(core , 
             {
-                text      : new PrinterRenderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
-                inline    : new PrinterRenderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
-                paragraph : new PrinterRenderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
-                group     : new PrinterRenderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
-                struct    : new PrinterRenderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
-                support   : new PrinterRenderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
+                text      : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
+                inline    : make_print_renderer((props: PrinterRenderFunc_Props)=><span>{props.children}</span>) , 
+                paragraph : make_print_renderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
+                group     : make_print_renderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
+                struct    : make_print_renderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
+                support   : make_print_renderer((props: PrinterRenderFunc_Props)=><div>{props.children}</div>) , 
             }
         )
     }

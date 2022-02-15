@@ -16,11 +16,11 @@ class BasicEffector{
         this.context_key = context_key
         this._default_val = default_val
     }
-    get_enter_effect():EnterEffectFunc {
-        return (element: Node, env: any) => [env , {}]
+    enter_effect(element: Node, env: any) {
+        return [env , {}]
     }
-    get_exit_effect(): ExitEffectFunc{
-        return (element: Node, env: any, context:any ) => [env , context]
+    exit_effect(element: Node, env: any, context:any){
+        return [env , context]
     }
 
     ensure_env(env: any){
@@ -51,5 +51,11 @@ class BasicEffector{
 
     make_context(val: any){
         return {[this.context_key]: val}
+    }
+
+    fuse_result(ret: [any , any], new_ret: [any , any]): [any,any]{
+        let [old_env , old_context] = ret
+        let [new_env , new_context] = new_ret
+        return [new_env , {...old_context , new_context}]
     }
 }
