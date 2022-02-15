@@ -16,10 +16,10 @@ class BasicEffector{
         this.context_key = context_key
         this._default_val = default_val
     }
-    enter_effect(element: Node, env: any) {
+    enter_effect(element: Node, env: any): [any,any] {
         return [env , {}]
     }
-    exit_effect(element: Node, env: any, context:any){
+    exit_effect(element: Node, env: any, context:any) : [any,any] {
         return [env , context]
     }
 
@@ -53,9 +53,16 @@ class BasicEffector{
         return {[this.context_key]: val}
     }
 
-    fuse_result(ret: [any , any], new_ret: [any , any]): [any,any]{
-        let [old_env , old_context] = ret
+    fuse_result(old_ret: [any , any], new_ret: [any , any]): [any,any]{
+        let [old_env , old_context] = old_ret
         let [new_env , new_context] = new_ret
-        return [new_env , {...old_context , new_context}]
+        return [new_env , {...old_context , ...new_context}]
+    }
+
+    enter_fuse( element: Node, env: any , context: any ): [any,any]{
+        return this.fuse_result( [env , context] , this.enter_effect(element , env) )
+    }
+    exit_fuse ( element: Node, env: any , context: any ): [any,any]{
+        return this.fuse_result( [env , context] , this.exit_effect(element , env , context) )
     }
 }

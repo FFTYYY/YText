@@ -33,7 +33,9 @@ import {
 	get_DefaultDisplayer ,
 	DefaultParagraph , 
 
-	DefaultListPrinter , 
+	get_DefaultListPrinter , 
+	get_DefaultGroupPrinter , 
+	DefaultParagraphPrinter , 
 } from "../lib"
 
 interface App_State{
@@ -48,8 +50,8 @@ class App extends React.Component<any,App_State> {
 		super(props)
 
 		let theoremstyle = new GroupStyle("theorem" , {
-			title: "Theorem 1" , 
-			other_param: "xxx" , 
+			title: "Theorem" , 
+			alias: "xxx" , 
 			sub_par: {a: "1", b: "2"} , 
 			haha: {
 				a: 123,
@@ -90,8 +92,13 @@ class App extends React.Component<any,App_State> {
 		this.editor.update_renderer(listrenderer , "group" , "list")
 		
 		this.printer = new Printer( this.core )
-		// this.outputer.update_renderer( sectrionrenderer, "support" , "new-section" )
-		this.printer.update_renderer( new DefaultListPrinter(), "group" , "list" )
+		
+		let listprinter = get_DefaultListPrinter()
+		let theoremprinter = get_DefaultGroupPrinter("theorem" , (p)=>p.title , (p)=>p.alias)
+
+		this.printer.update_renderer( DefaultParagraphPrinter, "paragraph" )
+		this.printer.update_renderer( listprinter, "group" , "list" )
+		this.printer.update_renderer( theoremprinter, "group" , "theorem" )
 	}
 
 	outer_act(){

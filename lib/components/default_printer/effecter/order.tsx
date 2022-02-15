@@ -30,20 +30,16 @@ class OrderEffector extends BasicEffector{
         }
 
         order ++
-        this.set_env(env , order)
+        env = this.set_env(env , order)
 
-        return [env , this.make_context({
-            order: order ,
-        })]
+        return [env , this.make_context(order)]
     }
     exit_effect(element: Node, env: any, context:any): [any,any]{
-        let my_context = this.get_context(context)
+        let order = this.get_context(context)
 
-        env = this.set_env( env , my_context.order ) // 还原环境
+        env = this.set_env( env , order ) // 还原环境
 
-        return [env , this.make_context(
-            my_context.order
-        )]
+        return [env , this.make_context( order )]
     }
 
 }

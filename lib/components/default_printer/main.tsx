@@ -33,7 +33,6 @@ class DefaultPrinter extends React.Component <DefaultPrinter_Props> {
 	constructor(props: DefaultPrinter_Props) {
 		super(props)
 
-
 		this.printer = props.printer
     }
 

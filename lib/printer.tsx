@@ -70,6 +70,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         let type = get_node_type(element)
         if(type == "text"){
             let R = printer.get_renderer("text")
+
             let text:any = (element as has_text).text
             if(text == "")
                 text = <br />
@@ -161,7 +162,7 @@ interface PrinterRenderer{
 
 function make_print_renderer(
     render_func: (props: PrinterRenderFunc_Props) => any , 
-    enter_effect: EnterEffectFunc = (e,v)=>[e,{}] , 
+    enter_effect: EnterEffectFunc = (e,v)=>[v,{}] , 
     exit_effect: ExitEffectFunc = (e,v,c)=>[v,c] , 
 ){
     return {

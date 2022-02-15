@@ -1,6 +1,6 @@
-export * from "./printer"
-export * from "./list"
+export * from "./main"
+export * from "./subrenderers"
 
-export * as printer from "./printer"
-export * as list from "./list"
+export * as main from "./main"
+export * as subrenderers from "./subrenderers"
 
