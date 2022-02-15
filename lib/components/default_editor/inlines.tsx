@@ -31,7 +31,7 @@ import { DefaultParameterEditButton , DefaultCloseButton } from "./universe"
 import { UniversalComponent_Props , } from "./universe"
 import { AutoStackedPopper , SimpleAutoStack , AutoStack , AutoTooltip  } from "./basic"
 import { AutoStackedPopperWithButton } from "./universe"
-import { InlineComponentPaper , UnselecableBox , ComponentEditorBox } from "./basic"
+import { UnselecableBox , ComponentEditorBox , ComponentPaper } from "./basic"
 
 export { get_DefaultInline }
 
@@ -44,7 +44,7 @@ function get_DefaultInline(
         let editor  = props.editor
         let Extra = rightbar_extra
 
-        return <InlineComponentPaper>
+        return <ComponentPaper is_inline>
             <AutoStack force_direction="row">
                 <ComponentEditorBox>{props.children}</ComponentEditorBox>
                 <UnselecableBox>
@@ -71,6 +71,6 @@ function get_DefaultInline(
                     </AutoStack>
                 </UnselecableBox>
             </AutoStack>
-        </InlineComponentPaper>
+        </ComponentPaper>
     }
 }

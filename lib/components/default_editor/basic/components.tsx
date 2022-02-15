@@ -28,7 +28,6 @@ export {
     ParagraphBox , 
     EditorBackgroundPaper , 
     ComponentEditorBox , 
-    InlineComponentPaper , 
     UnselecableBox , 
     ComponentBox , 
 }
@@ -36,6 +35,7 @@ export {
 // TODO 加入一个不可选中的Box
 // TODO 加入一个通用抽屉
 
+/** 这个组件定义一个不可被选中的区域。用于 slate 的各种不希望被修改的辅助部分。 */
 const UnselecableBox = (props: BoxProps) => <Box 
     contentEditable = {false}
     {...props}
@@ -45,7 +45,7 @@ const UnselecableBox = (props: BoxProps) => <Box
     } as SxProps}
 />
 
-/** 这个元素定义一个默认的用作段落的 Box 组件。 */
+/** 这个组件定义默认的段落渲染方式。 */
 const ParagraphBox = (props: TypographyProps) => <Typography 
     component = {Box}
     {...props}
@@ -57,9 +57,11 @@ const ParagraphBox = (props: TypographyProps) => <Typography
     }}}
 />
 
-/** 这个元素提供一个用于书写组件内容的 Box 组件。 */
+/** 这个组件定义可以书写的区域。
+ * @param props.autogrow 如果为 true ，则区域会自动横向增长以填满父元素。
+ */
 const ComponentEditorBox = (props: BoxProps & {autogrow?: boolean}) =><Box 
-    {...props}
+    {...{...props , autogrow: undefined}} // 去掉自己定义的属性。
     sx = {{
         paddingX : (theme: any) => theme.margins.background , 
         ...(props.autogrow
@@ -71,20 +73,31 @@ const ComponentEditorBox = (props: BoxProps & {autogrow?: boolean}) =><Box
     } as SxProps}
 />
 
-/** 这个元素定义一个默认的用作组件的纸张的组件。 */
-const ComponentPaper = (props: PaperProps) =><Paper 
+/** 这个组件定义一个用来渲染特殊节点的纸张。 
+ * @param props.is_inline 这个组件是否是行内组件。
+*/
+const ComponentPaper = (props: PaperProps & {is_inline?: boolean}) =><Paper 
     elevation = {0}
     variant = "outlined" 
     square 
-    {...props}
+    {...{...props , is_inline: undefined}} // 去掉自己定义的属性。
     sx = {{
-        marginTop: (theme: any) => theme.margins.paragraph , 
-        color  : (theme: any) => theme.palette.primary , 
+        ...(props.is_inline
+            ? { // 如果是行内组件。
+                display: "inline-block" ,
+                height:  (theme: any) => `${theme.typography.body1.lineHeight}rem` , // 高度等于行高。
+                color  : (theme: any) => theme.palette.secondary.dark , 
+                marginX: (theme: any) => theme.margins.small , 
+            } : { // 如果是块级组件。
+                marginTop: (theme: any) => theme.margins.paragraph ,
+                color  : (theme: any) => theme.palette.primary , 
+            }
+        ) , 
         ...props.sx
     } as SxProps}
 />
 
-/** 对于一个非 Paper 的组件，这个组件用来提供其边框。 */
+/** 对于一个不用纸张作为最外层元素的节点，这个组件用来提供其边框。 */
 const ComponentBox = (props: BoxProps) =><Box 
     {...props}
     sx = {{
@@ -94,21 +107,7 @@ const ComponentBox = (props: BoxProps) =><Box
 />
 
 
-/** 这个元素定义一个默认的用作组件的纸张的组件。 */
-const InlineComponentPaper = (props: PaperProps) =><Paper 
-    elevation = {2}
-    square 
-    {...props}
-    sx = {{
-        display: "inline-block" ,
-        height:  (theme: any) => { `${theme.typography.body1.lineHeight}rem`} , // 高度等于行高。
-        color  : (theme: any) => theme.palette.secondary.dark , 
-        paddingX: (theme: any) => theme.margins.small , 
-        ...props.sx
-    } as SxProps}
-/>
-
-/** 包裹整个编辑器的 Paper。 */
+/** 包裹整个编辑器的纸张。 */
 const EditorBackgroundPaper = (props: PaperProps) => <Paper 
     elevation = {0}
     variant = "outlined"

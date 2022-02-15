@@ -33,7 +33,7 @@ import { YEditor } from "../../editor"
 import { warning } from "../../exceptions/warning";
 import { node2path } from "../../utils"
 
-import {  AutoStack , AutoTooltip , Direction , UnselecableBox , ComponentBox , InlineComponentPaper } from "./basic"
+import {  AutoStack , AutoTooltip , Direction , UnselecableBox , ComponentBox , ComponentPaper} from "./basic"
 import {  DefaultCloseButton , DefaultParameterEditButton , AutoStackedPopperWithButton } from "./universe"
 import { add_nodes } from "../../behaviours"
 
@@ -143,7 +143,7 @@ function get_DefaultDisplayer(
         let url = get_url(element.parameters)
         let R = render_element
 
-        return <UnselecableBox><InlineComponentPaper>{props.children}
+        return <UnselecableBox><ComponentPaper is_inline>{props.children}
             <AutoStack force_direction="row">
                 <R url={url} />
                 <ButtonGroup variant="text">
@@ -151,6 +151,6 @@ function get_DefaultDisplayer(
                     <DefaultCloseButton editor={editor} element={element} />
                 </ButtonGroup>
             </AutoStack>
-        </InlineComponentPaper></UnselecableBox>    
+        </ComponentPaper></UnselecableBox>    
     }
 }
