@@ -15,7 +15,7 @@ import {
 	Divider ,  
 } from "@mui/material"
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-import { my_theme } from "./basic"
+import { default_printer_theme } from "./basic"
 import { Printer } from "../../printer"
 
 export { DefaultPrinter }
@@ -37,7 +37,7 @@ class DefaultPrinter extends React.Component <DefaultPrinter_Props> {
     }
 
     render() {
-        return <ThemeProvider theme={my_theme}><Paper sx={{
+        return <ThemeProvider theme={default_printer_theme}><Paper sx={{
 			position: "absolute" , 
 			height: "100%" , 
 			width: "100%" , 

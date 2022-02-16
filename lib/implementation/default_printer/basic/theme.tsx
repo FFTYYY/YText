@@ -1,9 +1,9 @@
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 import type { ThemeOptions } from "@mui/material/styles"
 
-export {my_theme}
+export {default_printer_theme}
 
-const my_theme = createTheme({
+const default_printer_theme = createTheme({
 	palette: {
 		divider: "#00000077" , 
 		primary: {
@@ -11,18 +11,18 @@ const my_theme = createTheme({
 		}
 	},
 	margins: {
-		/** 用来书写的纸张跟内部元素的距离。 */
-		background: "0.5rem" ,
 
 		/** 段落之间的上下距离。 */
-		paragraph: "0.8rem" , 
+		paragraph: "0.4rem" , 
 
-		/** 小间隔。 */
-		small: "0.2rem" , 
+		/** 特殊元素距离之前元素的距离。 */
+		special: "0.8rem" , 
+
+		/** 代替分号的小空格。 */
+		colon: "1rem" , 
+
+		/** 一个层级的空格。 */
+		level: "2rem" , 
+		
 	} , 
-	widths: {
-
-		/** 任何一个有值的元素的最小宽度。 */
-		minimum_content: "10px" , 
-	}
 } as ThemeOptions)

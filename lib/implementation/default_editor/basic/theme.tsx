@@ -1,9 +1,9 @@
 import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 import type { ThemeOptions } from "@mui/material/styles"
 
-export { my_theme }
+export { default_editor_theme }
 
-const my_theme = createTheme({
+const default_editor_theme = createTheme({
 	palette: {
 		divider: "#00000077" , 
 		primary: {

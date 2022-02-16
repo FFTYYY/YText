@@ -13,7 +13,6 @@ export type { InjectFunction }
 
 type InjectFunction<NT> = (props:{
     element: NT, 
-    env: PrinterEnv , 
     context: PrinterContext, 
 }) => any
 
@@ -40,9 +39,9 @@ class InjectEffector<NT extends Node = Node> extends BasicEffector<NT>{
         let PI = this.pre_inject
 
 
-        // 将 to_inject 加入 env。
+        // 将`to_inject`加入`env`。
         env = this.set_env(env , [
-            ...this.get_env(env) , <PI element={element} env={env} context={context} />
+            ...this.get_env(env) , <PI element={element} context={context} />
         ])
         
         return [env , context]
@@ -54,7 +53,7 @@ class InjectEffector<NT extends Node = Node> extends BasicEffector<NT>{
 
         // 将 to_inject 加入 env。
         env = this.set_env(env , [
-            ...this.get_env(env) , <SI element={element} env={env} context={context} />
+            ...this.get_env(env) , <SI element={element} context={context} />
         ])
         
         return [env , context]

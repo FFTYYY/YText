@@ -15,10 +15,13 @@ class OrderEffector<NODETYPE = Node> extends BasicEffector<NODETYPE>{
 
     constructor(
         env_key: string , 
-        context_key: string , 
+        context_key?: string , 
         clear_order: OptionFunc<NODETYPE,boolean> = (e,v,c)=>false, 
     ){
+        if(context_key == undefined)
+            context_key = env_key
         super(env_key , context_key , 0)
+        
         this.clear_order = clear_order
     }
     enter_effect(element: NODETYPE, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {

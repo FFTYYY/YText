@@ -161,7 +161,6 @@ interface PrinterRenderFunc_Props{
     context: PrinterContext
 }
 
-
 /** 一个输出渲染器的渲染器类。
  * 每个渲染器应该包括三个部分：渲染函数和两个前作用函数。
  * 前作用函数用来执行必要的带副作用的操作

@@ -1,8 +1,6 @@
 import React from "react"
 import Button from "@mui/material/Button"
 
-import "./App.css"
-
 import { 
 	Box ,
 } 
@@ -48,6 +46,11 @@ import type {
 } 
 from "../lib"
 
+import { get_all_styles } from "./components/styles"
+import { use_all_editors } from "./components/editors"
+
+import { use_all_printers } from "./components/printers"
+
 interface App_State{
 	value: Node[]
 }
@@ -59,83 +62,18 @@ class App extends React.Component<any,App_State> {
 	constructor(props: any) {
 		super(props)
 
-		let theoremstyle = new GroupStyle("theorem" , {
-			title: "Theorem" , 
-			alias: "xxx" , 
-			sub_par: {a: "1", b: "2"} , 
-			haha: {
-				a: 123,
-				b: 0.99 , 
-				c: false , 
-			}
-		})
-		let liststyle = new GroupStyle("list" , {title: "list"})
-		let prooftyle = new GroupStyle("proof" , {title: "Proof"})
-		let theoremrenderer = get_DefaultGroup_with_AppBar()
-		let listrenderer    = get_DefaultGroup_with_RightBar()
-		let proofrenderer = get_DefaultGroup_with_RightBar()
 
-		let strongstyle = new InlineStyle("strong" , {test: "2333"})
-		let strongrenderer = get_DefaultInline()
-
-		let npstyle = new SupportStyle("newparagraph" , {})
-		let sectionerstyle = new SupportStyle("new-section" , {alias: ""})
-		let imagestyle = new SupportStyle("image" , {url: "" , title: ""})
-		let nprenderer = DefaultNewParagraph
-		let sectrionrenderer = get_DefaultSplitter((parameters)=>parameters.alias)
-		let imagerenderer = get_DefaultDisplayer((parameters)=>parameters.url)
-
-		this.core = new EditorCore([
-				...[strongstyle]      , 
-				...[theoremstyle , liststyle , prooftyle]       , 
-				...[] , 
-				...[imagestyle , npstyle , sectionerstyle]     , 
-				...[new AbstractStyle("comment" , {}) , new AbstractStyle("comment 2" , {})]
-			] , 
+		this.core = new EditorCore(
+			get_all_styles() , 
 			{test: "haha"} , 
         )
 
 		this.editor = new YEditor( this.core )
-		this.editor.update_renderer(DefaultParagraph , "paragraph")
-		this.editor.update_renderer(theoremrenderer , "group" , "theorem")
-		this.editor.update_renderer(strongrenderer  , "inline" , "strong")
-		this.editor.update_renderer(nprenderer , "support" , "newparagraph")
-		this.editor.update_renderer(sectrionrenderer , "support" , "new-section")
-		this.editor.update_renderer(imagerenderer , "support" , "image")
-		this.editor.update_renderer(listrenderer , "group" , "list")
-		this.editor.update_renderer(proofrenderer , "group" , "proof")
+		this.editor = use_all_editors( this.editor )
 		
 		this.printer = new Printer( this.core )
+		this.printer = use_all_printers(this.printer)
 		
-		let listprinter = get_DefaultListPrinter()
-		let _theo_order = new OrderEffector("order/theo" , "order/theo")
-		let theoremprinter = get_DefaultGroupPrinter(
-			[_theo_order] , 
-			(props: {element: GroupNode, env: PrinterEnv , context: PrinterContext}) => {
-				let order = _theo_order.get_context(props.context)
-				return <span>{props.element.parameters.title} {order}: </span>
-			}
-		)
-		let proofprinter = get_DefaultGroupPrinter(
-			[] , 
-			(props: {element: GroupNode, env: PrinterEnv , context: PrinterContext}) => {
-				return <span>{props.element.parameters.title}: </span>
-			} , 
-			(props)=><></>,
-			(props)=><></>,
-			(props:{element: GroupNode, context: PrinterContext}) => {
-				return <div>Q.E.D</div>
-			}
-
-		)
-
-
-		let paragraphprinter = get_DefaultParagraphPrinter()
-
-		this.printer.update_renderer( paragraphprinter, "paragraph" )
-		this.printer.update_renderer( listprinter as PrinterRenderer, "group" , "list" )
-		this.printer.update_renderer( theoremprinter as PrinterRenderer, "group" , "theorem" )
-		this.printer.update_renderer( proofprinter as PrinterRenderer, "group" , "proof" )
 	}
 
 	outer_act(){
