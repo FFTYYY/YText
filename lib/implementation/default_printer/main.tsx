@@ -15,7 +15,7 @@ import {
 	Divider ,  
 } from "@mui/material"
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-import { my_theme } from "../default_editor/basic"
+import { my_theme } from "./basic"
 import { Printer } from "../../printer"
 
 export { DefaultPrinter }

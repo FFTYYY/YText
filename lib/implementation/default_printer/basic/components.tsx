@@ -16,9 +16,9 @@ import type  { PrinterRenderFunc_Props } from "../../../printer"
 import { GroupNode} from "../../../core/elements"
 import type { PrinterRenderer } from "../../../printer"
 
-export { PrinterGroupBox , PrinterParagraphBox , PrinterInlineTitle }
+export { PrinterBox , PrinterParagraph , PrinterInlineTitle }
 
-const PrinterParagraphBox = (props: TypographyProps) => <Typography 
+const PrinterParagraph = (props: TypographyProps) => <Typography 
     component = {Box}
     {...props}
     sx = {(theme:any)=>{return {
@@ -27,20 +27,22 @@ const PrinterParagraphBox = (props: TypographyProps) => <Typography
     }}}
 />
 
-const PrinterGroupBox = (props: BoxProps) => <Box 
-    {...props}
-    sx = {{
-        marginTop: (theme:any) => theme.margins.paragraph , 
-        ...props.sx
-    } as SxProps}
-/>
-
-
 const PrinterInlineTitle = (props: BoxProps) => <Box 
     {...props}
     sx = {{
-        marginTop: (theme:any) => theme.margins.paragraph , 
+        marginX: (theme:any) => "1rem" , 
         display: "inline-block" , 
         ...props.sx
     } as SxProps}
 />
+
+const PrinterBox = (props: BoxProps) => <Box 
+    {...props}
+    sx = {{
+        marginTop: (theme:any) => theme.margins.paragraph , 
+        paddingX : (theme:any) => theme.margins.paragraph , 
+        ...props.sx
+    } as SxProps}
+/>
+
+

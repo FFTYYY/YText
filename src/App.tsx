@@ -36,10 +36,15 @@ import {
 	get_DefaultListPrinter , 
 	get_DefaultGroupPrinter , 
 	get_DefaultParagraphPrinter , 
+
+	OrderEffector , 
 } from "../lib"
 
 import type {
-	PrinterRenderer
+	PrinterRenderer , 
+	GroupNode , 
+	PrinterEnv , 
+	PrinterContext , 
 } 
 from "../lib"
 
@@ -65,8 +70,10 @@ class App extends React.Component<any,App_State> {
 			}
 		})
 		let liststyle = new GroupStyle("list" , {title: "list"})
+		let prooftyle = new GroupStyle("proof" , {title: "Proof"})
 		let theoremrenderer = get_DefaultGroup_with_AppBar()
 		let listrenderer    = get_DefaultGroup_with_RightBar()
+		let proofrenderer = get_DefaultGroup_with_RightBar()
 
 		let strongstyle = new InlineStyle("strong" , {test: "2333"})
 		let strongrenderer = get_DefaultInline()
@@ -80,7 +87,7 @@ class App extends React.Component<any,App_State> {
 
 		this.core = new EditorCore([
 				...[strongstyle]      , 
-				...[theoremstyle , liststyle]       , 
+				...[theoremstyle , liststyle , prooftyle]       , 
 				...[] , 
 				...[imagestyle , npstyle , sectionerstyle]     , 
 				...[new AbstractStyle("comment" , {}) , new AbstractStyle("comment 2" , {})]
@@ -96,16 +103,39 @@ class App extends React.Component<any,App_State> {
 		this.editor.update_renderer(sectrionrenderer , "support" , "new-section")
 		this.editor.update_renderer(imagerenderer , "support" , "image")
 		this.editor.update_renderer(listrenderer , "group" , "list")
+		this.editor.update_renderer(proofrenderer , "group" , "proof")
 		
 		this.printer = new Printer( this.core )
 		
 		let listprinter = get_DefaultListPrinter()
-		let theoremprinter = get_DefaultGroupPrinter("theorem" , (p)=>(p.title as string) , (p)=>(p.alias as string))
+		let _theo_order = new OrderEffector("order/theo" , "order/theo")
+		let theoremprinter = get_DefaultGroupPrinter(
+			[_theo_order] , 
+			(props: {element: GroupNode, env: PrinterEnv , context: PrinterContext}) => {
+				let order = _theo_order.get_context(props.context)
+				return <span>{props.element.parameters.title} {order}: </span>
+			}
+		)
+		let proofprinter = get_DefaultGroupPrinter(
+			[] , 
+			(props: {element: GroupNode, env: PrinterEnv , context: PrinterContext}) => {
+				return <span>{props.element.parameters.title}: </span>
+			} , 
+			(props)=><></>,
+			(props)=><></>,
+			(props:{element: GroupNode, context: PrinterContext}) => {
+				return <div>Q.E.D</div>
+			}
+
+		)
+
+
 		let paragraphprinter = get_DefaultParagraphPrinter()
 
 		this.printer.update_renderer( paragraphprinter, "paragraph" )
 		this.printer.update_renderer( listprinter as PrinterRenderer, "group" , "list" )
 		this.printer.update_renderer( theoremprinter as PrinterRenderer, "group" , "theorem" )
+		this.printer.update_renderer( proofprinter as PrinterRenderer, "group" , "proof" )
 	}
 
 	outer_act(){

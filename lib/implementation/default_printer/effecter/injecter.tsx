@@ -9,39 +9,70 @@ import type { PrinterEnv , PrinterContext } from "../../../printer"
 
 
 export { InjectEffector , ConsumeEffector }
+export type { InjectFunction }
 
-class InjectEffector<NODETYPE = Node> extends BasicEffector<NODETYPE>{
-    to_inject: any
+type InjectFunction<NT> = (props:{
+    element: NT, 
+    env: PrinterEnv , 
+    context: PrinterContext, 
+}) => any
+
+/** 这个前作用器允许节点向之后的节点的渲染函数注入一定的可渲染元素。 */
+class InjectEffector<NT extends Node = Node> extends BasicEffector<NT>{
+    pre_inject: InjectFunction<NT>
+    suf_inject: InjectFunction<NT>
 
     constructor(
         env_key: string , 
         context_key: string , 
-        to_inject?: (element: NODETYPE, env: PrinterEnv, context: PrinterContext) => any , 
+        pre_inject?: InjectFunction<NT> , 
+        suf_inject?: InjectFunction<NT> , 
     ){
-        // env 是一个注入序列。
+        // env 是一个等待注入的元素序列。
         super(env_key , context_key , [])
-        this.to_inject = to_inject || ( (e,v,c)=><></>)
+
+        this.pre_inject = pre_inject || ( (props)=><></>)
+        this.suf_inject = suf_inject || ( (props)=><></>)
     }
-    enter_effect(element: NODETYPE, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {
+    /** 在渲染自身之前注入。 */
+    enter_effect(element: NT, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {
         
+        let PI = this.pre_inject
+
+
         // 将 to_inject 加入 env。
         env = this.set_env(env , [
-            ...this.get_env(env) , this.to_inject(element,env,context)
+            ...this.get_env(env) , <PI element={element} env={env} context={context} />
         ])
         
-        return [env , {}]
+        return [env , context]
     }
+    /** 在渲染自身之后注入。 */
+    exit_effct(element: NT, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {
+        
+        let SI = this.suf_inject
+
+        // 将 to_inject 加入 env。
+        env = this.set_env(env , [
+            ...this.get_env(env) , <SI element={element} env={env} context={context} />
+        ])
+        
+        return [env , context]
+    }
+
 }
 
-class ConsumeEffector<NODETYPE = Node> extends BasicEffector<NODETYPE>{
+/** 这个元素接收`InjectEffector`注入的元素并提供给元素。*/
+class ConsumeEffector<NT = Node> extends BasicEffector<NT>{
     constructor(
         env_key: string , 
         context_key: string , 
     ){
         super(env_key , context_key , [])
     }
-    enter_effect(element: NODETYPE, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {  
-        console.log(env)
-        return [env , this.make_context(this.get_env(env))]
+    enter_effect(element: NT, env: PrinterEnv, context:PrinterContext) : [PrinterEnv,PrinterContext] {  
+        let to_inject = this.get_env(env)
+        env = this.set_env(env , []) // 清空环境
+        return [env , this.make_context(to_inject)]
     }
 }
