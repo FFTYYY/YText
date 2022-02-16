@@ -6,3 +6,12 @@ dist-ssr
 *.log
 .vscode
 ytext_temp.rar
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+*.log
+.vscode
+ytext_temp.rar
+.VSCodeCounter
