@@ -134,7 +134,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 								}}
 								title = {typename}
 							>{
-								Object.keys(me.editor.core[`${typename}styles`]).map( (stylename) => 
+								Object.keys(me.editor.core.styles[typename]).map( (stylename) => 
 									<Button 
 										key = {stylename}
 										onClick = {e => me.editor.get_onClick(typename , stylename)(e)}

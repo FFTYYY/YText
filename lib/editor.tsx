@@ -203,7 +203,7 @@ class YEditor extends Renderer<EditorRenderer_Func>{
         let root = me.core.root
         if(nodetype == "group")
         {        
-            let style = me.core.groupstyles[stylename]
+            let style = me.core.get_style("group" , stylename)
             if(style == undefined)
                 return (e:any) => undefined
 
@@ -213,7 +213,7 @@ class YEditor extends Renderer<EditorRenderer_Func>{
             }
         }
         if(nodetype == "inline"){
-            let style = me.core.inlinestyles[stylename]
+            let style = me.core.get_style("inline" , stylename)
             if(style == undefined)
                 return (e:any) => undefined
 
@@ -233,7 +233,7 @@ class YEditor extends Renderer<EditorRenderer_Func>{
         }
         if(nodetype == "support")
         {        
-            let style = me.core.supportstyles[stylename]
+            let style = me.core.get_style("support",stylename)
             if(style == undefined)
                 return (e:any) => undefined
 

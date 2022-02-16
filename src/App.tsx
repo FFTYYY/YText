@@ -78,12 +78,13 @@ class App extends React.Component<any,App_State> {
 		let sectrionrenderer = get_DefaultSplitter((parameters)=>parameters.alias)
 		let imagerenderer = get_DefaultDisplayer((parameters)=>parameters.url)
 
-		this.core = new EditorCore(
-			[strongstyle]      , 
-			[theoremstyle , liststyle]       , 
-			[] , 
-            [imagestyle , npstyle , sectionerstyle]     , 
-            [new AbstractStyle("comment" , {}) , new AbstractStyle("comment 2" , {})]      , 
+		this.core = new EditorCore([
+				...[strongstyle]      , 
+				...[theoremstyle , liststyle]       , 
+				...[] , 
+				...[imagestyle , npstyle , sectionerstyle]     , 
+				...[new AbstractStyle("comment" , {}) , new AbstractStyle("comment 2" , {})]
+			] , 
 			{test: "haha"} , 
         )
 
