@@ -61,8 +61,12 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
     }
 
 
-    /** 递归地渲染节点。 */
-    _sub_component(props: {element: Node , contexts: {[idx: number]: PrinterContext}}){
+    /** 递归地渲染节点。 
+     * @param props.element 当前渲染的节点。
+     * @param props.contexts 全体节点的上下文。
+     * @param props.now_path 当前节点的路径。 
+    */
+    _sub_component(props: {element: Node , contexts: {[idx: number]: PrinterContext}, now_path: string[]}){
         let element = props.element
         let me = this
         let ThisFunction = this._sub_component.bind(this)
@@ -92,18 +96,23 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         let R = printer.get_renderer(type , name)
         return <R.render_func
             element  = { element }
-            context  = { contexts[JSON.stringify(element)] }        
+            context  = { contexts[JSON.stringify(props.now_path)] }        
         >{
-            Object.keys(children).map((num) => <ThisFunction
-                key      = {num}
-                element  = {children[num]} 
+            Object.keys(children).map((subidx) => <ThisFunction
+                key      = {subidx}
+                element  = {children[subidx]} 
                 contexts = {contexts}
+                now_path = {[...props.now_path , subidx]}
             />)
         }</R.render_func>
     }
 
-    /** 这个函数在实际渲染组件之前，获得每个组件的环境。 */
-    build_envs(_node: Node, now_env: PrinterEnv, contexts: PrinterContext){
+    /** 这个函数在实际渲染组件之前，获得每个组件的环境。 
+     * @param props._node 当前节点。
+     * @param props.now_env 当前环境。
+     * @param props.now_path 从根到当前节点的路径。
+    */
+    build_envs(_node: Node, now_env: PrinterEnv, contexts: PrinterContext, now_path: string[]){
         if(!("children" in _node)){
             return [ now_env , contexts ]            
         }
@@ -123,16 +132,15 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         now_env = _env // 更新当前环境。
 
         // 递归地进入子节点。
-        for(let c of node.children){
-            [now_env , contexts] = this.build_envs(c , now_env , contexts)
+        for(let subidx in node.children){
+            [now_env , contexts] = this.build_envs(node.children[subidx] , now_env , contexts, [...now_path , subidx])
         }
 
         // 获得退出时的结果。
         let [new_env , new_context] = R.exit_effect(node , now_env , _context)
         
-        // TODO：你他妈的不能这么做。但是不这么做的话就没法给段落节点记录上下文。
-        // TODO：改成用路径记录。
-        contexts[JSON.stringify(node)] = new_context // 更新此节点的上下文。
+        // 注意，这里用路径作为上下文的键，因为段落节点没有 idx 。
+        contexts[JSON.stringify(now_path)] = new_context // 更新此节点的上下文。
 
         return [new_env , contexts]
     }
@@ -141,9 +149,9 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         let me = this
         let R = this._sub_component.bind(this)
 
-        let [_ , contexts] = this.build_envs(me.state.root , {} , {})
+        let [_ , contexts] = this.build_envs(me.state.root , {} , {} , [])
 
-        return <R element={me.state.root} contexts={contexts}></R>
+        return <R element={me.state.root} contexts={contexts} now_path={[]}></R>
     }
 }
 
