@@ -25,7 +25,8 @@ let theoremrenderer     = get_DefaultGroup_with_AppBar()
 let listrenderer        = get_DefaultGroup_with_RightBar( (p)=>"list" )
 let proofrenderer       = get_DefaultGroup_with_RightBar()
 
-let strongrenderer      = get_DefaultInline()
+let strongrenderer      = get_DefaultInline("Strong" , (props)=><strong>{props.children}</strong>)
+let deleterenderer      = get_DefaultInline("Delete" , (props)=><del>{props.children}</del>)
 
 let nprenderer          = DefaultNewParagraph
 let sectrionrenderer    = get_DefaultSplitter((parameters)=>parameters.alias)
@@ -35,6 +36,7 @@ function use_all_editors(editor: YEditor){
     editor.update_renderer(DefaultParagraph , "paragraph")
     editor.update_renderer(theoremrenderer  , "group" , "theorem")
     editor.update_renderer(strongrenderer   , "inline" , "strong")
+    editor.update_renderer(deleterenderer   , "inline" , "delete")
     editor.update_renderer(nprenderer       , "support" , "newparagraph")
     editor.update_renderer(sectrionrenderer , "support" , "new-section")
     editor.update_renderer(imagerenderer    , "support" , "image")

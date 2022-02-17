@@ -63,11 +63,13 @@ let GroupPaper = (props: PaperProps & {element: GroupNode}) => <ComponentPaper {
 /** 这个函数返回一个默认的带应用栏的 group 组件。用于比较大的 group 组件。
  * @param get_title 从参数列表获得 title 的方法。
  * @param appbar_extra 要额外向 appbar 里添加的组件。
+ * @param surrounder 包裹内容区域的组件。
  * @returns 一个用于渲染group的组件。
  */
 function get_DefaultGroup_with_AppBar(
     get_title:((parameters:any)=>string) = ((parameters:any)=>parameters.title) , 
-    appbar_extra: (props: UniversalComponent_Props) => any = (props:UniversalComponent_Props) => <></>
+    appbar_extra: (props: UniversalComponent_Props) => any = (props) => <></> , 
+    surrounder: (props: UniversalComponent_Props & {children: any}) => any = (props) => <>{props.children}</>
 ): EditorRenderer_Func{
     // 渲染器
     return (props: EditorRenderer_Props) => {
@@ -75,6 +77,7 @@ function get_DefaultGroup_with_AppBar(
         let title = get_title(element.parameters)
         let editor = props.editor
         let E = appbar_extra
+        let SUR = surrounder
 
         return <GroupPaper element={element}>
             <AutoStack force_direction="column">
@@ -89,7 +92,9 @@ function get_DefaultGroup_with_AppBar(
                     </AutoStack></Toolbar>
                 </UnselecableBox >
                 <Divider />
-                <ComponentEditorBox autogrow>{props.children}</ComponentEditorBox>
+                <ComponentEditorBox autogrow>
+                    <SUR editor={editor} element={element}>{props.children}</SUR>
+                </ComponentEditorBox>
             </AutoStack>
         </GroupPaper>
     }
@@ -98,11 +103,13 @@ function get_DefaultGroup_with_AppBar(
 /** 这个函数返回一个默认的group组件，但是各种选项等都被折叠在右侧的一个小按钮内。用于比较小的group。
  * @param get_title 从参数列表获得title的方法。
  * @param rightbar_extra 要额外向添加的组件。
+ * @param surrounder 包裹内容区域的组件。
  * @returns 一个用于渲染group的组件。
 */
 function get_DefaultGroup_with_RightBar(
     get_title:((parameters:any)=>string) = ((parameters:any)=>parameters.title) , 
-    rightbar_extra: (props: UniversalComponent_Props) => any = (props:UniversalComponent_Props) => <></>
+    rightbar_extra: (props: UniversalComponent_Props) => any = (props) => <></> , 
+    surrounder: (props: UniversalComponent_Props & {children: any}) => any = (props) => <>{props.children}</>
 ): EditorRenderer_Func{
 
     return (props: EditorRenderer_Props) => {
@@ -110,10 +117,13 @@ function get_DefaultGroup_with_RightBar(
         let title = get_title(element.parameters)
         let editor = props.editor
         let E = rightbar_extra
+        let SUR = surrounder
 
         return <GroupPaper element={element}>
             <AutoStack force_direction="row">
-                <ComponentEditorBox autogrow>{props.children}</ComponentEditorBox>
+                <ComponentEditorBox autogrow>
+                    <SUR editor={editor} element={element}>{props.children}</SUR>
+                </ComponentEditorBox>                
                 <UnselecableBox>
                     <SimpleAutoStack>
                         <Typography variant="overline">{title}</Typography>

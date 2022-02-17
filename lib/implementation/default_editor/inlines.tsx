@@ -37,16 +37,21 @@ export { get_DefaultInline }
 
 
 function get_DefaultInline(
-    rightbar_extra: (props: UniversalComponent_Props) => any = (props:UniversalComponent_Props) => <></>
+    name: string = "" , 
+    surrounder: (props: UniversalComponent_Props & {children: any}) => any = (props) => <React.Fragment>{props.children}</React.Fragment> , 
+    rightbar_extra: (props: UniversalComponent_Props) => any = (props) => <></> , 
 ): EditorRenderer_Func{
     return (props: EditorRenderer_Props) => {
         let element = props.element as InlineNode
         let editor  = props.editor
         let Extra = rightbar_extra
+        let SUR = surrounder
 
         return <ComponentPaper is_inline>
             <AutoStack force_direction="row">
-                <ComponentEditorBox>{props.children}</ComponentEditorBox>
+                <ComponentEditorBox>
+                    <SUR editor={editor} element={element}>{props.children}</SUR>
+                </ComponentEditorBox>        
                 <UnselecableBox>
                     <AutoStack force_direction="row">
                         <Extra editor={editor} element={element}/>
@@ -61,7 +66,7 @@ function get_DefaultInline(
                                 } , 
                                 children: <KeyboardArrowDownIcon sx={{height: "1rem"}}/> ,
                             }} 
-                            title = "展开"
+                            title = {"展开" + (name ? ` / ${name}` : "") }
                         >
                             <Typography>{element.name}</Typography>
                             <DefaultParameterEditButton editor={editor} element={element}/>

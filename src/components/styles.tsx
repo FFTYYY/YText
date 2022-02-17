@@ -41,6 +41,7 @@ let theoremstyle = new GroupStyle("theorem" , {
 let liststyle 		= new GroupStyle  ("list" , {})
 let prooftyle 		= new GroupStyle  ("proof" , {title: "Proof"})
 let strongstyle     = new InlineStyle ("strong" , {})
+let deletestyle     = new InlineStyle ("delete" , {})
 
 let npstyle         = new SupportStyle("newparagraph" , {})
 let sectionerstyle  = new SupportStyle("new-section" , {title: ""})
@@ -57,6 +58,7 @@ function get_all_styles(){
 		liststyle , 
 		prooftyle , 
 		strongstyle , 
+		deletestyle , 
 		npstyle , 
 		sectionerstyle , 
 		imagestyle , 
