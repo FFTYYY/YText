@@ -5,7 +5,7 @@
 
 import { Transforms, Element, Node , Editor } from "slate"
 import { get_node_type , GroupNode , paragraph_prototype , text_prototype, InlineNode , inline_prototype } from "../core/elements"
-import { is_same_node } from "../utils"
+import { is_same_node } from "../implementation/utils"
 
 export { constraint_group }
 

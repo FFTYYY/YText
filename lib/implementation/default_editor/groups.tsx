@@ -43,7 +43,7 @@ import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 import { YEditor } from "../../editor"
 import { add_nodes , set_node , add_nodes_before , move_node } from "../../behaviours"
 
-import { is_same_node , node2path } from "../../utils"
+import { is_same_node , node2path } from "../utils"
 
 import { DefaultParameterEditButton , DefaultCloseButton , AutoStackedPopperWithButton } from "./universe/buttons"
 import { DefaultHidden } from "./hidden"

@@ -7,49 +7,36 @@ import {
 from "@mui/material"
 
 import { Node , Transforms } from "slate"
+import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
 
 import {
 	YEditor , 
 	EditorCore , 
 	Printer , 
 	
-	GroupStyle , 
-	AbstractStyle , 
-	SupportStyle ,
-	InlineStyle , 
 
 	group_prototype ,
 	paragraph_prototype , 
 
 	DefaultEditor , 
 	DefaultPrinter , 
-	DefaultNewParagraph , 
-	get_DefaultGroup_with_AppBar , 
-	get_DefaultGroup_with_RightBar , 
-	get_DefaultInline , 
-	get_DefaultSplitter , 
-	get_DefaultDisplayer ,
-	DefaultParagraph , 
 
-	get_DefaultListPrinter , 
-	get_DefaultGroupPrinter , 
-	get_DefaultParagraphPrinter , 
-
-	OrderEffector , 
+	default_theme , 
 } from "../lib"
 
 import type {
 	PrinterRenderer , 
 	GroupNode , 
 	PrinterEnv , 
-	PrinterContext , 
+	PrinterContext ,
+	 
 } 
 from "../lib"
 
 import { get_all_styles } from "./components/styles"
 import { use_all_editors } from "./components/editors"
-
 import { use_all_printers } from "./components/printers"
+import { my_theme } from "./components/theme"
 
 interface App_State{
 	value: Node[]
@@ -93,9 +80,7 @@ class App extends React.Component<any,App_State> {
 			}}>
 				<DefaultEditor 
 					editor = {me.editor}
-					onUpdate = {(newval)=>{
-						// console.log(me.editor.core.root)
-					}}
+					theme = {my_theme}
 				/>
 			</Box>
 
@@ -109,6 +94,7 @@ class App extends React.Component<any,App_State> {
 			}}>
 				<DefaultPrinter
 					printer = {this.printer}
+					theme = {my_theme}
 				/>
 			</Box>
 		</Box>

@@ -29,7 +29,7 @@ import { Node, Editor } from "slate"
 import { StyledNode , is_valid_parameter_leaf} from "../../../core/elements"
 import type { ValidParameter , ValidParameterLeaf } from "../../../core/elements"
 import { YEditor } from "../../../editor"
-import { is_same_node , node2path } from "../../../utils"
+import { is_same_node , node2path } from "../../utils"
 import { set_node , delete_node } from "../../../behaviours"
 
 

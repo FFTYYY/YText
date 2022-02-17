@@ -31,7 +31,7 @@ import { SupportStyle , EditorCore} from "../../core/editor_core"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 import { YEditor } from "../../editor"
 import { warning } from "../../exceptions/warning"
-import { node2path } from "../../utils"
+import { node2path } from "../utils"
 
 import {  AutoStack , AutoTooltip , Direction } from "../basic"
 import {  UnselecableBox , ComponentBox , ComponentPaper} from "./basic"

@@ -22,12 +22,13 @@ import {
 	Settings as SettingsIcon , 
 	QrCode as QrCodeIcon , 
 } from "@mui/icons-material"
-import { ThemeProvider } from "@mui/material/styles"
+import { ThemeProvider , createTheme } from "@mui/material/styles"
+import type { Theme , ThemeOptions } from "@mui/material/styles"
 
 import { Node } from "slate"
 
 import { YEditor } from "../../editor"
-import { object_foreach } from "../../utils"
+import { object_foreach , merge_object } from "../utils"
 import type { StyleType , NodeType } from "../../core/elements"
 
 import { DefaultHidden } from "./hidden"
@@ -40,10 +41,10 @@ import {
 	AutoTooltip , 
 	AutoStackedPopper , 
 	AutoStackButtons , 
+	default_theme , 
 } from "../basic"
 
-import { default_editor_theme } from "./basic"
-import { EditorBackgroundPaper , ComponentEditorBox } from "./basic"
+import { EditorBackgroundPaper , ComponentEditorBox , } from "./basic"
 
 export { DefaultEditor }
 
@@ -56,6 +57,7 @@ interface DefaultEditor_Props{
 	editor: YEditor
 	onUpdate?: (newval: Node[]) => void
 	onMount?: () => void
+	theme?: ThemeOptions
 }
 
 /** 
@@ -96,8 +98,10 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 		// number2percent 用来将小数形式的表示转为字符串形式。MUI的sx的left属性不接受小数点表示。
 		let number2percent = (obj: {[k:string]:number}) => object_foreach(obj , x=>`${Math.floor(x*100)%100}%`)
 
+		let theme = merge_object(default_theme , this.props.theme)
+
 		let me = this
-		return <ThemeProvider theme={default_editor_theme}><EditorBackgroundPaper>
+		return <ThemeProvider theme={createTheme(theme)}><EditorBackgroundPaper>
 
 			<Box sx = {{ 
 				position: "absolute", 

@@ -25,7 +25,7 @@ import { InlineNode , StyledNode } from "../../core/elements"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
 import { YEditor } from "../../editor"
 
-import { is_same_node} from "../../utils"
+import { is_same_node} from "../utils"
 import { DefaultHidden } from "./hidden"
 import { DefaultParameterEditButton , DefaultCloseButton } from "./universe"
 import { UniversalComponent_Props , } from "./universe"
