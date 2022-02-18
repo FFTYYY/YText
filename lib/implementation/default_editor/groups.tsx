@@ -45,7 +45,7 @@ import { add_nodes , set_node , add_nodes_before , move_node } from "../../behav
 
 import { is_same_node , node2path } from "../utils"
 
-import { DefaultParameterEditButton , DefaultCloseButton , AutoStackedPopperWithButton } from "./universe/buttons"
+import { DefaultParameterEditButton , DefaultCloseButton , AutoStackedPopperWithButton , NewParagraphButton } from "./universe/buttons"
 import { DefaultHidden } from "./hidden"
 
 import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "../basic"
@@ -82,13 +82,14 @@ function get_DefaultGroup_with_AppBar(
         return <GroupPaper element={element}>
             <AutoStack force_direction="column">
                 <UnselecableBox>
-                    <Toolbar><AutoStack>
+                    <Toolbar sx={{overflow: "auto"}}><AutoStack>
                         <Typography>{title}</Typography>
-                        <DefaultParameterEditButton editor={editor} element={element}/>         
+                        <DefaultParameterEditButton editor={editor} element={element} />         
                         <DefaultHidden              editor={editor} element={element} />
                         <DefaultGroupSwicth         editor={editor} element={element} />
+                        <NewParagraphButton         editor={editor} element={element} />
                         <DefaultCloseButton         editor={editor} element={element} />
-                        <E                          editor={editor} element={element}/>
+                        <E                          editor={editor} element={element} />
                     </AutoStack></Toolbar>
                 </UnselecableBox >
                 <Divider />
@@ -141,6 +142,7 @@ function get_DefaultGroup_with_RightBar(
                             <DefaultHidden      editor={editor} element={element} />
                             <DefaultGroupSwicth editor={editor} element={element} />
                             <DefaultCloseButton editor={editor} element={element} />
+                            <NewParagraphButton         editor={editor} element={element} />
                         </AutoStackedPopperWithButton>
                     </SimpleAutoStack>
                 </UnselecableBox>

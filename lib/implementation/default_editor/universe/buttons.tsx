@@ -21,11 +21,14 @@ import type { IconButtonProps } from "@mui/material"
 import {
     Close as CloseIcon , 
     Settings as SettingsIcon , 
+    North as NorthIcon , 
+    South as SouthIcon , 
 }
 from "@mui/icons-material"
 
 
-import { delete_node } from "../../../behaviours"
+import { delete_node , add_nodes_before , add_nodes_after} from "../../../behaviours"
+import { paragraph_prototype } from "../../../core/elements"
 import { AutoTooltip , Direction , AutoStack , AutoStackedPopper } from "../../basic/direction_control"
 import type { AutoStackedPopper_Props } from "../../basic/direction_control"
 import { DefaultParameterWithEditorWithDrawer , UniversalComponent_Props } from "./parameter_container" 
@@ -34,6 +37,7 @@ export {
     DefaultParameterEditButton , 
     DefaultCloseButton , 
     AutoStackedPopperWithButton , 
+	NewParagraphButton , 
 }
 
 /** 这个函数是一个语法糖，用于自动创建按钮 */
@@ -82,6 +86,25 @@ function DefaultParameterEditButton(props: UniversalComponent_Props & {
  */
 function DefaultCloseButton(props: UniversalComponent_Props){
     return <AutoIconButton onClick={e=>{delete_node(props.editor , props.element)}} title="删除组件" icon={CloseIcon} />
+}
+
+/** 这个组件提供一个在组件的上下新建段落的节点。 
+ * @param props.editor 这个组件所服务的编辑器。
+ * @param props.element 这个组件所服务的节点。
+ */
+function NewParagraphButton(props: UniversalComponent_Props){
+	return <React.Fragment>
+		<AutoIconButton
+			onClick = { e => {add_nodes_before(props.editor , paragraph_prototype() , props.element ) }}
+			title = "向上添加段落"
+			icon = {NorthIcon}
+		></AutoIconButton>
+		<AutoIconButton
+			onClick = { e => {add_nodes_after(props.editor , paragraph_prototype() , props.element ) }}
+			title = "向下添加段落"
+			icon = {SouthIcon}
+		></AutoIconButton>
+	</React.Fragment>
 }
 
 

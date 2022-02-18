@@ -35,8 +35,8 @@ import { node2path } from "../utils"
 
 import {  AutoStack , AutoTooltip , Direction } from "../basic"
 import {  UnselecableBox , ComponentBox , ComponentPaper} from "./basic"
-import {  DefaultCloseButton , DefaultParameterEditButton , AutoStackedPopperWithButton } from "./universe"
-import { add_nodes } from "../../behaviours"
+import {  DefaultCloseButton , DefaultParameterEditButton , AutoStackedPopperWithButton , NewParagraphButton } from "./universe"
+import { add_nodes , add_nodes_after , add_nodes_before } from "../../behaviours"
 
 export { DefaultNewParagraph , get_DefaultSplitter , get_DefaultDisplayer}
 
@@ -58,12 +58,7 @@ function DefaultNewParagraph(props: EditorRenderer_Props){
                 >{(()=>{
                     if(left_active)
                         return <AutoTooltip title="向上添加段落"><Button 
-                            onClick = { e => {
-                                let my_path = node2path(editor.core.root , element) // 获取本节点的位置
-                                if(my_path == undefined)
-                                    warning("节点不在节点树中！")
-                                add_nodes(editor , paragraph_prototype() , my_path)
-                            }}
+                            onClick = { e => { add_nodes_before(editor , paragraph_prototype() , element) }}
                             size = "small"
                             variant = "outlined"
                             fullWidth
@@ -78,13 +73,7 @@ function DefaultNewParagraph(props: EditorRenderer_Props){
                 >{(()=>{
                     if(right_active)
                         return <AutoTooltip title="向下添加段落"><Button 
-                            onClick = { e => {
-                                let my_path = node2path(editor.core.root , element) // 获取本节点的位置
-                                if(my_path == undefined)
-                                    warning("节点不在节点树中！")
-                                my_path[my_path.length - 1] ++ // 在下一个节点处插入
-                                add_nodes(editor , paragraph_prototype() , my_path)
-                            }}
+                            onClick = { e => { add_nodes_after(editor , paragraph_prototype() , element) }}
                             size = "small"
                             variant = "outlined"
                             fullWidth
@@ -118,6 +107,7 @@ function get_DefaultSplitter(get_title: (parameters:any)=>string = (parameters:a
                             title = "展开"
                         >
                             <DefaultParameterEditButton editor={props.editor} element={props.element as SupportNode} />
+                            <NewParagraphButton         editor={editor} element={element} />
                             <DefaultCloseButton         editor={editor} element={element} />
                         </AutoStackedPopperWithButton>
                     </AutoStack>
@@ -149,6 +139,7 @@ function get_DefaultDisplayer(
                 <R url={url} />
                 <ButtonGroup variant="text">
                     <DefaultParameterEditButton editor={editor} element={element} />
+                    <NewParagraphButton         editor={editor} element={element} />
                     <DefaultCloseButton editor={editor} element={element} />
                 </ButtonGroup>
             </AutoStack>
