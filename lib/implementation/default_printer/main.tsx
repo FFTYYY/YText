@@ -17,7 +17,8 @@ import {
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
 import { Printer } from "../../printer"
-import { default_theme } from "../basic"
+import { default_theme  } from "../basic"
+import { PrinterBackgroundPaper } from "./basic"
 
 export { DefaultPrinter }
 
@@ -41,16 +42,10 @@ class DefaultPrinter extends React.Component <DefaultPrinter_Props> {
     render() {
 		let theme = merge_object(default_theme , this.props.theme)
 
-        return <ThemeProvider theme={createTheme(theme)}><Paper sx={{
-			position: "absolute" , 
-			height: "100%" , 
-			width: "100%" , 
-			overflowY: "auto" , 
-			wordWrap: "break-word" , 
-		}}>
+        return <ThemeProvider theme={createTheme(theme)}><PrinterBackgroundPaper>
             <Printer.Component
 			    printer = {this.printer}
 		    />
-        </Paper></ThemeProvider>
+        </PrinterBackgroundPaper></ThemeProvider>
 	}
 }

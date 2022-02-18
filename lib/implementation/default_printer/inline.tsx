@@ -21,9 +21,9 @@ import type { ValidParameter } from "../../core/elements"
 import type { PrinterEnv , PrinterContext } from "../../printer"
 import { AutoStack } from "../basic"
 import type {InjectFunction} from "./effecter"
-import { PrinterBox , PrinterParagraph , PrinterInlineTitle , NewLevel } from "./basic/components"
+import { PrinterBox , PrinterParagraph , NewLevel } from "./basic/components"
 
-export { get_DefaultParagraphPrinter }
+export { get_DefaultParagraphPrinter , get_DefaultInlinePrinter }
 
 function get_DefaultParagraphPrinter(){ 
 
@@ -38,6 +38,7 @@ function get_DefaultParagraphPrinter(){
             return <PrinterParagraph>
                 {Object.keys(extra).map((key)=><React.Fragment key={key}>{extra[key]}</React.Fragment>)}
                 {props.children}
+                <br/>
             </PrinterParagraph>
         } , 
         enter_effect: (element: Node, env: PrinterEnv): [PrinterEnv,PrinterContext] => {  
@@ -51,6 +52,44 @@ function get_DefaultParagraphPrinter(){
             let ret: [PrinterEnv , PrinterContext] = [ env , context ]
     
             ret = consumer_effector.exit_fuse(element , ret[0] , ret[1])
+    
+            return ret
+        } , 
+    }
+}
+
+function get_DefaultInlinePrinter<NodeType extends Node>({
+    extra_effectors = [] , 
+    outer = (props)=><span>{props.children}</span> , 
+}:{
+	extra_effectors?: BasicEffector[] ,
+	outer     ?: (props: {element: NodeType, context: PrinterContext, children: any}) => any
+}){ 
+
+    let OUT = outer
+
+    return {
+        render_func: (props: PrinterRenderFunc_Props) => {
+            let element = props.element as NodeType 
+
+            return <OUT element={element} context={props.context}>{props.children}</OUT>
+        } , 
+        enter_effect: (element: NodeType, env: PrinterEnv): [PrinterEnv,PrinterContext] => {    
+            let ret: [PrinterEnv , PrinterContext] = [ env , {} ]
+            
+            // 应用额外的前作用器。
+            for(let extra_eff of extra_effectors){
+                ret = extra_eff.enter_fuse(element , ret[0] , ret[1])
+            }
+    
+            return ret
+        } , 
+        exit_effect: (element: NodeType, env: PrinterEnv , context: PrinterContext):[PrinterEnv,PrinterContext] => {    
+            let ret: [PrinterEnv , PrinterContext] = [ env , context ]
+    
+            for(let extra_eff of extra_effectors){
+                ret = extra_eff.exit_fuse(element , ret[0] , ret[1])
+            }
     
             return ret
         } , 

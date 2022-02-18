@@ -24,6 +24,7 @@ export { use_all_editors }
 let theoremrenderer     = get_DefaultGroup_with_AppBar()
 let listrenderer        = get_DefaultGroup_with_RightBar( (p)=>"list" )
 let proofrenderer       = get_DefaultGroup_with_RightBar()
+let displayrenderer     = get_DefaultGroup_with_AppBar((p)=>"展示")
 
 let strongrenderer      = get_DefaultInline("Strong" , (props)=><strong>{props.children}</strong>)
 let deleterenderer      = get_DefaultInline("Delete" , (props)=><del>{props.children}</del>)
@@ -41,6 +42,6 @@ function use_all_editors(editor: YEditor){
     editor.update_renderer(sectrionrenderer , "support" , "new-section")
     editor.update_renderer(imagerenderer    , "support" , "image")
     editor.update_renderer(listrenderer     , "group" , "list")
-    editor.update_renderer(proofrenderer    , "group" , "proof")
+    editor.update_renderer(displayrenderer    , "group" , "display")
     return editor
 }

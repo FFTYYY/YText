@@ -7,7 +7,7 @@ const my_theme: ThemeOptions = {
     palette: {
         divider: "#00000077" , 
         primary: {
-            main: "#111111"
+            main: "#000000"
         }
     },    
     printer: {
@@ -19,21 +19,21 @@ const my_theme: ThemeOptions = {
         } , 
         typography: {
             body: {
-                fontFamily: "default" , 
+                fontFamily: "STXihei" , 
                 fontSize: "1rem" , 
                 lineHeight: "1.5rem" , 
                 lineSpacing: "0.00938em" , 
                 fontWeight: 400 , 
             },
             structure: {
-                fontFamily: "default" , 
+                fontFamily: "DengXian" , 
                 fontSize: "1rem" , 
                 lineHeight: "1.5rem" , 
                 lineSpacing: "0.00938em" , 
-                fontWeight: 600 , 
+                fontWeight: 400 , 
             } , 
             display: {
-                fontFamily: "default" , 
+                fontFamily: "KaiTi" , 
                 fontSize: "1rem" , 
                 lineHeight: "1.5rem" , 
                 lineSpacing: "0.00938em" , 

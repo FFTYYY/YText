@@ -87,9 +87,8 @@ class App extends React.Component<any,App_State> {
 			<Box sx = {{
 					position: "absolute" , 
 					width: "48%" ,
-					left: "52%" , 
+					left: "51%" , 
 					height: "90%" , 
-					backgroundColor: "#AABBCC" , 
 					overflow: "auto" , 
 			}}>
 				<DefaultPrinter

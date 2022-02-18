@@ -39,6 +39,7 @@ let theoremstyle = new GroupStyle("theorem" , {
 	}
 })
 let liststyle 		= new GroupStyle  ("list" , {})
+let displaystyle 	= new GroupStyle  ("display" , {title: "" , origin: ""})
 let prooftyle 		= new GroupStyle  ("proof" , {title: "Proof"})
 let strongstyle     = new InlineStyle ("strong" , {})
 let deletestyle     = new InlineStyle ("delete" , {})
@@ -64,5 +65,6 @@ function get_all_styles(){
 		imagestyle , 
 		comment  , 
 		testabs , 
+		displaystyle , 
 	]
 }

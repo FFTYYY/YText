@@ -81,10 +81,9 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
             let R = printer.get_renderer("text")
 
             let text:any = (element as has_text).text
-            if(text == "") // TODO 这里的逻辑应该改成：若某个元素子节点为空，则渲染成换行。
-                text = <br />
             return <R.render_func element={element} context={{}}>{text}</R.render_func>
         }
+        let children = (element as has_children).children
 
         let name = undefined // 如果name是undefined，则get_renderer会返回默认样式。
         let styled = is_styled(element)
@@ -92,7 +91,6 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
             name = (element as StyledNode).name
         }
         
-        let children = (element as has_children).children
         let R = printer.get_renderer(type , name)
         return <R.render_func
             element  = { element }
@@ -156,7 +154,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
 }
 
 interface PrinterRenderFunc_Props{
-    children: any[]
+    children: any
     element: Node
     context: PrinterContext
 }

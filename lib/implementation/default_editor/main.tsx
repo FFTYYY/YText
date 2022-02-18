@@ -44,7 +44,7 @@ import {
 	default_theme , 
 } from "../basic"
 
-import { EditorBackgroundPaper , ComponentEditorBox , } from "./basic"
+import { EditorBackgroundPaper , ComponentEditorBox } from "./basic"
 
 export { DefaultEditor }
 

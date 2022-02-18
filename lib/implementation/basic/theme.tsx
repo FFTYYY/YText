@@ -45,6 +45,7 @@ const default_theme : ThemeOptions = {
             special: "0.8rem" ,  
             colon: "1rem" ,  
             level: "2rem" ,  
+            structure: "0.4rem" , 
         } , 
         typography: {
             body: {
@@ -135,6 +136,9 @@ interface PrinterTheme {
 
 		/** 一个层级的空格。 */
 		level: string 
+
+		/** 结构性的左右偏移。 */
+		structure: string 
     } , 
     typography: {
         
