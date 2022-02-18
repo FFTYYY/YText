@@ -46,7 +46,12 @@ let deletestyle     = new InlineStyle ("delete" , {})
 
 let npstyle         = new SupportStyle("newparagraph" , {})
 let sectionerstyle  = new SupportStyle("new-section" , {title: ""})
-let imagestyle      = new SupportStyle("image" , {url: "" , title: ""})
+let imagestyle      = new SupportStyle("image" , {
+	url: "" , 
+	title: "" , 
+	width: 10 , 
+	height : -1,
+} , {forceInline: true})
 
 let comment = new AbstractStyle("comment" , {})
 let testabs = new AbstractStyle("test" , {})

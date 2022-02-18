@@ -105,7 +105,7 @@ function my_sectioner_printer(){
 function my_strong_printer(){
 	return get_DefaultInlinePrinter<InlineNode>({
 		outer: (props: {element: InlineNode , context: PrinterContext, children: any}) => {
-			return <PrinterParagraph><strong>{props.children}</strong></PrinterParagraph>
+			return <strong>{props.children}</strong>
 		}
 	})
 }
@@ -113,7 +113,7 @@ function my_strong_printer(){
 function my_delete_printer(){
 	return get_DefaultInlinePrinter<InlineNode>({
 		outer: (props: {element: InlineNode , context: PrinterContext, children: any}) => {
-			return <PrinterParagraph><del>{props.children}</del></PrinterParagraph>
+			return <del>{props.children}</del>
 		}
 	})
 }

@@ -125,24 +125,38 @@ function get_DefaultSplitter(get_title: (parameters:any)=>string = (parameters:a
  * @param render_element 如何在编辑视图中渲染元素。默认为用 <img> 来渲染。
 */
 function get_DefaultDisplayer(
-    get_url:((parameters: any)=>string)=((p)=>p.url) , 
-    render_element: ((props: {url: string, parameters?: any})=>any) = ((props: {url: string})=><img src={props.url}/> ), 
+    name?: string , 
+    is_empty:((parameters: any)=>boolean)=((p)=>!!(p["url"])) , 
+    render_element: ((props: {parameters: any})=>any) = ((props)=><img src={props.parameters.url}/> ), 
 ){
     return (props: EditorRenderer_Props) => {
         let editor = props.editor
         let element = props.element as SupportNode
-        let url = get_url(element.parameters)
+        let parameters = element.parameters
         let R = render_element
 
-        return <UnselecableBox><ComponentPaper is_inline>{props.children}
+        return <ComponentPaper is_inline>{props.children}<UnselecableBox>
             <AutoStack force_direction="row">
-                <R url={url} />
-                <ButtonGroup variant="text">
+                {is_empty(parameters) ? <R parameters={parameters} /> : name }
+                <AutoStackedPopperWithButton
+                    close_on_otherclick
+                    button_class = {IconButton}
+                    button_props = {{
+                        sx: {
+                            height: "1rem" , 
+                            width: "1rem" , 
+                            margin: "0",
+                        } , 
+                        children: <KeyboardArrowDownIcon sx={{height: "1rem"}}/> ,
+                    }} 
+                    title = {"展开" + (name ? ` / ${name}` : "") }
+                >
+                    <Typography>{name}</Typography>
                     <DefaultParameterEditButton editor={editor} element={element} />
                     <NewParagraphButton         editor={editor} element={element} />
                     <DefaultCloseButton editor={editor} element={element} />
-                </ButtonGroup>
+                </AutoStackedPopperWithButton>
             </AutoStack>
-        </ComponentPaper></UnselecableBox>    
+        </UnselecableBox></ComponentPaper>
     }
 }

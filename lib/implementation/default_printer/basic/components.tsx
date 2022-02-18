@@ -35,7 +35,7 @@ const PrinterDivider = (props: DividerProps) => <Divider
 
 /** 一段要展示的话。 */
 const PrinterDisplay = (props: TypographyProps  & {inline?: boolean}) => <Typography 
-    component = {Box}
+    component = {props.inline ? "span" : Box}
     {...{...props , inline: undefined}}
     sx = {[
         (theme)=>({
@@ -71,7 +71,7 @@ const PrinterParagraph = (props: TypographyProps) => <Typography
 
 /** 一个的标题，独占一行。 */
 const PrinterTitle = (props: TypographyProps & {inline?: boolean}) => <Typography 
-    component = {Box}
+    component = {props.inline ? "span" : Box}
     {...{...props , inline: undefined}}
     sx = {[
         (theme)=>({
