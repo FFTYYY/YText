@@ -2,11 +2,13 @@ import {
     Typography , 
     Box , 
     Paper , 
+    Divider , 
 } from "@mui/material"
 import type {
     TypographyProps , 
     PaperProps , 
     BoxProps , 
+    DividerProps , 
 } from "@mui/material"
 import type { SxProps } from "@mui/material/styles"
 
@@ -17,8 +19,19 @@ import { GroupNode} from "../../../core/elements"
 import type { PrinterRenderer } from "../../../printer"
 import React from "react"
 
-export { PrinterBox , PrinterParagraph , PrinterInlineTitle , NewLevel , PrinterTitle , OldLevel}
+export { PrinterBox , PrinterParagraph , PrinterInlineTitle , NewLevel , PrinterTitle , OldLevel , PrinterDivider}
 
+/** 默认的分隔线。 */
+const PrinterDivider = (props: DividerProps) => <Divider 
+    {...props}
+    sx = {[
+        {
+            marginTop: (theme) => theme.printer.margins.special , 
+            marginBottom: (theme) => theme.printer.margins.special , 
+        } , 
+        ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
+    ]}
+/>
 
 /** 段落节点的默认输出方式。 */
 const PrinterParagraph = (props: TypographyProps) => <Typography 

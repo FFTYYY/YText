@@ -29,6 +29,14 @@ const default_theme : ThemeOptions = {
                 lineSpacing: "0.00938em" ,    
                 fontWeight: 400 , 
             } , 
+
+            structure: {
+                fontFamily: "Century Gothic, SimHei" , 
+                fontSize: "1rem" , 
+                lineHeight : "1.5rem" , 
+                lineSpacing: "0.00938em" ,    
+                fontWeight: 400 , 
+            } , 
         } , 
     } , 
     printer: {
@@ -106,7 +114,11 @@ interface EditorTheme {
 		minimum_content: string 
 	} , 
     typography: {
+        /** 主要文本的字体。 */
         body: TypographyTheme
+
+        /** 结构性文本的字体。 */
+        structure: TypographyTheme
     }
 }
 

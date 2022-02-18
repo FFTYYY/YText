@@ -1,15 +1,27 @@
+import React from "react"
+
 import {
     Typography , 
     Box , 
     Paper , 
 } from "@mui/material"
+import type {
+    TypographyProps , 
+    PaperProps , 
+    BoxProps , 
+} from "@mui/material"
+
+
 import { Node } from "slate"
 import type  { PrinterRenderFunc_Props } from "../../printer"
-import  { make_print_renderer } from "../../printer"
-import { PrinterParagraph } from "./basic/components"
+import { GroupNode} from "../../core/elements"
+import type { PrinterRenderer } from "../../printer"
+import { OrderEffector , InjectEffector , ConsumeEffector , BasicEffector} from "./effecter"
+import type { ValidParameter } from "../../core/elements"
 import type { PrinterEnv , PrinterContext } from "../../printer"
-import { OrderEffector , InjectEffector , ConsumeEffector} from "./effecter"
-import React from "react"
+import { AutoStack } from "../basic"
+import type {InjectFunction} from "./effecter"
+import { PrinterBox , PrinterParagraph , PrinterInlineTitle , NewLevel } from "./basic/components"
 
 export { get_DefaultParagraphPrinter }
 

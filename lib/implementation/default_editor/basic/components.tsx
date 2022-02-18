@@ -9,6 +9,7 @@
      Typography , 
      Box , 
      Paper , 
+     Container , 
  } from "@mui/material"
  import type {
      TypographyProps , 
@@ -26,6 +27,7 @@ export {
     ComponentEditorBox , 
     UnselecableBox , 
     ComponentBox , 
+    StructureTypography , 
 }
 
 // TODO 加入一个通用抽屉
@@ -48,12 +50,28 @@ const ParagraphBox = (props: TypographyProps) => <Typography
     {...props}
     sx = {[
         (theme)=>({
-            ...theme.typography.body1,
+            ...theme.editor.typography.body,
             marginTop: theme.editor.margins.paragraph , 
         }),
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}
 />
+
+/** 结构性的文字。 */
+const StructureTypography = (props: TypographyProps) => <Typography 
+    component = {Box}
+    {...props}
+    sx = {[
+        (theme)=>({
+            ...theme.editor.typography.structure,
+            marginY: "auto" , // 垂直居中
+            height: theme.editor.typography.structure.lineHeight , 
+            whiteSpace: "nowrap" , 
+        }),
+        ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
+    ]}
+/>
+
 
 /** 这个组件定义可以书写的区域。
  * @param props.autogrow 如果为 true ，则区域会自动横向增长以填满父元素。

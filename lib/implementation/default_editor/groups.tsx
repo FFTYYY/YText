@@ -49,7 +49,7 @@ import { DefaultParameterEditButton , DefaultCloseButton , AutoStackedPopperWith
 import { DefaultHidden } from "./hidden"
 
 import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "../basic"
-import { ComponentPaper , ComponentEditorBox , UnselecableBox} from "./basic"
+import { ComponentPaper , ComponentEditorBox , UnselecableBox , StructureTypography} from "./basic"
 
 import type { UniversalComponent_Props } from "./universe" 
 
@@ -83,7 +83,7 @@ function get_DefaultGroup_with_AppBar(
             <AutoStack force_direction="column">
                 <UnselecableBox>
                     <Toolbar sx={{overflow: "auto"}}><AutoStack>
-                        <Typography>{title}</Typography>
+                        <StructureTypography>{title}</StructureTypography>
                         <DefaultParameterEditButton editor={editor} element={element} />         
                         <DefaultHidden              editor={editor} element={element} />
                         <DefaultGroupSwicth         editor={editor} element={element} />
@@ -127,7 +127,7 @@ function get_DefaultGroup_with_RightBar(
                 </ComponentEditorBox>                
                 <UnselecableBox>
                     <SimpleAutoStack>
-                        <Typography variant="overline">{title}</Typography>
+                        <StructureTypography variant="overline">{title}</StructureTypography>
                         <E editor={editor} element={element}/>
                         <AutoStackedPopperWithButton
                             close_on_otherclick

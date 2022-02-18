@@ -81,7 +81,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
             let R = printer.get_renderer("text")
 
             let text:any = (element as has_text).text
-            if(text == "")
+            if(text == "") // TODO 这里的逻辑应该改成：若某个元素子节点为空，则渲染成换行。
                 text = <br />
             return <R.render_func element={element} context={{}}>{text}</R.render_func>
         }
