@@ -20,25 +20,17 @@ const my_theme: ThemeOptions = {
         typography: {
             body: {
                 fontFamily: "STXihei" , 
-                fontSize: "1rem" , 
-                lineHeight: "1.5rem" , 
-                lineSpacing: "0.00938em" , 
-                fontWeight: 400 , 
             },
             structure: {
                 fontFamily: "DengXian" , 
-                fontSize: "1rem" , 
-                lineHeight: "1.5rem" , 
-                lineSpacing: "0.00938em" , 
-                fontWeight: 400 , 
+                fontWeight: 600 , 
             } , 
             display: {
                 fontFamily: "KaiTi" , 
-                fontSize: "1rem" , 
-                lineHeight: "1.5rem" , 
-                lineSpacing: "0.00938em" , 
-                fontWeight: 400 ,         
             } , 
+            weaken: {
+                fontFamily: "FangSong" , 
+            }
         } , 
     } , 
 }

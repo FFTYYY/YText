@@ -19,7 +19,17 @@ import { GroupNode} from "../../../core/elements"
 import type { PrinterRenderer } from "../../../printer"
 import React from "react"
 
-export { PrinterBox , PrinterParagraph , PrinterDisplay , NewLevel , PrinterTitle , OldLevel , PrinterDivider , PrinterBackgroundPaper}
+export { 
+    PrinterBox , 
+    PrinterParagraph , 
+    PrinterDisplay , 
+    NewLevel , 
+    PrinterTitle , 
+    OldLevel , 
+    PrinterDivider , 
+    PrinterBackgroundPaper ,
+    PrinterWeaken , 
+}
 
 /** 默认的分隔线。 */
 const PrinterDivider = (props: DividerProps) => <Divider 
@@ -32,6 +42,23 @@ const PrinterDivider = (props: DividerProps) => <Divider
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}
 />
+
+/** 一段要弱化的话。 */
+const PrinterWeaken = (props: TypographyProps  & {inline?: boolean}) => <Typography 
+    component = {props.inline ? "span" : Box}
+    {...{...props , inline: undefined}}
+    sx = {[
+        (theme)=>({
+            ...theme.printer.typography.weaken, // 使用弱化字体的样式
+            ...(props.inline ? { // 如果是行内样式
+                marginRight: (theme) => theme.printer.margins.colon , 
+                display: "inline-block" , 
+            } : {})
+        }),
+        ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
+    ]}
+/>
+
 
 /** 一段要展示的话。 */
 const PrinterDisplay = (props: TypographyProps  & {inline?: boolean}) => <Typography 

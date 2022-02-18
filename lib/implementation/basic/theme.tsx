@@ -55,6 +55,13 @@ const default_theme : ThemeOptions = {
                 lineSpacing: "0.00938em" , 
                 fontWeight: 400 , 
             },
+            weaken: {
+                fontFamily: "default" , 
+                fontSize: "1rem" , 
+                lineHeight: "1.5rem" , 
+                lineSpacing: "0.00938em" , 
+                fontWeight: 400 , 
+            },
             structure: {
                 fontFamily: "default" , 
                 fontSize: "1rem" , 
@@ -151,6 +158,9 @@ interface PrinterTheme {
 
         /** 展示的文本的字体。 */
         display: TypographyTheme
+
+        /** 弱化的文本的字体。（不重要的） */
+        weaken: TypographyTheme
     }
 }
 

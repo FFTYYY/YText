@@ -1,4 +1,4 @@
-import React from "react"
+import React , {useMemo} from "react"
 import Button from "@mui/material/Button"
 
 import { 
@@ -32,6 +32,7 @@ import {
 	make_print_renderer, 
 	PrinterTitle , 
 	PrinterDisplay , 
+	PrinterWeaken , 
 } from "../../lib"
 
 import type {
@@ -67,7 +68,7 @@ function my_proof_printer(){
 			let title = props.element.parameters.title
 			return <React.Fragment><AutoStack force_direction="column">
 				<PrinterTitle>{title}</PrinterTitle>
-				<NewLevel>{props.children}</NewLevel>
+				<NewLevel><PrinterWeaken>{props.children}</PrinterWeaken></NewLevel>
 				<PrinterTitle>Q.E.D</PrinterTitle>
 			</AutoStack></React.Fragment>
 		} , 
@@ -134,6 +135,23 @@ function my_displaystyle_printer(){
 	return printer
 }
 
+function my_image_printer(){
+
+    let printer = get_DefaultInlinePrinter<SupportNode>({
+		outer: (props: {element: SupportNode , context: PrinterContext, children: any}) => {
+			let p = props.element.parameters as {url: string , width: number , height: number}
+			let width = p.width > 0 ? `${p.width}rem` : "100%"
+			let height = p.height > 0 ? `${p.height}rem` : "100%"
+			// TODO 这玩意儿每次编辑都会重新加载，有点蛋疼....
+			return <img src={p.url} style={{
+				width: width, 
+				height: height , 
+			}}/>
+		} , 
+	})
+	return printer
+}
+
 
 function use_all_printers(printer: Printer){
     let listprinter 		= my_list_printer()
@@ -145,6 +163,7 @@ function use_all_printers(printer: Printer){
 	let strongprinter 		= my_strong_printer()
 	let deleteprinter 		= my_delete_printer()
 	let displayprinter 		= my_displaystyle_printer()
+	let imageprinter 		= my_image_printer()
 
 
     printer.update_renderer( paragraphprinter, "paragraph" )
@@ -154,7 +173,8 @@ function use_all_printers(printer: Printer){
     printer.update_renderer( sectionerprinter as PrinterRenderer, "support" , "new-section" )
     printer.update_renderer( strongprinter    as PrinterRenderer, "inline" , "strong" )
     printer.update_renderer( deleteprinter    as PrinterRenderer, "inline" , "delete" )
-    printer.update_renderer( displayprinter    as PrinterRenderer, "group" , "display" )
+    printer.update_renderer( displayprinter   as PrinterRenderer, "group" , "display" )
+    printer.update_renderer( imageprinter     as PrinterRenderer, "support" , "image" )
     
     return printer
 }
