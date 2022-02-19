@@ -226,17 +226,27 @@ class YEditor extends Renderer<EditorRenderer_Func>{
             if(style == undefined)
                 return (e:any) => undefined
 
-            
             return (e:any)=>{
+                let selection = me.slate.selection
+                let flag = true
+                if(selection != undefined)
+                    flag = JSON.stringify(selection.anchor) == JSON.stringify(selection.focus) // 是否没有选择
+
                 let node: InlineNode = style.makenode()
-                Transforms.wrapNodes(
-                    me.slate , 
-                    node as InlineNode , 
-                    { 
-                        match: (n:Node)=>Text.isText(n) , // 所有子节点中是文本的那些。
-                        split: true , 
-                    }
-                )
+
+                if(flag){ // 如果没有选择任何东西，就新建节点。
+                    Transforms.insertNodes(me.slate , node)
+                }
+                else{ // 如果有节点，就把所有子节点打包成一个inline节点。
+                    Transforms.wrapNodes<InlineNode>(
+                        me.slate , 
+                        node , 
+                        { 
+                            match: (n:Node)=>Text.isText(n) , // 所有子节点中是文本的那些。
+                            split: true , 
+                        }
+                    )
+                }
             }
 
         }

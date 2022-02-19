@@ -84,10 +84,16 @@ class App extends React.Component<any,App_State> {
 					theme = {my_theme}
 					onFocusChange = {()=>{
 
-						let pathid = JSON.stringify(me.editor.slate.selection.focus.path)
+						if(me.editor.slate.selection != undefined){
 
-						if(me.printer_ref.current != undefined)
-							me.printer_ref.current.scroll_to(pathid)
+							let pathid = JSON.stringify(me.editor.slate.selection.focus.path)
+
+							if(me.printer_ref.current != undefined)
+								me.printer_ref.current.scroll_to(pathid)
+						}
+					}}
+					onUpdate = {(v)=>{
+						console.log(v)
 					}}
 				/>
 			</Box>

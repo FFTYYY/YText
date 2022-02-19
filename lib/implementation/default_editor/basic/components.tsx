@@ -84,7 +84,7 @@ const ComponentEditorBox = (props: BoxProps & {autogrow?: boolean}) =><Box
             ...(props.autogrow
                 ? { flex: 1 , minWidth: 0 , } // 如果自动增长，就设置一个 flex 属性。但是必须同时设置一个 minWidth，不知道为啥...
                                             // 可以参考 https://makandracards.com/makandra/66994-css-flex-and-min-width 
-                : { minWidth: (theme) => theme.editor.widths.minimum_content } // 如果不自动增长，设置一个最小宽度。
+                : {} // { minWidth: (theme) => theme.editor.widths.minimum_content } // 如果不自动增长，设置一个最小宽度。
             ) ,
         } , 
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 

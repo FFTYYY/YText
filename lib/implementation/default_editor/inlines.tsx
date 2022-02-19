@@ -35,7 +35,10 @@ import { UnselecableBox , ComponentEditorBox , ComponentPaper } from "./basic"
 
 export { get_DefaultInline }
 
-
+/** 默认的内联样式渲染器。
+ * @remark 现在有个bug，在内联节点的末尾输入中文的时候会出错。
+ * 见https://github.com/ianstormtaylor/slate/issues/4811
+ */
 function get_DefaultInline(
     name: string = "" , 
     surrounder: (props: UniversalComponent_Props & {children: any}) => any = (props) => <React.Fragment>{props.children}</React.Fragment> , 
@@ -51,7 +54,7 @@ function get_DefaultInline(
             <AutoStack force_direction="row">
                 <ComponentEditorBox>
                     <SUR editor={editor} element={element}>{props.children}</SUR>
-                </ComponentEditorBox>        
+                </ComponentEditorBox>
                 <UnselecableBox>
                     <AutoStack force_direction="row">
                         <Extra editor={editor} element={element}/>
