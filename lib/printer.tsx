@@ -63,18 +63,21 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         this.my_refs = {}
     }
 
+    /** 这个函数可以被主动调用，令编辑器滚动到指定元素。
+     * TODO 移动到core内，操作应与渲染方式分离。
+     * TODO 让text节点也有path_id
+     * @param path_id path数组字符串化以后的值（JSON.stringify(path)）。注意 path_id 只到inline节点的上一层。
+     */
     scroll_to(path_id: string){
         // TODO 如果是新建一行，调用这个函数的时候这行还没创建好，因此会返回undefined。
         // 不过好像问题也不大就是了...
-        if(this.my_refs[path_id] == undefined){
+        if(this.my_refs[path_id] == undefined || this.my_refs[path_id].current == undefined){
             return 
         }
-        if(this.my_refs[path_id].current != undefined){
-            this.my_refs[path_id].current.scrollIntoView({
-                behavior: "smooth" , 
-                block: "center"
-            })
-        }
+        this.my_refs[path_id].current.scrollIntoView({
+            behavior: "smooth" , 
+            block: "center"
+        })
     }
 
 
