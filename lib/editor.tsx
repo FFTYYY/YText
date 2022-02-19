@@ -26,7 +26,8 @@ export type { EditorRenderer_Props , EditorRenderer_Func}
 
 interface YEditorComponent_Props{
     editor: YEditor                 // 目标YEditor对象
-    onUpdate?: (newval:any)=>any    // 当节点改变时的回调函数
+    onUpdate?: (newval:any)=>void    // 当节点改变时的回调函数
+    onFocusChange?: ()=>void          // 点击或者修改
 }
 
 /** Slate 需要的渲染函数的 props 。 */
@@ -47,6 +48,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     core: EditorCore
     slate: ReactEditor
     onUpdate: (v: any) => void
+    onFocusChange: ()=>void
 
     /**
      * @param props.editor 与这个组件对应的YEditor。
@@ -59,7 +61,8 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
         this.core = this.editor.core
         this.slate = this.editor.slate
 
-        this.onUpdate = props.onUpdate || ( (v: any) => {} ) // 这个函数用于通知外部自身的改变
+        this.onUpdate = props.onUpdate || ( (v) => {} ) // 这个函数用于通知外部自身的改变
+        this.onFocusChange = props.onFocusChange || ( () => {} ) // 这个函数用于通知外部自身的改变
     }
 
     /** 
@@ -127,11 +130,17 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
         return <Slate 
             editor = {me.slate} 
             value = {[paragraph_prototype("")]} 
-            onChange = {value => me.update_value(value)} 
+            onChange = {value => {
+                me.update_value(value)
+                me.onFocusChange()
+            }}
         >
             <Editable
                 renderElement={me.renderElement.bind(me)}
                 renderLeaf   ={me.renderLeaf.bind(me)}
+                onClick = {e=>{
+                    me.onFocusChange()
+                }}
             />
         </Slate>
     }

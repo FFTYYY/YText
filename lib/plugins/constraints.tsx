@@ -24,10 +24,18 @@ function constraint_group(editor: Editor): Editor{
         let idx = path.length - 1
 
         if("children" in node){
+            let groupflag = false // 见到过group没有
             for(let [subidx, subnode] of node.children.entries()){
 
                 if(get_node_type(subnode) != "group") //不是 group ，我们不关心
                     continue
+                
+                if(!groupflag){ // 当前是第一个group节点，我们不关心
+                    groupflag = true
+                    continue
+                }
+                groupflag = true
+
                 let now_node = subnode as GroupNode
 
                 if(subidx == 0){ // 第一个元素前面不可能有 GroupNode ，直接返回。
@@ -39,6 +47,11 @@ function constraint_group(editor: Editor): Editor{
                 // 不允许一个关系是 separating 的 group 节点前面还是 group
                 if(get_node_type(last_node) == "group" && now_node.relation == "separating"){
                     Transforms.insertNodes(editor , paragraph_prototype() , {at: [...path,subidx]})
+                    return
+                }
+                // 不允许一个关系是 chaining 的 group 节点前面不是 group
+                if(get_node_type(last_node) != "group" && now_node.relation == "chaining"){
+                    Transforms.moveNodes(editor , {at: [...path,subidx-1] , to: [...path,subidx]})
                     return
                 }
             }

@@ -45,7 +45,8 @@ class App extends React.Component<any,App_State> {
 	editor : YEditor
 	printer: Printer
 	core: EditorCore
-	
+	printer_ref: any
+
 	constructor(props: any) {
 		super(props)
 
@@ -60,7 +61,7 @@ class App extends React.Component<any,App_State> {
 		
 		this.printer = new Printer( this.core )
 		this.printer = use_all_printers(this.printer)
-		
+		this.printer_ref = React.createRef()
 	}
 
 	outer_act(){
@@ -81,6 +82,15 @@ class App extends React.Component<any,App_State> {
 				<DefaultEditor 
 					editor = {me.editor}
 					theme = {my_theme}
+					onFocusChange = {()=>{
+						let path = me.editor.slate.selection.focus.path
+						path = path.slice(0,path.length-1)
+
+						let pathid = JSON.stringify(path)
+
+						if(me.printer_ref.current != undefined)
+							me.printer_ref.current.scroll_to(pathid)
+					}}
 				/>
 			</Box>
 
@@ -92,8 +102,9 @@ class App extends React.Component<any,App_State> {
 					overflow: "auto" , 
 			}}>
 				<DefaultPrinter
-					printer = {this.printer}
+					printer = {me.printer}
 					theme = {my_theme}
+					ref = {me.printer_ref}
 				/>
 			</Box>
 		</Box>

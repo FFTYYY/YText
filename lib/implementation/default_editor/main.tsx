@@ -56,6 +56,7 @@ interface DefaultEditor_State{
 interface DefaultEditor_Props{
 	editor: YEditor
 	onUpdate?: (newval: Node[]) => void
+	onFocusChange?: ()=>void
 	onMount?: () => void
 	theme?: ThemeOptions
 }
@@ -67,6 +68,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 	editor: YEditor
 	onUpdate: (newval: Node[]) => void
 	onMount: ()=>void
+	onFocusChange: ()=>void
 
 	constructor(props: DefaultEditor_Props) {
 		super(props)
@@ -74,6 +76,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 		this.editor = props.editor
 		this.onUpdate = props.onUpdate || ((newval: Node[])=>{})
 		this.onMount  = props.onMount || (()=>{})
+		this.onFocusChange  = props.onFocusChange || (()=>{})
     }
 	componentDidMount(): void {
 		this.onMount()	
@@ -109,7 +112,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 				width: complement_width, 
 				overflow: "auto", 
 			}}><ComponentEditorBox>
-				<YEditor.Component editor={me.editor} onUpdate={me.onUpdate}/>
+				<YEditor.Component editor={me.editor} onUpdate={me.onUpdate} onFocusChange={me.onFocusChange}/>
 			</ComponentEditorBox></Box>
 
 			<Box sx = {{

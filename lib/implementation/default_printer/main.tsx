@@ -32,18 +32,28 @@ interface DefaultPrinter_Props{
  */
 class DefaultPrinter extends React.Component <DefaultPrinter_Props> {
     printer: Printer
+	main: React.RefObject<any>
 
 	constructor(props: DefaultPrinter_Props) {
 		super(props)
 
 		this.printer = props.printer
+
+		this.main = React.createRef()
     }
+
+	scroll_to(path_id: string){
+		if(this.main.current != undefined)
+			this.main.current.scroll_to(path_id)
+	}
 
     render() {
 		let theme = merge_object(default_theme , this.props.theme)
+		let main = this.main
 
-        return <ThemeProvider theme={createTheme(theme)}><PrinterBackgroundPaper>
+		return <ThemeProvider theme={createTheme(theme)}><PrinterBackgroundPaper id="haha">
             <Printer.Component
+				ref = {main}
 			    printer = {this.printer}
 		    />
         </PrinterBackgroundPaper></ThemeProvider>
