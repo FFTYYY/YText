@@ -43,6 +43,7 @@ let displaystyle 	= new GroupStyle  ("display" , {title: "" , origin: ""})
 let prooftyle 		= new GroupStyle  ("proof" , {title: "Proof"})
 let strongstyle     = new InlineStyle ("strong" , {})
 let deletestyle     = new InlineStyle ("delete" , {})
+let linkstyle       = new InlineStyle ("link" , {targetidx: ""})
 
 let npstyle         = new SupportStyle("newparagraph" , {})
 let sectionerstyle  = new SupportStyle("new-section" , {title: ""})
@@ -71,5 +72,6 @@ function get_all_styles(){
 		comment  , 
 		testabs , 
 		displaystyle , 
+		linkstyle , 
 	]
 }

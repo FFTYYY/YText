@@ -83,10 +83,8 @@ class App extends React.Component<any,App_State> {
 					editor = {me.editor}
 					theme = {my_theme}
 					onFocusChange = {()=>{
-						let path = me.editor.slate.selection.focus.path
-						path = path.slice(0,path.length-1)
 
-						let pathid = JSON.stringify(path)
+						let pathid = JSON.stringify(me.editor.slate.selection.focus.path)
 
 						if(me.printer_ref.current != undefined)
 							me.printer_ref.current.scroll_to(pathid)

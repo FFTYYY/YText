@@ -21,7 +21,7 @@ import type { ValidParameter } from "../../core/elements"
 import type { PrinterEnv , PrinterContext } from "../../printer"
 import { AutoStack } from "../basic"
 import type {InjectFunction} from "./effecter"
-import { PrinterBox , PrinterParagraph , PrinterInlineTitle , NewLevel } from "./basic/components"
+import { PrinterBox , PrinterParagraph , NewLevel } from "./basic/components"
 
 export { get_DefaultBlockPrinter }
 

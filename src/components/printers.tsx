@@ -119,6 +119,15 @@ function my_delete_printer(){
 	})
 }
 
+// TODO 啊这...
+function my_link_printer(){
+	return get_DefaultInlinePrinter<InlineNode>({
+		outer: (props: {element: InlineNode , context: PrinterContext, children: any}) => {
+			return <a>{props.children}</a>
+		}
+	})
+}
+
 function my_displaystyle_printer(){
 
     let printer = get_DefaultBlockPrinter<GroupNode>({
@@ -164,6 +173,7 @@ function use_all_printers(printer: Printer){
 	let deleteprinter 		= my_delete_printer()
 	let displayprinter 		= my_displaystyle_printer()
 	let imageprinter 		= my_image_printer()
+	let linkprinter 		= my_link_printer()
 
 
     printer.update_renderer( paragraphprinter, "paragraph" )
@@ -175,6 +185,7 @@ function use_all_printers(printer: Printer){
     printer.update_renderer( deleteprinter    as PrinterRenderer, "inline" , "delete" )
     printer.update_renderer( displayprinter   as PrinterRenderer, "group" , "display" )
     printer.update_renderer( imageprinter     as PrinterRenderer, "support" , "image" )
+    printer.update_renderer( linkprinter     as PrinterRenderer, "inline" , "link" )
     
     return printer
 }

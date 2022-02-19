@@ -28,6 +28,7 @@ let displayrenderer     = get_DefaultGroup_with_AppBar((p)=>"展示")
 
 let strongrenderer      = get_DefaultInline("Strong" , (props)=><strong>{props.children}</strong>)
 let deleterenderer      = get_DefaultInline("Delete" , (props)=><del>{props.children}</del>)
+let linkrenderer        = get_DefaultInline("Link" , (props)=><u>{props.children}</u>)
 
 let nprenderer          = DefaultNewParagraph
 let sectrionrenderer    = get_DefaultSplitter((parameters)=>parameters.alias)
@@ -56,5 +57,6 @@ function use_all_editors(editor: YEditor){
     editor.update_renderer(listrenderer     , "group" , "list")
     editor.update_renderer(displayrenderer    , "group" , "display")
     editor.update_renderer(proofrenderer    , "group" , "proof")
+    editor.update_renderer(linkrenderer    , "inline" , "link")
     return editor
 }
