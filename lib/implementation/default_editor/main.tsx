@@ -31,7 +31,7 @@ import { YEditor } from "../../editor"
 import { object_foreach , merge_object } from "../utils"
 import type { StyleType , NodeType } from "../../core/elements"
 
-import { DefaultHidden } from "./hidden"
+import { DefaultHiddenEditorButtons } from "./hidden"
 import { 
 	DefaultParameterEditButton , 
 	AutoStackedPopperWithButton , 
@@ -44,7 +44,7 @@ import {
 	default_theme , 
 } from "../basic"
 
-import { EditorBackgroundPaper , ComponentEditorBox } from "./basic"
+import { EditorBackgroundPaper , EditorComponentEditingBox } from "./basic"
 
 export { DefaultEditor }
 
@@ -105,15 +105,14 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 
 		let me = this
 		return <ThemeProvider theme={createTheme(theme)}><EditorBackgroundPaper>
-
 			<Box sx = {{ 
 				position: "absolute", 
 				height: "100%", 
 				width: complement_width, 
 				overflow: "auto", 
-			}}><ComponentEditorBox>
+			}}><EditorComponentEditingBox>
 				<YEditor.Component editor={me.editor} onUpdate={me.onUpdate} onFocusChange={me.onFocusChange}/>
-			</ComponentEditorBox></Box>
+			</EditorComponentEditingBox></Box>
 
 			<Box sx = {{
 				position: "absolute", 
@@ -121,10 +120,9 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 				left: number2percent(complement_width), 
 				width: toolbar_width
 			}}>
-
 				<AutoStack force_direction="column">
 					<DefaultParameterEditButton editor = {me.editor} element = {me.editor.core.root} />
-					<DefaultHidden editor={me.editor} element={me.editor.core.root} />
+					<DefaultHiddenEditorButtons editor={me.editor} element={me.editor.core.root} />
 					<Divider />
 					{["group" , "inline" , "support" , "struct"].map ( (typename: StyleType)=>{
 						let Icon = icons[typename]

@@ -21,7 +21,9 @@ import type { ValidParameter } from "../../core/elements"
 import type { PrinterEnv , PrinterContext } from "../../printer"
 import { AutoStack } from "../basic"
 import type {InjectFunction} from "./effecter"
-import { PrinterBox , PrinterParagraph , NewLevel } from "./basic/components"
+import { 
+    PrinterParagraphBox , 
+} from "./basic/components"
 
 export { get_DefaultParagraphPrinter , get_DefaultInlinePrinter }
 
@@ -35,11 +37,11 @@ function get_DefaultParagraphPrinter(){
 
             let extra =  consumer_effector.get_context(props.context) // 需要额外插入的元素。
 
-            return <PrinterParagraph>
+            return <PrinterParagraphBox>
                 {Object.keys(extra).map((key)=><React.Fragment key={key}>{extra[key]}</React.Fragment>)}
                 {props.children}
                 <br/>
-            </PrinterParagraph>
+            </PrinterParagraphBox>
         } , 
         enter_effect: (element: Node, env: PrinterEnv): [PrinterEnv,PrinterContext] => {  
             let ret: [PrinterEnv , PrinterContext] = [ env , {} ]

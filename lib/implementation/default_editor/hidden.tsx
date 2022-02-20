@@ -28,7 +28,7 @@ import { is_same_node , node2path , update_kth , get_hidden_idx } from "../utils
 import { EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle } from "../../core/editor_core"
 import { DefaultEditor } from "./main"
 
-export {DefaultNewHidden , DefaultHiddenEditor , DefaultHidden}
+export {DefaultNewHidden , DefaultHiddenEditor , DefaultHiddenEditorButtons}
 
 /** 这个组件提供一个按钮，让 element 选择其 hidden style 。
  * @param props.editor 这个组件所服务的编辑器。
@@ -202,7 +202,7 @@ function DefaultHiddenEditorGroup(props: {editor:YEditor , element: StyledNode, 
  * @param props.element 这个组件所服务的节点。
  * @returns 一个渲染了两个 Button 的 
 */
-function DefaultHidden(props: {editor: YEditor , element: StyledNode}){
+function DefaultHiddenEditorButtons(props: {editor: YEditor , element: StyledNode}){
     let editor = props.editor
     let element = props.element
 

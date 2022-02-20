@@ -21,19 +21,19 @@ import type { ThemeOptions } from "@mui/material/styles"
 import { Node } from "slate"
 
 export { 
-    ComponentPaper , 
-    ParagraphBox , 
+    EditorComponentPaper , 
+    EditorParagraphBox , 
     EditorBackgroundPaper , 
-    ComponentEditorBox , 
-    UnselecableBox , 
-    ComponentBox , 
-    StructureTypography , 
+    EditorComponentEditingBox , 
+    EditorUnselecableBox , 
+    EditorComponentBox , 
+    EditorStructureTypography , 
 }
 
 // TODO 加入一个通用抽屉
 
 /** 这个组件定义一个不可被选中的区域。用于 slate 的各种不希望被修改的辅助部分。 */
-const UnselecableBox = (props: BoxProps) => <Box 
+const EditorUnselecableBox = (props: BoxProps) => <Box 
     contentEditable = {false}
     {...props}
     sx = {[
@@ -45,7 +45,7 @@ const UnselecableBox = (props: BoxProps) => <Box
 />
 
 /** 这个组件定义默认的段落渲染方式。 */
-const ParagraphBox = (props: TypographyProps) => <Typography 
+const EditorParagraphBox = (props: TypographyProps) => <Typography 
     component = {Box}
     {...props}
     sx = {[
@@ -58,7 +58,7 @@ const ParagraphBox = (props: TypographyProps) => <Typography
 />
 
 /** 结构性的文字。 */
-const StructureTypography = (props: TypographyProps) => <Typography 
+const EditorStructureTypography = (props: TypographyProps) => <Typography 
     component = {Box}
     {...props}
     sx = {[
@@ -76,7 +76,7 @@ const StructureTypography = (props: TypographyProps) => <Typography
 /** 这个组件定义可以书写的区域。
  * @param props.autogrow 如果为 true ，则区域会自动横向增长以填满父元素。
  */
-const ComponentEditorBox = (props: BoxProps & {autogrow?: boolean}) =><Box 
+const EditorComponentEditingBox = (props: BoxProps & {autogrow?: boolean}) =><Box 
     {...{...props , autogrow: undefined}} // 去掉自己定义的属性。
     sx = {[
         {
@@ -94,7 +94,7 @@ const ComponentEditorBox = (props: BoxProps & {autogrow?: boolean}) =><Box
 /** 这个组件定义一个用来渲染特殊节点的纸张。 
  * @param props.is_inline 这个组件是否是行内组件。
 */
-const ComponentPaper = (props: PaperProps & {is_inline?: boolean}) =><Paper 
+const EditorComponentPaper = (props: PaperProps & {is_inline?: boolean}) =><Paper 
     elevation = {0}
     variant = "outlined" 
     square 
@@ -118,7 +118,7 @@ const ComponentPaper = (props: PaperProps & {is_inline?: boolean}) =><Paper
 />
 
 /** 对于一个不用纸张作为最外层元素的节点，这个组件用来提供其边框。 */
-const ComponentBox = (props: BoxProps) =><Box 
+const EditorComponentBox = (props: BoxProps) =><Box 
     {...props}
     sx = {[
         {

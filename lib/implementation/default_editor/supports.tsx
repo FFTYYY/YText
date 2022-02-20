@@ -27,21 +27,22 @@ from "@mui/icons-material"
 import { Node } from "slate"
 
 import { SupportNode , paragraph_prototype} from "../../core/elements"
-import { SupportStyle , EditorCore} from "../../core/editor_core"
 import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
-import { YEditor } from "../../editor"
-import { warning } from "../../exceptions/warning"
-import { node2path } from "../utils"
 
 import {  AutoStack , AutoTooltip , Direction } from "../basic"
-import {  UnselecableBox , ComponentBox , ComponentPaper} from "./basic"
 import {  DefaultCloseButton , DefaultParameterEditButton , AutoStackedPopperWithButton , NewParagraphButton } from "./universe"
 import { add_nodes , add_nodes_after , add_nodes_before } from "../../behaviours"
+import { 
+    EditorComponentPaper as ComponentPaper , 
+    EditorUnselecableBox as UnselecableBox , 
+    EditorComponentBox as ComponentBox , 
+} from "./basic"
 
-export { DefaultNewParagraph , get_DefaultSplitter , get_DefaultDisplayer}
+
+export { DefaultNewParagraphEditor , get_DefaultSplitterEditor , get_DefaultDisplayerEditor}
 
 /** 这个函数返回一个用来新建段落的辅助节点。 */
-function DefaultNewParagraph(props: EditorRenderer_Props){
+function DefaultNewParagraphEditor(props: EditorRenderer_Props){
     let element = props.element as SupportNode
     let editor = props.editor
 
@@ -86,7 +87,7 @@ function DefaultNewParagraph(props: EditorRenderer_Props){
 }
 
 /** 这个函数返回一个默认的分界符组件。 */
-function get_DefaultSplitter(get_title: (parameters:any)=>string = (parameters:any)=>parameters.name){
+function get_DefaultSplitterEditor(get_title: (parameters:any)=>string = (parameters:any)=>parameters.name){
     return (props: EditorRenderer_Props) => {
 
         let editor = props.editor
@@ -124,7 +125,7 @@ function get_DefaultSplitter(get_title: (parameters:any)=>string = (parameters:a
  * @param get_url 如何从参数中获得要显示元素的url，默认为取 url 这个参数。
  * @param render_element 如何在编辑视图中渲染元素。默认为用 <img> 来渲染。
 */
-function get_DefaultDisplayer(
+function get_DefaultDisplayerEditor(
     name?: string , 
     is_empty:((parameters: any)=>boolean)=((p)=>!!(p["url"])) , 
     render_element: ((props: {parameters: any})=>any) = ((props)=><img src={props.parameters.url}/> ), 

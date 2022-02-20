@@ -32,7 +32,7 @@ import type { ValidParameter , ValidParameterLeaf } from "../../../core/elements
 import { YEditor } from "../../../editor"
 import { is_same_node , node2path } from "../../utils"
 import { set_node , delete_node } from "../../../behaviours"
-import { StructureTypography } from "../basic"
+import { EditorStructureTypography as StructureTypography } from "../basic"
 
 export { 
     DefaultParameterContainer , 

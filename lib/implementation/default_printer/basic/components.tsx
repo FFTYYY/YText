@@ -20,15 +20,15 @@ import type { PrinterRenderer } from "../../../printer"
 import React from "react"
 
 export { 
-    PrinterBox , 
-    PrinterParagraph , 
-    PrinterDisplay , 
-    NewLevel , 
-    PrinterTitle , 
-    OldLevel , 
     PrinterDivider , 
-    PrinterBackgroundPaper ,
-    PrinterWeaken , 
+    PrinterWeakenText , 
+    PrinterDisplayText , 
+    PrinterTitleBoxText , 
+    PrinterParagraphBox , 
+    PrinterPartBox , 
+    PrinterNewLevelBox , 
+    PrinterOldLevelBox , 
+    PrinterBackgroundPaper , 
 }
 
 /** 默认的分隔线。 */
@@ -44,7 +44,7 @@ const PrinterDivider = (props: DividerProps) => <Divider
 />
 
 /** 一段要弱化的话。 */
-const PrinterWeaken = (props: TypographyProps  & {inline?: boolean}) => <Typography 
+const PrinterWeakenText = (props: TypographyProps  & {inline?: boolean}) => <Typography 
     component = {props.inline ? "span" : Box}
     {...{...props , inline: undefined}}
     sx = {[
@@ -61,7 +61,7 @@ const PrinterWeaken = (props: TypographyProps  & {inline?: boolean}) => <Typogra
 
 
 /** 一段要展示的话。 */
-const PrinterDisplay = (props: TypographyProps  & {inline?: boolean}) => <Typography 
+const PrinterDisplayText = (props: TypographyProps  & {inline?: boolean}) => <Typography 
     component = {props.inline ? "span" : Box}
     {...{...props , inline: undefined}}
     sx = {[
@@ -78,17 +78,17 @@ const PrinterDisplay = (props: TypographyProps  & {inline?: boolean}) => <Typogr
 
 
 /** 段落节点的默认输出方式。 */
-const PrinterParagraph = (props: TypographyProps) => <Typography 
+const PrinterParagraphBox = (props: TypographyProps) => <Typography 
     component = {Box}
     {...props}
     sx = {[
         (theme)=>({
             // ...theme.printer.typography.body, // 不要在段落上使用内容字体样式，否则外层无法覆盖之。
-            fontFamily: "inherit" , 
-            fontSize: "inherit" , 
-            lineHeight: "inherit" , 
-            lineSpacing: "inherit" , 
-            fontWeight: "inherit" , 
+            fontFamily  : "inherit" , 
+            fontSize    : "inherit" , 
+            lineHeight  : "inherit" , 
+            lineSpacing : "inherit" , 
+            fontWeight  : "inherit" , 
 
             marginTop: theme.printer.margins.paragraph , 
         }) , 
@@ -96,8 +96,8 @@ const PrinterParagraph = (props: TypographyProps) => <Typography
     ]}
 />
 
-/** 一个的标题，独占一行。 */
-const PrinterTitle = (props: TypographyProps & {inline?: boolean}) => <Typography 
+/** 一个的标题，独占一行。这个样式同时包含字体和间距。 */
+const PrinterTitleBoxText = (props: TypographyProps & {inline?: boolean}) => <Typography 
     component = {props.inline ? "span" : Box}
     {...{...props , inline: undefined}}
     sx = {[
@@ -106,14 +106,15 @@ const PrinterTitle = (props: TypographyProps & {inline?: boolean}) => <Typograph
             ...(props.inline ? { // 如果是行内样式
                 marginRight: (theme) => theme.printer.margins.colon , 
                 display: "inline-block" , 
-            } : {})
+            } : {
+            })
         }),
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}
 />
 
 /** 一个用来包裹一个部分的组件。 */
-const PrinterBox = (props: BoxProps) => <Box 
+const PrinterPartBox = (props: BoxProps) => <Box 
     {...props}
     sx = {[
         {
@@ -125,7 +126,7 @@ const PrinterBox = (props: BoxProps) => <Box
 />
 
 /** 用来包裹右边部分，从而开启新层级的组件。 */
-const NewLevel = (props: BoxProps) => <Box 
+const PrinterNewLevelBox = (props: BoxProps) => <Box 
     {...props}
     sx = {[
         {
@@ -136,7 +137,7 @@ const NewLevel = (props: BoxProps) => <Box
 />
 
 /** 用来包裹左边部分，从而开启新层级的组件。 */
-const OldLevel = (props: BoxProps) => <Box 
+const PrinterOldLevelBox = (props: BoxProps) => <Box 
     {...props}
     sx = {[
         {

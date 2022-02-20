@@ -21,7 +21,9 @@ import type { ValidParameter } from "../../core/elements"
 import type { PrinterEnv , PrinterContext } from "../../printer"
 import { AutoStack } from "../basic"
 import type {InjectFunction} from "./effecter"
-import { PrinterBox , PrinterParagraph , NewLevel } from "./basic/components"
+import { 
+    PrinterPartBox , 
+} from "./basic/components"
 
 export { get_DefaultBlockPrinter }
 
@@ -30,15 +32,15 @@ export { get_DefaultBlockPrinter }
  * @param extra_effectors 额外的前作用器。 
  * @param inject_pre 要在渲染前注入的东西（行内元素）。 
  * @param inject_suf 要在渲染后注入的东西（行内元素）。 
- * @param outer      大的框框。 
- * @param inner 内部的框框。 
+ * @param outer      大的框框，用来设置上下间距等样式。 
+ * @param inner     内部的框框，用来处理内部内容的间距、字体等。 
  * @returns 一个输出渲染器。
  */
 function get_DefaultBlockPrinter<NodeType extends StyledNode>({ 
 	extra_effectors = [] , 
 	inject_pre = (props)=><></>, 
 	inject_suf = (props)=><></>, 
-    outer = (props)=><PrinterBox>{props.children}</PrinterBox> , 
+    outer = (props)=><PrinterPartBox>{props.children}</PrinterPartBox> , 
     inner = (props)=><>{props.children}</>, 
 }:{
 	extra_effectors?: BasicEffector[] ,

@@ -24,15 +24,18 @@ import {
 	
 	OrderEffector , 
 	
-	NewLevel , 
+    PrinterDivider , 
+    PrinterWeakenText , 
+    PrinterDisplayText , 
+    PrinterTitleBoxText  , 
+    PrinterParagraphBox , 
+    PrinterPartBox , 
+    PrinterNewLevelBox , 
+    PrinterOldLevelBox , 
+    PrinterBackgroundPaper , 
+
 	AutoStack , 
-	OldLevel , 
-	PrinterParagraph , 
-	PrinterDivider, 
 	make_print_renderer, 
-	PrinterTitle , 
-	PrinterDisplay , 
-	PrinterWeaken , 
 } from "../../lib"
 
 import type {
@@ -56,7 +59,7 @@ function my_theorem_printer(){
             let order = orderer.get_context(props.context)
 			let title = props.element.parameters.title
 			let alias = props.element.parameters.alias
-            return <PrinterTitle inline>{title} {order} ({alias})</PrinterTitle>
+            return <PrinterTitleBoxText inline>{title} {order} ({alias})</PrinterTitleBoxText>
         }}
     )
 	return theoremprinter
@@ -67,9 +70,9 @@ function my_proof_printer(){
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
 			let title = props.element.parameters.title
 			return <React.Fragment><AutoStack force_direction="column">
-				<PrinterTitle>{title}</PrinterTitle>
-				<NewLevel><PrinterWeaken>{props.children}</PrinterWeaken></NewLevel>
-				<PrinterTitle>Q.E.D</PrinterTitle>
+				<PrinterTitleBoxText>{title}</PrinterTitleBoxText>
+				<PrinterNewLevelBox><PrinterWeakenText>{props.children}</PrinterWeakenText></PrinterNewLevelBox>
+				<PrinterTitleBoxText>Q.E.D</PrinterTitleBoxText>
 			</AutoStack></React.Fragment>
 		} , 
 	})
@@ -82,7 +85,7 @@ function my_list_printer(){
 		inner: (props: {element: GroupNode , context: PrinterContext, children: any}) => {
 			let order = orderer.get_context(props.context)
 			return <React.Fragment><AutoStack force_direction="row">
-				<OldLevel><PrinterParagraph>{order}</PrinterParagraph></OldLevel>
+				<PrinterOldLevelBox><PrinterParagraphBox>{order}</PrinterParagraphBox></PrinterOldLevelBox>
 				<Box>{props.children}</Box>
 			</AutoStack></React.Fragment>
 		} , 
@@ -97,7 +100,7 @@ function my_sectioner_printer(){
 			let order = orderer.get_context(props.context)
 			let title = props.element.parameters.title
 			return <PrinterDivider>
-				<PrinterTitle>{order}th Section: {title}</PrinterTitle>
+				<PrinterTitleBoxText>{order}th Section: {title}</PrinterTitleBoxText>
 			</PrinterDivider>
 		} , 
 	})
@@ -135,9 +138,9 @@ function my_displaystyle_printer(){
 			let title  = props.element.parameters.title
 			let origin = props.element.parameters.origin
 			return <React.Fragment><AutoStack force_direction="column">
-				{title ? <PrinterTitle>{title}</PrinterTitle> : <></>}
-				<PrinterDisplay align="center">{props.children}</PrinterDisplay>
-				{origin ? <PrinterTitle align="right">——{origin}</PrinterTitle> : <></>}
+				{title ? <PrinterTitleBoxText>{title}</PrinterTitleBoxText> : <></>}
+				<PrinterDisplayText align="center">{props.children}</PrinterDisplayText>
+				{origin ? <PrinterTitleBoxText align="right">——{origin}</PrinterTitleBoxText> : <></>}
 			</AutoStack></React.Fragment>
 		} , 
 	})

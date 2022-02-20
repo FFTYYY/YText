@@ -46,14 +46,22 @@ import { add_nodes , set_node , add_nodes_before , move_node } from "../../behav
 import { is_same_node , node2path } from "../utils"
 
 import { DefaultParameterEditButton , DefaultCloseButton , AutoStackedPopperWithButton , NewParagraphButton } from "./universe/buttons"
-import { DefaultHidden } from "./hidden"
+import { DefaultHiddenEditorButtons } from "./hidden"
 
 import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "../basic"
-import { ComponentPaper , ComponentEditorBox , UnselecableBox , StructureTypography} from "./basic"
+import { 
+    EditorComponentPaper as ComponentPaper , 
+    EditorParagraphBox as ParagraphBox , 
+    EditorBackgroundPaper as BackgroundPaper , 
+    EditorComponentEditingBox as ComponentEditorBox , 
+    EditorUnselecableBox as UnselecableBox , 
+    EditorComponentBox as ComponentBox , 
+    EditorStructureTypography as StructureTypography , 
+} from "./basic"
 
 import type { UniversalComponent_Props } from "./universe" 
 
-export { get_DefaultGroup_with_AppBar , get_DefaultGroup_with_RightBar}
+export { get_DefaultGroupEditor_with_AppBar , get_DefaultGroupEditor_with_RightBar}
 
 /** 为 Group 类型的节点定制的 Paper ，在节点前后相连时会取消前后距离。 */
 let GroupPaper = (props: PaperProps & {element: GroupNode}) => <ComponentPaper {...props} 
@@ -66,7 +74,7 @@ let GroupPaper = (props: PaperProps & {element: GroupNode}) => <ComponentPaper {
  * @param surrounder 包裹内容区域的组件。
  * @returns 一个用于渲染group的组件。
  */
-function get_DefaultGroup_with_AppBar(
+function get_DefaultGroupEditor_with_AppBar(
     get_title:((parameters:any)=>string) = ((parameters:any)=>parameters.title) , 
     appbar_extra: (props: UniversalComponent_Props) => any = (props) => <></> , 
     surrounder: (props: UniversalComponent_Props & {children: any}) => any = (props) => <>{props.children}</>
@@ -85,7 +93,7 @@ function get_DefaultGroup_with_AppBar(
                     <Toolbar sx={{overflow: "auto"}}><AutoStack>
                         <StructureTypography>{title}</StructureTypography>
                         <DefaultParameterEditButton editor={editor} element={element} />         
-                        <DefaultHidden              editor={editor} element={element} />
+                        <DefaultHiddenEditorButtons editor={editor} element={element} />
                         <DefaultGroupSwicth         editor={editor} element={element} />
                         <NewParagraphButton         editor={editor} element={element} />
                         <DefaultCloseButton         editor={editor} element={element} />
@@ -107,7 +115,7 @@ function get_DefaultGroup_with_AppBar(
  * @param surrounder 包裹内容区域的组件。
  * @returns 一个用于渲染group的组件。
 */
-function get_DefaultGroup_with_RightBar(
+function get_DefaultGroupEditor_with_RightBar(
     get_title:((parameters:any)=>string) = ((parameters:any)=>parameters.title) , 
     rightbar_extra: (props: UniversalComponent_Props) => any = (props) => <></> , 
     surrounder: (props: UniversalComponent_Props & {children: any}) => any = (props) => <>{props.children}</>
@@ -139,7 +147,7 @@ function get_DefaultGroup_with_RightBar(
                             title = "展开"
                         >
                             <DefaultParameterEditButton editor={editor} element={element}/>
-                            <DefaultHidden      editor={editor} element={element} />
+                            <DefaultHiddenEditorButtons editor={editor} element={element} />
                             <DefaultGroupSwicth editor={editor} element={element} />
                             <DefaultCloseButton editor={editor} element={element} />
                             <NewParagraphButton         editor={editor} element={element} />
