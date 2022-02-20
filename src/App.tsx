@@ -37,6 +37,7 @@ import { get_all_styles } from "./components/styles"
 import { use_all_editors } from "./components/editors"
 import { use_all_printers } from "./components/printers"
 import { my_theme } from "./components/theme"
+import { $ } from "jquery"
 
 interface App_State{
 	value: Node[]
@@ -66,6 +67,7 @@ class App extends React.Component<any,App_State> {
 
 	outer_act(){
 		Transforms.insertNodes( this.editor.slate , [paragraph_prototype("桀桀") , paragraph_prototype("!!")] )
+		console.log($)
 	}
 
 	render() {

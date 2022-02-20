@@ -8,6 +8,7 @@ import type { StyleType , NodeType } from "./core/elements"
 import { get_node_type , is_styled } from "./core/elements"
 import { EditorCore } from "./core/editor_core"
 import { Renderer } from "./core/renderer"
+import { GlobalInfo , GlobalInfoProvider } from "./globalinfo"
 
 export { Printer , make_print_renderer }
 export type { 
@@ -106,7 +107,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
 
             let text:any = (element as has_text).text
             return <React.Fragment>
-                <div style={{display: "hidden"}} ref={me.my_refs[path_id]}/>
+                <span style={{display: "hidden"}} ref={me.my_refs[path_id]}/>
                 <R.render_func element={element} context={{}}>{text}</R.render_func>
             </React.Fragment>
         }
@@ -120,7 +121,7 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         
         let R = printer.get_renderer(type , name)
         return <React.Fragment>
-            <div style={{display: "hidden"}} ref={me.my_refs[path_id]}/>
+            <span style={{display: "hidden"}} ref={me.my_refs[path_id]}/>
             <R.render_func element={ element } context={contexts[path_id] } >{
                 Object.keys(children).map((subidx) => <ThisFunction
                     key      = {subidx}
@@ -142,8 +143,6 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         this.my_refs[path_id] = React.createRef() // 初始化 refs
 
         if(!("children" in _node)){
-            
-
             return [ now_env , contexts ]            
         }
 
@@ -183,7 +182,17 @@ class _PrinterComponent extends React.Component<PrinterComponent_Props , Printer
         me.my_refs = {}
         let [_ , contexts] = this.build_envs(me.state.root , {} , {} , [])
 
-        return <R element={me.state.root} contexts={contexts} now_path={[]}></R>
+        let context = {
+            "refs": me.my_refs , 
+            "root": me.state.root , 
+            "core": me.core , 
+            "printer": me.printer , 
+            "printer_component": me , 
+        }
+
+        return <GlobalInfoProvider value={context}>
+            <R element={me.state.root} contexts={contexts} now_path={[]}></R>
+        </GlobalInfoProvider>
     }
 }
 

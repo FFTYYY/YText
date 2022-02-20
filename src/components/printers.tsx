@@ -1,9 +1,9 @@
 import React , {useMemo} from "react"
-import Button from "@mui/material/Button"
 
 import { 
 	Box ,
 	Divider , 
+	Button , 
 } 
 from "@mui/material"
 
@@ -36,6 +36,9 @@ import {
 
 	AutoStack , 
 	make_print_renderer, 
+
+	GlobalInfo , 
+	idx2path , 
 } from "../../lib"
 
 import type {
@@ -126,7 +129,12 @@ function my_delete_printer(){
 function my_link_printer(){
 	return get_DefaultInlinePrinter<InlineNode>({
 		outer: (props: {element: InlineNode , context: PrinterContext, children: any}) => {
-			return <a>{props.children}</a>
+			let taridx = props.element.parameters.targetidx as (string)
+			return <GlobalInfo.Consumer>{value => {
+				let tarpath = JSON.stringify( idx2path( value.root , taridx ) )
+				// TODO 似乎可以用react-router
+				return <u onClick={e=>value.printer_component.scroll_to(tarpath)}>{props.children}</u>
+			}}</GlobalInfo.Consumer>
 		}
 	})
 }

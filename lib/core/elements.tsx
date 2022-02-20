@@ -128,7 +128,7 @@ type StyledNode = InlineNode | GroupNode | StructNode | SupportNode
  * @internal
 */
 function gene_idx(){
-    return Math.random() * 23333333
+    return parseInt( Math.random() * 23333333 )
 }
 
 /** 总之新建一个text node。*/

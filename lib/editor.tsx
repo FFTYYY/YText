@@ -19,6 +19,7 @@ import { get_node_type , is_styled  } from "./core/elements"
 import { EditorCore } from "./core/editor_core"
 import { withAllYEditorPlugins } from "./plugins/apply_all"
 import { Renderer } from "./core/renderer"
+import { GlobalInfoProvider , GlobalInfo } from "./globalinfo"
 
 export { YEditor }
 export type { EditorRenderer_Props , EditorRenderer_Func}
@@ -127,22 +128,27 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
     }
     render(){
         let me = this
-        return <Slate 
-            editor = {me.slate} 
-            value = {[paragraph_prototype("")]} 
-            onChange = {value => {
-                me.update_value(value)
-                me.onFocusChange()
-            }}
-        >
-            <Editable
-                renderElement={me.renderElement.bind(me)}
-                renderLeaf   ={me.renderLeaf.bind(me)}
-                onClick = {e=>{
+        let context = {
+            editor: me.editor , 
+            slate: me.slate , 
+            core: me.core , 
+        }
+        return <GlobalInfoProvider value={context}>
+            <Slate 
+                editor = {me.slate} 
+                value = {[paragraph_prototype("")]} 
+                onChange = {value => {
+                    me.update_value(value)
                     me.onFocusChange()
                 }}
-            />
-        </Slate>
+            >
+                <Editable
+                    renderElement = {me.renderElement.bind(me)}
+                    renderLeaf    = {me.renderLeaf.bind(me)}
+                    onClick = {e=>{me.onFocusChange()}}
+                />
+            </Slate>
+        </GlobalInfoProvider>
     }
     
 }

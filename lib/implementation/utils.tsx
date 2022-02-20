@@ -9,6 +9,7 @@ export {
     update_kth , 
     object_foreach , 
     merge_object , 
+    idx2path, 
 }
 
 /** 询问一个节点在另一个节点的 hidden 数组中的位置。 */
@@ -51,6 +52,18 @@ function node2path(root: Node, node: Node): Path{
     }
     return undefined
 }
+
+// TODO 同上
+/** 获得一个节点在节点树中的路径。 */
+function idx2path(root: Node, idx: number | string): Path{
+    for(let [nd , path] of Node.descendants(root)){
+        if(is_styled(nd) && `${nd.idx}` == `${idx}`){
+            return path
+        }
+    }
+    return undefined
+}
+
 
 // 递归合并两个对象的每一项。
 function merge_object(obj_1: any, obj_2: any){
