@@ -15,6 +15,7 @@ import {
     IconButton , 
     ClickAwayListener  , 
     Box , 
+    Switch , 
 } from "@mui/material"
 import type { IconButtonProps } from "@mui/material"
 
@@ -26,9 +27,12 @@ import {
 }
 from "@mui/icons-material"
 
-
-import { delete_node , add_nodes_before , add_nodes_after} from "../../../behaviours"
-import { paragraph_prototype } from "../../../core/elements"
+import {Node} from "slate"
+import { delete_node , add_nodes_before , add_nodes_after , add_nodes , set_node , move_node} from "../../../behaviours"
+import type {  GroupNode , StructNode , StyledNode } from "../../../core/elements"
+import { paragraph_prototype , get_node_type } from "../../../core/elements"
+import { node2path } from "../../utils"
+import { YEditor } from "../../../editor"
 import { AutoTooltip , Direction , AutoStack , AutoStackedPopper } from "../../basic/direction_control"
 import type { AutoStackedPopper_Props } from "../../basic/direction_control"
 import { DefaultParameterWithEditorWithDrawer , UniversalComponent_Props } from "./parameter_container" 
@@ -38,6 +42,7 @@ export {
     DefaultCloseButton , 
     AutoStackedPopperWithButton , 
 	NewParagraphButton , 
+    DefaultSwicth , 
 }
 
 /** 这个函数是一个语法糖，用于自动创建按钮 */
@@ -115,15 +120,24 @@ function AutoStackedPopperWithButton(props: {
     title?: string ,  
     children?: any , 
     close_on_otherclick?: boolean,
+    onClose?: ()=>void , 
 }){
     let B = props.button_class
     let [menu_open, set_menu_open] = React.useState<boolean>(false)
     // 展开栏挂载的元素。
     let menu_anchor = React.useRef()
+    let onClose = props.onClose || (()=>{}) // TODO use MUI onExit
+
+    let my_set_menu_open = (new_val: boolean) => {
+        set_menu_open(new_val)
+        if(!new_val){ // 正在关闭
+            onClose()
+        }
+    }
 
     let poper = <React.Fragment>
         <AutoTooltip title={props.title}><B 
-            onClick = {e => set_menu_open(!menu_open)}
+            onClick = {e => my_set_menu_open(!menu_open)}
             ref = {menu_anchor}
             {...props.button_props}
         /></AutoTooltip>
@@ -135,11 +149,39 @@ function AutoStackedPopperWithButton(props: {
     </React.Fragment>
 
     if(props.close_on_otherclick){
-        return <ClickAwayListener onClickAway={()=>{set_menu_open(false)}}><Box>{poper}</Box></ ClickAwayListener>
+        return <ClickAwayListener onClickAway={()=>{my_set_menu_open(false)}}><Box>{poper}</Box></ ClickAwayListener>
     }
     return poper
 }
 
 function MyImg(props: {img_url: string}){
     return <img src={props.img_url}></img>
+}
+
+/** 这个组件给一个 Group 或 Struct 组件提供一个开关，用于控制 Group 的 relation 。 
+ * @param props.editor 服务的编辑器。
+ * @param props.element 服务的节点。
+*/
+function DefaultSwicth(props: {editor: YEditor , element: StyledNode}){
+    let element = props.element as ( GroupNode | StructNode )
+    let editor = props.editor
+
+    let [ checked , set_checked ] = useState(element.relation == "chaining") // 开关是否打开
+
+    /** 处理开关的逻辑。 */
+    function switch_check_change(e: any & {target: any & {checked: boolean}}){
+        let checked = e.target.checked
+        set_checked(checked)
+
+        // constraints会自动处理更改，不用担心
+        if(checked == false){ // 从开到关
+            set_node(editor , element , { relation: "separating" })
+        }
+        if(checked == true){ // 从关到开
+            set_node( editor , element , { relation: "chaining" } )
+        }
+
+    }
+
+    return <AutoTooltip title = "贴合"><Switch checked={checked} onChange={switch_check_change}></Switch></AutoTooltip>
 }

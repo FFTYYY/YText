@@ -8,6 +8,7 @@ import {
     get_DefaultSplitterEditor , 
     get_DefaultDisplayerEditor , 
     DefaultParagraphEditor , 
+    get_DefaultStructEditor_with_RightBar , 
     YEditor , 
 } from "../../lib"
 
@@ -45,6 +46,12 @@ let imagerenderer       = get_DefaultDisplayerEditor(
         }}/>
     }
 )
+let structrenderer       = get_DefaultStructEditor_with_RightBar(
+    (p)=>"结构" , 
+    (n,p)=>{
+        return p.widths.split(",").map(x=>x=="" ? 1 : parseInt(x))
+    }
+)
 
 function use_all_editors(editor: YEditor){
     editor.update_renderer(DefaultParagraphEditor , "paragraph")
@@ -57,6 +64,7 @@ function use_all_editors(editor: YEditor){
     editor.update_renderer(listrenderer     , "group" , "list")
     editor.update_renderer(displayrenderer    , "group" , "display")
     editor.update_renderer(proofrenderer    , "group" , "proof")
-    editor.update_renderer(linkrenderer    , "inline" , "link")
+    editor.update_renderer(linkrenderer      , "inline" , "link")
+    editor.update_renderer(structrenderer    , "struct" , "str")
     return editor
 }

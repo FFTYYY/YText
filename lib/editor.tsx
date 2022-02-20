@@ -196,7 +196,7 @@ class YEditor extends Renderer<EditorRenderer_Func>{
      * @param idx 应用关涉的节点编号。节点编号相同的操作会被覆盖。
      * @param subapply 等修改时调用的函数。
      */
-    add_suboperation(idx: number, subapply: (fat: YEditor)=>void){
+    add_suboperation(idx: string, subapply: (fat: YEditor)=>void){
         this.suboperations[idx] = subapply
     }
 
@@ -216,9 +216,9 @@ class YEditor extends Renderer<EditorRenderer_Func>{
     get_onClick(nodetype: StyleType, stylename: string): (e:any)=>void{
         let me = this
         let root = me.core.root
-        if(nodetype == "group")
+        if(nodetype == "group" || nodetype == "support" || nodetype == "struct")
         {        
-            let style = me.core.get_style("group" , stylename)
+            let style = me.core.get_style(nodetype , stylename)
             if(style == undefined)
                 return (e:any) => undefined
 
@@ -226,7 +226,8 @@ class YEditor extends Renderer<EditorRenderer_Func>{
                 let node = style.makenode()
                 Transforms.insertNodes(me.slate , node)
             }
-        }
+        }        
+
         if(nodetype == "inline"){
             let style = me.core.get_style("inline" , stylename)
             if(style == undefined)
@@ -255,17 +256,6 @@ class YEditor extends Renderer<EditorRenderer_Func>{
                 }
             }
 
-        }
-        if(nodetype == "support")
-        {        
-            let style = me.core.get_style("support",stylename)
-            if(style == undefined)
-                return (e:any) => undefined
-
-            return (e:any) => {
-                let node = style.makenode()
-                Transforms.insertNodes(me.slate , node)
-            }
         }
 
         return (e:any) => undefined

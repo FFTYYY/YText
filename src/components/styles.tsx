@@ -9,6 +9,7 @@ import {
 	AbstractStyle , 
 	SupportStyle ,
 	InlineStyle , 
+	StructStyle , 
 
 	group_prototype ,
 	paragraph_prototype , 
@@ -57,6 +58,7 @@ let imagestyle      = new SupportStyle("image" , {
 let comment = new AbstractStyle("comment" , {})
 let testabs = new AbstractStyle("test" , {})
 
+let teststruct = new StructStyle("str" , {widths: "1"})
 
 function get_all_styles(){
 
@@ -73,5 +75,6 @@ function get_all_styles(){
 		testabs , 
 		displaystyle , 
 		linkstyle , 
+		teststruct , 
 	]
 }

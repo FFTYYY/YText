@@ -112,6 +112,12 @@ type GroupNode = Node & StyledNodeBase & {
 /** 结构节点。 */
 type StructNode = Node & StyledNodeBase & {
 	type: "struct"
+
+	/** 结构节点也有一个额外的`relation`属性。 */
+    relation: GroupRelationType 
+
+    /** 子节点数量。 */
+    num_children: number
 }
 
 /** 辅助节点。 */
@@ -128,7 +134,7 @@ type StyledNode = InlineNode | GroupNode | StructNode | SupportNode
  * @internal
 */
 function gene_idx(){
-    return parseInt( Math.random() * 23333333 )
+    return Math.floor( Math.random() * 23333333 )
 }
 
 /** 总之新建一个text node。*/
@@ -181,9 +187,11 @@ function struct_prototype(name: string , parameter_proto: ValidParameter , flags
         type: "struct" , 
         name: name , 
 
+        num_children: 1,
+        relation: "separating" , 
         parameters: parameter_proto , 
 
-        children: [] , 
+        children: [group_prototype(`${name}-child` , {})] , 
         hiddens: [] , 
         flags: {} , 
     }

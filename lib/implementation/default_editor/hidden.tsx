@@ -153,7 +153,7 @@ class DefaultHiddenEditor extends React.Component<DefaultHiddenEditor_Props , De
                     editor = { me.subeditor }
                     onMount={()=>{ // 这个函数需要等到子组件 mount 再调用....
                         replace_nodes(me.subeditor , me.subeditor.core.root , me.props.son.children)
-                        me.props.editor.add_suboperation(me.son.idx , me.sub_apply.bind(me))
+                        me.props.editor.add_suboperation(`${me.son.idx}-hidden` , me.sub_apply.bind(me))
                     }}
                 />
             </ForceContain.Provider>
