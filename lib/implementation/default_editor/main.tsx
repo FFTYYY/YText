@@ -131,7 +131,8 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 
 							<AutoStackedPopperWithButton
 								poper_props = {{
-									stacker: AutoStackButtons , 
+									stacker: AutoStackButtons ,
+									component: Box ,  
 								}}
 								button_class = {IconButton}
 								button_props = {{
@@ -140,10 +141,15 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 								title = {typename}
 							>{
 								Object.keys(me.editor.core.styles[typename]).map( (stylename) => 
-									<Button 
-										key = {stylename}
-										onClick = {e => me.editor.get_onClick(typename , stylename)(e)}
-									>{stylename}</Button>
+									<React.Fragment key={stylename}>
+										<Button 
+											onClick = {e => me.editor.get_onClick(typename , stylename)(e)}
+											variant = "text"
+										>
+											{stylename}
+										</Button>
+										<Divider orientation="vertical" flexItem/>
+									</React.Fragment>
 								)
 							}</AutoStackedPopperWithButton>
 						</React.Fragment>
