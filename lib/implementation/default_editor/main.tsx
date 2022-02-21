@@ -22,7 +22,7 @@ import {
 	Settings as SettingsIcon , 
 	QrCode as QrCodeIcon , 
 } from "@mui/icons-material"
-import { ThemeProvider , createTheme } from "@mui/material/styles"
+import { ThemeProvider , createTheme , styled } from "@mui/material/styles"
 import type { Theme , ThemeOptions } from "@mui/material/styles"
 
 import { Node } from "slate"
@@ -132,7 +132,7 @@ class DefaultEditor extends React.Component <DefaultEditor_Props , DefaultEditor
 							<AutoStackedPopperWithButton
 								poper_props = {{
 									stacker: AutoStackButtons ,
-									component: Box ,  
+									component: styled(Paper)({backgroundColor: "#aabbdd55" , }) ,  
 								}}
 								button_class = {IconButton}
 								button_props = {{

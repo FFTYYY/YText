@@ -146,7 +146,7 @@ class _YEditorComponent extends React.Component<YEditorComponent_Props>{
                 <Editable
                     renderElement = {me.renderElement.bind(me)}
                     renderLeaf    = {me.renderLeaf.bind(me)}
-                    onClick = {e=>{me.onFocusChange()}}
+                    onClick       = {e=>{me.onFocusChange()}}
                 />
             </Slate>
         </GlobalInfoProvider>
