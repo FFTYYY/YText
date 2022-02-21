@@ -130,16 +130,15 @@ function get_DefaultStructEditor_with_RightBar(
                 
                 <Grid container columns={sum} sx={{width: "100%"}}>
                     {widths.map((width,idx)=>{
-                        return <React.Fragment key={idx}><Grid item xs={width} sx={{
+                        return <Grid key={idx} item xs={width} sx={{
                             borderRight: idx == children.length-1 ? "none" : "1px solid"
                         }}>
                             <ComponentEditorBox autogrow >
                                 <SUR editor={editor} element={element}>
                                     {props.children[idx]}
                                 </SUR>
-                                </ComponentEditorBox>
-                            </Grid>
-                        </React.Fragment>
+                            </ComponentEditorBox>
+                        </Grid>
                     })}
                 </Grid>
                     

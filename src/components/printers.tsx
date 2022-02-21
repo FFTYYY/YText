@@ -33,6 +33,7 @@ import {
     PrinterNewLevelBox , 
     PrinterOldLevelBox , 
     PrinterBackgroundPaper , 
+	get_DefaultStructPrinter , 
 
 	AutoStack , 
 	make_print_renderer, 
@@ -46,6 +47,7 @@ import type {
 	GroupNode , 
 	InlineNode , 
 	SupportNode , 
+	StructNode , 
 	PrinterEnv , 
 	PrinterContext , 
 } 
@@ -172,6 +174,13 @@ function my_image_printer(){
 	return printer
 }
 
+function my_struct_printer(){
+	let printer = get_DefaultStructPrinter({
+		get_widths: (element: StructNode) => (element.parameters.widths as string).split(",").map(x=>x=="" ? 1 : parseInt(x))
+	})
+
+	return printer
+}
 
 function use_all_printers(printer: Printer){
     let listprinter 		= my_list_printer()
@@ -185,6 +194,7 @@ function use_all_printers(printer: Printer){
 	let displayprinter 		= my_displaystyle_printer()
 	let imageprinter 		= my_image_printer()
 	let linkprinter 		= my_link_printer()
+	let structprinter 		= my_struct_printer()
 
 
     printer.update_renderer( paragraphprinter, "paragraph" )
@@ -197,6 +207,7 @@ function use_all_printers(printer: Printer){
     printer.update_renderer( displayprinter   as PrinterRenderer, "group" , "display" )
     printer.update_renderer( imageprinter     as PrinterRenderer, "support" , "image" )
     printer.update_renderer( linkprinter     as PrinterRenderer, "inline" , "link" )
+    printer.update_renderer( structprinter     as PrinterRenderer, "struct" , "str" )
     
     return printer
 }

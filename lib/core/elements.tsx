@@ -27,6 +27,7 @@ export {
 	is_paragraph , 
 	get_node_type , 
 	is_certain_style , 
+    new_struct_child , 
 }
 export type {
 	StyledNodeType , 
@@ -191,7 +192,7 @@ function struct_prototype(name: string , parameter_proto: ValidParameter , flags
         relation: "separating" , 
         parameters: parameter_proto , 
 
-        children: [group_prototype(`${name}-child` , {})] , 
+        children: [new_struct_child()] , 
         hiddens: [] , 
         flags: {} , 
     }
@@ -251,3 +252,8 @@ function is_certain_style(node: Node , type: StyleType, name: string):boolean{
     return get_node_type(node) == type && (node as StyledNode).name == name
 }
 
+/** 这个函数新建一个`StructNode`的子节点。 */
+function new_struct_child(){
+    let node = group_prototype("struct-child" , {} , {})
+    return node
+}

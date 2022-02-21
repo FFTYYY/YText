@@ -5,8 +5,15 @@
  */
 
 import { Transforms, Element, Node , Editor } from "slate"
-import { get_node_type , paragraph_prototype , group_prototype , text_prototype, InlineNode , inline_prototype } from "../core/elements"
-import type {StructNode , GroupNode} from "../core/elements"
+import { 
+    get_node_type , 
+    paragraph_prototype , 
+    group_prototype , 
+    text_prototype, 
+    inline_prototype ,
+    new_struct_child , 
+} from "../core/elements"
+import type {StructNode , GroupNode , InlineNode} from "../core/elements"
 import { is_same_node } from "../implementation/utils"
 import { JsxFragment } from "typedoc/dist/lib/utils/jsx.elements"
 
@@ -30,9 +37,7 @@ export { constraint_struct , constraint_relation }
                 // 在末尾添加一个group节点。
                 let newnodes = []
                 for(let i = 0;i < node.num_children - node.children.length;i++){
-                    let newnode = group_prototype(`${node.name}-child` , {})
-                    newnode.relation = "chaining" // TODO 考虑一下是设置这个，还是通过flags豁免检查。
-                    newnodes.push(newnode)
+                    newnodes.push(new_struct_child())
                 }
                 Transforms.insertNodes<GroupNode>(editor , newnodes , {at: [...path,node.children.length]})
                 return 
@@ -76,7 +81,8 @@ function constraint_relation(editor: Editor): Editor{
         const [node , path]: [Node, number[]] = entry
         let idx = path.length - 1
 
-        if("children" in node){
+        // 豁免`StructNode`的检查。
+        if(("children" in node) && get_node_type(node) != "struct"){
             let flag = false // 见到过group或者struct没有
             for(let [subidx, subnode] of node.children.entries()){
 
