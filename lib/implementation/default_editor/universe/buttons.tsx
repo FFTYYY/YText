@@ -158,6 +158,7 @@ function MyImg(props: {img_url: string}){
     return <img src={props.img_url}></img>
 }
 
+// TODO 撤销操作不会刷新switch状态。
 /** 这个组件给一个 Group 或 Struct 组件提供一个开关，用于控制 Group 的 relation 。 
  * @param props.editor 服务的编辑器。
  * @param props.element 服务的节点。

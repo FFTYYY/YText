@@ -6,6 +6,7 @@ import React from "react";
 import { createEditor , Node , BaseEditor , Path , BaseElement } from "slate"
 import { Slate, Editable, withReact, ReactEditor} from "slate-react"
 import { Editor, Transforms , Point , Text } from "slate"
+import { withHistory } from "slate-history"
 
 import {
     Card , 
@@ -188,7 +189,7 @@ class YEditor extends Renderer<EditorRenderer_Func>{
             }
         )
 
-        this.slate  = withAllYEditorPlugins( withReact(createEditor() as ReactEditor) ) as ReactEditor
+        this.slate  = withAllYEditorPlugins( withHistory( withReact(createEditor() as ReactEditor) ) ) as ReactEditor
         this.suboperations = {}
     }
 
