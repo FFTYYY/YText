@@ -155,7 +155,6 @@ const PrinterBackgroundPaper = (props: BoxProps) => <Box
             ...theme.printer.typography.body, // 不要内容字体的样式。这个样式应该在最外层使用方便被覆盖。
             padding: theme.printer.margins.structure , 
             boxSizing: "border-box" , // 设置这个属性来让padding不要撑大宽高。
-            position: "absolute" , 
 			height: "100%" , 
 			width: "100%" , 
 			overflowY: "auto" , 
