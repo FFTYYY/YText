@@ -18,7 +18,6 @@
 		"types": ["vite/client"] , 
 	},
 	"include": [
-		// "./src", 
 		"./lib/", 
 	] , 
 	"typedocOptions": {
