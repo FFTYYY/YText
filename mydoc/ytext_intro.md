@@ -94,6 +94,15 @@ interface FixedParameterList{[key: string]: FixedParameterValue}
 
 
 
+## 缓存结果
+
+除此之外，每个概念节点还可以有一个属性缓存结果（Result Cache），用来保存印刷中保存的中间结果，以便需要引用时不必重新完成整个印刷流程。
+
+缓存结果对于描述一个文档是不必要的，因为其是在印刷过程中计算的，每次印刷时都可以重新计算。
+
+
+
+
 ## 行内概念节点的实现
 
 一个行内概念节点只包含一段文本。但是如之前所说，作为一个特殊节点，其还有参数和抽象。注意一个概念节点不需要储存元参数，只需要储存其对应的一级概念名，而概念本身会确定元参数。另外，两级概念都有其参数列表，但是不需要一级概念的参数表，因为只需要二级概念的参数表就可以确定要一级概念的参数表。另外，二级概念的固定参数表也可以直接由二级概念本身确定，因此也不需要在节点中储存。
@@ -101,12 +110,13 @@ interface FixedParameterList{[key: string]: FixedParameterValue}
 除此之外，每个概念节点还需要有一个全局唯一的编号，用来方便创建引用。
 
 ```
-Interface InlineNode{
+interface InlineNode{
 	type: "inline"
 	idx: number 
 
 	concept: string
 	parameters: ParameterList
+	cacheResult: any
 
 	children: [ Text ]
 	abstrct: AbstractNode []
@@ -123,6 +133,7 @@ interface GroupNode{
 
 	concept: string
 	parameters: ParameterList
+	cacheResult: any
 
 	children: NonLeafNode []
 	abstract: AbstractNode []
@@ -145,6 +156,7 @@ interface StructNode{
 
 	concept: string
 	parameters: ParameterList
+	cacheResult: any
 	
 	children: NonLeafNode []
 	abstract: AbstractNode []
@@ -166,6 +178,7 @@ interface SupportNode{
 
 	concept: string
 	parameters: ParameterList
+	cacheResult: any
 	
 	children: []
 	abstract: AbstractNode []
@@ -182,6 +195,7 @@ interface AbstractNode{
 	
 	concept: string
 	parameters: ParameterList
+	cacheResult: any
 	
 	children: NonLeafNode []
 	abstract: AbstractNode []
@@ -206,7 +220,7 @@ type Context = any
 ```
 type PrinterEnterFunction = function enter(node: Node , env: Env , context: Context) => [env: Env , context: Context]
 
-type PrinterExitFunction = function exit(node: Node , env: Env , context: Context) => [env: Env , context: Context , finished: boolean]
+type PrinterExitFunction = function exit(node: Node , env: Env , context: Context) => [env: Env , context: Context , cacheResult: any, finished: boolean]
 ```
 其中`enter`在进入节点时调用，`exit`在离开节点时调用。
 
@@ -255,6 +269,7 @@ interface SecondConcept{
 }
 ```
 注意，在节点指定concept时，只需要指定二级概念。
+
 
 # 关于编辑
 
