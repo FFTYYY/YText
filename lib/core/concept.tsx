@@ -8,7 +8,7 @@ export type {
     FixedParameterValue , 
     FixedParameterList , 
     FirstClassConcept , 
-    SecondClassConcepy , 
+    SecondClassConcept , 
 }
 
 /** 元参数列表的接口。
@@ -74,7 +74,7 @@ class FirstClassConcept{
  * 二级概念继承一级概念以形成真正的概念。之所以这么设计，是为了让概念可以在编辑中动态创建而免于编程。
  * 二级概念描述如何重写一级概念的参数。
  */
-class SecondClassConcepy{
+class SecondClassConcept{
     /** 对应的一级概念类型。 */
     type: string
     /** 对应的一级概念名称。 */
