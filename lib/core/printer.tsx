@@ -10,6 +10,11 @@ import {
 } from "./concept"
 import {
     PrinterRenderer , 
+    Env , 
+    Context , 
+    PrinterEnterFunction , 
+    PrinterExitFunction , 
+    PrinterRenderFunction , 
 } from "./renderer"
 import {
     InlineNode , 
@@ -17,6 +22,16 @@ import {
     SupportNode , 
     StructNode , 
     AbstractNode , 
+    Node , 
+
+    is_concetnode , 
+	is_inlinenode , 
+	is_groupnode , 
+	is_supportnode , 
+	is_abstractnode , 
+	is_structnode , 
+	is_paragraphnode , 
+	is_textnode , 
 } from "./intermidiate"
 
 export {}
@@ -46,6 +61,7 @@ interface DefaultRendererhDict{
     "support"   : PrinterRenderer , 
     "abstract"  : PrinterRenderer , 
     "paragraph" : PrinterRenderer , 
+    "text"      : PrinterRenderer , 
 }
 
 
@@ -72,5 +88,57 @@ class Printer{
         this.renderers = props.renderers
         this.defaultRenderers = props.defaultRenderers
     }
+
+    /** 查询一个渲染器。
+     * @param type 查找的节点类型。
+     * @param name 查找的概念名称。
+     * 如果`type == "paragraph" || "text"`，那么`name`将会被忽略。
+     * 反之，如果`type != "paragraph" && type != "text"`，那么`name`必须提供。
+     */
+    get_renderer(type: "group" | "inline" | "struct" | "support" | "abstract" | "paragraph" | "text" , name?: string){
+        if(type != "paragraph" && type != "text" && name == undefined){
+            
+        }
+
+    }
 }
 
+class PrinterComponent extends React.Component{
+
+    printer: Printer
+    root: GroupNode | AbstractNode
+
+    constructor(props:{
+        printer: Printer
+        root: GroupNode | AbstractNode 
+    }){
+        super(props)
+
+        this.printer = props.printer
+        this.root = props.root
+    }
+
+    /**这个函数在印刷之前生成环境和上下文。 */
+    preprocess(){
+        let me = this 
+        var context: Context = {}
+        var env: Env = {}
+
+        function _preprocess(nowcontext: Context , nowenv: Env , nownode: Node){
+
+            /** 进入时操作。 */
+            me.renderers[""]
+
+            if (is_groupnode(nownode)){
+                nownode
+            }
+
+        }
+
+
+    }
+    
+    render(){
+        return <></>
+    }
+}

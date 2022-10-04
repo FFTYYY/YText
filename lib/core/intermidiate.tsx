@@ -18,13 +18,23 @@ export type {
 	AbstractNode , 
 }
 
+export {
+	is_concetnode , 
+	is_inlinenode , 
+	is_groupnode , 
+	is_supportnode , 
+	is_abstractnode , 
+	is_structnode , 
+	is_paragraphnode , 
+	is_textnode , 
+}
+
 
 /** 文本节点的接口。 */
 interface TextNode {text: string}
 
 /** 段落节点的接口。 */
 interface ParagraphNode {
-	type: "paragraph"
 	children: (TextNode | InlineNode) []
 }
 
@@ -159,3 +169,41 @@ interface AbstractNode{
 	abstract: AbstractNode []
 }
 
+/** 判断一个节点是不是概念节点。（包括组、行内、支撑、结构和抽象） */
+function is_concetnode(node: Node): node is ConceptNode{
+	return node["type"] != undefined
+}
+
+/** 判断一个节点是不是行内节点。 */
+function is_inlinenode(node: Node): node is InlineNode{
+	return node["type"] == "inline"
+}
+
+/** 判断一个节点是不是组节点。 */
+function is_groupnode(node: Node): node is GroupNode{
+	return node["type"] == "group"
+}
+
+/** 判断一个节点是不是支撑节点。 */
+function is_supportnode(node: Node): node is SupportNode{
+	return node["type"] == "support"
+}
+/** 判断一个节点是不是抽象节点。 */
+function is_abstractnode(node: Node): node is AbstractNode{
+	return node["type"] == "abstract"
+}
+
+/** 判断一个节点是不是组节点。 */
+function is_structnode(node: Node): node is AbstractNode{
+	return node["type"] == "struct"
+}
+
+/** 判断一个节点是不是段落节点。 */
+function is_paragraphnode(node: Node): node is ParagraphNode{
+	return node["type"] == undefined && node["children"] != undefined
+}
+
+/** 判断一个节点是不是文本节点。 */
+function is_textnode(node: Node): node is TextNode{
+	return node["type"] == undefined && node["text"] != undefined
+}

@@ -44,6 +44,7 @@ class FirstClassConcept{
 
     /** 参数列表。 */
     parameterPrototype: ParameterList
+    
     /** 元参数列表。如果没有提供会默认把所有项都设置为`undefined`。 */
     metaParameters: MetaParameters
 
