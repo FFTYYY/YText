@@ -3,6 +3,10 @@
  * 每个一级概念都必须提供自己的印刷实现，另外段落也需要提供印刷实现。
  */
 
+import {
+    Node , 
+} from "./intermidiate"
+
 export {
     PrinterRenderer , 
 }
@@ -16,9 +20,9 @@ export type {
 }
 
 /** 渲染器所需要维护的环境。 */
-type Env = any
+type Env = {[key: string | number]: any}
 /** 渲染器所需要维护的节点的上下文。 */
-type Context = any
+type Context = {[key: string | number]: any}
 
 /** 进入时操作。 */
 type PrinterEnterFunction = (node: Node , env: Env , context: Context) => [env: Env , context: Context]

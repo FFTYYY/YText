@@ -2,6 +2,10 @@
 @module
 */
 
+import {
+	BadNodeError , 
+} from "../exceptions"
+
 export type {
 	TextNode , 
 	ParagraphNode , 
@@ -16,6 +20,8 @@ export type {
 	SupportNode , 
 	StructNode , 
 	AbstractNode , 
+	AllNodeTypes , 
+	AllConceptTypes , 
 }
 
 export {
@@ -27,6 +33,7 @@ export {
 	is_structnode , 
 	is_paragraphnode , 
 	is_textnode , 
+	get_node_type , 
 }
 
 
@@ -61,6 +68,11 @@ type ConceptNode = NonLeafConceptNode | AbstractNode
 /** 所有树上非叶子的节点。 */
 type NonLeafNode = ParagraphNode | NonLeafConceptNode
 
+/** 所有可能的节点类型。 */
+type AllNodeTypes = "group" | "inline" | "structure" | "support" | "abstract" | "paragraph" | "text"
+
+/** 所有可能的概念类型。 */
+type AllConceptTypes = "group" | "inline" | "structure" | "support" | "abstract"
 
 /** 行内节点。 */
 interface InlineNode{
@@ -78,7 +90,7 @@ interface InlineNode{
 	cacheResult: any
 
 	/** 子节点列表。 */
-	children: [ Text ]
+	children: [ TextNode ]
 	/** 抽象列表。 */
 	abstrct: AbstractNode []
 }
@@ -207,3 +219,17 @@ function is_paragraphnode(node: Node): node is ParagraphNode{
 function is_textnode(node: Node): node is TextNode{
 	return node["type"] == undefined && node["text"] != undefined
 }
+
+/** 获得一个节点的类型的字符串。 */
+function get_node_type(node: Node): AllNodeTypes{
+	if(node["type"] != undefined){
+		return node["type"]
+	}
+	let flag1 = node["children"] != undefined // 段落节点的特征
+	let flag2 = node["text"] != undefined // 文本节点的特征
+	if(flag1 == flag2){// flag1和flag2不能同是同非。
+		throw new BadNodeError(`the node has ${flag1 ? "yes" : "no" } "children" and has ${flag2 ? "yes" : "no"} "text"`)
+	}
+	return flag1? "paragraph" : "text"
+}
+
