@@ -22,30 +22,31 @@ export type {
 
 /** 渲染器所需要维护的环境。 */
 type Env = {[key: string | number]: any}
+
 /** 渲染器所需要维护的节点的上下文。 */
 type Context = {[key: string | number]: any}
 
-/** 进入时操作。 */
-type PrinterEnterFunction = (node: Node , env: Env , context: Context) => [env: Env , context: Context]
+/** 进入时操作。注意，这个操作应是原地操作。 */
+type PrinterEnterFunction = (node: Readonly<Node>, env_draft: Env, context_draft: Context) => void
 
-/** 离开时操作。 */
-type PrinterExitFunction = (node: Node , env: Env , context: Context) => [env: Env , context: Context , cacheResult: any, finished: boolean]
+/** 离开时操作。 注意，这操作应是原地操作。*/
+type PrinterExitFunction = (node: Readonly<Node>, env_draft: Env, context_draft: Context) => [cache_result: any, finished: boolean]
 
 /** 渲染器的渲染函数的props。 */
 interface PrinterRenderFunctionProps {
 
     /** 要渲染的节点。大多数情况下渲染器不应该访问节点，而应该从`context`和`parameters`获取需要的信息。 */
-	node: Node
+	readonly node: Node
     /** 经过预处理获得的`context`。 */
-	context: Context
+	readonly context: Context
 
     /** 经过处理的参数列表，这个参数还原成了一级概念的参数列表。 
      * 注意，这个列表的类型不是`PrinterParameterList`，因为其中已经去掉的类型的信息，而只是一个值的字典。
     */
-    parameters: {[key: string]: any}
+    readonly parameters: {[key: string]: any}
 
     /** 子节点列表，这个是用来递归渲染用的。 */
-	children: React.ReactElement
+	readonly children: React.ReactElement
 }
 
 /** 渲染器的渲染函数。 */

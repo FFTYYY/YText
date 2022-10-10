@@ -44,7 +44,7 @@ import {
     GlobalInfo , 
     GlobalInfoProvider , 
 } from "./globalinfo"
-import { useFocused } from "slate-react"
+import produce from "immer"
 
 export type {
     FirstClassConceptDict , 
@@ -294,38 +294,45 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         */
         function _preprocess(nowenv: Env , node: Node , path: number[] , contexts: {[path: string]: Context})
             : [Env , boolean]
-        {
-            /** 进入时操作。 */
-
+        {            
             let renderer = me.printer.get_node_renderer(node) // 向印刷器请求渲染器。
             let my_path = JSON.stringify(path) // 本节点的路径的字符串表示。
-            let flag = true // 这个变量表示处理是否结束。只要有一个子节点的处理没有结束那就没有结束。
 
+            let flag = true // 这个变量表示处理是否结束。只要有一个子节点的处理没有结束那就没有结束。
+        
             let nowcontext: Context = contexts[my_path] // 使用path来作为每个节点的索引。
             if(nowcontext == undefined){
                 nowcontext = {}
             }
+            
 
-            // 进入时先操作一次环境并建立一次上下文。
-            let [env_1 , context_1] = renderer.enter(node , nowenv , nowcontext)
+            // 进入时操作。
+            // 进入时先操作一次环境并建立一次上下文。使用produce来进行不可变更新。
+            // 前面加个分号是为了防止被视为索引。
+            ([nowenv , nowcontext] = produce([nowenv , nowcontext] , ([e,c])=>{
+                renderer.enter(node , e , c)
+            }))
 
             // 然后让所有子节点操作环境。
             if (! is_textnode(node)){ // 还有子节点
                 for(let c_idx in node.children){
                     let c = node.children[c_idx]
-                    let [env_2 , flag_2] = _preprocess(env_1 , c , [...path , parseInt(c_idx)] , contexts) // 向下处理子节点。
+                    let [env_1 , flag_1] = _preprocess(nowenv , c , [...path , parseInt(c_idx)] , contexts) // 向下处理子节点。
 
-                    flag = flag && flag_2 // 只要有一个子节点返回`false`，本节点就返回`false`。
-                    env_1 = env_2 // 总之更新环境。
+                    flag = flag && flag_1 // 只要有一个子节点返回`false`，本节点就返回`false`。
+                    nowenv = env_1
                 }
             }
 
+            // TODO 保存cache结果
             // 退出时再操作一次环境和上下文。
-            let [env_3 , context_3 , flag_3] = renderer.exit(node , env_1 , context_1)
-            flag = flag && flag_3
+            ([nowenv , nowcontext] = produce([nowenv , nowcontext] , ([e,c]) => {
+                let [flag2 , cache] = renderer.exit(node , e , c)
+                flag = flag && flag2
+            }))
 
-            contexts[my_path] = context_3 //记录/更新 上下文。
-            return [env_3 , flag]
+            contexts[my_path] = nowcontext //记录/更新 上下文。
+            return [nowenv , flag]
         }
 
         let env = {}

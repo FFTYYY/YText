@@ -55,9 +55,9 @@ function AutoTooltip(props: {
 }
 
 /** 这个组件用于创建一个根据当前方向自动堆叠的对象。子元素会自动转向。
- * @param force_direction 强制设置一个当前方向。
- * @param children 子元素。由 React 自动提供。
- * @param simple 是否为一个小堆叠，如果为 true ，则子组件不会转向。
+ * @param props.force_direction 强制设置一个当前方向。
+ * @param props.children 子元素。由 React 自动提供。
+ * @param props.simple 是否为一个小堆叠，如果为 true ，则子组件不会转向。
  */
 function AutoStackButtons(props: {
     force_direction?: DirectionValues
@@ -84,9 +84,9 @@ function AutoStackButtons(props: {
 
 
 /** 这个组件用于创建一个根据当前方向自动堆叠的对象。子元素会自动转向。
- * @param force_direction 强制设置一个当前方向。
- * @param children 子元素。由 React 自动提供。
- * @param simple 是否为一个小堆叠，如果为 true ，则子组件不会转向。
+ * @param props.force_direction 强制设置一个当前方向。
+ * @param props.children 子元素。由 React 自动提供。
+ * @param props.simple 是否为一个小堆叠，如果为 true ，则子组件不会转向。
  */
 function AutoStack(props: {
     force_direction?: DirectionValues
@@ -111,8 +111,8 @@ function AutoStack(props: {
 
 /** 这个组件用于创建一个根据当前方向自动堆叠的对象。子元素不会自动转向。
  * 相当于 <AutoStack simple>
- * @param force_direction 强制设置一个当前方向。
- * @param children 子元素。由 React 自动提供。
+ * @param props.force_direction 强制设置一个当前方向。
+ * @param props.children 子元素。由 React 自动提供。
  */
 function SimpleAutoStack(props: {
     force_direction?: DirectionValues

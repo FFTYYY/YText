@@ -63,7 +63,7 @@ interface ParagraphNode {
 2. 是否强制这个节点为空（Void）节点；
 3. 是否强制这个节点为块级（Block）节点：
 ```
-Interface MetaParameters{
+interface MetaParameters{
 	forceInline?: boolean,
 	forceBlock?: boolean,
 	forceVoid?: boolean,

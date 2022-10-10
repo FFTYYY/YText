@@ -8,51 +8,49 @@ import {
     GroupNode,
     InlineNode,
     TextNode, 
+    OrderContexter , 
 } from "../lib"
 export {renderer_theorem , renderer_strong , default_renderers}
 
+let theo_order = new OrderContexter("order-theo")
 let renderer_theorem = new PrinterRenderer(
-    function enter(node: Node , env: Env , context: Context):[env: Env , context: Context]{
-        if(env["num_theorem"] == undefined){
-            env["num_theorem"] = 0
-        }
-        env["num_theorem"] += 1
-        return [env , {...context , "order": env["num_theorem"]}]
+    function enter(node: Readonly<Node> , env: Env , context: Context){
+        theo_order.enter(node , env , context)
     } , 
-    function exit(node: Node , env: Env , context: Context):[Env , Context , any , boolean]{
-        return [env , context , context , true]
+    function exit(node: Readonly<Node> , env: Env , context: Context):[any , boolean]{
+        theo_order.exit(node , env , context)
+        return [context , true]
     } , 
     function render(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
         let node = props.node
         let context = props.context
         let parameters = props.parameters
         node = node as GroupNode
-        console.log("?!")
-        return <div>{parameters["name"]}{context["order"]}{props.children}</div>
+
+        let order = theo_order.get_context(context)
+        return <div>{parameters["name"]} {order}{props.children}</div>
     }
 )
 
 let renderer_strong = new PrinterRenderer(
-    function enter(node: Node , env: Env , context: Context):[env: Env , context: Context]{
-        return [env , context]
+    function enter(node: Node , env: Env , context: Context){
+        
     } , 
-    function exit(node: Node , env: Env , context: Context):[Env , Context , any , boolean]{
-        return [env , context , context , true]
+    function exit(node: Node , env: Env , context: Context):[any , boolean]{
+        return [context , true]
     } , 
     function render(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
         let node = props.node as InlineNode
-        console.log("??")
         return <strong>{props.children}</strong>
     }
 )
 
 
 let default_renderer_block = new PrinterRenderer(
-    function enter(node: Node , env: Env , context: Context):[env: Env , context: Context]{
-        return [env , context]
+    function enter(node: Node , env: Env , context: Context){
     } , 
-    function exit(node: Node , env: Env , context: Context):[Env , Context , any , boolean]{
-        return [env , context , context , true]
+    function exit(node: Node , env: Env , context: Context):[ any , boolean]{
+        return [context , true]
     } , 
     function render(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
         let node = props.node as GroupNode
@@ -61,11 +59,10 @@ let default_renderer_block = new PrinterRenderer(
 )
 
 let default_renderer_inline = new PrinterRenderer(
-    function enter(node: Node , env: Env , context: Context):[env: Env , context: Context]{
-        return [env , context]
+    function enter(node: Node , env: Env , context: Context){
     } , 
-    function exit(node: Node , env: Env , context: Context):[Env , Context , any , boolean]{
-        return [env , context , context , true]
+    function exit(node: Node , env: Env , context: Context):[any , boolean]{
+        return [context , true]
     } , 
     function render(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
         let node = props.node as InlineNode
@@ -75,11 +72,10 @@ let default_renderer_inline = new PrinterRenderer(
 )
 
 let default_renderer_text = new PrinterRenderer(
-    function enter(node: Node , env: Env , context: Context):[env: Env , context: Context]{
-        return [env , context]
+    function enter(node: Node , env: Env , context: Context){
     } , 
-    function exit(node: Node , env: Env , context: Context):[Env , Context , any , boolean]{
-        return [env , context , context , true]
+    function exit(node: Node , env: Env , context: Context):[any , boolean]{
+        return [context , true]
     } , 
     function render(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
         let node = props.node as TextNode
