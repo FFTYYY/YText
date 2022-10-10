@@ -5,6 +5,7 @@
 
 import {
     Node , 
+    ParameterList , 
 } from "./intermidiate"
 
 export {
@@ -32,8 +33,18 @@ type PrinterExitFunction = (node: Node , env: Env , context: Context) => [env: E
 
 /** 渲染器的渲染函数的props。 */
 interface PrinterRenderFunctionProps {
-	context: Context
+
+    /** 要渲染的节点。大多数情况下渲染器不应该访问节点，而应该从`context`和`parameters`获取需要的信息。 */
 	node: Node
+    /** 经过预处理获得的`context`。 */
+	context: Context
+
+    /** 经过处理的参数列表，这个参数还原成了一级概念的参数列表。 
+     * 注意，这个列表的类型不是`PrinterParameterList`，因为其中已经去掉的类型的信息，而只是一个值的字典。
+    */
+    parameters: {[key: string]: any}
+
+    /** 子节点列表，这个是用来递归渲染用的。 */
 	children: React.ReactElement
 }
 

@@ -7,6 +7,8 @@ export type {
     MetaParameters , 
     FixedParameterValue , 
     FixedParameterList , 
+}
+export {
     FirstClassConcept , 
     SecondClassConcept , 
 }
@@ -92,11 +94,13 @@ class SecondClassConcept{
     fixedIverride: FixedParameterList
 
     constructor(
+        type: "group" | "inline" | "structure" | "support" | "abstract" , 
         firstConcept: string , 
         name: string , 
         defaultOverride: ParameterList , 
         fixedIverride: FixedParameterList , 
     ){
+        this.type = type
         this.firstConcept = firstConcept
         this.name = name
         this.defaultOverride = defaultOverride

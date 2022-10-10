@@ -1,5 +1,37 @@
-import React from 'react'
-import {haha} from '../lib'
+import React from "react"
+import {
+	Printer ,
+	PrinterComponent ,
+	FirstClassConcept , 
+	SecondClassConcept ,  
+} from "../lib"
+import {
+	theorem , 
+	strong , 
+	sec_theorem , 
+	sec_strong , 
+} from "./concepts"
+import {
+	renderer_strong , 
+	renderer_theorem , 
+	default_renderers , 
+} from "./renderers"
+import {tree} from "./tree"
+
+let printer = new Printer(
+	[theorem , strong] , 
+	[sec_theorem , sec_strong] , 
+	{
+		"group": {
+			"theorem": renderer_theorem , 
+		} , 
+		"inline": {
+			"strong": renderer_strong , 
+		} , 
+		"struct": {} , "support" : {} , "abstract": {} , 
+	} , 
+	default_renderers , 
+)
 
 class App extends React.Component<{},{}>{
 	constructor(props: {}){
@@ -8,7 +40,10 @@ class App extends React.Component<{},{}>{
 
 	render(){
 		let me = this
-		return <div>hello,world! haha = {haha}</div>
+		return <PrinterComponent 
+			printer = {printer} 
+			root = {tree}
+		></PrinterComponent>
 	}
 }
 
