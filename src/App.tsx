@@ -4,6 +4,8 @@ import {
 	PrinterComponent ,
 	FirstClassConcept , 
 	SecondClassConcept ,  
+	default_theme , 
+	PrinterBackgroundPaper , 
 } from "../lib"
 import {
 	theorem , 
@@ -16,7 +18,11 @@ import {
 	renderer_theorem , 
 	default_renderers , 
 } from "./renderers"
-import {tree} from "./tree"
+import {
+	tree
+} from "./tree"
+import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
+import type { ThemeOptions } from '@mui/material/styles';
 
 let printer = new Printer(
 	[theorem , strong] , 
@@ -40,10 +46,14 @@ class App extends React.Component<{},{}>{
 
 	render(){
 		let me = this
-		return <PrinterComponent 
-			printer = {printer} 
-			root = {tree}
-		></PrinterComponent>
+		return <ThemeProvider theme = {createTheme(default_theme)}>
+			<PrinterBackgroundPaper>
+				<PrinterComponent 
+					printer = {printer} 
+					root = {tree}
+				></PrinterComponent>
+			</PrinterBackgroundPaper>
+		</ThemeProvider>
 	}
 }
 

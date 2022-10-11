@@ -18,6 +18,7 @@ export type {
     PrinterExitFunction , 
     PrinterRenderFunctionProps , 
     PrinterRenderFunction , 
+    ProcessedParameterList , 
 }
 
 /** 渲染器所需要维护的环境。 */
@@ -26,11 +27,24 @@ type Env = {[key: string | number]: any}
 /** 渲染器所需要维护的节点的上下文。 */
 type Context = {[key: string | number]: any}
 
+/** 经过处理的参数列表。 */
+type ProcessedParameterList = {[key: string]: any}
+
 /** 进入时操作。注意，这个操作应是原地操作。 */
-type PrinterEnterFunction = (node: Readonly<Node>, env_draft: Env, context_draft: Context) => void
+type PrinterEnterFunction = (
+    node: Readonly<Node>, 
+    parameters: Readonly<ProcessedParameterList>, 
+    env_draft: Env, 
+    context_draft: Context
+) => void
 
 /** 离开时操作。 注意，这操作应是原地操作。*/
-type PrinterExitFunction = (node: Readonly<Node>, env_draft: Env, context_draft: Context) => [cache_result: any, finished: boolean]
+type PrinterExitFunction = (
+    node: Readonly<Node>, 
+    parameters: Readonly<ProcessedParameterList>, 
+    env_draft: Env, 
+    context_draft: Context
+) => [cache_result: any, finished: boolean]
 
 /** 渲染器的渲染函数的props。 */
 interface PrinterRenderFunctionProps {
@@ -64,10 +78,16 @@ class PrinterRenderer{
     /** 渲染函数。 */
 	renderer: PrinterRenderFunction
 
-    constructor(enter: PrinterEnterFunction, exit: PrinterExitFunction, renderer: PrinterRenderFunction){
-        this.enter = enter 
-        this.exit = exit
-        this.renderer = renderer
+    /**
+     * 渲染器的构造函数。
+     * @param funcs.enter 进入时操作。
+     * @param funcs.exit 退出时操作。
+     * @param funcs.renderer 渲染函数。
+     */
+    constructor(funcs:{enter?: PrinterEnterFunction, exit?: PrinterExitFunction, renderer?: PrinterRenderFunction}){
+        this.enter = funcs.enter || ((n,p,e,c)=>{})
+        this.exit = funcs.exit || ((n,p,e,c)=>[undefined, true])
+        this.renderer = funcs.renderer
     }
 }
 

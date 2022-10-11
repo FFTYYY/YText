@@ -6,6 +6,7 @@ import {
     Context , 
     PrinterEnterFunction , 
     PrinterExitFunction , 
+    ProcessedParameterList , 
 } from "../../core/renderer"
 import { 
 	Node , 
@@ -29,26 +30,27 @@ export { ContexterBase }
  * 
  TODO 是不是需要提供一个『如果已经确定不需要二次迭代，那么下一次进入就会自动跳过』的方法啊？
  */
-class ContexterBase<NODETYPE = Node>{
+class ContexterBase<NT = Node>{
     key: string
     get_default_val: ()=>any
 
     /**
      * 上下文工具的构造函数。
      * @param key 本工具的唯一名称。
-     * @param default_val 如果环境还没创建，默认的环境。
+     * @param default_val 如果环境还没创建，默认的环境的方法。
      */
-    constructor(key:string, get_default_val: ()=>any){
+    constructor(key:string, default_val: any){
         this.key = key
-        this.get_default_val = get_default_val
+        this.get_default_val = ()=>( JSON.parse( JSON.stringify(default_val) ) ) // 深拷贝，避免被修改。
+
     }
 
     /** 进入时操作。子类需要重写这个函数。 */
-    enter(node: NODETYPE , env: Env , context: Context){
-    }
+    enter(node: Readonly<NT> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context){}
+    
     /** 退出时操作。子类需要重写这个函数。 */
-    exit(node: NODETYPE , env: Env , context: Context): [any, boolean]{
-        return [{} , true]
+    exit(node: Readonly<NT> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context): [any, boolean]{
+        return [undefined , true]
     }
 
     /** 这个函数确保自己的环境存在，如果没有就创建一个。 */

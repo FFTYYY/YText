@@ -15,6 +15,7 @@ import {
     PrinterEnterFunction , 
     PrinterExitFunction , 
     PrinterRenderFunction , 
+    ProcessedParameterList , 
 } from "./renderer"
 import {
     InlineNode , 
@@ -34,7 +35,8 @@ import {
 	is_abstractnode , 
 	is_structnode , 
 	is_paragraphnode , 
-	is_textnode , 
+	is_textnode, 
+    ParameterList, 
     //get_node_type, 
 } from "./intermidiate"
 import {
@@ -207,7 +209,7 @@ class Printer{
     /** 这个函数将节点的参数列表还原成一级概念的参数列表。 
       TODO 增加类型判断，最好是能抛出一个异常。
     */
-    process_parameters(node: ConceptNode): {[key: string]: any}{
+    process_parameters(node: ConceptNode): ProcessedParameterList{
         let sec_ccpt = this.get_node_second_concept(node)
         let frt_ccpt = this.get_node_first_concept(node)
 
@@ -282,7 +284,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
     }
 
     /**这个函数在印刷之前生成环境和上下文。 */
-    preprocess(): [Env , {[path: string]: Context}]{
+    preprocess(): [Env , {[path: string]: Context} , {[path: string]: ProcessedParameterList}]{
         let me = this 
 
         /** 这个函数递归地检查整个节点树，并让每个节点对环境做处理。最终的结果被记录在全局变量中。 
@@ -290,34 +292,54 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
          * @param node 当前节点。
          * @param path 当前节点到根的路径。
          * @param contexts 所有节点的上下文的储存。
+         * @param parameters 所有节点的处理好的参数的储存。
          * 注意这个函数对`nowenv`是不改变的，但是对`contexts`却是改变的。
         */
-        function _preprocess(nowenv: Env , node: Node , path: number[] , contexts: {[path: string]: Context})
-            : [Env , boolean]
+        function _preprocess(
+            nowenv: Env , 
+            node: Node , 
+            path: number[] , 
+            contexts: {[path: string]: Context} , 
+            all_parameters: {[path: string]: ProcessedParameterList} , 
+        ): [Env , boolean]
         {            
             let renderer = me.printer.get_node_renderer(node) // 向印刷器请求渲染器。
             let my_path = JSON.stringify(path) // 本节点的路径的字符串表示。
 
             let flag = true // 这个变量表示处理是否结束。只要有一个子节点的处理没有结束那就没有结束。
-        
+            
+            // 初始化上下文
             let nowcontext: Context = contexts[my_path] // 使用path来作为每个节点的索引。
             if(nowcontext == undefined){
                 nowcontext = {}
             }
             
+            // 处理参数
+            let my_parameters = all_parameters[my_path] // 首先看看是不是有已经保存的参数。
+            if(my_parameters == undefined){
+                my_parameters = {} // 注意非概念节点的参数列表直接为空。
+                if((!is_textnode(node)) && (!is_paragraphnode(node))){ // 为概念节点处理参数列表。
+                    my_parameters = me.printer.process_parameters(node)
+                }
+                all_parameters[my_path] = my_parameters // 由于参数列表不会改变，所以这里直接储存。
+            }
 
             // 进入时操作。
             // 进入时先操作一次环境并建立一次上下文。使用produce来进行不可变更新。
             // 前面加个分号是为了防止被视为索引。
             ([nowenv , nowcontext] = produce([nowenv , nowcontext] , ([e,c])=>{
-                renderer.enter(node , e , c)
+                renderer.enter(node , my_parameters , e , c)
             }))
 
             // 然后让所有子节点操作环境。
             if (! is_textnode(node)){ // 还有子节点
                 for(let c_idx in node.children){
                     let c = node.children[c_idx]
-                    let [env_1 , flag_1] = _preprocess(nowenv , c , [...path , parseInt(c_idx)] , contexts) // 向下处理子节点。
+
+                    // 向下处理子节点。
+                    let [env_1 , flag_1] = _preprocess(
+                        nowenv , c , [...path , parseInt(c_idx)] , contexts, all_parameters
+                    ) 
 
                     flag = flag && flag_1 // 只要有一个子节点返回`false`，本节点就返回`false`。
                     nowenv = env_1
@@ -327,7 +349,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
             // TODO 保存cache结果
             // 退出时再操作一次环境和上下文。
             ([nowenv , nowcontext] = produce([nowenv , nowcontext] , ([e,c]) => {
-                let [flag2 , cache] = renderer.exit(node , e , c)
+                let [flag2 , cache] = renderer.exit(node , my_parameters , e , c)
                 flag = flag && flag2
             }))
 
@@ -337,15 +359,15 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
 
         let env = {}
         let contexts = {}
-        let flag = true // 处理是否结束。如果为`false`就要继续处理。
-        while(flag){
-            let [newenv , newflag] = _preprocess(env , me.root , [] , contexts)
+        let all_parameters = {}
+        let flag = false // 处理是否结束。如果为`false`就要继续处理。
+        while(!flag){
+            let [newenv , newflag] = _preprocess(env , me.root , [] , contexts , all_parameters)
             env = newenv 
             flag = newflag
             break
         }
-
-        return [env , contexts]
+        return [env , contexts , all_parameters]
     }
     
     /** 这个函数渲染一个子节点。 */
@@ -353,17 +375,21 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         node: Node , 
         path: number [] , 
         contexts: {[path: string]: Context} , 
+        all_parameters: {[path: string]: ProcessedParameterList} , 
     }): React.ReactElement{
         let me = this
-        let [node , path , contexts] = [props.node , props.path , props.contexts]
+        let [node, path, contexts, all_parameters] = [props.node, props.path, props.contexts, props.all_parameters]
         let ThisFunction = me.subrender.bind(this)
         
         let my_path = JSON.stringify(path) // 获取本节点
         let my_context = contexts[my_path] // 本节点的上下文信息。
+        let my_parameters = all_parameters[my_path] // 获取参数列表。
 
-        let my_parameters = {} // 注意非概念节点的参数列表直接为空。
-        if((!is_textnode(node)) && (!is_paragraphnode(node))){ // 为概念节点处理参数列表。
-            my_parameters = me.printer.process_parameters(node)
+        if(my_parameters == undefined){
+            throw new UnexpectedParametersError(`all_parameters should contain ${my_path} but it doesn't.`)
+        }
+        if(my_context == undefined){
+            throw new UnexpectedParametersError(`contexts should contain ${my_path} but it doesn't.`)
         }
 
         let renderer = me.printer.get_node_renderer(node) // 向印刷器请求渲染器。
@@ -379,6 +405,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
                 node     = {mychildren[subidx]} 
                 path     = {[...path , parseInt(subidx)]}
                 contexts = {contexts}
+                all_parameters = {all_parameters}
             />)}</React.Fragment>
         }
 
@@ -394,7 +421,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         let me = this
         let R = me.subrender.bind(this)
 
-        let [env , contexts] = me.preprocess()
+        let [env , contexts , all_parameters] = me.preprocess()
 
         // 通过React注入器提供给用户定义的渲染器的全局信息。
         let globalinfo = {
@@ -403,6 +430,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
             "printerComponent": me , 
             "env": env , 
             "contexts": contexts , 
+            "all_parameters": all_parameters , 
         }
 
         return <GlobalInfoProvider 
@@ -411,6 +439,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
             node = {me.root} 
             path = {[]}
             contexts = {contexts}
+            all_parameters = {all_parameters}
         /></GlobalInfoProvider>
     }
 }
