@@ -324,12 +324,14 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
                 all_parameters[my_path] = my_parameters // 由于参数列表不会改变，所以这里直接储存。
             }
 
+            // TODO 我们真的需要不可变操作吗 
             // 进入时操作。
             // 进入时先操作一次环境并建立一次上下文。使用produce来进行不可变更新。
             // 前面加个分号是为了防止被视为索引。
-            ([nowenv , nowcontext] = produce([nowenv , nowcontext] , ([e,c])=>{
-                renderer.enter(node , my_parameters , e , c)
-            }))
+            // ([nowenv , nowcontext] = produce([nowenv , nowcontext] , ([e,c])=>{
+            //     renderer.enter(node , my_parameters , e , c)
+            // }))
+            renderer.enter(node , my_parameters , nowenv , nowcontext)
 
             // 然后让所有子节点操作环境。
             if (! is_textnode(node)){ // 还有子节点
@@ -348,10 +350,12 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
 
             // TODO 保存cache结果
             // 退出时再操作一次环境和上下文。
-            ([nowenv , nowcontext] = produce([nowenv , nowcontext] , ([e,c]) => {
-                let [flag2 , cache] = renderer.exit(node , my_parameters , e , c)
-                flag = flag && flag2
-            }))
+            // ([nowenv , nowcontext] = produce([nowenv , nowcontext] , ([e,c]) => {
+            //     let [flag2 , cache] = renderer.exit(node , my_parameters , e , c)
+            //     flag = flag && flag2
+            // }))
+            let [flag2 , cache] = renderer.exit(node , my_parameters , nowenv , nowcontext)
+            flag = flag && flag2
 
             contexts[my_path] = nowcontext //记录/更新 上下文。
             return [nowenv , flag]

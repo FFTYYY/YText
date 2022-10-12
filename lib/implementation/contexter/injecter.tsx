@@ -18,15 +18,27 @@ export type { InjectInformation }
 /** 这个函数说明如何生成需要注入的信息。
  * 初始化时，这个函数被提供给注射器，预处理遍历到对应节点时，根据这个节点的信息生成所需的信息。
  */
-type InjectInformation<NT extends Node> = (
-    node: Readonly<NT>, 
+type InjectInformation<NodeType extends Node , InfoType = any> = (
+    node: Readonly<NodeType>, 
     parameters: Readonly<ProcessedParameterList>, 
     env: Env , 
     context: Context
-) => any
+) => InfoType | undefined
 
-/** 这个上下文工具允许节点向之后的节点的渲染函数注入一定的可渲染元素。 */
-class InjectContexter<NT extends Node = Node> extends ContexterBase<NT>{
+/** 这个上下文工具允许节点向之后的节点的渲染函数注入一定的可渲染元素。 
+ * 注射器会在环境内创造以特定的名称定义的环境，每个环境内又被`infokey`分为若干个子环境，每个子环境是一个数组，包含所有以
+ * 这个infokey注射的信息。每次Consumer会取出所有的信息并处理。
+ * 
+ * 注意这里类型定义其实不严谨，env中并非所有项目都是`InfoType`（所有`Injecter`都共用一个`env`，但是他们的`InfoType`不一定一样）。
+ * 但是在实现中只会关心`env[this.infotype]`（这一点由所有函数都首先调用`this.get_subenv`来保证），而这一项一定是`InfoType`类型
+ * 的，所以不会有问题。
+ * 
+*/
+class InjectContexter<NodeType extends Node = Node, InfoType = any> extends ContexterBase<
+    NodeType , 
+    undefined , 
+    {[infokey: string]: InfoType[]}
+>{
     /**
      * 『注射器』上下文工具的构造函数。
      * @param infokey 要注射的信息配对使用的key。
@@ -35,29 +47,48 @@ class InjectContexter<NT extends Node = Node> extends ContexterBase<NT>{
      * 
      */
     infokey: string
-    preinfo: InjectInformation<NT>
-    aftinfo: InjectInformation<NT>
-    constructor(infokey: string, infos: {preinfo?: InjectInformation<NT>, aftinfo?: InjectInformation<NT>}){
+    preinfo: InjectInformation<NodeType, InfoType>
+    aftinfo: InjectInformation<NodeType, InfoType>
+    constructor(infokey: string, infos: {preinfo?: InjectInformation<NodeType , InfoType>, aftinfo?: InjectInformation<NodeType , InfoType>}){
         super("__injector_consumer" , {})
         this.infokey = infokey
         this.preinfo = infos.preinfo || ( (n,p,e,c)=>undefined )
         this.aftinfo = infos.aftinfo || ( (n,p,e,c)=>undefined )
     }
-    enter(node: Readonly<NT>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): void {
+
+    /** 这个函数自动创建（如果不存在的话）对应的环境项目和信息项目，并返回本注射器使用的信息项目。 
+     * 所有注射器函数在操作`env`之前都应该调用这个函数，来保证只操作自己的项目。
+    */
+    get_subenv(env: Env){
         this.ensure_env(env)
         let e = this.get_env(env)
-        e[this.infokey] = this.preinfo(node,parameters,env,context)
+        // 确保本信息的数组存在。
+        if(e[this.infokey] == undefined){
+            e[this.infokey] = []
+        }
+        return e[this.infokey]
     }
-    exit(node: Readonly<NT>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): [any, boolean] {
-        this.ensure_env(env)
-        let e = this.get_env(env)
-        e[this.infokey] = this.aftinfo(node,parameters,env,context)
+    enter(node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): void {
+        let e = this.get_subenv(env)
+        let theinfo = this.preinfo(node,parameters,env,context)
+        if(theinfo != undefined)
+            e.push( theinfo )
+    }
+    exit(node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): [any, boolean] {
+        let e = this.get_subenv(env)
+        let theinfo = this.aftinfo(node,parameters,env,context)
+        if(theinfo != undefined)
+            e.push( theinfo )
         return [undefined , true]
     }
 }
 
 /** 这个上下文工具接收注射器提供的信息，并提供给节点。*/
-class ConsumerContexter<NT extends Node = Node> extends ContexterBase<NT>{
+class ConsumerContexter<NodeType extends Node = Node , InfoType = any> extends ContexterBase<
+    NodeType , 
+    InfoType [] , 
+    {[infokey: string]: InfoType[]}
+>{
     infokey: string
 
     /** 接收器（Injector）上下文工具的构造函数。
@@ -69,9 +100,41 @@ class ConsumerContexter<NT extends Node = Node> extends ContexterBase<NT>{
         super("__injector_consumer" , {})
         this.infokey = infokey
     }
-    enter(node: Readonly<NT>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): void {
+
+    /** 这个函数自动创建（如果不存在的话）对应的环境项目和信息项目，并返回本接收器使用的信息项目。 
+     * 所有接收器函数在操作`env`之前都应该调用这个函数，来保证只操作自己的项目。
+    */
+    get_subenv(env: Env){
         this.ensure_env(env)
         let e = this.get_env(env)
-        this.set_context(context , e[this.infokey])
+        // 确保本信息的数组存在。
+        if(e[this.infokey] == undefined){
+            e[this.infokey] = []
+        }
+        return e[this.infokey]
+    }
+    set_subenv(env: Env, val: InfoType[]){
+        this.ensure_env(env)
+        let e = this.get_env(env)
+        e[this.infokey] = val
+    }
+
+    set_context(context: Context, val: InfoType[]){
+        if(context[this.key] == undefined){
+            context[this.key] = {}
+        }
+        context[this.key][this.infokey] = val
+    }
+    get_context(context: Context): InfoType[]{
+        if(context[this.key] == undefined){
+            context[this.key] = {}
+        }
+        return context[this.key][this.infokey]
+    }
+
+    enter(node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): void {
+        let info = [...this.get_subenv(env)] // 复制已有的信息。其实不用这么写，不过也无所谓吧。
+        this.set_subenv(env , []) // 删除已经吃到的信息。
+        this.set_context(context , info)
     }
 }

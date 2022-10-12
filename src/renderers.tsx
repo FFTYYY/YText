@@ -12,6 +12,7 @@ import {
     ProcessedParameterList , 
 
     get_default_group_renderer , 
+    get_default_paragraph_renderer , 
 } from "../lib"
 export {renderer_theorem , renderer_strong , default_renderers}
 
@@ -37,10 +38,11 @@ let theo_order = new OrderContexter("order-theo")
 let renderer_theorem = (()=>{
     let orderer = new OrderContexter("theorem")
 
-    let theoremprinter = get_default_group_renderer<GroupNode>({
+    let theoremprinter = get_default_group_renderer({
         contexters: [
             orderer,
-        ]
+        ] , 
+        pre_element: (props: PrinterRenderFunctionProps)=><div>Theorem {orderer.get_context(props.context)}</div>
     })
     return theoremprinter
 })()
@@ -78,7 +80,7 @@ let default_renderers = {
     "struct"    : default_renderer_block , 
     "support"   : default_renderer_block , 
     "abstract"  : default_renderer_block , 
-    "paragraph" : default_renderer_block , 
+    "paragraph" : get_default_paragraph_renderer({}) , 
     "inline"    : default_renderer_inline , 
     "text"      : default_renderer_text , 
 }

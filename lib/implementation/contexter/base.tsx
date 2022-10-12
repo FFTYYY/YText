@@ -30,26 +30,26 @@ export { ContexterBase }
  * 
  TODO 是不是需要提供一个『如果已经确定不需要二次迭代，那么下一次进入就会自动跳过』的方法啊？
  */
-class ContexterBase<NT = Node>{
+class ContexterBase<NodeType = Node, ContextType = any, EnvType = any>{
     key: string
-    get_default_val: ()=>any
+    get_default_val: ()=>EnvType
 
     /**
      * 上下文工具的构造函数。
      * @param key 本工具的唯一名称。
      * @param default_val 如果环境还没创建，默认的环境的方法。
      */
-    constructor(key:string, default_val: any){
+    constructor(key:string, default_val: EnvType){
         this.key = key
         this.get_default_val = ()=>( JSON.parse( JSON.stringify(default_val) ) ) // 深拷贝，避免被修改。
 
     }
 
     /** 进入时操作。子类需要重写这个函数。 */
-    enter(node: Readonly<NT> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context){}
+    enter(node: Readonly<NodeType> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context){}
     
     /** 退出时操作。子类需要重写这个函数。 */
-    exit(node: Readonly<NT> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context): [any, boolean]{
+    exit(node: Readonly<NodeType> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context): [any, boolean]{
         return [undefined , true]
     }
 
@@ -61,24 +61,24 @@ class ContexterBase<NT = Node>{
     }
 
     /** 获得这个操作器对应的环境。 */
-    get_env(env: Env): any{
+    get_env(env: Env): EnvType{
         this.ensure_env(env)
         return env[this.key]
     }
 
     /** 设置这个操作器对应的环境。 */
-    set_env(env: Env , val: any): void{
+    set_env(env: Env , val: EnvType): void{
         this.ensure_env(env)
         env[this.key] = val
     }
 
     /** 获得这个操作器对应的上下文。 */
-    get_context(context: Context): any{
+    get_context(context: Context): ContextType{
         return context[this.key]
     }
 
     /** 设置这个操作器对应的上下文。 */
-    set_context(context: Context , val: any): void{
+    set_context(context: Context , val: ContextType): void{
         context[this.key] = val
     }
 }

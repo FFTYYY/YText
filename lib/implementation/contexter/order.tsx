@@ -19,7 +19,7 @@ import {
 
 export { OrderContexter }
 
-class OrderContexter<NT = Node> extends ContexterBase<NT>{
+class OrderContexter<NT = Node> extends ContexterBase<NT , number , {[order_key: string]: number}>{
 
     /** 标明排序的对象。 */
     order_key: string

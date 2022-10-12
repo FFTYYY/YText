@@ -60,7 +60,7 @@ interface PrinterRenderFunctionProps {
     readonly parameters: {[key: string]: any}
 
     /** 子节点列表，这个是用来递归渲染用的。 */
-	readonly children: React.ReactElement
+	readonly children?: React.ReactElement
 }
 
 /** 渲染器的渲染函数。 */
