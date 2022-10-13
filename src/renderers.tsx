@@ -13,6 +13,7 @@ import {
 
     get_default_group_renderer , 
     get_default_paragraph_renderer , 
+    get_default_inline_renderer , 
 
     PrinterTitleBoxText , 
 } from "../lib"
@@ -38,9 +39,8 @@ let renderer_theorem = (()=>{
 })()
 
 
-let renderer_strong = new PrinterRenderer({
-    renderer(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
-        let node = props.node as InlineNode
+let renderer_strong = get_default_inline_renderer({outer:
+    (props: PrinterRenderFunctionProps)=>{
         return <strong>{props.children}</strong>
     }
 })
