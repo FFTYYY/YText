@@ -1,7 +1,3 @@
-/** 这个组件定义印刷器渲染的默认实现中用到的一些基本组件。
- * @module
- */
-
 import {
     Typography , 
     Box , 
@@ -14,12 +10,13 @@ import type {
     BoxProps , 
     DividerProps , 
 } from "@mui/material"
+import type { SxProps } from "@mui/material/styles"
 
 export { 
     PrinterDivider , 
     PrinterWeakenText , 
     PrinterDisplayText , 
-    PrinterTitleBoxText , 
+    PrinterStructureBoxText , 
     PrinterParagraphBox , 
     PrinterPartBox , 
     PrinterNewLevelBox , 
@@ -45,9 +42,9 @@ const PrinterWeakenText = (props: TypographyProps  & {inline?: boolean}) => <Typ
     {...{...props , inline: undefined}}
     sx = {[
         (theme)=>({
-            ...theme.fonts.weaken, // 使用弱化字体的样式。
-            ...(props.inline ? { // 如果是行内样式。
-                marginRight: (theme) => theme.margins.colon , // 如果是行内，在右边加入一个小间隔。
+            ...theme.fonts.weaken, // 使用弱化字体的样式
+            ...(props.inline ? { // 如果是行内样式
+                marginRight: (theme) => theme.margins.colon , 
                 display: "inline-block" , 
             } : {})
         }),
@@ -72,14 +69,13 @@ const PrinterDisplayText = (props: TypographyProps  & {inline?: boolean}) => <Ty
     ]}
 />
 
-
 /** 段落节点的默认输出方式。 */
 const PrinterParagraphBox = (props: TypographyProps) => <Typography 
     component = {Box}
     {...props}
     sx = {[
         (theme)=>({
-            // ...theme.printer.typography.body, // 不要在段落上使用内容字体样式，否则外层无法覆盖之。
+            // ...theme.fonts.body, // 不要在段落上使用内容字体样式，否则外层无法覆盖之。
             fontFamily  : "inherit" , 
             fontSize    : "inherit" , 
             lineHeight  : "inherit" , 
@@ -92,31 +88,35 @@ const PrinterParagraphBox = (props: TypographyProps) => <Typography
     ]}
 />
 
-/** 一个标题，独占一行。这个样式同时包含字体和间距。 */
-const PrinterTitleBoxText = (props: TypographyProps & {inline?: boolean}) => <Typography 
+/** 一个的标题，独占一行。这个样式同时包含字体和间距。 */
+const PrinterStructureBoxText = (props: TypographyProps & {inline?: boolean , leftmargin?: boolean}) => <Typography 
     component = {props.inline ? "span" : Box}
-    {...{...props , inline: undefined}}
+    {...{...props , inline: undefined , leftmargin: undefined}}
     sx = {[
         (theme)=>({
             ...theme.fonts.structure, // 使用结构字体的样式
             ...(props.inline ? { // 如果是行内样式
-                marginRight: (theme) => theme.margins.colon , 
+                ...(props.leftmargin ? { // 是否将空格放在左边。
+                    marginLeft: (theme) => theme.margins.colon ,
+                }: {
+                    marginRight: (theme) => theme.margins.colon ,
+                }) , 
                 display: "inline-block" , 
-            } : {
-            })
+            } : {})
         }),
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}
 />
 
 /** 一个用来包裹一个部分的组件。 */
-const PrinterPartBox = (props: BoxProps) => <Box 
-    {...props}
+const PrinterPartBox = (props: BoxProps & {subtitle_like?: boolean , small_margin?: boolean}) => <Box 
+    {...{...props , subtitle_like: undefined , small_margin: undefined}}
     sx = {[
-        {
-            marginTop: (theme) => theme.margins.special , 
-            marginBottom: (theme) => theme.margins.special , 
-        } , 
+        (theme)=>({
+            ...(props.subtitle_like ? theme.fonts.title : {}) , 
+            marginTop: props.small_margin ? theme.margins.paragraph : theme.margins.special , 
+            // marginBottom: (theme) => theme.printer.margins.special , // 下方的边距由下方的元素负责。
+        }) , 
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}
 />
@@ -126,7 +126,8 @@ const PrinterNewLevelBox = (props: BoxProps) => <Box
     {...props}
     sx = {[
         {
-            marginLeft: (theme) => theme.margins.level , 
+            left: (theme) => theme.margins.level , 
+            position: "relative" , 
         } ,
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}
@@ -136,14 +137,16 @@ const PrinterNewLevelBox = (props: BoxProps) => <Box
 const PrinterOldLevelBox = (props: BoxProps) => <Box 
     {...props}
     sx = {[
-        {
-            width: (theme) => theme.margins.level , 
-        } ,
+        (theme)=>({
+            width: theme.margins.level , 
+            flex: `0 0 ${theme.margins.level}` , 
+        }) ,
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}
 />
 
-/** 包裹在最外层的组件。 */
+
+/** 一个用来包裹一个部分的组件。 */
 const PrinterBackgroundPaper = (props: BoxProps) => <Box 
     {...props}
     sx = {[
@@ -155,6 +158,7 @@ const PrinterBackgroundPaper = (props: BoxProps) => <Box
 			width: "100%" , 
 			overflowY: "auto" , 
 			wordWrap: "break-word" , 
+            paddingX: "2rem" , 
         }) , 
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}

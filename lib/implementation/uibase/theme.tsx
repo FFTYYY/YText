@@ -47,6 +47,13 @@ const default_theme: ThemeOptions = {
             lineSpacing: "0.00938em" , 
             fontWeight: 400 ,         
         } , 
+        title: {
+            fontFamily: "default" , 
+            fontSize: "1rem" , 
+            lineHeight: "1.5rem" , 
+            lineSpacing: "0.00938em" , 
+            fontWeight: 400 ,   
+        }
     } , 
 }
 
@@ -98,6 +105,9 @@ interface Fonts {
     
     /** 结构性文本的字体。 */
     structure: TypographyTheme
+
+    /** 结构性文本，但是是标题。 */
+    title: TypographyTheme
 
     /** 展示的文本的字体。 */
     display: TypographyTheme

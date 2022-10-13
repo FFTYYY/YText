@@ -28,7 +28,8 @@ import {
 
 export { get_default_group_renderer , get_default_paragraph_renderer }
 
-// TODO get_default_group_renderer 还没添加element_pre/aft和text_pre/aft
+
+// TODO 最好把contexters改成现场生成的。
 
 /** 这个函数快速生产一个默认的块级组件的渲染器。 
  * 同时，这个函数会使用上下文工具，快捷地允许向段落的开头和结尾添加元素。

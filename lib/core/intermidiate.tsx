@@ -53,7 +53,7 @@ type ParameterValue =
 
 
 /** 参数列表。 */
-interface ParameterList{[key: string]: ParameterValue}
+interface ParameterList<ValueType = ParameterValue>{[key: string]: ValueType}
 
 
 /** 所有可能的节点。 */

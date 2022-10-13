@@ -50,25 +50,24 @@ class FirstClassConcept{
     /** 元参数列表。如果没有提供会默认把所有项都设置为`undefined`。 */
     metaParameters: MetaParameters
 
-    constructor(
+    constructor({
+        type , 
+        name , 
+        parameterPrototype = {} , // TODO 一律用下划线命名法
+        metaParameters = {} , 
+    } : {
         type: "group" | "inline" | "structure" | "support" | "abstract" , 
         name: string , 
-        metaParameters: MetaParameters , 
         parameterPrototype?: ParameterList , 
-    ){
+        metaParameters?: MetaParameters , 
+    }){
         this.type = type
         this.name = name
-        this.metaParameters = metaParameters
-
-        if(parameterPrototype == undefined){
-            this.parameterPrototype = {
-                forceInline: undefined , 
-                forceBlock: undefined , 
-                forceVoid: undefined , 
-            }
-        }
-        else{
-            this.parameterPrototype = parameterPrototype
+        this.metaParameters = metaParameters || {}
+        this.parameterPrototype = parameterPrototype || {
+            forceInline: undefined , 
+            forceBlock: undefined , 
+            forceVoid: undefined , 
         }
     }
 }
@@ -93,17 +92,23 @@ class SecondClassConcept{
     /** 要固定哪些参数的值。 */
     fixedIverride: FixedParameterList
 
-    constructor(
+    constructor({
+        type, 
+        firstConcept , 
+        name , 
+        defaultOverride = {} , 
+        fixedIverride = {} , 
+    }:{
         type: "group" | "inline" | "structure" | "support" | "abstract" , 
         firstConcept: string , 
         name: string , 
-        defaultOverride: ParameterList , 
-        fixedIverride: FixedParameterList , 
-    ){
+        defaultOverride?: ParameterList , 
+        fixedIverride?: FixedParameterList , 
+    }){
         this.type = type
         this.firstConcept = firstConcept
         this.name = name
-        this.defaultOverride = defaultOverride
-        this.fixedIverride = fixedIverride
+        this.defaultOverride = defaultOverride || {}
+        this.fixedIverride = fixedIverride || {}
     }
 }
