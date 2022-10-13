@@ -21,7 +21,10 @@ import {
 import { 
     PrinterPartBox , 
     PrinterParagraphBox, 
-} from "./basic/components"
+} from "./uibase/components"
+import {
+    auto_renderer , 
+} from "./utils"
 
 export { get_default_group_renderer , get_default_paragraph_renderer }
 
@@ -42,8 +45,8 @@ export { get_default_group_renderer , get_default_paragraph_renderer }
 */
 function get_default_group_renderer({
     contexters =  [] , 
-    outer =  (props: PrinterRenderFunctionProps)=><PrinterPartBox>{props.children}</PrinterPartBox> , 
-    inner =  (props: PrinterRenderFunctionProps)=><React.Fragment>{props.children}</React.Fragment> , 
+    outer =  (props: PrinterRenderFunctionProps<GroupNode>)=><PrinterPartBox>{props.children}</PrinterPartBox> , 
+    inner =  (props: PrinterRenderFunctionProps<GroupNode>)=><React.Fragment>{props.children}</React.Fragment> , 
     pre_element =  undefined , 
     aft_element =  undefined , 
     pre_text =  undefined , 
@@ -52,8 +55,8 @@ function get_default_group_renderer({
     text_key =  "paragraph-text" , 
 }:{
     contexters?: ContexterBase<GroupNode>[]
-    outer?: PrinterRenderFunction
-    inner?: PrinterRenderFunction
+    outer?: PrinterRenderFunction<GroupNode>
+    inner?: PrinterRenderFunction<GroupNode>
     pre_element?: InjectInformation<GroupNode , React.ReactElement> | undefined
     aft_element?: InjectInformation<GroupNode , React.ReactElement> | undefined
     pre_text?: InjectInformation<GroupNode , string> | undefined
@@ -66,35 +69,25 @@ function get_default_group_renderer({
     
     // 注意contexter是没有状态的，因此可以声明在外面。
     // 注意 xx && yy == xx == undefined ? undefined : yy
-    let elmt_injecter = new InjectContexter<GroupNode , React.ReactElement<PrinterRenderFunctionProps>>(element_key , {
-        preinfo: (n,p,e,c)=>(pre_element && pre_element(n,p,e,c)), 
-        aftinfo: (n,p,e,c)=>(aft_element && aft_element(n,p,e,c)), 
-    })
-    let text_injecter = new InjectContexter<GroupNode , string>(text_key , {
-        preinfo: (n,p,e,c)=>(pre_text && pre_text(n,p,e,c)) , 
-        aftinfo: (n,p,e,c)=>(aft_text && aft_text(n,p,e,c)) , 
-    })
+    let elmt_injecter = new InjectContexter<GroupNode , React.ReactElement<PrinterRenderFunctionProps<GroupNode>>>(
+        element_key , {
+            preinfo: (n,p,e,c)=>(pre_element && pre_element(n,p,e,c)), 
+            aftinfo: (n,p,e,c)=>(aft_element && aft_element(n,p,e,c)), 
+        }
+    )
+    let text_injecter = new InjectContexter<GroupNode , string>(
+        text_key , {
+            preinfo: (n,p,e,c)=>(pre_text && pre_text(n,p,e,c)) , 
+            aftinfo: (n,p,e,c)=>(aft_text && aft_text(n,p,e,c)) , 
+        }
+    )
 
     // 把预先定义的两个注射器塞进contexter里面。
     contexters = [...contexters , elmt_injecter , text_injecter]
 
-    return new PrinterRenderer({
-        enter: (node: Readonly<GroupNode>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context)=>{
-            for(let cer of contexters){
-                cer.enter(node,parameters,env,context)
-            }
-        } , 
-        exit: (node: Readonly<GroupNode>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context)=>{
-            let cache = {} // TODO 这个没有真正地被处理
-            let flag = true
-            for(let cer of contexters){
-                let [subcache , subflag] = cer.exit(node,parameters,env,context)
-                cache = {...cache , ...(subcache || {})} // 合并cache和cache
-                flag = flag && subflag
-            }
-            return [cache , flag]
-        } , 
-        renderer: (props: PrinterRenderFunctionProps) => {
+    return auto_renderer<GroupNode>({
+        contexters: contexters , 
+        render_function: (props: PrinterRenderFunctionProps<GroupNode>) => {
             let props_except_children = {
                 node: props.node , 
                 context: props.context , 
@@ -124,32 +117,20 @@ function get_default_paragraph_renderer({
 }: {
     element_key?: string
     text_key?: string
-    contexters?: ContexterBase []
+    contexters?: ContexterBase<ParagraphNode> []
 }){
+    type RPROPS = PrinterRenderFunctionProps<ParagraphNode> // 只是让代码看起来不要太乱...
+
     // 注意contexter是没有状态的，因此可以声明在外面。
-    let elmt_consumer = new ConsumerContexter<ParagraphNode , React.ReactElement<PrinterRenderFunctionProps>>(element_key)
+    let elmt_consumer = new ConsumerContexter<ParagraphNode , React.ReactElement<RPROPS>>(element_key)
     let text_consumer = new ConsumerContexter<ParagraphNode , string>(text_key)
 
     // 把预先定义的两个注射器塞进contexter里面。
     contexters = [...contexters , elmt_consumer , text_consumer]
     
-    return new PrinterRenderer({
-        enter: (node: Readonly<GroupNode>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context)=>{
-            for(let cer of contexters){
-                cer.enter(node,parameters,env,context)
-            }
-        } , 
-        exit:  (node: Readonly<GroupNode>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context)=>{
-            let cache = {}
-            let flag = true
-            for(let cer of contexters){
-                let [subcache , subflag] = cer.exit(node,parameters,env,context)
-                cache = {...cache , ...(subcache || {})} // 合并cache和cache
-                flag = flag && subflag
-            }
-            return [cache , flag]
-        } , 
-        renderer: (props: PrinterRenderFunctionProps) => {
+    return auto_renderer<ParagraphNode>({
+        contexters: contexters , 
+        render_function: (props: RPROPS) => {
             let context = props.context
             let pre_elements = elmt_consumer.get_context(context)
             let pre_texts = text_consumer.get_context(context)

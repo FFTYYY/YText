@@ -1,4 +1,4 @@
-/** 这个模块提供一些通用的实现工具。 */
+/** 这个模块提供一些对ui的实现所用的工具。 */
 
 export * from "./autodirection"
 export * from "./theme"

@@ -31,26 +31,26 @@ type Context = {[key: string | number]: any}
 type ProcessedParameterList = {[key: string]: any}
 
 /** 进入时操作。注意，这个操作应是原地操作。 */
-type PrinterEnterFunction = (
-    node: Readonly<Node>, 
+type PrinterEnterFunction<NodeType extends Node = Node> = (
+    node: Readonly<NodeType>, 
     parameters: Readonly<ProcessedParameterList>, 
     env_draft: Env, 
     context_draft: Context
 ) => void
 
 /** 离开时操作。 注意，这操作应是原地操作。*/
-type PrinterExitFunction = (
-    node: Readonly<Node>, 
+type PrinterExitFunction<NodeType extends Node = Node> = (
+    node: Readonly<NodeType>, 
     parameters: Readonly<ProcessedParameterList>, 
     env_draft: Env, 
     context_draft: Context
 ) => [cache_result: any, finished: boolean]
 
 /** 渲染器的渲染函数的props。 */
-interface PrinterRenderFunctionProps {
+interface PrinterRenderFunctionProps<NodeType extends Node = Node> {
 
     /** 要渲染的节点。大多数情况下渲染器不应该访问节点，而应该从`context`和`parameters`获取需要的信息。 */
-	readonly node: Node
+	readonly node: NodeType
     /** 经过预处理获得的`context`。 */
 	readonly context: Context
 
@@ -64,19 +64,21 @@ interface PrinterRenderFunctionProps {
 }
 
 /** 渲染器的渲染函数。 */
-type PrinterRenderFunction = (props: PrinterRenderFunctionProps) => React.ReactElement<PrinterRenderFunctionProps>
+type PrinterRenderFunction<NodeType extends Node = Node> = (
+    (props: PrinterRenderFunctionProps<NodeType>) => React.ReactElement<PrinterRenderFunctionProps<NodeType>>
+)
 
 /** 总之是渲染器。 */
-class PrinterRenderer{
+class PrinterRenderer<NodeType extends Node = Node>{
 
     /** 进入时操作。 */
-	enter: PrinterEnterFunction
+	enter: PrinterEnterFunction<NodeType>
 
     /** 退出时操作。 */
-	exit: PrinterExitFunction
+	exit: PrinterExitFunction<NodeType>
 
     /** 渲染函数。 */
-	renderer: PrinterRenderFunction
+	renderer: PrinterRenderFunction<NodeType>
 
     /**
      * 渲染器的构造函数。
@@ -84,7 +86,11 @@ class PrinterRenderer{
      * @param funcs.exit 退出时操作。
      * @param funcs.renderer 渲染函数。
      */
-    constructor(funcs:{enter?: PrinterEnterFunction, exit?: PrinterExitFunction, renderer?: PrinterRenderFunction}){
+    constructor(funcs:{
+            enter?: PrinterEnterFunction<NodeType>, 
+            exit?: PrinterExitFunction<NodeType>, 
+            renderer?: PrinterRenderFunction<NodeType>
+    }){
         this.enter = funcs.enter || ((n,p,e,c)=>{})
         this.exit = funcs.exit || ((n,p,e,c)=>[undefined, true])
         this.renderer = funcs.renderer

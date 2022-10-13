@@ -24,6 +24,7 @@ import {
     Env , 
     Context, 
     ParagraphNode, 
+    InlineNode , 
 } from "../core"
 import {
     ContexterBase , 
@@ -34,43 +35,38 @@ import {
 import { 
     PrinterPartBox , 
     PrinterParagraphBox, 
-} from "./basic/components"
-
+} from "./uibase/components"
+import {
+    auto_renderer , 
+} from "./utils"
 export {get_default_inline_renderer}
 
-function get_default_inline_renderer<NodeType extends Node>({
+
+/**
+ * 这个函数帮助用户生成一个行内一级概念的渲染器。
+ * @param params.contexters 要使用的上下文工具列表。
+ * @param params.outer 包裹内容的一个容器。
+ * @returns 
+ */
+function get_default_inline_renderer({
     contexters = [] , 
-    outer = (props: PrinterRenderFunctionProps)=><span>{props.children}</span>  , 
+    outer = (props: PrinterRenderFunctionProps<InlineNode>)=><span>{props.children}</span>  , 
 }:{
-	contexters?: ContexterBase[] ,
+	contexters?: ContexterBase<InlineNode>[] ,
 	outer     ?: PrinterRenderFunction
 }){ 
 
     let OUT = outer
 
-    return new PrinterRenderer({
-        enter: (node: Readonly<GroupNode>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context)=>{
-            for(let cer of contexters){
-                cer.enter(node,parameters,env,context)
-            }
-        } , 
-        exit: (node: Readonly<GroupNode>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context)=>{
-            let cache = {} // TODO 这个没有真正地被处理
-            let flag = true
-            for(let cer of contexters){
-                let [subcache , subflag] = cer.exit(node,parameters,env,context)
-                cache = {...cache , ...(subcache || {})} // 合并cache和cache
-                flag = flag && subflag
-            }
-            return [cache , flag]
-        } , 
-        renderer: (props: PrinterRenderFunctionProps) => {
+    return auto_renderer({
+        contexters: contexters , 
+        render_function: (props: PrinterRenderFunctionProps<InlineNode>) => {
             let props_except_children = {
                 node: props.node , 
                 context: props.context , 
                 parameters: props.parameters ,             
             }
             return <OUT {...props_except_children}>{props.children}</OUT>
-        } , 
+        }
     })
 }
