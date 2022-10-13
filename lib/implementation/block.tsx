@@ -29,6 +29,7 @@ import {
     ContexterBase , 
     InjectContexter , 
     ConsumerContexter , 
+    InjectInformation , 
 } from "./contexter"
 import { 
     PrinterPartBox , 
@@ -66,32 +67,29 @@ function get_default_group_renderer({
     contexters?: ContexterBase<GroupNode>[]
     outer?: PrinterRenderFunction
     inner?: PrinterRenderFunction
-    pre_element?: PrinterRenderFunction
-    aft_element?: PrinterRenderFunction | undefined
-    pre_text?: string | undefined
-    aft_text?: string | undefined
+    pre_element?: InjectInformation<GroupNode , React.ReactElement> | undefined
+    aft_element?: InjectInformation<GroupNode , React.ReactElement> | undefined
+    pre_text?: InjectInformation<GroupNode , string> | undefined
+    aft_text?: InjectInformation<GroupNode , string> | undefined
     element_key?: string
     text_key?: string
 }){
     let OUT = outer
     let INN = inner
     
-    let PP = pre_element
-    let PA = aft_element
-
     // 注意contexter是没有状态的，因此可以声明在外面。
     // 注意 xx && yy == xx == undefined ? undefined : yy
     let elmt_injecter = new InjectContexter<GroupNode , React.ReactElement<PrinterRenderFunctionProps>>(element_key , {
-        preinfo: (n,p,e,c)=>(PP && <PP node={n} parameters={p} context={c} />), 
-        aftinfo: (n,p,e,c)=>(PA && <PA node={n} parameters={p} context={c} />), 
+        preinfo: (n,p,e,c)=>(pre_element && pre_element(n,p,e,c)), 
+        aftinfo: (n,p,e,c)=>(aft_element && aft_element(n,p,e,c)), 
     })
     let text_injecter = new InjectContexter<GroupNode , string>(text_key , {
-        preinfo: ()=>pre_text , 
-        aftinfo: ()=>aft_text , 
+        preinfo: (n,p,e,c)=>(pre_text && pre_text(n,p,e,c)) , 
+        aftinfo: (n,p,e,c)=>(aft_text && aft_text(n,p,e,c)) , 
     })
 
     // 把预先定义的两个注射器塞进contexter里面。
-    contexters = [elmt_injecter , text_injecter , ...contexters]
+    contexters = [...contexters , elmt_injecter , text_injecter]
 
     return new PrinterRenderer({
         enter: (node: Readonly<GroupNode>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context)=>{
@@ -146,7 +144,7 @@ function get_default_paragraph_renderer({
     let text_consumer = new ConsumerContexter<ParagraphNode , string>(text_key)
 
     // 把预先定义的两个注射器塞进contexter里面。
-    contexters = [elmt_consumer , text_consumer , ...contexters]
+    contexters = [...contexters , elmt_consumer , text_consumer]
     
     return new PrinterRenderer({
         enter: (node: Readonly<GroupNode>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context)=>{

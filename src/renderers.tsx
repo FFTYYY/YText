@@ -13,27 +13,12 @@ import {
 
     get_default_group_renderer , 
     get_default_paragraph_renderer , 
+
+    PrinterTitleBoxText , 
 } from "../lib"
 export {renderer_theorem , renderer_strong , default_renderers}
 
 let theo_order = new OrderContexter("order-theo")
-
-// let renderer_theorem = new PrinterRenderer({
-//     enter(node: Readonly<Node> , parameters: Readonly<ProcessedParameterList> , env: Env , context: Context){
-//         theo_order.enter(node , parameters , env , context)
-//     } , 
-//     exit(node: Readonly<Node> , parameters: Readonly<ProcessedParameterList> , env: Env , context: Context):[any , boolean]{
-//         theo_order.exit(node , parameters , env , context)
-//         return [context , true]
-//     } , 
-//     renderer(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
-//         let context = props.context
-//         let parameters = props.parameters
-
-//         let order = theo_order.get_context(context)
-//         return <div>{parameters["name"]} {order}{props.children}</div>
-//     }
-// })
 
 let renderer_theorem = (()=>{
     let orderer = new OrderContexter("theorem")
@@ -42,10 +27,16 @@ let renderer_theorem = (()=>{
         contexters: [
             orderer,
         ] , 
-        pre_element: (props: PrinterRenderFunctionProps)=><div>Theorem {orderer.get_context(props.context)}</div>
+        pre_element: (node,parameters,env,context) => {
+            let order = orderer.get_context(context)
+			let title = "Theorem"
+			let alias = parameters.alias
+            return <PrinterTitleBoxText inline>{title} {order} {alias}</PrinterTitleBoxText>
+        }
     })
     return theoremprinter
 })()
+
 
 let renderer_strong = new PrinterRenderer({
     renderer(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{

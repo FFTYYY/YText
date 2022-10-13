@@ -1,6 +1,22 @@
 export {tree}
 
 function create_group(concept , parameters , children){
+
+    for(let x in parameters){
+        if ( (parameters[x]) instanceof String){
+            parameters[x] = {
+                type: "string" , 
+                val: parameters[x] , 
+            }
+        }
+        else if ( (parameters[x]) instanceof Number){
+            parameters[x] = {
+                type: "number" , 
+                val: parameters[x] , 
+            }
+        }
+    }
+
     return {
         type: "group" as "group" , 
         idx: Math.floor( Math.random() * 233333) , 
@@ -57,7 +73,7 @@ let tree = create_group("root" , {} , [
     ]) , 
     create_group("theorem" , {alias_name: ""} , [
         create_paragraph([
-            t("午餐是要收费的。") , 
+            t(`午餐是要收费的。`) , 
         ]) , 
     ]) , 
 

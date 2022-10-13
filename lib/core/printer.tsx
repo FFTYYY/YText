@@ -47,6 +47,7 @@ import {
     GlobalInfoProvider , 
 } from "./globalinfo"
 import produce from "immer"
+import { ConsoleLogger } from "typedoc/dist/lib/utils"
 
 export type {
     FirstClassConceptDict , 
@@ -223,6 +224,8 @@ class Printer{
             ...sec_ccpt.defaultOverride , 
             ...node.parameters , 
         }
+        if(node.concept == "theorem")
+            console.log(sec_parameters)
 
         // 保存固定值参数的处理结果。
         let processed_fixedparams = {}
@@ -237,7 +240,13 @@ class Printer{
                 processed_fixedparams[x] = v
             }
             else{
-                let val = Function(`return ${v.val}`)(sec_parameters) // 将先前处理好的非固定参数作为参数
+                let val = Function(`return ${v.val}`)()(sec_parameters) // 将先前处理好的非固定参数作为参数
+
+                if(node.concept == "theorem"){
+
+                    console.log(Function(`return ${v.val}`)())
+                }
+
                 processed_fixedparams[x] = {
                     type: frt_ccpt.parameterPrototype[x].type , 
                     val: val , 
