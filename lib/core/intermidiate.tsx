@@ -86,13 +86,11 @@ interface InlineNode{
 	concept: string
 	/** 节点的二级概念参数。 */
 	parameters: ParameterList
-	/** 节点的缓存结果。 */
-	cacheResult: any
 
 	/** 子节点列表。 */
 	children: [ TextNode ]
 	/** 抽象列表。 */
-	abstrct: AbstractNode []
+	abstract: AbstractNode []
 }
 
 /** 组节点。 */
@@ -106,8 +104,6 @@ interface GroupNode{
 	concept: string
 	/** 节点的二级概念参数。 */
 	parameters: ParameterList
-	/** 节点的缓存结果。 */
-	cacheResult: any
 
 	/** 子节点列表。 */
 	children: NonLeafNode []
@@ -129,8 +125,6 @@ interface SupportNode{
 	concept: string
 	/** 节点的二级概念参数。 */
 	parameters: ParameterList
-	/** 节点的缓存结果。 */
-	cacheResult: any
 	
 	/** 子节点列表。必定为空。 */
 	children: []
@@ -149,16 +143,14 @@ interface StructNode{
 	concept: string
 	/** 节点的二级概念参数。 */
 	parameters: ParameterList
-	/** 节点的缓存结果。 */
-	cacheResult: any
 	
 	/** 子节点列表。必定为组节点。 */
 	children: GroupNode []
 	/** 抽象列表。 */
 	abstract: AbstractNode []
-
-	numChildren: number
-	relation: "chaining" | "separate"
+	
+	/** 跟前一个节点的关系。 */
+	relation: "chaining" | "separating"
 }
 
 /** 抽象节点。 */
@@ -172,8 +164,6 @@ interface AbstractNode{
 	concept: string
 	/** 节点的二级概念参数。 */
 	parameters: ParameterList
-	/** 节点的缓存结果。 */
-	cacheResult: any
 	
 	/** 子节点列表。 */
 	children: NonLeafNode []
@@ -207,7 +197,7 @@ function is_abstractnode(node: Node): node is AbstractNode{
 
 /** 判断一个节点是不是组节点。 */
 function is_structnode(node: Node): node is AbstractNode{
-	return node["type"] == "struct"
+	return node["type"] == "structure"
 }
 
 /** 判断一个节点是不是段落节点。 */

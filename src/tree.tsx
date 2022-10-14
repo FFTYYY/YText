@@ -6,9 +6,19 @@ import {
     ParagraphNode , 
     TextNode , 
     Node , 
+    validate , 
 } from "../lib"
 
 export {tree}
+
+function make_parameters(parameters){
+    for(let x in parameters){
+        if(parameters[x]["type"] == "choice"){
+            parameters[x].type = "string"
+        }
+    }
+    return parameters
+}
 
 function create_group(concept , parameters , children , relation , idx = undefined): GroupNode{
 
@@ -32,7 +42,6 @@ function create_group(concept , parameters , children , relation , idx = undefin
         idx: idx || Math.floor( Math.random() * 233333) , 
         concept: concept , 
         parameters: parameters , 
-        cacheResult: {} , 
         children: children , 
         abstract: [] , 
         relation: relation , 
@@ -50,9 +59,8 @@ function create_inline(concept , parameters , children , idx = undefined): Inlin
         idx: idx || Math.floor( Math.random() * 233333) , 
         concept: concept , 
         parameters: parameters , 
-        cacheResult: {} , 
         children: children , 
-        abstrct: [] , 
+        abstract: [] , 
     }
 }
 
@@ -74,7 +82,6 @@ function create_support(concept , parameters , idx= undefined): SupportNode{
         idx: idx || Math.floor( Math.random() * 233333) , 
         concept: concept , 
         parameters: parameters , 
-        cacheResult: {} , 
         children: [] , 
         abstract: [] , 
 
@@ -86,14 +93,14 @@ function parse_concept(oldnode){
     let parameters = {}
     if(oldnode["proxy_info"] && oldnode["proxy_info"].proxy_name){
         concept = oldnode["proxy_info"].proxy_name
-        parameters = oldnode["proxy_info"].parameters
+        parameters = oldnode["proxy_info"].proxy_params
     }
     else{
         concept = oldnode["name"]
         parameters = oldnode["parameters"]
 
     }
-    return [concept , parameters]
+    return [concept , make_parameters(parameters)]
 }
 
 function parse_children(oldnode){
@@ -108,7 +115,6 @@ function parse_children(oldnode){
 }
 
 function parsetext(text){
-    console.log(typeof(text))
     if(typeof(text) == "string"){
         return text
     }
@@ -150,6 +156,15 @@ function convert_old_tree(json): GroupNode{
     let old_tree = JSON.parse(json)
 
     let ret = parse(old_tree) as GroupNode
+
+    let [good , msg] = validate(ret)
+    console.log(good)
+    console.log(msg)
+    if(!good){
+        console.log(msg)
+        console.log("ret is" , ret)
+        console.log("old is" , old_tree)
+    }
 
     return ret
 }
