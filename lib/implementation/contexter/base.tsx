@@ -14,8 +14,23 @@ import {
 } from "../../core/intermidiate"
  
 export { ContexterBase }
+export type {
+    PreprocessInformation , 
+    PreprocessFunction , 
+}
   
 // TODO 额外提供两个type，一个是预处理过程中用到的所有信息（npec），一个是使用预处理过程中的信息生成东西的函数。
+
+/** 在预处理阶段可以访问的信息。 */
+interface PreprocessInformation<NodeType = Node>{
+    node: Readonly<NodeType>
+    parameters: Readonly<ProcessedParameterList>
+    context: Context
+    env: Env 
+}
+
+/** 在预处理阶段用于提供任何一个信息的函数。 */
+type PreprocessFunction<NodeType = Node, ReturnType = any> = (info: PreprocessInformation<NodeType>) => ReturnType
 
 /**
  * 这个类定义一个预处理时的处理上下文的工具的基类。

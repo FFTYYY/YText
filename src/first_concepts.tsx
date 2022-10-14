@@ -8,6 +8,8 @@ import {
     ParameterList , 
 } from "../lib"
 
+export {first_concepts}
+
 /** 自动添加type */
 function make_param(parameters: ParameterList<ParameterValue | string | number | boolean>): ParameterList{
     let ret: ParameterList = {}
@@ -79,7 +81,7 @@ var subwords_style    = new FirstClassConcept   ({type: "group", name: "属言" 
         label: "属言" ,
     })   
 })
-var mathblock_style   = new FirstClassConcept   ({type: "group", name: "数学言" , 
+var mathblock_style   = new FirstClassConcept   ({type: "group", name: "数学" , 
     parameterPrototype: make_param({
         ...words_params , 
         label: "数学" ,
@@ -126,9 +128,9 @@ var delete_style      = new FirstClassConcept  ({type: "inline", name: "刊"   ,
     })
 })
 
-var delete_style      = new FirstClassConcept  ({type: "inline", name: "引"   , 
+var delete_style      = new FirstClassConcept  ({type: "inline", name: "缀"   , 
     parameterPrototype: make_param({
-        label: "引" ,
+        label: "缀" ,
         target: "" , 
         autotext: false , 
     })
@@ -141,7 +143,7 @@ var mathinline_style  = new FirstClassConcept  ({type: "inline", name: "数学" 
 })
 
 
-var image_style       = new FirstClassConcept ({type: "support", name: "图"   , 
+var image_style       = new FirstClassConcept ({type: "inline", name: "图"   , 
     parameterPrototype: make_param({ 
         label: "图片" , 
         target: ""  , 
@@ -151,17 +153,17 @@ var image_style       = new FirstClassConcept ({type: "support", name: "图"   ,
     metaParameters: { forceInline: true }
 })
 
-var newpara_style     = new FirstClassConcept ({type: "group", name: "新段"   , 
+var newpara_style     = new FirstClassConcept ({type: "support", name: "新段"   , 
     parameterPrototype: make_param( { } ) 
 }) // 这个元素不渲染，所以没有`label`。
-var sectioner_style   = new FirstClassConcept ({type: "group", name: "小节线" , 
+var sectioner_style   = new FirstClassConcept ({type: "support", name: "小节线" , 
     parameterPrototype: make_param( { 
         label: "小节" , 
         title: "" , 
         alone: false 
     } ) 
 })
-var ender_style       = new FirstClassConcept ({type: "group", name: "章节线" , 
+var ender_style       = new FirstClassConcept ({type: "support", name: "章节线" , 
     parameterPrototype: make_param( { 
         label: "章" , 
     } ) 
@@ -188,3 +190,21 @@ var ender_style       = new FirstClassConcept ({type: "group", name: "章节线"
 // } ) })
 
 
+let first_concepts = [
+    brightwords_style , 
+	followwords_style , 
+	subwords_style , 
+	mathblock_style , 
+	mount_style , 
+	display_style , 
+	formatted_style , 
+	subsection_style , 
+	strong_style , 
+	delete_style , 
+	delete_style , 
+	mathinline_style , 
+	image_style , 
+	newpara_style , 
+	ender_style , 
+    sectioner_style , 
+]

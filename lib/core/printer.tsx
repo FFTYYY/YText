@@ -398,6 +398,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         let my_context = contexts[my_path] // 本节点的上下文信息。
         let my_parameters = all_parameters[my_path] // 获取参数列表。
 
+
         if(my_parameters == undefined){
             throw new UnexpectedParametersError(`all_parameters should contain ${my_path} but it doesn't.`)
         }

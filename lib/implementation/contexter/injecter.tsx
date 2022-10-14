@@ -3,7 +3,11 @@
  * 注射器可以向环境中发射一个信息，这个信息用一个key来编号，之后的节点可以通过接收器来接收这个信息，通过key来配对。
  * 注射器是不特定的，任何一个带有注射器且处理相同key的节点都可以处理此信息。
  */
-import { ContexterBase } from "./base"
+import { 
+    ContexterBase , 
+    PreprocessInformation , 
+    PreprocessFunction , 
+} from "./base"
 import { 
     Env , 
     Context , 
@@ -13,17 +17,6 @@ import {
 
 
 export { InjectContexter , ConsumerContexter }
-export type { InjectInformation }
-
-/** 这个函数说明如何生成需要注入的信息。
- * 初始化时，这个函数被提供给注射器，预处理遍历到对应节点时，根据这个节点的信息生成所需的信息。
- */
-type InjectInformation<NodeType extends Node , InfoType = any> = (
-    node: Readonly<NodeType>, 
-    parameters: Readonly<ProcessedParameterList>, 
-    env: Env , 
-    context: Context
-) => InfoType | undefined
 
 /** 这个上下文工具允许节点向之后的节点的渲染函数注入一定的可渲染元素。 
  * 注射器会在环境内创造以特定的名称定义的环境，每个环境内又被`infokey`分为若干个子环境，每个子环境是一个数组，包含所有以
@@ -47,13 +40,18 @@ class InjectContexter<NodeType extends Node = Node, InfoType = any> extends Cont
      * 
      */
     infokey: string
-    preinfo: InjectInformation<NodeType, InfoType>
-    aftinfo: InjectInformation<NodeType, InfoType>
-    constructor(infokey: string, infos: {preinfo?: InjectInformation<NodeType , InfoType>, aftinfo?: InjectInformation<NodeType , InfoType>}){
+    preinfo: PreprocessFunction<NodeType , InfoType | undefined>
+    aftinfo: PreprocessFunction<NodeType , InfoType | undefined>
+    constructor(
+        infokey: string, infos: {
+            preinfo?: PreprocessFunction<NodeType , InfoType | undefined>, 
+            aftinfo?: PreprocessFunction<NodeType , InfoType | undefined>
+        }
+    ){
         super("__injector_consumer" , {})
         this.infokey = infokey
-        this.preinfo = infos.preinfo || ( (n,p,e,c)=>undefined )
-        this.aftinfo = infos.aftinfo || ( (n,p,e,c)=>undefined )
+        this.preinfo = infos.preinfo || ( (info)=>undefined )
+        this.aftinfo = infos.aftinfo || ( (info)=>undefined )
     }
 
     /** 这个函数自动创建（如果不存在的话）对应的环境项目和信息项目，并返回本注射器使用的信息项目。 
@@ -70,13 +68,13 @@ class InjectContexter<NodeType extends Node = Node, InfoType = any> extends Cont
     }
     enter(node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): void {
         let e = this.get_subenv(env)
-        let theinfo = this.preinfo(node,parameters,env,context)
+        let theinfo = this.preinfo({node,parameters,env,context})
         if(theinfo != undefined)
             e.push( theinfo )
     }
     exit(node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): [any, boolean] {
         let e = this.get_subenv(env)
-        let theinfo = this.aftinfo(node,parameters,env,context)
+        let theinfo = this.aftinfo({node,parameters,env,context})
         if(theinfo != undefined)
             e.push( theinfo )
         return [undefined , true]

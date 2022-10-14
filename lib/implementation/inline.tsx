@@ -30,7 +30,8 @@ import {
     ContexterBase , 
     InjectContexter , 
     ConsumerContexter , 
-    InjectInformation , 
+    PreprocessFunction , 
+    PreprocessInformation , 
 } from "./contexter"
 import { 
     PrinterPartBox , 
@@ -52,8 +53,8 @@ function get_default_inline_renderer({
     contexters = [] , 
     outer = (props: PrinterRenderFunctionProps<InlineNode>)=><span>{props.children}</span>  , 
 }:{
-	contexters?: ContexterBase<InlineNode>[] ,
-	outer     ?: PrinterRenderFunction
+	contexters?: PreprocessFunction<InlineNode , ContexterBase<InlineNode>>[] ,
+	outer     ?: PrinterRenderFunction<InlineNode>
 }){ 
 
     let OUT = outer

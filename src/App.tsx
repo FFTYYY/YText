@@ -6,16 +6,17 @@ import {
 	SecondClassConcept ,  
 	default_theme , 
 	PrinterBackgroundPaper , 
+	RendererhDict, 
+	DefaultRendererhDict, 
 } from "../lib"
 import {
-	theorem , 
-	strong , 
-	sec_theorem , 
-	sec_strong , 
-} from "./concepts"
+	first_concepts
+} from "./first_concepts"
 import {
-	renderer_strong , 
-	renderer_theorem , 
+	second_concepts
+} from "./second_concepts"
+import {
+	renderers , 
 	default_renderers , 
 } from "./renderers"
 import {
@@ -25,18 +26,10 @@ import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import type { ThemeOptions } from '@mui/material/styles';
 
 let printer = new Printer(
-	[theorem , strong] , 
-	[sec_theorem , sec_strong] , 
-	{
-		"group": {
-			"theorem": renderer_theorem , 
-		} , 
-		"inline": {
-			"strong": renderer_strong , 
-		} , 
-		"struct": {} , "support" : {} , "abstract": {} , 
-	} , 
-	default_renderers , 
+	first_concepts , 
+	second_concepts , 
+	renderers as RendererhDict , 
+	default_renderers as DefaultRendererhDict , 
 )
 
 class App extends React.Component<{},{}>{

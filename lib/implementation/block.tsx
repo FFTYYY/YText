@@ -16,7 +16,8 @@ import {
     ContexterBase , 
     InjectContexter , 
     ConsumerContexter , 
-    InjectInformation , 
+    PreprocessFunction , 
+    PreprocessInformation , 
 } from "./contexter"
 import { 
     PrinterPartBox , 
@@ -28,8 +29,6 @@ import {
 
 export { get_default_group_renderer , get_default_paragraph_renderer }
 
-
-// TODO 最好把contexters改成现场生成的。
 
 /** 这个函数快速生产一个默认的块级组件的渲染器。 
  * 同时，这个函数会使用上下文工具，快捷地允许向段落的开头和结尾添加元素。
@@ -55,13 +54,13 @@ function get_default_group_renderer({
     element_key =  "paragraph-element" , 
     text_key =  "paragraph-text" , 
 }:{
-    contexters?: ContexterBase<GroupNode>[]
+    contexters?: PreprocessFunction<GroupNode , ContexterBase<GroupNode>>[]
     outer?: PrinterRenderFunction<GroupNode>
     inner?: PrinterRenderFunction<GroupNode>
-    pre_element?: InjectInformation<GroupNode , React.ReactElement> | undefined
-    aft_element?: InjectInformation<GroupNode , React.ReactElement> | undefined
-    pre_text?: InjectInformation<GroupNode , string> | undefined
-    aft_text?: InjectInformation<GroupNode , string> | undefined
+    pre_element?: PreprocessFunction<GroupNode , React.ReactElement<PrinterRenderFunctionProps<GroupNode>> | undefined> | undefined
+    aft_element?: PreprocessFunction<GroupNode , React.ReactElement<PrinterRenderFunctionProps<GroupNode>> | undefined> | undefined
+    pre_text?: PreprocessFunction<GroupNode , string | undefined> | undefined
+    aft_text?: PreprocessFunction<GroupNode , string | undefined> | undefined
     element_key?: string
     text_key?: string
 }){
@@ -72,19 +71,20 @@ function get_default_group_renderer({
     // 注意 xx && yy == xx == undefined ? undefined : yy
     let elmt_injecter = new InjectContexter<GroupNode , React.ReactElement<PrinterRenderFunctionProps<GroupNode>>>(
         element_key , {
-            preinfo: (n,p,e,c)=>(pre_element && pre_element(n,p,e,c)), 
-            aftinfo: (n,p,e,c)=>(aft_element && aft_element(n,p,e,c)), 
+            preinfo: (info)=>(pre_element && pre_element(info)), 
+            aftinfo: (info)=>(aft_element && aft_element(info)), 
         }
     )
     let text_injecter = new InjectContexter<GroupNode , string>(
         text_key , {
-            preinfo: (n,p,e,c)=>(pre_text && pre_text(n,p,e,c)) , 
-            aftinfo: (n,p,e,c)=>(aft_text && aft_text(n,p,e,c)) , 
+            preinfo: (info)=>(pre_text && pre_text(info)) , 
+            aftinfo: (info)=>(aft_text && aft_text(info)) , 
         }
     )
 
     // 把预先定义的两个注射器塞进contexter里面。
-    contexters = [...contexters , elmt_injecter , text_injecter]
+    // 注意因为Injecter和Consumer本身会使用当前的info来生成信息，所以这里不需要再传入当前info。
+    contexters = [...contexters , ()=>elmt_injecter , ()=>text_injecter]
 
     return auto_renderer<GroupNode>({
         contexters: contexters , 
@@ -118,7 +118,7 @@ function get_default_paragraph_renderer({
 }: {
     element_key?: string
     text_key?: string
-    contexters?: ContexterBase<ParagraphNode> []
+    contexters?: PreprocessFunction<ParagraphNode , ContexterBase<ParagraphNode>>[]
 }){
     type RPROPS = PrinterRenderFunctionProps<ParagraphNode> // 只是让代码看起来不要太乱...
 
@@ -127,7 +127,7 @@ function get_default_paragraph_renderer({
     let text_consumer = new ConsumerContexter<ParagraphNode , string>(text_key)
 
     // 把预先定义的两个注射器塞进contexter里面。
-    contexters = [...contexters , elmt_consumer , text_consumer]
+    contexters = [...contexters , ()=>elmt_consumer , ()=>text_consumer]
     
     return auto_renderer<ParagraphNode>({
         contexters: contexters , 

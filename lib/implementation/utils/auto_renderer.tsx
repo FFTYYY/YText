@@ -4,6 +4,8 @@
 
 import {
     ContexterBase , 
+    PreprocessFunction , 
+    PreprocessInformation , 
 } from "../contexter"
 import {
     PrinterRenderFunction , 
@@ -11,7 +13,7 @@ import {
     Node , 
     ProcessedParameterList , 
     Env , 
-    Context , 
+    Context ,
 } from "../../core"
 
 export {auto_renderer}
@@ -27,19 +29,23 @@ function auto_renderer<NodeType extends Node = Node>({
     contexters = [], 
 }: {
     render_function:  PrinterRenderFunction<NodeType>
-    contexters?: ContexterBase<NodeType>[]
+    contexters?: PreprocessFunction<NodeType , ContexterBase<NodeType>>[]
 }): PrinterRenderer<NodeType>{
     return new PrinterRenderer({
         enter: (node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context)=>{
             for(let cer of contexters){
-                cer.enter(node,parameters,env,context)
+                let contexter = cer({node , parameters , env , context}) // 创建contexter
+                
+                contexter.enter(node,parameters,env,context)
             }
         } , 
         exit: (node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context)=>{
             let cache = {} // TODO 这个没有真正地被处理
             let flag = true
             for(let cer of contexters){
-                let [subcache , subflag] = cer.exit(node,parameters,env,context)
+                let contexter = cer({node , parameters , env , context}) // 创建contexter
+
+                let [subcache , subflag] = contexter.exit(node,parameters,env,context)
                 cache = {...cache , ...(subcache || {})} // 合并cache和cache
                 flag = flag && subflag
             }
