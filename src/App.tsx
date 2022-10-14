@@ -4,7 +4,6 @@ import {
 	PrinterComponent ,
 	FirstClassConcept , 
 	SecondClassConcept ,  
-	default_theme , 
 	PrinterBackgroundPaper , 
 	RendererhDict, 
 	DefaultRendererhDict, 
@@ -22,8 +21,9 @@ import {
 import {
 	tree
 } from "./tree"
-import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
-import type { ThemeOptions } from '@mui/material/styles';
+import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
+import type { ThemeOptions } from "@mui/material/styles"
+import {theme} from "./theme"
 
 let printer = new Printer(
 	first_concepts , 
@@ -39,7 +39,7 @@ class App extends React.Component<{},{}>{
 
 	render(){
 		let me = this
-		return <ThemeProvider theme = {createTheme(default_theme)}>
+		return <ThemeProvider theme = {createTheme(theme)}>
 			<PrinterBackgroundPaper>
 				<PrinterComponent 
 					printer = {printer} 
