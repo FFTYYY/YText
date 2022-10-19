@@ -11,7 +11,7 @@ function create_abstract(concept , parameters , children){
     }
 }
 
-function create_group(concept , parameters , children , abstract: any[] = []){
+function create_group(concept , parameters , children , relation: string = "separating",abstract: any[] = []){
 
     for(let x in parameters){
         if ( typeof(parameters[x]) == "string"){
@@ -35,11 +35,11 @@ function create_group(concept , parameters , children , abstract: any[] = []){
         parameters: parameters , 
         children: children , 
         abstract: abstract , 
-        relation: "separate" as "separate" , 
+        relation: relation , 
     }
 }
 
-function create_structure(concept , parameters , children , abstract: any[] = []){
+function create_structure(concept , parameters , children , relation: string = "separating" , abstract: any[] = []){
 
     for(let x in parameters){
         if ( typeof(parameters[x]) == "string"){
@@ -63,7 +63,7 @@ function create_structure(concept , parameters , children , abstract: any[] = []
         parameters: parameters , 
         children: children , 
         abstract: abstract , 
-        relation: "separate" as "separate" , 
+        relation: relation , 
     }
 }
 
@@ -104,7 +104,7 @@ let tree = create_group("root" , {} , [
         create_paragraph([
             text("天下没有免费的午餐定理。") , 
         ]) , 
-    ] , [
+    ] , "separating" , [
         create_abstract("comment" , {} , [
             create_paragraph([
                 text("另外，希望大家知道，") , 
@@ -132,6 +132,18 @@ let tree = create_group("root" , {} , [
                 text(`还有其他收费项目`) , 
             ]) , 
         ]) , 
-    ]) 
+    ]) ,
+    create_structure("line" , {widths: "2,2"} , [
+        create_group("theorem" , {alias_name: ""} , [
+            create_paragraph([
+                text(`不仅午餐要收费`) , 
+            ]) , 
+        ] , ) , 
+        create_group("theorem" , {alias_name: "超级收费定理"} , [
+            create_paragraph([
+                text(`吃饭也要收费。`) , 
+            ])
+        ], ) , 
+    ] , "chaining") , 
 ])
 

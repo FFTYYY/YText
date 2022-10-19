@@ -43,7 +43,7 @@ import {
 } from "./main"
 
 import {
-    Link, ThemeOptions , Dialog  , 
+    Link, ThemeOptions , Dialog, Tooltip  , 
 } from "@mui/material"
 
 export {get_default_abstract_renderer , DefaultAbstractRendererAsProperty , DefaultAbstractAsRoot}
@@ -140,6 +140,7 @@ function get_default_abstract_renderer({
             return <React.Fragment>
                 <Link href="#" onClick={(e)=>set_show_abstract(true)}>{props.children}</Link>
                 <Dialog open={show_abstract} onClose={()=>set_show_abstract(false)}>{subcomp}</Dialog>
+                {/* <Tooltip title = {subcomp}><Link href="#">{props.children}</Link></Tooltip> */}
             </React.Fragment> 
         } , 
         render_function: (props: PrinterRenderFunctionProps<AbstractNode>) => {
