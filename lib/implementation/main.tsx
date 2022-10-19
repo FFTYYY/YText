@@ -90,8 +90,6 @@ class DefaultPrinterComponent extends React.Component<DefaultPrinterProps>{
 			theme = merge_theme(default_theme , me.theme)
 		}
 
-        console.log(default_theme)
-
         return <ThemeProvider theme = {createTheme(theme)}>
             <GlobalInfoProvider value={{theme: theme}}>
                 <PrinterBackgroundPaper>

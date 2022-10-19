@@ -65,7 +65,7 @@ export {
 interface ConceptDict<T>{
     "group"     : {[name: string] : T} , 
     "inline"    : {[name: string] : T} , 
-    "struct"    : {[name: string] : T} , 
+    "structure"    : {[name: string] : T} , 
     "support"   : {[name: string] : T} , 
     "abstract"  : {[name: string] : T} , 
 }
@@ -91,7 +91,7 @@ type RendererhDict = ConceptDict<PrinterRenderer>
 interface DefaultRendererhDict{
     "group"     : PrinterRenderer , 
     "inline"    : PrinterRenderer , 
-    "struct"    : PrinterRenderer , 
+    "structure" : PrinterRenderer , 
     "support"   : PrinterRenderer , 
     "abstract"  : PrinterRenderer , 
     "paragraph" : PrinterRenderer , 
@@ -118,7 +118,7 @@ class Printer{
         const make_emptydict = ()=>{return {
             "group"     : {} , 
             "inline"    : {} , 
-            "struct"    : {} , 
+            "structure"    : {} , 
             "support"   : {} , 
             "abstract"  : {} , 
         }}
@@ -224,8 +224,6 @@ class Printer{
             ...sec_ccpt.defaultOverride , 
             ...node.parameters , 
         }
-        if(node.concept == "theorem")
-            console.log(sec_parameters)
 
         // 保存固定值参数的处理结果。
         let processed_fixedparams = {}
@@ -241,11 +239,6 @@ class Printer{
             }
             else{
                 let val = Function(`return ${v.val}`)()(sec_parameters) // 将先前处理好的非固定参数作为参数
-
-                if(node.concept == "theorem"){
-
-                    console.log(Function(`return ${v.val}`)())
-                }
 
                 processed_fixedparams[x] = {
                     type: frt_ccpt.parameterPrototype[x].type , 
@@ -301,7 +294,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
          * @param node 当前节点。
          * @param path 当前节点到根的路径。
          * @param contexts 所有节点的上下文的储存。
-         * @param parameters 所有节点的处理好的参数的储存。
+         * @param all_parameters 所有节点的处理好的参数的储存。
          * 注意这个函数对`nowenv`是不改变的，但是对`contexts`却是改变的。
         */
         function _preprocess(

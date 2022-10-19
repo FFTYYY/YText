@@ -14,13 +14,13 @@ function create_abstract(concept , parameters , children){
 function create_group(concept , parameters , children , abstract: any[] = []){
 
     for(let x in parameters){
-        if ( (parameters[x]) instanceof String){
+        if ( typeof(parameters[x]) == "string"){
             parameters[x] = {
                 type: "string" , 
                 val: parameters[x] , 
             }
         }
-        else if ( (parameters[x]) instanceof Number){
+        else if ( typeof(parameters[x]) == "number"){
             parameters[x] = {
                 type: "number" , 
                 val: parameters[x] , 
@@ -37,8 +37,36 @@ function create_group(concept , parameters , children , abstract: any[] = []){
         abstract: abstract , 
         relation: "separate" as "separate" , 
     }
-    
 }
+
+function create_structure(concept , parameters , children , abstract: any[] = []){
+
+    for(let x in parameters){
+        if ( typeof(parameters[x]) == "string"){
+            parameters[x] = {
+                type: "string" , 
+                val: parameters[x] , 
+            }
+        }
+        else if ( typeof(parameters[x]) == "number"){
+            parameters[x] = {
+                type: "number" , 
+                val: parameters[x] , 
+            }
+        }
+    }
+
+    return {
+        type: "structure" as "structure" , 
+        idx: Math.floor( Math.random() * 233333) , 
+        concept: concept , 
+        parameters: parameters , 
+        children: children , 
+        abstract: abstract , 
+        relation: "separate" as "separate" , 
+    }
+}
+
 
 
 function create_paragraph(children){
@@ -92,12 +120,18 @@ let tree = create_group("root" , {} , [
     ]) , 
     create_paragraph([
         text("这个定理告诉我们，天下是没有免费的午餐的。这是因为：") , 
-    ]) , 
-    create_group("theorem" , {alias_name: ""} , [
-        create_paragraph([
-            text(`午餐是要收费的。`) , 
+    ]) ,
+    create_structure("line" , {widths: "2,2"} , [
+        create_group("theorem" , {alias_name: ""} , [
+            create_paragraph([
+                text(`午餐是要收费的。`) , 
+            ]) , 
         ]) , 
-    ]) , 
-
+        create_group("theorem" , {alias_name: "收费定理"} , [
+            create_paragraph([
+                text(`还有其他收费项目`) , 
+            ]) , 
+        ]) , 
+    ]) 
 ])
 

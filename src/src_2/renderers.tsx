@@ -1,4 +1,5 @@
 import * as React from "react"
+import { Grid } from "@mui/material"
 import {
     PrinterRenderer , 
     Env , 
@@ -6,6 +7,7 @@ import {
     Node , 
     PrinterRenderFunctionProps, 
     GroupNode,
+    StructNode , 
     InlineNode,
     TextNode, 
     OrderContexter , 
@@ -15,6 +17,7 @@ import {
     get_default_inline_renderer , 
     get_default_paragraph_renderer, 
     get_default_abstract_renderer , 
+    get_default_structure_renderer , 
 
     DefaultAbstractRendererAsProperty , 
 
@@ -24,10 +27,41 @@ import {
 
     useless_renderer_block , 
     useless_renderer_inline ,
-    useless_renderer_text, 
+    useless_renderer_text,
+    ProcessedParameterList, 
 } from "../../lib"
 
 export {default_renderers , renderers}
+
+let renderer_line = (()=>{
+    function get_widths(node: StructNode, parameters: ProcessedParameterList){
+        
+        let widths_str = parameters.widths || ""
+        let widths = widths_str.split(",").map(x=>(x == "" ? 1 : parseInt(x))) as number [] // convert to int list 
+        if(widths.length > node.children.length){
+            widths = widths.slice(0,node.children.length)
+        }
+        while(widths.length < node.children.length){
+            widths.push(1)
+        }
+        return widths
+    }
+    let renderer = get_default_structure_renderer({
+        inner(props){
+            let {node , parameters , context , children} = props
+            let widths = get_widths(node , parameters)
+            let sum = widths.reduce((s , x)=>s + x , 0)
+            return <Grid container columns={sum} sx={{width: "100%"}} spacing={2}>{props.children}</Grid>
+        } , 
+        subinner(props){
+            let {node , parameters , context , children , subidx} = props
+            let widths = get_widths(node , parameters)
+            let my_width = widths[subidx]
+            return <Grid item xs={my_width} sx={{align: "center"}}>{props.children}</Grid>
+        }
+    })
+    return renderer
+})()
 
 var renderer_theorem = (()=>{
 
@@ -50,6 +84,7 @@ var renderer_theorem = (()=>{
                 >
                     <React.Fragment>{parameters.name} {order}</React.Fragment>
                 </DefaultAbstractRendererAsProperty>
+                <React.Fragment> {parameters.alias}</React.Fragment>
             </PrinterStructureBoxText>
 		} , 
 		outer: (props) => {
@@ -88,7 +123,9 @@ let renderers = {
     inline: {
         "strong": renderer_strong , 
     } , 
-    struct: {} , 
+    structure: {
+        "line": renderer_line , 
+    } , 
     abstract: {
         "comment": renderer_comment , 
     } , 

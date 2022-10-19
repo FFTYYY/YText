@@ -81,7 +81,30 @@ let sec_comment = new SecondClassConcept({
     } , 
 })
 
+let line = new FirstClassConcept({
+    type: "structure" , 
+    name: "line" , 
+    parameterPrototype: {
+        widths: {
+            type: "string" , 
+            val: ""
+        }
+    } , 
+})
+
+let sec_line = new SecondClassConcept({
+    type: "structure" ,  
+    firstConcept: "line" , 
+    name: "line" , 
+    defaultOverride: {
+        widths: {
+            type: "string" , 
+            val: ""
+        }
+    } , 
+})
 
 
-let first_concepts = [theorem , strong , comment]
-let second_concepts = [sec_theorem , sec_strong , sec_comment]
+
+let first_concepts = [theorem , strong , comment , line]
+let second_concepts = [sec_theorem , sec_strong , sec_comment ,  sec_line]

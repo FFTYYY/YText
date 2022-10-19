@@ -111,7 +111,7 @@ interface GroupNode{
 	abstract: AbstractNode []
 
 	/** 跟前一个节点的关系。 */
-	relation: "chaining" | "separate"
+	relation: "chaining" | "separating"
 }
 
 /** 支持节点。 */
