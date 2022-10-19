@@ -29,12 +29,11 @@ import type { Theme , ThemeOptions } from "@mui/material/styles"
 import { Node } from "slate"
 import { ReactEditor } from "slate-react"
 
-import { YEditor } from "../../editor"
-import { object_foreach , merge_object } from "../utils"
-import type { StyleType , NodeType , StyledNodeType , GroupNode } from "../../core/elements"
-import { group_prototype } from "../../core/elements"
-import { EditorCore } from "../../core/core"
-import { Proxy } from "../../core/proxy"
+import { YEditor } from "../editor"
+import { object_foreach , merge_object } from "./utils"
+import type { StyleType , NodeType , StyledNodeType , GroupNode } from "../core/elements"
+import { EditorCore } from "../core/core"
+import { Proxy } from "../core/proxy"
 
 import { DefaultHiddenEditorButtons } from "./hidden"
 import { 
@@ -47,13 +46,12 @@ import {
 	AutoStackedPopper , 
 	AutoStackButtons , 
 	default_theme , 
-} from "../basic"
+} from "./basic"
 
 import { EditorBackgroundPaper , EditorComponentEditingBox } from "./basic"
-import { DoSomething } from "../utils"
 import { timelineSeparatorClasses } from "@mui/lab"
-import { StyleCollector } from "../../core/stylecollector"
-import type { EditorRenderer_Props , EditorRenderer_Func } from "../../editor"
+import { StyleCollector } from "../core/stylecollector"
+import type { EditorRenderer_Props , EditorRenderer_Func } from "../editor"
 
 export { DefaultEditor }
 
@@ -165,7 +163,7 @@ class DefaultButtonbar extends React.Component<{
 		let me = this
 
 		return <React.Fragment>
-			{["group" , "inline" , "support" , "struct"].map ( (typename: StyledNodeType)=>{
+			{["group" as "group" , "inline" as "inline" , "support" as "support" , "struct" as "struct"].map ( (typename: StyledNodeType)=>{
 				let Icon = icons[typename]
 				return <React.Fragment key={typename}><AutoStackedPopperWithButton
 					poper_props = {{
@@ -309,7 +307,7 @@ class DefaultEditor extends React.Component <{
 	ctrl_key: any
 
 	/** 这个代理编辑器也需要维护（同步）一份`root`，这是为了能在此编辑器内执行设置参数等操作。*/
-	root: GroupNode
+	root?: GroupNode
 }> {
     core: EditorCore
     proxies: {[key in StyleType]: {[name: string]: Proxy}}
@@ -377,7 +375,7 @@ class DefaultEditor extends React.Component <{
 		this.onMount()	
 
 		while(!this.get_editor()); // 确保editor存在
-		let editor = this.get_editor()
+		let editor = this.get_editor() as YEditor
 		this.setState({root: editor.get_root()})
 	}
 	componentWillUnmount(): void {
@@ -400,6 +398,10 @@ class DefaultEditor extends React.Component <{
 		let theme = merge_object(default_theme , this.props.theme)
 
 		let me = this
+		if(me.state.root == undefined){
+			return <></>
+		}
+
 		return <ThemeProvider theme={createTheme(theme)}><EditorBackgroundPaper>
 			<Box sx = {{ 
 				position: "absolute", 
@@ -417,7 +419,7 @@ class DefaultEditor extends React.Component <{
 					plugin 		= {me.plugin}
 
 					onUpdate = {(v)=>{
-						me.setState({root: me.get_editor().get_root()}) // 同步自身的root。
+						me.setState({root: (me.get_editor() as YEditor).get_root()}) // 同步自身的root。
 						me.onUpdate(v)
 					}}
 					onFocusChange = {me.onFocusChange} 

@@ -65,7 +65,7 @@ function is_same_node(node1: Node, node2: Node): boolean{
 
 // TODO：这个函数的实现太沙雕了，应该换一个更有效率的实现。
 /** 获得一个节点在节点树中的路径。 */
-function node2path(root: Node, node: Node): Path{
+function node2path(root: Node, node: Node): Path | undefined{
     for(let [nd , path] of Node.descendants(root)){
         if(is_same_node(nd,node)){
             return path
@@ -76,7 +76,7 @@ function node2path(root: Node, node: Node): Path{
 
 // TODO 同上
 /** 获得一个节点在节点树中的路径。 */
-function idx2path(root: Node, idx: number | string): Path{
+function idx2path(root: Node, idx: number | string): Path | undefined{
     for(let [nd , path] of Node.descendants(root)){
         if(is_styled(nd) && `${nd.idx}` == `${idx}`){
             return path
@@ -86,7 +86,7 @@ function idx2path(root: Node, idx: number | string): Path{
 }
 
 /** 获得一个路径对应的节点。 */
-function idx2node(root: Node, idx: number | string): Node{
+function idx2node(root: Node, idx: number | string): Node | undefined{
     for(let [nd , path] of Node.descendants(root)){
         if(is_styled(nd) && `${nd.idx}` == `${idx}`){
             return nd

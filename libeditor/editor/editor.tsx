@@ -29,7 +29,6 @@ import { get_node_type , is_styled , new_struct_child , ValidParameter } from ".
 import { EditorCore } from "../core/core"
 import { withAllYEditorPlugins } from "../plugins/apply_all"
 import { StyleCollector } from "../core/stylecollector"
-import { GlobalInfoProvider , GlobalInfo } from "../globalinfo"
 
 export { YEditor }
 import { UtilsMixin } from "./utilsmixin"

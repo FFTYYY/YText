@@ -19,11 +19,11 @@ import {
 } from "@mui/icons-material"
 import { Node, Editor } from "slate"
 
-import { AutoTooltip , ForceContain , AutoStackedPopper } from "../basic"
-import { StyledNode , NodeType , StyleType ,  GroupNode } from "../../core/elements"
-import { YEditor } from "../../editor"
-import { is_same_node , node2path , update_kth , get_hidden_idx } from "../utils"
-import { EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle } from "../../core/core"
+import { AutoTooltip , ForceContain , AutoStackedPopper } from "./basic"
+import { StyledNode , NodeType , StyleType ,  GroupNode } from "../core/elements"
+import { YEditor } from "../editor"
+import { is_same_node , node2path , update_kth , get_hidden_idx } from "./utils"
+import { EditorCore , InlineStyle , GroupStyle , StructStyle , SupportStyle , AbstractStyle } from "../core/core"
 import { DefaultEditor } from "./main"
 
 export {DefaultNewHidden , DefaultHiddenEditor , DefaultHiddenEditorButtons}
@@ -46,7 +46,7 @@ function DefaultNewHidden(props: {editor: YEditor, element: StyledNode, anchor_e
             if(choice == undefined || abstractproxies[choice] == undefined)
                 return 
             
-            let new_hiddens = [...element.hiddens , ...[abstractproxies[choice].makehidden()]]
+            let new_hiddens = [...element.hiddens , ...[abstractproxies[choice].makehidden() as GroupNode]]
             editor.set_node( element , {hiddens: new_hiddens})
         }
     }

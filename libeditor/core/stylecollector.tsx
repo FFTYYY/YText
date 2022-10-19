@@ -44,7 +44,7 @@ class StyleCollector<VAL>{
      * @param stylename 样式名。如果为 undefined 就表示无样式（使用默认渲染器）。
      * @returns 如果 stylename 是 undefined 或者没有找到渲染器，就范围这个节点类型的默认渲染器，否则返回找到的渲染器。
      */
-    get(nodetype: NodeType, stylename: string | undefined = undefined): VAL{
+    get(nodetype: NodeType, stylename: string | undefined = undefined): VAL  | undefined{
         if(stylename == undefined){
             return this.default_vals[nodetype]
         }

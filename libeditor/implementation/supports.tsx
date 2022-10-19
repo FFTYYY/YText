@@ -26,11 +26,11 @@ from "@mui/icons-material"
 
 import { Node } from "slate"
 
-import { SupportNode , paragraph_prototype , get_param_val } from "../../core/elements"
-import type { ValidParameter} from "../../core/elements"
-import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
+import { SupportNode , paragraph_prototype , get_param_val } from "../core/elements"
+import type { ValidParameter} from "../core/elements"
+import type { EditorRenderer_Func , EditorRenderer_Props } from "../editor"
 
-import {  AutoStack , AutoTooltip , Direction } from "../basic"
+import {  AutoStack , AutoTooltip , Direction } from "./basic"
 import {  DefaultCloseButton , DefaultParameterEditButton , AutoStackedPopperWithButton , NewParagraphButton } from "./universe"
 import { 
     EditorComponentPaper as ComponentPaper , 

@@ -3,5 +3,7 @@
  */
 
 export * from "./components"
+export * from "./direction_control"
+export * from "./theme"
 
 export * as implementation_editor_basic_components from "./components"

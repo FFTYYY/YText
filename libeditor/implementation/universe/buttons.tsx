@@ -29,12 +29,12 @@ import {
 from "@mui/icons-material"
 
 import {Node , Text} from "slate"
-import type {  GroupNode , StructNode , StyledNode } from "../../../core/elements"
-import { paragraph_prototype , get_node_type } from "../../../core/elements"
-import { node2path } from "../../utils"
-import { YEditor } from "../../../editor"
-import { AutoTooltip , Direction , AutoStack , AutoStackedPopper } from "../../basic/direction_control"
-import type { AutoStackedPopper_Props } from "../../basic/direction_control"
+import type {  GroupNode , StructNode , StyledNode } from "../../core/elements"
+import { paragraph_prototype , get_node_type } from "../../core/elements"
+import { node2path } from "../utils"
+import { YEditor } from "../../editor"
+import { AutoTooltip , Direction , AutoStack , AutoStackedPopper } from "../basic/direction_control"
+import type { AutoStackedPopper_Props } from "../basic/direction_control"
 import { DefaultParameterWithEditorWithDrawer , UniversalComponent_Props } from "./parameter_container" 
 import { editor } from "../../.."
 

@@ -43,12 +43,12 @@ import {
 
 import { Node, Editor } from "slate"
 
-import { StructNode , StyledNode , paragraph_prototype , get_node_type , get_param_val } from "../../core/elements"
-import type { ValidParameter } from "../../core/elements"
-import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
-import { YEditor } from "../../editor"
+import { StructNode , StyledNode , paragraph_prototype , get_node_type , get_param_val } from "../core/elements"
+import type { ValidParameter } from "../core/elements"
+import type { EditorRenderer_Func , EditorRenderer_Props } from "../editor"
+import { YEditor } from "../editor"
 
-import { is_same_node , node2path } from "../utils"
+import { is_same_node , node2path } from "./utils"
 
 import { 
     DefaultParameterEditButton , 
@@ -60,7 +60,7 @@ import {
 } from "./universe/buttons"
 import { DefaultHiddenEditorButtons } from "./hidden"
 
-import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "../basic"
+import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "./basic"
 import { 
     EditorComponentPaper as ComponentPaper , 
     EditorParagraphBox as ParagraphBox , 

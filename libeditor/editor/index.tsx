@@ -1,3 +1,5 @@
+import React from "react"
+
 import { YEditor } from "./editor"
 import type { EditorRenderer_Props , EditorRenderer_Func } from "./collectionmixin"
 

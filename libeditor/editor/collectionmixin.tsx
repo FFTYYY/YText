@@ -10,22 +10,7 @@ import {
     Container , 
 } from "@mui/material"
 
-import {
-    text_prototype , 
-    paragraph_prototype , 
-    inline_prototype , 
-    group_prototype , 
-    struct_prototype, 
-    support_prototype , 
-    has_children , 
-} from "../core/elements"
-import type { StyledNodeType , InlineNode , GroupNode , StructNode , SupportNode , StyleType , NodeType , StyledNode } from "../core/elements"
-import { Proxy } from "../core/proxy"
-import { get_node_type , is_styled , new_struct_child , ValidParameter } from "../core/elements"
-import { EditorCore } from "../core/core"
-import { withAllYEditorPlugins } from "../plugins/apply_all"
-import { StyleCollector } from "../core/stylecollector"
-import { GlobalInfoProvider , GlobalInfo } from "../globalinfo"
+import {StyleType , NodeType} from "../core/elements"
 
 import { YEditor } from "./editor"
 export { CollectionMixin }
@@ -53,7 +38,7 @@ let CollectionMixin = {
     /** 添加一个渲染器。 */
     get_renderer(nodetype: NodeType, stylename: string | undefined = undefined): EditorRenderer_Func{
         let me = this as any as YEditor
-        return me.renderers.get(nodetype , stylename)
+        return me.renderers.get(nodetype , stylename) || (()=><></>)
     } , 
 }
 

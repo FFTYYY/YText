@@ -22,10 +22,10 @@ import {
 import type { StyledNodeType , InlineNode , GroupNode , StructNode , SupportNode , StyleType , NodeType , StyledNode } from "../core/elements"
 import { Proxy } from "../core/proxy"
 import { get_node_type , is_styled , new_struct_child , ValidParameter } from "../core/elements"
-import { EditorCore } from "../core/core"
+import { EditorCore } from "../core"
 import { set_normalize_status } from "../plugins/constraints"
 import { StyleCollector } from "../core/stylecollector"
-import { GlobalInfoProvider , GlobalInfo } from "../globalinfo"
+import { GlobalInfoProvider , GlobalInfo } from "../core/globalinfo"
 
 import { YEditor } from "./editor"
 
@@ -64,7 +64,7 @@ let RenderMixin = {
         let element = props.element  as BaseElement
 
         let type = get_node_type(element)
-        let name = undefined // 如果name是undefined，则get_renderer会返回默认样式。
+        let name: string | undefined = undefined // 如果name是undefined，则get_renderer会返回默认样式。
         if(is_styled(element)){
             name = element.name
         }
@@ -101,7 +101,7 @@ let RenderMixin = {
         // 子渲染器需要的 props 。
         let subprops = {
             editor: me  , 
-            element: props.leaf ,
+            element: props.leaf as Node ,
             children: props.children , 
         }
         return <span {...slate_attributes}><R {...subprops}></R></span>

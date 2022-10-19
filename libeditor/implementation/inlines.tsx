@@ -20,17 +20,17 @@ import {
 } from "@mui/icons-material"
 
 
-import { InlineStyle , EditorCore} from "../../core/core"
-import { InlineNode , StyledNode , get_param_val } from "../../core/elements"
-import type { ValidParameter } from "../../core/elements"
-import type { EditorRenderer_Func , EditorRenderer_Props } from "../../editor"
-import { YEditor } from "../../editor"
+import { InlineStyle , EditorCore} from "../core/core"
+import { InlineNode , StyledNode , get_param_val } from "../core/elements"
+import type { ValidParameter } from "../core/elements"
+import type { EditorRenderer_Func , EditorRenderer_Props } from "../editor"
+import { YEditor } from "../editor"
 
-import { is_same_node} from "../utils"
+import { is_same_node} from "./utils"
 import { DefaultHiddenEditorButtons } from "./hidden"
 import { DefaultParameterEditButton , DefaultCloseButton } from "./universe"
 import { UniversalComponent_Props , } from "./universe"
-import { AutoStackedPopper , SimpleAutoStack , AutoStack , AutoTooltip  } from "../basic"
+import { AutoStackedPopper , SimpleAutoStack , AutoStack , AutoTooltip  } from "./basic"
 import { AutoStackedPopperWithButton } from "./universe"
 import { 
     EditorComponentPaper as ComponentPaper , 

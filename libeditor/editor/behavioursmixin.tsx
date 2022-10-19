@@ -26,7 +26,7 @@ let BehavioursMixin = {
     /** 这个函数修改节点的某个属性。相当于`slate.Transforms.setNodes`。 */
     set_node_by_path<T extends Node = StyledNode>(path:number[] , new_val: Partial<T>){
         let me = this as any as YEditor
-        if(path == []){
+        if(path.length == 0){
             me.setState({root: {...me.state.root , ...new_val}})
             return 
         }

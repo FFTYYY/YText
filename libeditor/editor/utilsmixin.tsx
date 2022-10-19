@@ -22,10 +22,10 @@ import {
 import type { StyledNodeType , InlineNode , GroupNode , StructNode , SupportNode , StyleType , NodeType , StyledNode } from "../core/elements"
 import { Proxy } from "../core/proxy"
 import { get_node_type , is_styled , new_struct_child , ValidParameter } from "../core/elements"
-import { EditorCore } from "../core/core"
+import { EditorCore } from "../core"
 import { withAllYEditorPlugins } from "../plugins/apply_all"
 import { StyleCollector } from "../core/stylecollector"
-import { GlobalInfoProvider , GlobalInfo } from "../globalinfo"
+import { GlobalInfoProvider , GlobalInfo } from "../core/globalinfo"
 import { set_normalize_status } from "../plugins/constraints"
 import { YEditor } from "./editor"
 export { UtilsMixin }
@@ -49,6 +49,9 @@ let UtilsMixin = {
         {        
             return () => {
                 let node = proxy.makenode()
+                if(node == undefined){
+                    return
+                }
                 me.add_nodes_here(node) // 在当前选中位置插入节点。
             }
         }
@@ -60,6 +63,9 @@ let UtilsMixin = {
                     flag = JSON.stringify(selection.anchor) == JSON.stringify(selection.focus) // 是否没有选择
                 
                 let node = proxy.makenode()
+                if(node == undefined){
+                    return
+                }
                 if(flag){ // 没有选东西，直接添加节点
                     me.add_nodes_here(node) // 在当前选中位置插入节点。
                 }
@@ -77,6 +83,9 @@ let UtilsMixin = {
                     flag = JSON.stringify(selection.anchor) == JSON.stringify(selection.focus) // 是否没有选择
 
                 let node = proxy.makenode()
+                if(node == undefined){
+                    return
+                }
 
                 if(flag){ // 如果没有选择任何东西，就新建节点。
                     me.add_nodes_here(node) // 在当前选中位置插入节点。
