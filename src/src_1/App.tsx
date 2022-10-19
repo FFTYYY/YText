@@ -11,7 +11,7 @@ import {
 	DefaultRendererhDict, 
 
 	DefaultPrinterComponent , 
-} from "../../lib"
+} from "../../libprinter"
 import {
 	first_concepts
 } from "./first_concepts"

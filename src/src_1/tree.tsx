@@ -7,7 +7,7 @@ import {
     TextNode , 
     Node , 
     validate , 
-} from "../../lib"
+} from "../../libprinter"
 
 export {tree}
 

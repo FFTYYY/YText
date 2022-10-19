@@ -3,7 +3,7 @@ import {
 	PrinterComponent ,
 	FirstClassConcept , 
 	SecondClassConcept ,  
-} from "../../lib"
+} from "../../libprinter"
 
 export {
     first_concepts , 
@@ -103,7 +103,6 @@ let sec_line = new SecondClassConcept({
         }
     } , 
 })
-
 
 
 let first_concepts = [theorem , strong , comment , line]

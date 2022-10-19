@@ -38,7 +38,7 @@ import {
 	GlobalInfo , 
 	GlobalInfoProvider, 
 	AutoTooltip, 
-} from "../../lib"
+} from "../../libprinter"
 import {
 	PrinterRenderer , 
 	GroupNode , 
@@ -49,7 +49,7 @@ import {
 	Context  , 
     PrinterRenderFunctionProps, 
     PrinterRenderFunction , 
-} from "../../lib"
+} from "../../libprinter"
 
 export {
 	renderers , 
@@ -468,14 +468,14 @@ let renderers = {
 		"章节线": ender_printer , 
 	} , 
 	"abstract": {} , 
-	"struct": {} , 
+	"structure": {} , 
 }
 
 
 
 let default_renderers = {
 	"group"     : default_renderer_block , 
-    "struct"    : default_renderer_block , 
+    "structure"    : default_renderer_block , 
     "support"   : default_renderer_block , 
     "abstract"  : default_renderer_block , 
     "paragraph" : get_default_paragraph_renderer({}) , 

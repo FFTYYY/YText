@@ -35,7 +35,7 @@ function create_group(concept , parameters , children , relation: string = "sepa
         parameters: parameters , 
         children: children , 
         abstract: abstract , 
-        relation: relation , 
+        relation: relation as "separating" | "chaining", 
     }
 }
 
@@ -63,7 +63,7 @@ function create_structure(concept , parameters , children , relation: string = "
         parameters: parameters , 
         children: children , 
         abstract: abstract , 
-        relation: relation , 
+        relation: relation as "separating" | "chaining", 
     }
 }
 

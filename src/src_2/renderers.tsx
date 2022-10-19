@@ -29,7 +29,7 @@ import {
     useless_renderer_inline ,
     useless_renderer_text,
     ProcessedParameterList, 
-} from "../../lib"
+} from "../../libprinter"
 
 export {default_renderers , renderers}
 
@@ -108,7 +108,7 @@ let renderer_comment = get_default_abstract_renderer({
 
 let default_renderers = {
     "group"     : useless_renderer_block , 
-    "struct"    : useless_renderer_block , 
+    "structure"  : useless_renderer_block , 
     "support"   : useless_renderer_block , 
     "abstract"  : useless_renderer_block , 
     "paragraph" : get_default_paragraph_renderer({}) , 
