@@ -12,7 +12,7 @@ import {
     AutoStack , 
     AutoTooltip , 
 } 
-from "../../../libeditor"
+from "../../../../libeditor"
 
 import { PostSnackbar } from "./snackbar"
 
