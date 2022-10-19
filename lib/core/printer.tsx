@@ -441,10 +441,10 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         let globalinfo = {
             "printer": me.printer , 
             "root": me.root , 
-            "printerComponent": me , 
-            "env": env , 
-            "contexts": contexts , 
-            "all_parameters": all_parameters , 
+            "printerComponent": me ,
+            "env": env , // 这一项提供所有节点的环境。
+            "contexts": contexts , // 这一项提供所有节点的上下文。
+            "all_parameters": all_parameters ,  // 这一项提供所有节点的处理好的参数。
         }
 
         return <GlobalInfoProvider 

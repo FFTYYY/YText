@@ -28,3 +28,12 @@ class ImpossibleError extends Error{
         Object.setPrototypeOf(this, ImpossibleError.prototype);
     }
 }
+
+/** 这个函数对某个对象的属性做断言，如果不符合断言则返回异常。 
+ * @param obj 要检测的对象
+ * TODO 没写完
+*/
+function assert_properties<key , type>(obj: any){
+    let s = "" as key
+    //
+}

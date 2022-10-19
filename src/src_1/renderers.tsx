@@ -38,7 +38,7 @@ import {
 	GlobalInfo , 
 	GlobalInfoProvider, 
 	AutoTooltip, 
-} from "../lib"
+} from "../../lib"
 import {
 	PrinterRenderer , 
 	GroupNode , 
@@ -49,7 +49,7 @@ import {
 	Context  , 
     PrinterRenderFunctionProps, 
     PrinterRenderFunction , 
-} from "../lib"
+} from "../../lib"
 
 export {
 	renderers , 

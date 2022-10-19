@@ -14,6 +14,7 @@ import {
     ProcessedParameterList , 
     Env , 
     Context ,
+    AbstractNode , 
 } from "../../core"
 
 export {auto_renderer}
@@ -23,13 +24,16 @@ export {auto_renderer}
  * 用户只需要指定`contexters`和`renderer`。
  * @param params.render_function 即`PrinterRenderer.renderer`
  * @param params.contexters 上下文工具列表。
+ * @param params.render_function_as_property 当抽象节点作为节点属性渲染时的渲染器。只对抽象节点提供。
  */
 function auto_renderer<NodeType extends Node = Node>({
     render_function , 
     contexters = [], 
+    render_function_as_property = undefined , 
 }: {
     render_function:  PrinterRenderFunction<NodeType>
     contexters?: PreprocessFunction<NodeType , ContexterBase<NodeType>>[]
+    render_function_as_property?: NodeType extends AbstractNode ? PrinterRenderFunction<NodeType> : never
 }): PrinterRenderer<NodeType>{
     return new PrinterRenderer({
         enter: (node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context)=>{
@@ -52,6 +56,7 @@ function auto_renderer<NodeType extends Node = Node>({
             return [cache , flag]
         } , 
         renderer: render_function , 
+        renderer_as_property: render_function_as_property , 
 })
 
 }

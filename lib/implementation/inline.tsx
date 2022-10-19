@@ -24,7 +24,8 @@ import {
     Env , 
     Context, 
     ParagraphNode, 
-    InlineNode , 
+    InlineNode ,
+    TextNode ,  
 } from "../core"
 import {
     ContexterBase , 
@@ -40,7 +41,11 @@ import {
 import {
     auto_renderer , 
 } from "./utils"
-export {get_default_inline_renderer}
+export {
+    get_default_inline_renderer , 
+    useless_renderer_inline , 
+    useless_renderer_text , 
+}
 
 
 /**
@@ -71,3 +76,21 @@ function get_default_inline_renderer({
         }
     })
 }
+
+/** 这个renderer总之提供一个默认的毫无功能的行内节点渲染实现。 */
+let useless_renderer_inline = new PrinterRenderer({
+    renderer(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
+        return <span>{props.children}</span>
+    }
+})
+
+/** 这个renderer总之提供一个默认的毫无功能的文本节点渲染实现。 
+ * 毕竟文本节点要什么功能....
+*/
+let useless_renderer_text = new PrinterRenderer({
+    renderer(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
+        let node = props.node as TextNode
+        return <span>{node.text}</span>
+    }
+})
+

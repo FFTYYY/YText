@@ -27,7 +27,7 @@ import {
     auto_renderer , 
 } from "./utils"
 
-export { get_default_group_renderer , get_default_paragraph_renderer }
+export { get_default_group_renderer , get_default_paragraph_renderer , useless_renderer_block }
 
 
 /** 这个函数快速生产一个默认的块级组件的渲染器。 
@@ -146,3 +146,12 @@ function get_default_paragraph_renderer({
         } , 
     })
 }
+
+
+/** 这个renderer总之提供一个默认的毫无功能的块级节点渲染实现。 */
+let useless_renderer_block = new PrinterRenderer({
+    renderer(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
+        let node = props.node as GroupNode
+        return <div>{props.children}</div>
+    }
+})

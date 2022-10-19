@@ -7,7 +7,7 @@ import {
     TextNode , 
     Node , 
     validate , 
-} from "../lib"
+} from "../../lib"
 
 export {tree}
 
@@ -158,9 +158,10 @@ function convert_old_tree(json): GroupNode{
     let ret = parse(old_tree) as GroupNode
 
     let [good , msg] = validate(ret)
-    console.log(good)
+    console.log("good? = " , good)
     console.log(msg)
     if(!good){
+        console.log("not good!!!")
         console.log(msg)
         console.log("ret is" , ret)
         console.log("old is" , old_tree)

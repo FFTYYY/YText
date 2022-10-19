@@ -6,7 +6,7 @@ import {
 	SecondClassConcept ,  
     ParameterValue ,
     ParameterList , 
-} from "../lib"
+} from "../../lib"
 
 export {first_concepts}
 
