@@ -1,224 +1,215 @@
-/** 这个模块给`EditorComponent`提供一系列mixins，来实现所有操作节点树的操作。 
+/** 这个模块定义所有修改文档的外部行为。 
  * @module
 */
-import Slate from "slate"
 
-import { EditorComponent } from "./main"
-import {
-    ConceptNode,
-    Node , 
-    ParameterList , 
-    GroupNode , 
+/**
+ TODO READ THIS
+ 1 应该保证slate是所有修改的来源
+ 2 应该加入一系列判断函数来将slate节点转成printer节点（e.g.：Slate.Node & ConceptNode)
+ 3 编辑器不应该维护root
+ */
 
-    is_concetnode , 
-    is_paragraphnode , 
-} from "../core"
-import {
-    UnexpectedParametersError
-} from "../exceptions"
+import { is_same_node , node2path } from "../implementation/utils"
+import { StyledNode , ValidParameter } from "../core/elements"
+import { Transforms, Node, Editor , Point } from "slate"
+import { YEditor } from "./editor"
+import { set_normalize_status } from "../plugins/constraints"
+export { BehavioursMixin }
 
-export { 
-    get_node_by_path , 
-    get_node_path_by_idx , 
-    get_node_by_idx , 
-    set_node_by_path , 
-    set_node_by_idx , 
-    set_node , 
-    set_node_parameters , 
-    delete_node_by_path , 
-    delete_node_by_idx , 
-    insert_node , 
-    insert_nodes , 
-    insert_nodes_before , 
-    insert_nodes_after , 
-    move_node , 
-    move_node_by_path , 
-    replace_nodes , 
-}
-
-function get_node_by_path<NodeType extends Node = Node , RootType extends Node = GroupNode>(root: RootType , path: number[]): NodeType | undefined{
-    if(path.length == 0)
-        return root as any as NodeType
-    if(is_concetnode(root) || is_paragraphnode(root)){
-        if(root.children.length >= path[0]){ // TODO >=?
-            return get_node_by_path( root.children[path[0]] , path.slice(1)  )
+/** 这个混入对象提供所有跟节点树操作有关的函数。
+ * 基本上就是`slate`的`Transforms`的代理。
+ */
+let BehavioursMixin = {
+    
+    /** 这个函数修改节点的某个属性。相当于`slate.Transforms.setNodes`。 */
+    set_node<T extends Node = StyledNode>(node: T, new_val: Partial<T>){
+        let me = this as any as YEditor
+        if(me.is_root(node)){
+            me.setState({root: {...me.state.root , ...new_val}})
+            return 
         }
-    }
-    return undefined
-}
-
-function get_node_path_by_idx<NodeType extends Node = Node , RootType extends Node = GroupNode>(root: RootType , idx: number): number[]| undefined{
-    if(root["idx"] == idx)
-        return []
-    if(is_concetnode(root) || is_paragraphnode(root)){
-        for(let subidx in root.children){
-            let c = root.children[subidx]
-            let ret = get_node_path_by_idx<NodeType , Node>(c , idx)
-            if(ret != undefined)
-                return [parseInt(subidx) , ...ret]
+    
+        Transforms.setNodes<T>(me.get_slate() , new_val , {at: node2path(me.get_slate() , node)})
+    } , 
+    /** 这个函数修改节点的某个属性。相当于`slate.Transforms.setNodes`。 */
+    set_node_by_path<T extends Node = StyledNode>(path:number[] , new_val: Partial<T>){
+        let me = this as any as YEditor
+        if(path == []){
+            me.setState({root: {...me.state.root , ...new_val}})
+            return 
         }
-    }
-    return undefined
-}
+    
+        Transforms.setNodes<T>(me.get_slate() , new_val , {at: path})
+    } , 
 
+    /** 如果一个节点有代理，这个函数就修改代理，同时修改参数，否则只修改参数。 */
+    auto_set_parameter(node: StyledNode, parameters: ValidParameter){
+        let me = this as any as YEditor
+        if(node.proxy_info && node.proxy_info.proxy_name){ // 这个节点有代理
+            
+            let new_proxy_params = {...node.proxy_info.proxy_params , ...parameters}
+            let new_node = {...node , proxy_info: {...node.proxy_info ,  proxy_params: new_proxy_params}}
+            let new_params = me.deproxy(new_node , new_proxy_params)
 
-function get_node_by_idx<NodeType extends Node = Node , RootType extends Node = GroupNode>(root: RootType , idx: number): NodeType | undefined{
-    if(root["idx"] == idx)
-        return root   as any as NodeType
-    if(is_concetnode(root) || is_paragraphnode(root)){
-        for(let c of root.children){
-            let ret = get_node_by_idx<NodeType , Node>(c , idx)
-            if(ret != undefined)
-                return ret
+            // 同时设置参数和代理。
+            me.set_node(node , {
+                parameters: {...node.parameters , ...new_params} , 
+                proxy_info: {
+                    ... node.proxy_info , 
+                    proxy_params: new_proxy_params , 
+                }
+            })
         }
-    }
-    return undefined
-}
-
-/** 这个函数修改特定路径的节点。 */
-function set_node_by_path<NodeType extends Node , RootType extends Node = GroupNode>(root: RootType , path: number[] , new_val: Partial<NodeType>){
-    let node = get_node_by_path(root , path)
-    if(node == undefined)
-        return false
-    Object.assign(node , new_val)
-    return true
-}
-
-/** 这个函数根据`idx`查找节点并修改之。 */
-function set_node_by_idx<NodeType extends Node , RootType extends Node = GroupNode>(root: RootType , idx: number , new_val: Partial<NodeType>){
-    let node = get_node_by_idx(root , idx)
-    if(node == undefined)
-        return false
-    Object.assign(node , new_val)
-    return true
-}
-
-function set_node<NodeType extends ConceptNode , RootType extends Node = GroupNode>(root: RootType, targetnode: NodeType, new_val: Partial<NodeType>){
-    if(!is_concetnode(targetnode)){ // 这个函数只能用来设置概念节点
-        return false
-    }
-    return set_node_by_idx(root , targetnode.idx , new_val)
-}
-
-function set_node_parameters<NodeType extends ConceptNode , RootType extends Node = GroupNode>(root: RootType, targetnode: NodeType, parameters: ParameterList){
-    if(!is_concetnode(targetnode)){ // 这个函数只能用来设置概念节点
-        return false
-    }
-    let node = get_node_by_idx<NodeType, RootType>(root, targetnode.idx)
-    if(node == undefined)
-        return false
-    node.parameters = {...node.parameters, ...parameters}
-    return true
-}
-
-function delete_node_by_path(root: Node, path: number[]){
-    if(path.length == 0){
-        throw new UnexpectedParametersError("the path.length in delete_node_by_path() can not be 0")
-    }
-    let father_path = path.slice(0,path.length-1)
-    let subidx = path[path.length-1]
-    let father_node = get_node_by_path(root , father_path)
-    if(father_node == undefined){
-        return false
-    }
-    if(is_concetnode(father_node) || is_paragraphnode(father_node)){
-        if(father_node.children.length > subidx){
-            father_node.children.splice(subidx , 1)
-            return true
+        else{ // 只需要设置参数。
+            me.set_node(node , {parameters: {...node.parameters , ...parameters} , })
         }
-    }
-    return false
+    } , 
+
+
+    /** 这个函数删除一个节点。 */
+    delete_node(node: Node){
+        let me = this as any as YEditor
+        Transforms.removeNodes(me.get_slate() , {at: node2path(me.get_slate() , node)})
+    } , 
+
+    /** 这个函数删除一个节点。 */
+    delete_node_by_path(path: number[]){
+        let me = this as any as YEditor
+        Transforms.removeNodes(me.get_slate() , {at: path})
+    } , 
+    
+    /** 这个函数把一个节点移动到另一个位置。 */
+    move_node(node_from: Node, position_to: number[]){
+        let me = this as any as YEditor
+        Transforms.moveNodes(me.get_slate() , {
+            at: node2path(me.get_slate() , node_from) , 
+            to: position_to , 
+        })
+    } , 
+
+    /** 这个组件把节点的子节点提升到顶层。 */
+    unwrap_node(node: Node){
+        let me = this as any as YEditor
+        Transforms.unwrapNodes(me.get_slate() , {at: node2path(me.get_root() , node)})
+    } , 
+
+    move_node_by_path(position_from: number[], position_to: number[]){
+        let me = this as any as YEditor
+        Transforms.moveNodes(me.get_slate() , {
+            at: position_from , 
+            to: position_to , 
+        })
+    } , 
+        
+    /** 这个函数插入一个或者系列节点。 */
+    add_nodes(nodes: (Node[]) | Node, path: number[]){
+        let me = this as any as YEditor
+        Transforms.insertNodes(me.get_slate() , nodes, {at: path})
+    } , 
+
+    /** 这个函数在某个节点前面插入一个或者系列节点。 */
+    add_nodes_before(nodes: (Node[]) | Node, target_node: Node){
+        let me = this as any as YEditor
+        Transforms.insertNodes(me.get_slate() , nodes, {at: node2path(me.get_slate(),target_node)})
+    } , 
+
+    /** 这个函数在某个节点后面插入一个或者系列节点。 */
+    add_nodes_after(nodes: (Node[]) | Node, target_node: Node){
+        let me = this as any as YEditor
+        let path = node2path(me.get_slate(),target_node)
+        path[path.length-1] ++
+        Transforms.insertNodes(me.get_slate() , nodes, {at: path})
+    } , 
+
+    /** 这个函数在选中位置插入节点。 */
+    add_nodes_here(nodes: (Node[]) | Node){
+        let me = this as any as YEditor
+        Transforms.insertNodes(me.get_slate() , nodes)
+    } , 
+
+    /** 把当前选择的区域打包成一个节点。 
+     * @param options.match 判断子节点中哪些要打包的函数。
+     * @param options.split 是否允许分裂父节点。
+    */
+     wrap_selected_nodes<T extends Node & {children: Node[]} = StyledNode>(
+        node: T, 
+        options:{
+            match?: (n:Node)=>boolean , 
+            split?: boolean , 
+        }
+    ){
+        let me = this as any as YEditor
+        if(options.split){ // 分裂节点有可能造成多个相同`idx`的节点，因此需要开启特殊检查。
+            set_normalize_status({pasting: true})
+        }
+        
+        Transforms.wrapNodes<T>(
+            me.get_slate() , 
+            node , 
+            {
+                match: options.match , 
+                split: options.split , 
+            }
+        )
+    } , 
+
+    /** 把当前选择的区域打包成一个节点。 
+     * @param options.match 判断子节点中哪些要打包的函数。
+     * @param options.split 是否允许分裂父节点。
+    */
+    wrap_nodes<T extends Node & {children: Node[]} = StyledNode>(
+        node: T, 
+        from: Point , 
+        to: Point , 
+        options:{
+            match?: (n:Node)=>boolean , 
+            split?: boolean , 
+        }
+    ){
+        let me = this as any as YEditor
+        if(options.split){ // 分裂节点有可能造成多个相同`idx`的节点，因此需要开启特殊检查。
+            set_normalize_status({pasting: true})
+        }
+        
+        Transforms.wrapNodes<T>(
+            me.get_slate() , 
+            node , 
+            {
+                at: {
+                    anchor: from , 
+                    focus: to , 
+                } , 
+                match: options.match , 
+                split: options.split , 
+            }
+        )
+    } , 
+
+
+    /** 这个函数把某个节点的全部子节点替换成给定节点。 */
+    replace_nodes(father_node: StyledNode, nodes: Node[]){
+        let me = this as any as YEditor
+
+        let root = me.get_slate()
+
+        let father_path = node2path(root , father_node)
+        if(me.is_root(father_node))
+            father_path = []
+
+        let numc = father_node.children.length
+
+        //把整个father删了
+        if(numc > 0){
+            Transforms.removeNodes<StyledNode>(me.get_slate(), {
+                at: {
+                    anchor: {path: [...father_path,0] , offset: 0} , 
+                    focus: {path: [...father_path,numc-1] , offset: 0} , 
+                }
+            })
+        }
+
+        // 替换成新节点
+        Transforms.insertNodes( me.get_slate() , nodes , {at: [...father_path , 0]} )
+    } , 
+
 }
-
-function delete_node_by_idx(root: Node, idx: number){
-    let path = get_node_path_by_idx(root , idx)
-    if(path == undefined || path.length == 0){
-        return false
-    }
-    return delete_node_by_path(root , path)
-}
-
-function insert_node<NodeType extends Node = Node>(root: Node, node: NodeType, path: number[]){
-    if(path.length == 0){
-        throw new UnexpectedParametersError("the path.length in insert_node() can not be 0")
-    }
-    let father_path = path.slice(0,path.length-1)
-    let subidx = path[path.length-1]
-    let father_node = get_node_by_path(root , father_path)
-    if(father_node == undefined){
-        return false
-    }
-    if(is_concetnode(father_node) || is_paragraphnode(father_node)){
-        (father_node.children as NodeType[]).splice(subidx , 0, node)
-        return true
-    }
-    return false
-}
-function insert_nodes<NodeType extends Node = Node>(root: Node, nodes: NodeType[], path: number[]){
-    if(path.length == 0){
-        throw new UnexpectedParametersError("the path.length in insert_node() can not be 0")
-    }
-    let father_path = path.slice(0,path.length-1)
-    let subidx = path[path.length-1]
-    let father_node = get_node_by_path(root , father_path)
-    if(father_node == undefined){
-        return false
-    }
-    if(is_concetnode(father_node) || is_paragraphnode(father_node)){
-        (father_node.children as NodeType[]).splice(subidx , 0, ...nodes)
-        return true
-    }
-    return false
-}
-
-function insert_nodes_before<NodeType extends Node = Node>(root: Node, nodes: NodeType[], target_node: ConceptNode){
-    let path = get_node_path_by_idx(root , target_node.idx)
-    if(path == undefined){
-        return false
-    }
-    return insert_nodes(root, nodes, path )
-}
-
-function insert_nodes_after<NodeType extends Node = Node>(root: Node, nodes: NodeType[], target_node: ConceptNode){
-    let path = get_node_path_by_idx(root , target_node.idx)    
-    if(path == undefined){
-        return false
-    }
-    path[path.length-1] ++
-    return insert_nodes(root, nodes, path)
-}
-
-function move_node(root: Node, target_node: ConceptNode, position: number[]){
-    let temporary_idx = Math.floor(Math.random() * 233333) //给要插入的节点制造一个临时idx。
-    let old_idx = target_node.idx
-    let to_insert = {...target_node, idx: temporary_idx}
-
-    if(!insert_node(root , target_node , position)){ // 总之先插入
-        return false
-    }
-    if(!delete_node_by_idx(root , target_node.idx)){ // 总之把之前的节点删掉，关我屁事。
-        return false
-    }
-    to_insert.idx = old_idx // 总之把idx改回来。
-    return true
-}
-
-function move_node_by_path(root: Node, from_path: number[], to_path: number[]){
-    let node = get_node_by_path(root, from_path)
-    if(node == undefined || !is_concetnode(node)){
-        return false
-    }
-    return move_node(root, node , to_path)
-}
-
-/** 这个函数把某个节点的全部子节点替换成给定节点。 */
-function replace_nodes<FatherType extends ConceptNode>(root: Node, father_node: FatherType, new_children: FatherType["children"]){
-
-    let father = get_node_by_idx(root, father_node.idx)
-    if(!is_concetnode(father)){
-        return false
-    }
-    father.children = new_children
-    return true
-}
-
