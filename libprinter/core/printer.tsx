@@ -52,7 +52,7 @@ import { ConsoleLogger } from "typedoc/dist/lib/utils"
 export type {
     FirstClassConceptDict , 
     SecondClassConceptDict , 
-    RendererhDict , 
+    RendererDict , 
     DefaultRendererhDict , 
 }
 
@@ -65,11 +65,10 @@ export {
 interface ConceptDict<T>{
     "group"     : {[name: string] : T} , 
     "inline"    : {[name: string] : T} , 
-    "structure"    : {[name: string] : T} , 
+    "structure" : {[name: string] : T} , 
     "support"   : {[name: string] : T} , 
     "abstract"  : {[name: string] : T} , 
 }
-
 
 /** 用来保存一级概念的列表。 */
 type FirstClassConceptList = FirstClassConcept[]
@@ -85,7 +84,7 @@ type FirstClassConceptDict = ConceptDict<FirstClassConcept>
 type SecondClassConceptDict = ConceptDict<SecondClassConcept>
 
 /** 用来保存各个一级概念的渲染器的字典。 */
-type RendererhDict = ConceptDict<PrinterRenderer>
+type RendererDict = ConceptDict<PrinterRenderer>
 
 /** 未找到概念时的渲染方案 */
 interface DefaultRendererhDict{
@@ -105,13 +104,13 @@ interface DefaultRendererhDict{
 class Printer{
     firstClassConcepts: FirstClassConceptDict
     secondClassConcepts: SecondClassConceptDict
-    renderers: RendererhDict 
+    renderers: RendererDict 
     defaultRenderers: DefaultRendererhDict 
 
     constructor(
         firstClassConcepts: FirstClassConceptList , 
         secondClassConcepts: SecondClassConceptList , 
-        renderers: RendererhDict , 
+        renderers: RendererDict , 
         defaultRenderers: DefaultRendererhDict , 
     ){
         /** 这是一个方便初始化字典的临时变量。 */

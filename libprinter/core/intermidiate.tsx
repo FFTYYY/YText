@@ -222,4 +222,3 @@ function get_node_type(node: Node): AllNodeTypes{
 	}
 	return flag1? "paragraph" : "text"
 }
-
