@@ -53,7 +53,7 @@ let tree_op_mixin = {
     /** 如果一个节点有代理，这个函数就修改代理，同时修改参数，否则只修改参数。 */
     auto_set_parameter<NT extends Slate.Node & ConceptNode>(editor: EditorComponent, node: NT, parameters: ParameterList){
         let P = {parameters: {...node.parameters , ...parameters}} as Partial<NT> // 有他妈的毛病
-        editor.set_node<NT>(node , P)
+        tree_op_mixin.set_node<NT>(editor, node , P)
     } , 
 
     /** 这个函数删除一个节点。 */
