@@ -1,37 +1,58 @@
 /** 这个模块给编辑器提供一些实用工具。 */
+
 import Slate from "slate"
 
+import { 
+    BadNodeError , 
+} from "../exceptions"
 import {
     Node ,
     ConceptNode ,
+    ParagraphNode , 
+    TextNode , 
+    is_concetnode , 
 } from "../core"
 
 export {
-    is_same_node , 
-    node2path , 
+    slate_is_concept , 
+    slate_is_paragraph , 
+    slate_is_text , 
+    slate_concept_node2path , 
+    slate_is_same_concept_node , 
 }
 
-/** 判断两个节点是否为同一个节点。这个函数会直接比较创建节点时分配的节点`idx`。 */
-function is_same_node(node1: Slate.Node, node2: Slate.Node): boolean{
-    if(node1["idx"] == undefined || node2["idx"] == undefined)
+function slate_is_concept(node: Slate.Node): node is Slate.Node & ConceptNode{
+    return node["idx"] != undefined
+}
+
+function slate_is_paragraph(node: Slate.Node): node is Slate.Node & ParagraphNode{
+    return (!slate_is_concept(node)) && (node["children"] != undefined)
+}
+
+
+function slate_is_text(node: Slate.Node): node is Slate.Node & TextNode{
+    let flag = slate_is_concept(node) || slate_is_paragraph(node)
+    if(flag)
         return false
-    return node1["idx"] == node2["idx"]
+    if(node["text"] == undefined){
+        throw new BadNodeError("can not determine know node type.")
+    }
+    return true
 }
 
+/** 判断两个节点是否为同一个节点。这个函数会直接比较创建节点时分配的节点 idx 。 */
+function slate_is_same_concept_node(node1: Slate.Node, node2: Slate.Node): boolean{
+    if((!slate_is_concept(node1)) || (!slate_is_concept(node2)))
+        return false
+    return node1.idx == node2.idx
+}
+
+// TODO：这个函数的实现太沙雕了，应该换一个更有效率的实现。
 /** 获得一个节点在节点树中的路径。 */
-function node2path(root: Slate.Node, node: Slate.Node): number[] | undefined{
-    if(is_same_node(root , node)){
-        return []
-    }
-    /** 如果根节点不存在子节点，那么自然无法向下查找。 */
-    if(root["children"] == undefined){
-        return undefined
-    }
-    root = root as {children: Slate.Node[]}
-    for(let subidx in root.children){
-        let ret = node2path(root , node)
-        if(ret != undefined){
-            return [parseInt(subidx) , ...ret]
+function slate_concept_node2path(root: Slate.Editor, node: Slate.Node & ConceptNode): Slate.Path{
+    for(let [nd , path] of Slate.Node.descendants(root)){
+        if(slate_is_same_concept_node(nd,node)){
+            return path
         }
     }
     return undefined
