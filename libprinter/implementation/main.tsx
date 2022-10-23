@@ -65,10 +65,6 @@ interface DefaultPrinterProps {
 
 /** 这个类提供一个默认的印刷器实现。 */
 class DefaultPrinterComponent extends React.Component<DefaultPrinterProps>{
-    printer: Printer
-    root: GroupNode | AbstractNode
-    theme?: ThemeOptions
-
     /**
      * 默认印刷器的构造函数。
      * @param props.printer 要使用的印刷器。
@@ -77,25 +73,21 @@ class DefaultPrinterComponent extends React.Component<DefaultPrinterProps>{
      */
     constructor(props: DefaultPrinterProps){
         super(props)
-
-        this.printer = props.printer
-        this.root = props.root
-        this.theme = props.theme
     }
 
     render(){
         let me = this
         let theme = default_theme
-		if(me.theme){
-			theme = merge_theme(default_theme , me.theme)
+		if(me.props.theme){
+			theme = merge_theme(default_theme , me.props.theme)
 		}
 
         return <ThemeProvider theme = {createTheme(theme)}>
             <GlobalInfoProvider value={{theme: theme}}>
                 <PrinterBackgroundPaper>
                     <PrinterComponent 
-                        printer = {me.printer}
-                        root = {me.root}
+                        printer = {me.props.printer}
+                        root = {me.props.root}
                     />
                 </PrinterBackgroundPaper>
             </GlobalInfoProvider>

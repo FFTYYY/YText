@@ -254,8 +254,8 @@ interface EditorComponentProps{
 type RemoveEditor<F> = F extends (editor: any, ...args: infer P) => infer R ? (...args: P) => R : never;
 type TreeOpeationsMixinsOriginal = typeof tree_op_mixin
 type TreeOpeationsMixins = {
-    set_node           : <NT extends Slate.Node & ConceptNode>                         (node: NT, new_val: Partial<NT>         ) => void
-    set_node_by_path   : <NT extends Slate.Node & ConceptNode>                         (path:number[] , new_val: Partial<NT>   ) => void
+    set_node           : <NT extends Slate.Node & ConceptNode>                          (node: NT, new_val: Partial<NT>         ) => void
+    set_node_by_path   : <NT extends Slate.Node & ConceptNode>                          (path:number[] , new_val: Partial<NT>   ) => void
     auto_set_parameter : <NT extends Slate.Node & ConceptNode>                         (node: NT, parameters: ParameterList    ) => void
     delete_concept_node: <NT extends Slate.Node & ConceptNode>                         (node: NT                               ) => void
     delete_node_by_path: <NT extends Slate.Node              >                         (path: number[]                         ) => void
@@ -291,6 +291,7 @@ interface SlateElementRendererProps{
     children: Slate.Node[]
 }
 
+// TODO add root parameters
 
 interface EditorComponent extends TreeOpeationsMixins{
     /** 对应的编辑器。 */
@@ -311,8 +312,13 @@ interface EditorComponent extends TreeOpeationsMixins{
     /** 改变光标位置的回调。 */
     onFocusChange: ()=>void
 }
+
+/**
+ * 因为slate实际上是编辑`root`的`children`，所以`root`的property要单独处理。
+ */
 class EditorComponent extends React.Component<EditorComponentProps , {
-    slate: GroupNode & SlateReact.ReactEditor
+    slate: SlateReact.ReactEditor
+    root_property: GroupNode & {children: undefined}
     root_children: (SlateReact.ReactEditor & GroupNode)["children"]
 }>{
     
@@ -326,33 +332,42 @@ class EditorComponent extends React.Component<EditorComponentProps , {
         this.onKeyPress     = props.onKeyPress      || (()=>{})
         this.onFocusChange  = props.onFocusChange   || (()=>{})
         this.use_tree_op_mixin()
-
-        const init_rootchildren = props.init_rootchildren || [this.editorcore.create_paragraph("hello!")]
-
+        
+        
         let me = this
-
+        
         let with_outer_plugin = props.plugin || ((x,y)=>y)
-
+        
+        let root = this.editorcore.create_group("root")
         this.state = {
-            slate: this.make_root(
-                with_outer_plugin(me , 
-                    with_ytext_plugin(me , 
-                        withHistory(
-                            SlateReact.withReact(
-                                Slate.createEditor() as SlateReact.ReactEditor
-                            ) 
-                        )
+            slate: with_outer_plugin(me , 
+                with_ytext_plugin(me , 
+                    withHistory(
+                        SlateReact.withReact(
+                            Slate.createEditor() as SlateReact.ReactEditor
+                        ) 
                     )
                 )
             ), 
-            root_children: init_rootchildren , 
+            root_children: root.children , 
+            root_property: {...root, children: undefined} , 
         }
     }
 
-    /** 新建一个group节点塞进去。 */
-    make_root(root: SlateReact.ReactEditor): GroupNode & SlateReact.ReactEditor{
-        Object.assign(root, this.editorcore.create_group("root"))
-        return root as GroupNode & SlateReact.ReactEditor
+    /** 将`root_children`和`root_property`组合成一棵树。 */
+    get_root(): Readonly<GroupNode>{
+        return {
+            ...this.state.root_property ,
+            children: this.state.root_children , 
+        }
+    }
+
+    set_root_children(root_children: (SlateReact.ReactEditor & GroupNode)["children"]){
+        this.setState({root_children: root_children})
+    }
+
+    set_root(root_property: Omit<Partial<GroupNode>, "children">){
+        this.setState({root_property: {...this.state.root_property , ...root_property}})
     }
 
     get_editorcore(){
@@ -386,6 +401,9 @@ class EditorComponent extends React.Component<EditorComponentProps , {
      * 当 slate 改变 value 时通知自身的函数。
     */
     update_value(value: Slate.Node[]){
+        this.setState({
+            root_children: value as (SlateReact.ReactEditor & GroupNode)["children"]
+        })
         this.onUpdate(value)
     }
 
@@ -456,20 +474,16 @@ class EditorComponent extends React.Component<EditorComponentProps , {
         }
         
         let root_children = this.state.root_children
-        console.log(me.state.slate)
 
         return <GlobalInfoProvider value={context}>
             <SlateReact.Slate 
                 editor = {slate} 
                 value = {root_children} 
                 onChange = {value => {
-                    // TODO ???
-                    // if(JSON.stringify(value) == JSON.stringify(this.state.slate.children)){
-                    //     return
-                    // }
-                    this.setState({
-                        root_children: value as (SlateReact.ReactEditor & GroupNode)["children"]
-                    })
+                    if(JSON.stringify(value) == JSON.stringify(this.state.root_children)){
+                        // 实际上没有改变，就不更新了。
+                        return
+                    }
                     me.update_value(value)
                     me.onFocusChange()
                 }}

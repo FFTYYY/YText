@@ -5,6 +5,7 @@ import {
 	Printer ,
 	PrinterComponent ,
 	FirstClassConcept , 
+	GroupNode , 
 	SecondClassConcept ,  
 	PrinterBackgroundPaper , 
 	RendererDict, 
@@ -14,7 +15,8 @@ import {
 
 	EditorCore,
 	EditorComponent , 
-	default_editor_theme , 
+	default_editor_theme, 
+	GlobalInfo, 
 } from "../../libprinter"
 import {
 	first_concepts , 
@@ -48,26 +50,58 @@ let editorcore = new EditorCore({
 	printer: printer , 
 })
 
-class App extends React.Component<{},{}>{
+class App extends React.Component<{},{
+	tree: GroupNode 
+}>{
+	editor_ref: React.RefObject<EditorComponent>
 	constructor(props: {}){
 		super(props)
+
+		this.state = {
+			tree: {
+				type: "group" ,
+				concept: "root" , 
+				idx: 2333 , 
+				abstract: [] , 
+				relation: "separating" , 
+				parameters: {} , 
+				children: [] , 
+			}
+		}
+
+		this.editor_ref = React.createRef<EditorComponent>()
 	}
 
 	render(){
 		let me = this
+
+		let update = ()=>{
+			if(!me.editor_ref || !me.editor_ref.current){
+				return
+			}
+			let editor = me.editor_ref.current
+			this.setState({tree: editor.get_root()})
+		}
+
 		return <div>
 			 <ThemeProvider theme = {createTheme(default_editor_theme)}>
 				<div style = {{position: "absolute", width: "50%", backgroundColor: "rgb(123,244,254)"}}>
 					<EditorComponent
 						editorcore = {editorcore}
 						init_rootchildren = {tree.children}
+						ref = {me.editor_ref}
+						onUpdate = {()=>{
+							update()
+							setTimeout(update , 1000)
+						}}
 					/>
 				</div>
 			</ThemeProvider>
+			<pre>{JSON.stringify(this.state.tree)}</pre>
 			<div style = {{position: "absolute", width: "50%", left: "50%", backgroundColor: "rgb(233,244,254)"}}>
 				<DefaultPrinterComponent 
 					printer = {printer} 
-					root = {tree}
+					root = {this.state.tree}
 					theme = {my_theme}
 				></DefaultPrinterComponent>
 			</div>

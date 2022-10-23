@@ -274,19 +274,15 @@ interface PrinterComponentProps {
  */
 class PrinterComponent extends React.Component<PrinterComponentProps>{
 
-    printer: Printer
-    root: GroupNode | AbstractNode
-
     constructor(props:PrinterComponentProps){
         super(props)
-
-        this.printer = props.printer
-        this.root = props.root
     }
 
     /**这个函数在印刷之前生成环境和上下文。 */
     preprocess(): [Env , {[path: string]: Context} , {[path: string]: ProcessedParameterList}]{
         let me = this 
+        let printer = me.props.printer
+        let root = me.props.root
 
         /** 这个函数递归地检查整个节点树，并让每个节点对环境做处理。最终的结果被记录在全局变量中。 
          * @param nowenv 当前的环境。
@@ -303,8 +299,8 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
             contexts: {[path: string]: Context} , 
             all_parameters: {[path: string]: ProcessedParameterList} , 
         ): [Env , boolean]
-        {            
-            let renderer = me.printer.get_node_renderer(node) // 向印刷器请求渲染器。
+        {
+            let renderer = printer.get_node_renderer(node) // 向印刷器请求渲染器。
             let my_path = JSON.stringify(path) // 本节点的路径的字符串表示。
 
             let flag = true // 这个变量表示处理是否结束。只要有一个子节点的处理没有结束那就没有结束。
@@ -320,7 +316,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
             if(my_parameters == undefined){
                 my_parameters = {} // 注意非概念节点的参数列表直接为空。
                 if((!is_textnode(node)) && (!is_paragraphnode(node))){ // 为概念节点处理参数列表。
-                    my_parameters = me.printer.process_parameters(node)
+                    my_parameters = printer.process_parameters(node)
                 }
                 all_parameters[my_path] = my_parameters // 由于参数列表不会改变，所以这里直接储存。
             }
@@ -367,7 +363,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         let all_parameters = {}
         let flag = false // 处理是否结束。如果为`false`就要继续处理。
         while(!flag){
-            let [newenv , newflag] = _preprocess(env , me.root , [] , contexts , all_parameters)
+            let [newenv , newflag] = _preprocess(env , root , [] , contexts , all_parameters)
             env = newenv 
             flag = newflag
             break
@@ -398,7 +394,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
             throw new UnexpectedParametersError(`contexts should contain ${my_path} but it doesn't.`)
         }
 
-        let renderer = me.printer.get_node_renderer(node) // 向印刷器请求渲染器。
+        let renderer = me.props.printer.get_node_renderer(node) // 向印刷器请求渲染器。
         let RR = renderer.renderer // 真正的渲染函数。
 
         // 先渲染子节点。
@@ -431,8 +427,8 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
 
         // 通过React注入器提供给用户定义的渲染器的全局信息。
         let globalinfo = {
-            "printer": me.printer , 
-            "root": me.root , 
+            "printer": me.props.printer , 
+            "root": me.props.root , 
             "printerComponent": me ,
             "env": env , // 这一项提供所有节点的环境。
             "contexts": contexts , // 这一项提供所有节点的上下文。
@@ -442,7 +438,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         return <GlobalInfoProvider 
             value = {globalinfo}
         ><R
-            node = {me.root} 
+            node = {me.props.root} 
             path = {[]}
             contexts = {contexts}
             all_parameters = {all_parameters}
