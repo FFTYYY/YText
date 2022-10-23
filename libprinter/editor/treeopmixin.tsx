@@ -10,7 +10,7 @@
 
  */
 
-import Slate from "slate"
+import * as Slate from "slate"
 import {
     slate_is_concept , 
     slate_is_paragraph , 

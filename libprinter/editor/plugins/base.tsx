@@ -1,4 +1,4 @@
-import SlateReact from "slate-react"
+import * as SlateReact from "slate-react"
 import {
     EditorComponent , 
 } from ".."

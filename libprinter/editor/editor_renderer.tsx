@@ -4,18 +4,24 @@
  * @module
  */
 
+
+import * as Slate from "slate"
 import React from "react"
 
 import {
     Node , 
 } from "../core"
+import {
+    EditorComponent , 
+} from "./main"
 
 export type {EditorRendererProps , EditorRenderer}
 
 /** 编辑器的渲染器接收的的props */
-interface EditorRendererProps<NodeType extends Node>{
+interface EditorRendererProps<NodeType extends Node & Slate.Node>{
+    editor: EditorComponent 
     node: NodeType
-    children: React.ReactElement
+    children: Slate.Node[]
 }
 
 /** 编辑器的渲染器。 */

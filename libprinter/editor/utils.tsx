@@ -1,6 +1,6 @@
 /** 这个模块给编辑器提供一些实用工具。 */
 
-import Slate from "slate"
+import * as Slate from "slate"
 
 import { 
     BadNodeError , 
@@ -11,6 +11,7 @@ import {
     ParagraphNode , 
     TextNode , 
     is_concetnode , 
+    AllNodeTypes , 
 } from "../core"
 
 export {
@@ -19,6 +20,7 @@ export {
     slate_is_text , 
     slate_concept_node2path , 
     slate_is_same_concept_node , 
+    slate_get_node_type , 
 }
 
 function slate_is_concept(node: Slate.Node): node is Slate.Node & ConceptNode{
@@ -38,6 +40,19 @@ function slate_is_text(node: Slate.Node): node is Slate.Node & TextNode{
         throw new BadNodeError("can not determine know node type.")
     }
     return true
+}
+
+function slate_get_node_type(node: Slate.Node): AllNodeTypes{
+    if(slate_is_text(node)){
+        return "text"
+    }
+    if(slate_is_paragraph(node)){
+        return "paragraph"
+    }
+    if(!slate_is_concept(node)){
+        throw new BadNodeError("can not determine know node type.")
+    }
+    return node.type
 }
 
 /** 判断两个节点是否为同一个节点。这个函数会直接比较创建节点时分配的节点 idx 。 */
