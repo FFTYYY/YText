@@ -22,7 +22,8 @@ import {
     AllNodeTypes, 
     NonLeafNode, 
 
-    GlobalInfoProvider , 
+    GlobalInfoProvider, 
+    AllConceptTypes, 
 } from "../core"
 
 import {
@@ -46,10 +47,14 @@ import {
 import {
     tree_op_mixin
 } from "./treeopmixin"
+import { UnexpectedParametersError } from "../exceptions"
 
 export {
     EditorComponent , 
     EditorCore , 
+}
+export type {
+    EditorComponentProps , 
 }
 
 /** 用来保存概念的编辑器渲染。 */
@@ -159,7 +164,7 @@ class EditorCore{
     }
 
     /** 新建一个行内节点。 */
-    create_inline(name: string, text: ""): InlineNode{
+    create_inline(name: string, text: string = ""): InlineNode{
         let me = this
         let sec_concept = this.printer.get_second_concept("inline" , name)
         let parameters = sec_concept == undefined ? {} : {...sec_concept.defaultOverride}
@@ -231,7 +236,9 @@ class EditorCore{
 
 interface EditorComponentProps{
     editorcore: EditorCore 
+
     plugin?: EditorPlugin
+
     init_rootchildren?: (SlateReact.ReactEditor & GroupNode)["children"]
 
     /** 节点树更新时的回调。 */
@@ -294,8 +301,6 @@ interface SlateElementRendererProps{
 // TODO add root parameters
 
 interface EditorComponent extends TreeOpeationsMixins{
-    /** 对应的编辑器。 */
-    editorcore: EditorCore
 
     /** 节点树更新时的回调。 */
     onUpdate: (v: any) => void
@@ -325,7 +330,6 @@ class EditorComponent extends React.Component<EditorComponentProps , {
     constructor(props:EditorComponentProps){
         super(props)
 
-        this.editorcore     = props.editorcore
         this.onUpdate       = props.onUpdate        || (()=>{})
         this.onKeyDown      = props.onKeyDown       || (()=>{})
         this.onKeyUp        = props.onKeyUp         || (()=>{})
@@ -338,7 +342,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
         
         let with_outer_plugin = props.plugin || ((x,y)=>y)
         
-        let root = this.editorcore.create_group("root")
+        let root = this.get_core().create_group("root")
         this.state = {
             slate: with_outer_plugin(me , 
                 with_ytext_plugin(me , 
@@ -352,6 +356,10 @@ class EditorComponent extends React.Component<EditorComponentProps , {
             root_children: root.children , 
             root_property: {...root, children: undefined} , 
         }
+    }
+
+    get_core(){
+        return this.props.editorcore
     }
 
     /** 将`root_children`和`root_property`组合成一棵树。 */
@@ -371,7 +379,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
     }
 
     get_editorcore(){
-        return this.editorcore
+        return this.get_core()
     }
 
     get_slate(){
@@ -393,7 +401,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
         this.add_nodes_after        = (nodes, target_node   ) => tree_op_mixin.add_nodes_after      (me,nodes, target_node)
         this.add_nodes_here         = (nodes                ) => tree_op_mixin.add_nodes_here       (me,nodes)
         this.wrap_selected_nodes    = (node, options        ) => tree_op_mixin.wrap_selected_nodes  (me,node, options)
-        this.wrap_nodes             = (node,fr,to,options   ) => tree_op_mixin.wrap_nodes           (me, node, fr, to, options)
+        this.wrap_nodes             = (node,fr,to,options   ) => tree_op_mixin.wrap_nodes           (me,node, fr, to, options)
         this.replace_nodes          = (father_node, nodes   ) => tree_op_mixin.replace_nodes        (me,father_node, nodes)  
     }
 
@@ -418,7 +426,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
         let node = props.element as Slate.Element & NonLeafNode
                 
         // 取得的子渲染器。
-        let R = me.editorcore.get_node_renderer(node)
+        let R = me.get_core().get_node_renderer(node)
 
         // 需要给 slate 提供的顶层属性。
         let slate_attributes = props.attributes
@@ -433,7 +441,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
         // 如果这是个 inline 元素，就添加一个额外 style 。
         let extra_style = {}
         if(slate_is_concept(node)){
-            let meta_param = this.editorcore.get_meta_param(node)
+            let meta_param = this.get_core().get_meta_param(node)
             if(meta_param && meta_param.forceInline){
                 extra_style = {display: "inline-block"}
             }
@@ -448,7 +456,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
     renderLeaf(props: SlateReact.RenderLeafProps){
         let me = this
 
-        let R = me.editorcore.get_renderer("text")
+        let R = me.get_core().get_renderer("text")
 
         // 需要给 slate 提供的顶层属性。
         let slate_attributes = props.attributes
@@ -470,7 +478,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
         let context = {
             editor: me , 
             slate: me.state.slate , 
-            core: me.editorcore , 
+            core: me.get_core() , 
         }
         
         let root_children = this.state.root_children
@@ -509,6 +517,24 @@ class EditorComponent extends React.Component<EditorComponentProps , {
                 />
             </SlateReact.Slate>
         </GlobalInfoProvider>
+    }
+
+    /** 在当前位置新建一个指定概念的节点。 */
+    new_concept_node(type: Exclude<AllConceptTypes,"abstract">, name: string){
+        let newnode: Node | undefined = undefined
+        if(type == "group")
+            newnode = this.get_core().create_group(name)
+        else if (type == "inline")
+            newnode = this.get_core().create_inline(name)
+        else if (type == "structure")
+            newnode = this.get_core().create_structure(name)
+        else if (type == "support")
+            newnode = this.get_core().create_support(name)
+        else{
+            throw new UnexpectedParametersError("unknown node type")
+        }
+
+        this.add_nodes_here(newnode)
     }
 }
 

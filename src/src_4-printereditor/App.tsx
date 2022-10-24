@@ -17,6 +17,8 @@ import {
 	EditorComponent , 
 	default_editor_theme, 
 	GlobalInfo, 
+
+	DefaultEditorComponent , 
 } from "../../libprinter"
 import {
 	first_concepts , 
@@ -53,7 +55,7 @@ let editorcore = new EditorCore({
 class App extends React.Component<{},{
 	tree: GroupNode 
 }>{
-	editor_ref: React.RefObject<EditorComponent>
+	editor_ref: React.RefObject<DefaultEditorComponent>
 	constructor(props: {}){
 		super(props)
 
@@ -69,7 +71,7 @@ class App extends React.Component<{},{
 			}
 		}
 
-		this.editor_ref = React.createRef<EditorComponent>()
+		this.editor_ref = React.createRef<DefaultEditorComponent>()
 	}
 
 	render(){
@@ -80,23 +82,24 @@ class App extends React.Component<{},{
 				return
 			}
 			let editor = me.editor_ref.current
-			this.setState({tree: editor.get_root()})
+			let edieditor = editor.get_editor()
+			if(edieditor){
+				this.setState({tree: edieditor.get_root()})
+			}
 		}
 
 		return <div>
-			 <ThemeProvider theme = {createTheme(default_editor_theme)}>
-				<div style = {{position: "absolute", width: "50%", backgroundColor: "rgb(123,244,254)"}}>
-					<EditorComponent
-						editorcore = {editorcore}
-						init_rootchildren = {tree.children}
-						ref = {me.editor_ref}
-						onUpdate = {()=>{
-							update()
-							setTimeout(update , 1000)
-						}}
-					/>
-				</div>
-			</ThemeProvider>
+			<div style = {{position: "absolute", width: "50%", height: "100%", backgroundColor: "rgb(123,244,254)"}}>
+				<DefaultEditorComponent
+					editorcore = {editorcore}
+					init_rootchildren = {tree.children}
+					ref = {me.editor_ref}
+					onUpdate = {()=>{
+						update()
+						setTimeout(update , 1000)
+					}}
+				/>
+			</div>
 			<pre>{JSON.stringify(this.state.tree)}</pre>
 			<div style = {{position: "absolute", width: "50%", left: "50%", backgroundColor: "rgb(233,244,254)"}}>
 				<DefaultPrinterComponent 

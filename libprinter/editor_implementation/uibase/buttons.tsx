@@ -136,9 +136,9 @@ function DefaultSoftDeleteButton(props: UniversalComponentProps & {puretext?: bo
             if(props.puretext){
                 // XXX 可能保留内部样式会比较好...
                 let text = Slate.Node.string(props.node)
-                let path = slate_concept_node2path(editor.get_slate() , props.node)
+                let path = slate_concept_node2path(editor.get_root() , props.node)
                 editor.delete_node_by_path(path)
-                editor.add_nodes(editor.editorcore.create_paragraph(text) , path)
+                editor.add_nodes(editor.get_core().create_paragraph(text) , path)
             }
             else{
                 editor.unwrap_node(props.node)
@@ -156,12 +156,12 @@ function NewParagraphButton(props: UniversalComponentProps){
         let editor = globalinfo.editor as EditorComponent
         return <React.Fragment>
                 <AutoIconButton
-                onClick = { e => {editor.add_nodes_before(editor.editorcore.create_paragraph() , props.node ) }}
+                onClick = { e => {editor.add_nodes_before(editor.get_core().create_paragraph() , props.node ) }}
                 title = "向上添加段落"
                 icon = {NorthIcon}
             ></AutoIconButton>
             <AutoIconButton
-                onClick = { e => {editor.add_nodes_after (editor.editorcore.create_paragraph() , props.node ) }}
+                onClick = { e => {editor.add_nodes_after (editor.get_core().create_paragraph() , props.node ) }}
                 title = "向下添加段落"
                 icon = {SouthIcon}
             ></AutoIconButton>
