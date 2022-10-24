@@ -2,6 +2,8 @@
  * @module
  */
 
+// TODO 哎呀，根节点应该永远是抽象节点啊。
+
 import React, {useState , createRef} from "react"
 import * as Slate from "slate"
 import produce from "immer"
