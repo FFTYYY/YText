@@ -2,6 +2,7 @@ import React from "react"
 import Slate from "slate"
 import {
     get_deafult_group_editor_with_appbar , 
+    get_default_abstract_editor , 
     GroupNode , 
     EditorRendererProps , 
     EditorRenderer ,
@@ -23,7 +24,9 @@ let renderers = {
     "inline": {} , 
     "structure": {} , 
     "support": {} , 
-    "abstract": {} ,
+    "abstract": {
+        "comment": get_default_abstract_editor({get_label: (n)=>"comment"})
+    } ,
 }
 
 let def = (props: EditorRendererProps<Slate.Node & ConceptNode>) => {return <div>{props.children}</div>}

@@ -49,56 +49,68 @@ export {
     DefaultParameterContainer , 
     DefaultParameterWithEditorWithDrawer , 
 }
-export type {UniversalComponentProps}
+export type{
+    EditorInformation
+}
 
-class ParameterItem extends React.Component <{
+/** 所有编辑器组件的通用信息。 */
+interface EditorInformation{
+    node: Slate.Node & ConceptNode
+}
+
+
+/** 参数项更新组件的`props`。 */
+interface ParameterItemComponentProps{
+    /** 要更新的参数项的初始值。 */
     parameter_item: ParameterValue
+
+    /** 这个参数项的名称。 */
     name: string
-} , {
+}
+
+/** 
+ * 这个组件负责一个参数项的更新操作。
+ */
+class ParameterItemComponent extends React.Component <ParameterItemComponentProps , {
     val: string | boolean | number
 }>{
-    type: "string" | "boolean" | "number" | "choice"
-    name: string
-
-    constructor(props){
+    constructor(props: ParameterItemComponentProps){
         super(props)
 
         this.state = {
             val: props.parameter_item.val
         }
-
-        this.name = props.name
-        this.type = props.parameter_item.type
     }
     
-    update(){
-        this.setState({val: this.props.parameter_item.val})
-    }
-
-    componentDidUpdate(prev_props, prev_state){
-        if(prev_props.parameter_item.val != this.props.parameter_item.val){ // 更新了props
-            this.update()
-        }
-    }
-
-    get_item(){
+    /** 当外界询问时，这个函数向外提供修改过的参数。 */
+    public get_item(): ParameterValue{
         let ret = {
             val: this.state.val , 
-            type: this.type , 
+            type: this.props.parameter_item.type , 
         } 
         // TODO handle choice?
         // if(this.type == "choice"){
         //     type ChoiceItem = ParameterValue & {type: "choice"}
         //     (ret as ChoiceItem).choices = (this.props.parameter_item as ChoiceItem).choices
         // }
-        return ret
+        return ret as ParameterValue
+    }
+    
+    componentDidUpdte(prev_props: ParameterItemComponentProps){
+
+        // 如果props里面的初始值更新了，那么就以新的初始值开始。
+        if( JSON.stringify(prev_props.parameter_item.val) != JSON.stringify(this.props.parameter_item.val) ){
+            this.setState({
+                val: this.props.parameter_item.val
+            })
+        }
     }
 
     render(){
-        let name = this.name
-        let type = this.type
-        let val = this.state.val
         let me = this
+        let name = this.props.name
+        let type = this.props.parameter_item.type
+        let val = this.state.val
 
         let standard_props = {
             value: val ,
@@ -161,49 +173,42 @@ class ParameterItem extends React.Component <{
     }
 }
 
+/** 参数菜单的`props`。 */
+interface DefaultParameterContainerProps{
+    parameters: ParameterList
+}
+
 /** 这个类定义一个菜单组件，作为默认的参数更新器。 
- * 注意，这个组件更新参数有两种方式：通过回调函数立刻更新（ onUpdate ），或者像父组件暴露本对象，期望父组件来调用
- * 自身的 parameter_values() 方法获得更新后的值。具体使用哪一种方法是可选的。但是注意，使用立刻更新的方法有可能
- * 会导致slate更新抢占焦点，而使用延迟更新则可能会导致保存不及时等问题。建议是使用 YEditor 提供的 operations 功能。
- * 
  * 注意，这个类是一个菜单，不包含打开菜单的逻辑。
  */
-class DefaultParameterContainer extends React.Component <{
-    /** 参数的值。 */
-    parameters: ParameterList
-
-    /** 更改时的回调函数。 */
-    onUpdate?: (newval: ParameterList) => void
-} , {}>{
-    onUpdate: (newval: any) => void
-    item_refs: {[key: string] : React.RefObject<ParameterItem>}
+class DefaultParameterContainer extends React.Component <DefaultParameterContainerProps>{
+    /** 所有子项的`ref`。 */
+    item_refs: {[key: string] : React.RefObject<ParameterItemComponent>}
 
     /**
+     * 参数菜单的构造函数。
      * @param props.parameters 所有参数的初始值。
-     * @param props.onUpdate 在自身更新时的回调。如果为 undefined 则不会干任何事。
      */
-    constructor(props){
+    constructor(props: DefaultParameterContainerProps){
         super(props)
 
         this.item_refs = Object.keys(this.props.parameters).reduce((obj , key)=>{
-            obj[key] = React.createRef<ParameterItem>()
+            obj[key] = React.createRef<ParameterItemComponent>()
             return obj
         } , {})
-        this.onUpdate = props.onUpdate || ( (newval: any) => {} )
     }
 
-    componentDidUpdate(): void {
-        this.onUpdate = this.props.onUpdate || ( (newval: any) => {} )
-    }    
-
-    get_parameters(){
+    /** 这个函数向外界提供一个完整的更新后的参数列表。 */
+    public get_parameters(){
         let me = this
         let ret = {}
         for(let key in this.props.parameters){
             if(!(me.item_refs[key] && me.item_refs[key].current)){
-                return {}
+                ret[key] = this.props.parameters[key] // 如果这个`ref`还没创建，返回初始值。
             }
-            ret[key] = me.item_refs[key].current.get_item()
+            else {
+                ret[key] = me.item_refs[key].current.get_item()
+            }
         }
         return ret
     }
@@ -216,40 +221,43 @@ class DefaultParameterContainer extends React.Component <{
     render(){
         let me = this
 
-        // console.log("state" , this.props.parameters)
-
-        return <List>
-            {Object.keys(me.props.parameters).map((key,idx)=>{
-                return <ListItem key = {idx}>
-                    <ParameterItem 
-                        ref = {this.item_refs[key]}
-                        name = {key}
-                        parameter_item = {me.props.parameters[key]}
-                    />
-                </ListItem>
-            })}
-        </List>
-        
+        return <List>{Object.keys(me.props.parameters).map((key,idx)=>{
+            return <ListItem key = {idx}>
+                <ParameterItemComponent
+                    ref = {this.item_refs[key]}
+                    name = {key}
+                    parameter_item = {me.props.parameters[key]}
+                />
+            </ListItem>
+        })}</List>
     }
 }
-interface UniversalComponentProps{
-    node: Slate.Node & ConceptNode
-}
 
 
-/** 这个组件向具体的编辑器和具体的节点提供 DefaultParameterContainer ，并使用 YEditor 提供的 operations 功能延迟更新。
+
+/** 这个组件向具体的编辑器和具体的节点提供`DefaultParameterContainer`。
  * 注意，这个组件不包含打开菜单的逻辑。
  * @param props.editor 这个组件所服务的编辑器。
  * @param props.element 这个组件所服务的节点。
  */
-class DefaultParameterWithEditor extends React.Component<UniversalComponentProps>{
+class DefaultParameterWithEditor extends React.Component<EditorInformation>{
 
+    /** 参数菜单的引用。 */
     container_ref: React.RefObject<DefaultParameterContainer>
 
     constructor(props){
         super(props)
 
         this.container_ref = React.createRef()
+    }
+
+    get_parameters(){
+        let container = this.get_container()
+        if(container){ // 如果引用已经建立，就直接询问
+            return container.get_parameters()
+        }
+        // 如果引用还未建立，就返回初始值。
+        return this.props.node.parameters
     }
 
     get_container(){
@@ -259,78 +267,60 @@ class DefaultParameterWithEditor extends React.Component<UniversalComponentProps
         return undefined
     }
 
-    effect(){
-        let globalinfo = this.context
-        let editor = globalinfo.editor as EditorComponent
-
-        let container = this.get_container()
-        if(!container){
-            return 
-        }
-        let props = this.props
-        // TODO add delay_operation
-        // props.editor.add_delay_operation( `${props.element.idx}-parameter` , (father_editor: YEditor) => {
-        //     father_editor.auto_set_parameter( props.element , container.get_parameters())
-        // })
-
-    }
-
-    componentDidMount(){
-        this.effect()
-    }
-    componentDidUpdate(){
-        this.effect()
-    }
-
     render(){
         let me = this
-        let props = this.props
-        let element = props.node
-
 
         return <DefaultParameterContainer
             ref = { me.container_ref }
-            parameters = { element.parameters }
-            // onUpdate = { newval=>temp_update_value(newval) }
+            parameters = { me.props.node.parameters }
         />
     }
+}
+
+/** 参数更新抽屉的`props` */
+type DefaultParameterWithEditorWithDrawerProps = EditorInformation & {
+
+    /** 抽屉是否打开。 */
+    open: boolean 
+
+    /** 抽屉应该关闭时的回调。 */
+    onClose?: (e:any)=>void
 }
 
 /**
  * 这个组件向具体的编辑器和具体的节点提供 DefaultParameterContainer ，并包含一个抽屉来打开关闭编辑界面。抽屉关闭时会调用 
  * editor.apply_all() 来应用所有更新。
- * @param props.editor 这个组件所服务的编辑器。
- * @param props.element 这个组件所服务的节点。
+ * @param props.node 这个组件所服务的节点。
  * @param props.open 抽屉是否打开。
- * @param props.onClose 抽屉关闭时的行为。
+ * @param props.onClose 抽屉应该关闭时的回调。如果不提供这个参数，抽屉就不会关闭。
  */
-function DefaultParameterWithEditorWithDrawer(props: UniversalComponentProps & {
-    open: boolean , 
-    onClose?: (e:any)=>void
-}){
+function DefaultParameterWithEditorWithDrawer(props: DefaultParameterWithEditorWithDrawerProps){
     let onClose = props.onClose || ((e:any)=>{})
+    let parametereditor_ref = React.useRef<DefaultParameterWithEditor | null>(null)
 
     return <GlobalInfo.Consumer>{globalinfo=>{
         let editor = globalinfo.editor as EditorComponent
 
         return <Drawer 
-            anchor = {"left"}
-            open = {props.open}
-            onClose={onClose}
-            ModalProps={{
+            anchor      = {"left"}
+            open        = {props.open}
+            onClose     = {onClose}
+            ModalProps  = {{
                 keepMounted: true,
             }}
-            SlideProps = {{
+            SlideProps  = {{
                 onExited: () => {
-                    // TODO fuck
-                    // editor.apply_delay_operations() // 令编辑器应用所有延迟操作。
+                    if(parametereditor_ref && parametereditor_ref.current){ // 在退出时更新所服务的节点的参数。
+                        let parameters = parametereditor_ref.current.get_parameters()
+                        editor.auto_set_parameter(props.node, parameters)
+                    }
                 }
             }}
             PaperProps  = {{sx: { width: "40%" }}}
         >
             <Box><StructureTypography>idx: {props.node.idx}</StructureTypography></Box>
             <Divider />
-            <DefaultParameterWithEditor node={props.node}/>
+            <DefaultParameterWithEditor node={props.node} ref={parametereditor_ref}/>
         </Drawer>
     }}</GlobalInfo.Consumer>
 }

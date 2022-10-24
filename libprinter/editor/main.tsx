@@ -234,35 +234,11 @@ class EditorCore{
     }
 }
 
-interface EditorComponentProps{
-    editorcore: EditorCore 
-
-    plugin?: EditorPlugin
-
-    init_rootchildren?: (SlateReact.ReactEditor & GroupNode)["children"]
-
-    /** 节点树更新时的回调。 */
-    onUpdate?: (v: any) => void
-
-    /** 按键按下的回调。 */
-    onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void
-
-    /** 按键弹起的回调。 */
-    onKeyUp?: (e: React.KeyboardEvent<HTMLDivElement>) => void
-
-    /** 按键按下弹起的回调。 */
-    onKeyPress?: (e: React.KeyboardEvent<HTMLDivElement>) => void
-
-    /** 改变光标位置的回调。 */
-    onFocusChange?: ()=>void
-    
-}
 
 type RemoveEditor<F> = F extends (editor: any, ...args: infer P) => infer R ? (...args: P) => R : never;
-type TreeOpeationsMixinsOriginal = typeof tree_op_mixin
 type TreeOpeationsMixins = {
-    set_node           : <NT extends Slate.Node & ConceptNode>                          (node: NT, new_val: Partial<NT>         ) => void
-    set_node_by_path   : <NT extends Slate.Node & ConceptNode>                          (path:number[] , new_val: Partial<NT>   ) => void
+    set_node           : <NT extends Slate.Node & ConceptNode>                         (node: NT, new_val: Partial<NT>         ) => void
+    set_node_by_path   : <NT extends Slate.Node & ConceptNode>                         (path:number[] , new_val: Partial<NT>   ) => void
     auto_set_parameter : <NT extends Slate.Node & ConceptNode>                         (node: NT, parameters: ParameterList    ) => void
     delete_concept_node: <NT extends Slate.Node & ConceptNode>                         (node: NT                               ) => void
     delete_node_by_path: <NT extends Slate.Node              >                         (path: number[]                         ) => void
@@ -285,22 +261,32 @@ type TreeOpeationsMixins = {
                                                                                         }) => void
 }
 
-/** Slate 需要的渲染函数的 props 。 */
-interface SlateLeafRendererProps{
-    attributes: any
-    children: Slate.Node[]
-    leaf: Slate.Text
-}
-/** Slate 需要的渲染函数的 props 。 */
-interface SlateElementRendererProps{
-    attributes: any
-    element: Slate.Element
-    children: Slate.Node[]
-}
+interface EditorComponentProps<RootType extends (GroupNode | AbstractNode)>{
+    editorcore: EditorCore 
 
-// TODO add root parameters
+    plugin?: EditorPlugin
 
-interface EditorComponent extends TreeOpeationsMixins{
+    init_rootchildren?: (SlateReact.ReactEditor & RootType)["children"] 
+
+    init_rootproperty?: Omit<RootType , "children">
+
+    /** 节点树更新时的回调。 */
+    onUpdate?: (v: any) => void
+
+    /** 按键按下的回调。 */
+    onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void
+
+    /** 按键弹起的回调。 */
+    onKeyUp?: (e: React.KeyboardEvent<HTMLDivElement>) => void
+
+    /** 按键按下弹起的回调。 */
+    onKeyPress?: (e: React.KeyboardEvent<HTMLDivElement>) => void
+
+    /** 改变光标位置的回调。 */
+    onFocusChange?: ()=>void
+    
+}
+interface EditorComponent<RootType extends (GroupNode | AbstractNode)> extends TreeOpeationsMixins{
 
     /** 节点树更新时的回调。 */
     onUpdate: (v: any) => void
@@ -321,13 +307,13 @@ interface EditorComponent extends TreeOpeationsMixins{
 /**
  * 因为slate实际上是编辑`root`的`children`，所以`root`的property要单独处理。
  */
-class EditorComponent extends React.Component<EditorComponentProps , {
+class EditorComponent<RootType extends (GroupNode | AbstractNode)> extends React.Component<EditorComponentProps<RootType> , {
     slate: SlateReact.ReactEditor
-    root_property: GroupNode & {children: undefined}
-    root_children: (SlateReact.ReactEditor & GroupNode)["children"]
+    root_property: Omit<RootType , "children">
+    root_children: (SlateReact.ReactEditor & RootType)["children"]
 }>{
     
-    constructor(props:EditorComponentProps){
+    constructor(props:EditorComponentProps<RootType>){
         super(props)
 
         this.onUpdate       = props.onUpdate        || (()=>{})
@@ -342,7 +328,12 @@ class EditorComponent extends React.Component<EditorComponentProps , {
         
         let with_outer_plugin = props.plugin || ((x,y)=>y)
         
-        let root = this.get_core().create_group("root")
+        let default_root = this.get_core().create_group("root") as RootType // 反正默认就是group了罢....
+        let [default_root_children, default_root_but_children] = (()=>{
+            let {children, ..._} = default_root
+            return [children, _] // 把默认根节点拆成儿子和非儿子的部分。
+        })()
+        
         this.state = {
             slate: with_outer_plugin(me , 
                 with_ytext_plugin(me , 
@@ -353,8 +344,8 @@ class EditorComponent extends React.Component<EditorComponentProps , {
                     )
                 )
             ), 
-            root_children: root.children , 
-            root_property: {...root, children: undefined} , 
+            root_children: props.init_rootchildren || default_root_children , 
+            root_property: props.init_rootproperty || default_root_but_children , 
         }
     }
 
@@ -363,18 +354,18 @@ class EditorComponent extends React.Component<EditorComponentProps , {
     }
 
     /** 将`root_children`和`root_property`组合成一棵树。 */
-    get_root(): Readonly<GroupNode>{
+    get_root(): Readonly<RootType & Slate.Editor>{
         return {
             ...this.state.root_property ,
             children: this.state.root_children , 
-        }
+        } as Readonly<RootType & Slate.Editor>
     }
 
-    set_root_children(root_children: (SlateReact.ReactEditor & GroupNode)["children"]){
+    set_root_children(root_children: (SlateReact.ReactEditor & RootType)["children"]){
         this.setState({root_children: root_children})
     }
 
-    set_root(root_property: Omit<Partial<GroupNode>, "children">){
+    set_root(root_property: Omit<Partial<RootType>, "children">){
         this.setState({root_property: {...this.state.root_property , ...root_property}})
     }
 
@@ -410,7 +401,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
     */
     update_value(value: Slate.Node[]){
         this.setState({
-            root_children: value as (SlateReact.ReactEditor & GroupNode)["children"]
+            root_children: value as (SlateReact.ReactEditor & RootType)["children"]
         })
         this.onUpdate(value)
     }

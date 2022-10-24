@@ -38,7 +38,8 @@ import {
     GroupNode , 
     Node , 
     AllConceptTypes , 
-    AllNodeTypes , 
+    AllNodeTypes, 
+    AbstractNode, 
 } from "../core"
 
 import { 
@@ -62,19 +63,19 @@ import { EditorBackgroundPaper , EditorComponentEditingBox } from "./uibase"
 
 export { DefaultEditorComponent }
 
-interface DefaultButtonbarprops{
-    editor: EditorComponent
+interface DefaultButtonbarprops<RootType extends AbstractNode | GroupNode>{
+    editor: EditorComponent<RootType>
     selecting: boolean
 
 }
 
 /** 这个组件是编辑器的右边工具栏的组件按钮部分。 */
-class DefaultButtonbar extends React.Component<DefaultButtonbarprops , {
+class DefaultButtonbar<RootType extends AbstractNode | GroupNode> extends React.Component<DefaultButtonbarprops<RootType> , {
     cur_type_idx: number , 
     cur_styl_idx: number , 
 }>{
     button_refs: {[k in Exclude<AllConceptTypes , "abstract">] : React.RefObject<HTMLButtonElement>[]}
-    constructor(props: DefaultButtonbarprops){
+    constructor(props: DefaultButtonbarprops<RootType>){
         super(props)
 
         this.state = {
@@ -154,7 +155,7 @@ class DefaultButtonbar extends React.Component<DefaultButtonbarprops , {
     }
 
     componentDidUpdate(
-        prevProps: Readonly<{ editor: EditorComponent; selecting: boolean }>, 
+        prevProps: Readonly<{ editor: EditorComponent<RootType>; selecting: boolean }>, 
         prevState: Readonly<{ cur_type_idx: number; cur_styl_idx: number }>, 
         snapshot?: any
     ): void {
@@ -206,15 +207,15 @@ class DefaultButtonbar extends React.Component<DefaultButtonbarprops , {
     }
 }
 
-
+// TODO 别这样写mixin
 let KeyOpsMixin = {
-    is_selecting(){
-        let me = this as any as DefaultEditorComponent
+    is_selecting<RootType extends AbstractNode | GroupNode>(){
+        let me = this as any as DefaultEditorComponent<RootType>
         return me.state.ctrl_key["q"]
     } , 
 
-    flush_key_state(keydown: boolean , e: React.KeyboardEvent<HTMLDivElement>){
-        let me = this as any as DefaultEditorComponent
+    flush_key_state<RootType extends AbstractNode | GroupNode>(keydown: boolean , e: React.KeyboardEvent<HTMLDivElement>){
+        let me = this as any as DefaultEditorComponent<RootType>
 
         if(e.ctrlKey){
             if(keydown){
@@ -237,8 +238,8 @@ let KeyOpsMixin = {
         }
     } , 
 
-    prevent_key_down(e: React.KeyboardEvent<HTMLDivElement>){
-        let me = this as any as DefaultEditorComponent
+    prevent_key_down<RootType extends AbstractNode | GroupNode>(e: React.KeyboardEvent<HTMLDivElement>){
+        let me = this as any as DefaultEditorComponent<RootType>
 
         if(me.state.ctrl_key["Control"] && e.key == "s"){ // ctrl + s
             // me.onSave() // 调用保存回调函数。
@@ -257,8 +258,8 @@ let KeyOpsMixin = {
         return false
     } , 
 
-    handle_key_up(e: React.KeyboardEvent<HTMLDivElement>){
-        let me = this as any as DefaultEditorComponent
+    handle_key_up<RootType extends AbstractNode | GroupNode>(e: React.KeyboardEvent<HTMLDivElement>){
+        let me = this as any as DefaultEditorComponent<RootType>
         if(me.state.ctrl_key["Control"] && e.key == "s"){
             e.preventDefault()
             return true
@@ -302,7 +303,7 @@ let KeyOpsMixin = {
 /** 
  * 这个组件提供一个开箱即用的默认编辑器组件。
  */
-class DefaultEditorComponent extends React.Component <EditorComponentProps & {
+class DefaultEditorComponent<RootType extends AbstractNode | GroupNode> extends React.Component <EditorComponentProps<RootType> & {
     theme?: ThemeOptions
     extra_buttons?: any
 } , {
@@ -319,8 +320,8 @@ class DefaultEditorComponent extends React.Component <EditorComponentProps & {
     onFocusChange: ()=>void
     // onSave: ()=> void
 
-    editor_ref		: React.RefObject<EditorComponent>
-    buttonbar_ref	: React.RefObject<DefaultButtonbar>
+    editor_ref		: React.RefObject<EditorComponent<RootType>>
+    buttonbar_ref	: React.RefObject<DefaultButtonbar<RootType>>
 
     use_mixins(){
         this.is_selecting 		= KeyOpsMixin.is_selecting.bind(this)
@@ -329,7 +330,7 @@ class DefaultEditorComponent extends React.Component <EditorComponentProps & {
         this.handle_key_up 		= KeyOpsMixin.handle_key_up.bind(this)
     }
 
-    constructor(props: EditorComponentProps & {theme?: ThemeOptions, extra_buttons?: any}) {
+    constructor(props: EditorComponentProps<RootType> & {theme?: ThemeOptions, extra_buttons?: any}) {
         super(props)
 
         this.use_mixins()
@@ -343,8 +344,8 @@ class DefaultEditorComponent extends React.Component <EditorComponentProps & {
         this.onFocusChange  = props.onFocusChange || (()=>{})
         // this.onSave = props.onSave || (()=>{})
 
-        this.editor_ref = React.createRef<EditorComponent>()
-        this.buttonbar_ref = React.createRef<DefaultButtonbar>()
+        this.editor_ref = React.createRef<EditorComponent<RootType>>()
+        this.buttonbar_ref = React.createRef<DefaultButtonbar<RootType>>()
     }
 
     get_editor(){
@@ -353,7 +354,7 @@ class DefaultEditorComponent extends React.Component <EditorComponentProps & {
         return undefined
     }
 
-    get_root(): GroupNode{
+    get_root(): RootType{
         return this.get_editor()?.get_root()
     }
 
@@ -362,9 +363,6 @@ class DefaultEditorComponent extends React.Component <EditorComponentProps & {
         // this.onMount()	
 
         while(!this.get_editor()); // 确保editor存在
-    }
-    componentWillUnmount(): void {
-        // this.editor.core.remove_notificatioon(`editor-${this.notification_key}`)
     }
 
     render() {
@@ -398,6 +396,8 @@ class DefaultEditorComponent extends React.Component <EditorComponentProps & {
                     editorcore          = {me.props.editorcore}
                     plugin              = {me.props.plugin}
                     init_rootchildren   = {me.props.init_rootchildren}
+                    init_rootproperty   = {me.props.init_rootproperty}
+
                     onUpdate            = {me.props.onUpdate}
                     // onKeyDown           = {me.props.onKeyDown}
                     // onKeyUp             = {me.props.onKeyUp}

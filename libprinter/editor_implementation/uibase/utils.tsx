@@ -1,5 +1,7 @@
 export {object_foreach , merge_object}
 
+
+
 /** 对对象的每个值进行操作，返回一个新的对象。 */
 function object_foreach(obj: any , func: (o:any)=>any){
     let ret = {}

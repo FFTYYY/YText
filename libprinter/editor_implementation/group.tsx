@@ -50,8 +50,7 @@ import {
     DefaultSoftDeleteButton , 
 } from "./uibase/buttons"
 
-// TODO add hidden editor
-// import { DefaultHiddenEditorButtons } from "./hidden"
+import { DefaultAbstractEditorButtons } from "./abstract"
 
 import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "./uibase"
 import { 
@@ -64,7 +63,7 @@ import {
     EditorStructureTypography as StructureTypography , 
 } from "./uibase"
 
-import { UniversalComponentProps } from "./uibase" 
+import { EditorInformation } from "./uibase" 
 
 export { get_deafult_group_editor_with_appbar , get_deafult_group_editor_with_rightbar}
 
@@ -74,9 +73,9 @@ let GroupPaper = (props: PaperProps & {node: GroupNode}) => <ComponentPaper {...
 />
 
 /** 这个函数返回一个默认的带应用栏的 group 组件。用于比较大的 group 组件。
- * @param get_label 从参数列表获得 title 的方法。
- * @param appbar_extra 要额外向 appbar 里添加的组件。
- * @param surrounder 包裹内容区域的组件。
+ * @param params.get_label 从参数列表获得 title 的方法。
+ * @param params.appbar_extra 要额外向 appbar 里添加的组件。
+ * @param params.surrounder 包裹内容区域的组件。
  * @returns 一个用于渲染group的组件。
  */
 function get_deafult_group_editor_with_appbar({
@@ -85,8 +84,8 @@ function get_deafult_group_editor_with_appbar({
     surrounder    = (props) => <>{props.children}</>
 }: {
     get_label       ?: (n:GroupNode)=>string ,  
-    appbar_extra    ?: (props: UniversalComponentProps) => any, 
-    surrounder      ?: (props: UniversalComponentProps & {children: any}) => any ,
+    appbar_extra    ?: (props: EditorInformation) => any, 
+    surrounder      ?: (props: EditorInformation & {children: any}) => any ,
 }): EditorRenderer{
     // 渲染器
     return (props: EditorRendererProps<Slate.Node & GroupNode>) => {
@@ -102,13 +101,13 @@ function get_deafult_group_editor_with_appbar({
                 <UnselecableBox>
                     <Toolbar sx={{overflow: "auto"}}><AutoStack>
                         <StructureTypography>{label}</StructureTypography>
-                        <DefaultParameterEditButton node={node} />         
-                        {/* <DefaultHiddenEditorButtons node={node} /> */}
-                        <DefaultSwicth              node={node} />
-                        <NewParagraphButton         node={node} />
-                        <DefaultCloseButton         node={node} />
-                        <DefaultSoftDeleteButton    node={node} />
-                        <E                          node={node} />
+                        <DefaultParameterEditButton     node={node} />
+                        <DefaultAbstractEditorButtons   node={node} />
+                        <DefaultSwicth                  node={node} />
+                        <NewParagraphButton             node={node} />
+                        <DefaultCloseButton             node={node} />
+                        <DefaultSoftDeleteButton        node={node} />
+                        <E                              node={node} />
                     </AutoStack></Toolbar>
                 </UnselecableBox >
                 <Divider />
@@ -121,9 +120,9 @@ function get_deafult_group_editor_with_appbar({
 }
 
 /** 这个函数返回一个默认的group组件，但是各种选项等都被折叠在右侧的一个小按钮内。用于比较小的group。
- * @param get_label 从参数列表获得title的方法。
- * @param rightbar_extra 要额外向添加的组件。
- * @param surrounder 包裹内容区域的组件。
+ * @param params.get_label 从参数列表获得title的方法。
+ * @param params.rightbar_extra 要额外向添加的组件。
+ * @param params.surrounder 包裹内容区域的组件。
  * @returns 一个用于渲染group的组件。
  */
 function get_deafult_group_editor_with_rightbar({
@@ -132,8 +131,8 @@ function get_deafult_group_editor_with_rightbar({
     surrounder      = (props) => <>{props.children}</>
 }: {
     get_label       ?: (n:GroupNode)=>string , 
-    rightbar_extra  ?: (props: UniversalComponentProps) => any, 
-    surrounder      ?: (props: UniversalComponentProps & {children: any}) => any ,
+    rightbar_extra  ?: (props: EditorInformation) => any, 
+    surrounder      ?: (props: EditorInformation & {children: any}) => any ,
 }): EditorRenderer{
 
     return (props: EditorRendererProps<Slate.Node & GroupNode>) => {
@@ -161,12 +160,12 @@ function get_deafult_group_editor_with_rightbar({
                             }}
                             title = "展开"
                         >
-                            <DefaultParameterEditButton node={node}/>
-                            {/* <DefaultHiddenEditorButtons node={node} /> */}
-                            <DefaultSwicth              node={node} />
-                            <DefaultCloseButton         node={node} />
-                            <DefaultSoftDeleteButton    node={node} />
-                            <NewParagraphButton         node={node} />
+                            <DefaultParameterEditButton     node={node}/>
+                            <DefaultAbstractEditorButtons   node={node} />
+                            <DefaultSwicth                  node={node} />
+                            <DefaultCloseButton             node={node} />
+                            <DefaultSoftDeleteButton        node={node} />
+                            <NewParagraphButton             node={node} />
                         </AutoStackedPopperWithButton>
                     </AutoStack>
                 </UnselecableBox>

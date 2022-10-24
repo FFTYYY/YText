@@ -13,6 +13,7 @@ import {
     is_concetnode , 
     AllNodeTypes , 
     GroupNode , 
+    AbstractNode , 
 } from "../core"
 
 export {
@@ -65,7 +66,7 @@ function slate_is_same_concept_node(node1: Slate.Node, node2: Slate.Node): boole
 
 // TODO：这个函数的实现太沙雕了，应该换一个更有效率的实现。
 /** 获得一个节点在节点树中的路径。 */
-function slate_concept_node2path(root: Slate.Node & GroupNode, node: Slate.Node & ConceptNode): Slate.Path{
+function slate_concept_node2path<RootType>(root: RootType & Slate.Node, node: Slate.Node & ConceptNode): Slate.Path{
     for(let [nd , path] of Slate.Node.descendants(root)){
         if(slate_is_same_concept_node(nd,node)){
             return path

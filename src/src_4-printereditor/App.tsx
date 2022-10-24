@@ -55,7 +55,7 @@ let editorcore = new EditorCore({
 class App extends React.Component<{},{
 	tree: GroupNode 
 }>{
-	editor_ref: React.RefObject<DefaultEditorComponent>
+	editor_ref: React.RefObject<DefaultEditorComponent<GroupNode>>
 	constructor(props: {}){
 		super(props)
 
@@ -71,32 +71,34 @@ class App extends React.Component<{},{
 			}
 		}
 
-		this.editor_ref = React.createRef<DefaultEditorComponent>()
+		this.editor_ref = React.createRef<DefaultEditorComponent<GroupNode>>()
 	}
-
+	componentDidMount(): void {
+		this.update()
+	}
+	update(){
+		let me = this
+		if(!me.editor_ref || !me.editor_ref.current){
+			return
+		}
+		let editor = me.editor_ref.current
+		let edieditor = editor.get_editor()
+		if(edieditor){
+			this.setState({tree: edieditor.get_root()})
+		}
+	}
 	render(){
 		let me = this
 
-		let update = ()=>{
-			if(!me.editor_ref || !me.editor_ref.current){
-				return
-			}
-			let editor = me.editor_ref.current
-			let edieditor = editor.get_editor()
-			if(edieditor){
-				this.setState({tree: edieditor.get_root()})
-			}
-		}
-
 		return <div>
 			<div style = {{position: "absolute", width: "50%", height: "100%", backgroundColor: "rgb(123,244,254)"}}>
-				<DefaultEditorComponent
+				<DefaultEditorComponent<GroupNode>
 					editorcore = {editorcore}
 					init_rootchildren = {tree.children}
 					ref = {me.editor_ref}
 					onUpdate = {()=>{
-						update()
-						setTimeout(update , 1000)
+						me.update()
+						setTimeout(me.update.bind(me) , 1000)
 					}}
 				/>
 			</div>
