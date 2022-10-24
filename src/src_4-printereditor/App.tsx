@@ -96,9 +96,8 @@ class App extends React.Component<{},{
 					editorcore = {editorcore}
 					init_rootchildren = {tree.children}
 					ref = {me.editor_ref}
-					onUpdate = {()=>{
+					onSave = {()=>{
 						me.update()
-						setTimeout(me.update.bind(me) , 1000)
 					}}
 				/>
 			</div>

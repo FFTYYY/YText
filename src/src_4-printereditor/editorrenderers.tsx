@@ -11,6 +11,7 @@ import {
     TextNode,
     ParagraphNode,
     ConceptNode, 
+    get_default_inline_editor , 
 } from "../../libprinter"
 
 export {renderers , default_renderers}
@@ -21,7 +22,11 @@ let renderers = {
             get_label: (n)=>"theorem"
         })
     } , 
-    "inline": {} , 
+    "inline": {
+        "strong": get_default_inline_editor({
+            get_label: (n)=>"strong"
+        })
+    } , 
     "structure": {} , 
     "support": {} , 
     "abstract": {
@@ -34,7 +39,9 @@ let default_renderers = {
     "group": get_deafult_group_editor_with_appbar({
         get_label: (n)=>"default"
     }) , 
-    "inline": (props: EditorRendererProps<Slate.Node & InlineNode>) => {return <span>{props.children}</span>} , 
+    "inline": get_default_inline_editor({
+        get_label: (n)=>"fuck"
+    }) , 
     "structure": def , 
     "support": def , 
     "abstract": def ,

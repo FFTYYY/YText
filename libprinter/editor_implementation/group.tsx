@@ -90,7 +90,6 @@ function get_deafult_group_editor_with_appbar({
     // 渲染器
     return (props: EditorRendererProps<Slate.Node & GroupNode>) => {
         let node = props.node as GroupNode
-        let editor = props.editor
         let label   = get_label(node)
 
         let E = appbar_extra
@@ -137,7 +136,6 @@ function get_deafult_group_editor_with_rightbar({
 
     return (props: EditorRendererProps<Slate.Node & GroupNode>) => {
         let node = props.node as GroupNode
-        let editor = props.editor
         let label   = get_label(node)
         let E = rightbar_extra
         let SUR = surrounder

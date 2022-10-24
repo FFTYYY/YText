@@ -19,7 +19,6 @@ export type {EditorRendererProps , EditorRenderer}
 
 /** 编辑器的渲染器接收的的props */
 interface EditorRendererProps<NodeType extends Node & Slate.Node>{
-    editor: EditorComponent 
     node: NodeType
     children: Slate.Node[]
 }

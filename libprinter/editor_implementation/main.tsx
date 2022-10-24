@@ -63,6 +63,8 @@ import { EditorBackgroundPaper , EditorComponentEditingBox } from "./uibase"
 
 export { DefaultEditorComponent }
 
+// TODO 完善无鼠标操作。
+
 interface DefaultButtonbarprops<RootType extends AbstractNode | GroupNode>{
     editor: EditorComponent<RootType>
     selecting: boolean
@@ -242,7 +244,7 @@ let KeyOpsMixin = {
         let me = this as any as DefaultEditorComponent<RootType>
 
         if(me.state.ctrl_key["Control"] && e.key == "s"){ // ctrl + s
-            // me.onSave() // 调用保存回调函数。
+            me.onSave() // 调用保存回调函数。
             e.preventDefault()
             return true
         }
@@ -306,6 +308,7 @@ let KeyOpsMixin = {
 class DefaultEditorComponent<RootType extends AbstractNode | GroupNode> extends React.Component <EditorComponentProps<RootType> & {
     theme?: ThemeOptions
     extra_buttons?: any
+    onSave?: ()=>void // 保存时操作。
 } , {
     ctrl_key: any
 }> {
@@ -316,9 +319,8 @@ class DefaultEditorComponent<RootType extends AbstractNode | GroupNode> extends 
     handle_key_up: (e: React.KeyboardEvent<HTMLDivElement>) => boolean
     
     onUpdate: (newval: Node[]) => void
-    // onMount: ()=>void
     onFocusChange: ()=>void
-    // onSave: ()=> void
+    onSave: ()=> void
 
     editor_ref		: React.RefObject<EditorComponent<RootType>>
     buttonbar_ref	: React.RefObject<DefaultButtonbar<RootType>>
@@ -330,7 +332,7 @@ class DefaultEditorComponent<RootType extends AbstractNode | GroupNode> extends 
         this.handle_key_up 		= KeyOpsMixin.handle_key_up.bind(this)
     }
 
-    constructor(props: EditorComponentProps<RootType> & {theme?: ThemeOptions, extra_buttons?: any}) {
+    constructor(props: EditorComponentProps<RootType> & {theme?: ThemeOptions, extra_buttons?: any, onSave?: ()=>void}) {
         super(props)
 
         this.use_mixins()
@@ -342,7 +344,7 @@ class DefaultEditorComponent<RootType extends AbstractNode | GroupNode> extends 
         this.onUpdate = props.onUpdate || ((newval: Node[])=>{})
         // this.onMount  = props.onMount || (()=>{})
         this.onFocusChange  = props.onFocusChange || (()=>{})
-        // this.onSave = props.onSave || (()=>{})
+        this.onSave = props.onSave || (()=>{})
 
         this.editor_ref = React.createRef<EditorComponent<RootType>>()
         this.buttonbar_ref = React.createRef<DefaultButtonbar<RootType>>()
@@ -360,7 +362,6 @@ class DefaultEditorComponent<RootType extends AbstractNode | GroupNode> extends 
 
     componentDidMount(): void {
         let me = this
-        // this.onMount()	
 
         while(!this.get_editor()); // 确保editor存在
     }
@@ -392,18 +393,15 @@ class DefaultEditorComponent<RootType extends AbstractNode | GroupNode> extends 
                 <EditorComponent
                     ref 		        = {me.editor_ref} 
 
-                    
                     editorcore          = {me.props.editorcore}
                     plugin              = {me.props.plugin}
                     init_rootchildren   = {me.props.init_rootchildren}
                     init_rootproperty   = {me.props.init_rootproperty}
 
                     onUpdate            = {me.props.onUpdate}
-                    // onKeyDown           = {me.props.onKeyDown}
-                    // onKeyUp             = {me.props.onKeyUp}
                     onKeyPress          = {me.props.onKeyPress}
                     onFocusChange       = {me.props.onFocusChange}
-                        
+                    
                 
                     onKeyDown = {e=>{
                         this.flush_key_state(true , e)

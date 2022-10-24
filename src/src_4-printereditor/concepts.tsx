@@ -33,7 +33,7 @@ let strong = new FirstClassConcept({
 let sec_theorem = new SecondClassConcept({
     type: "group" , 
     firstConcept: "theorem" , 
-    name: "theorem" , 
+    name: "theoremer" , 
     defaultOverride: {
         alias_name: {
             type: "string" , 

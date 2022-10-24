@@ -67,8 +67,6 @@ function create_structure(concept , parameters , children , relation: string = "
     }
 }
 
-
-
 function create_paragraph(children){
     return {
         children: children
@@ -87,7 +85,7 @@ function inln(concept , parameters , text , abstract: any[] = []){
         concept: concept , 
         parameters: parameters , 
         children: [ {text: text} ] , 
-        abstrct: abstract , 
+        abstract: abstract , 
     }
 }
 
@@ -100,7 +98,7 @@ let tree = create_group("root" , {} , [
     create_paragraph([
         text("希望大家不要不识好歹。") , 
     ]) , 
-    create_group("theorem" , {alias_name: "NFL"} , [
+    create_group("theoremer" , {alias_name: "NFL"} , [
         create_paragraph([
             text("天下没有免费的午餐定理。") , 
         ]) , 
@@ -111,7 +109,7 @@ let tree = create_group("root" , {} , [
                 inln("stronger" , {} , "这个") , 
                 text("定理是要收钱的。") , 
             ]) , 
-            create_group("theorem" , {alias_name: ""} , [
+            create_group("theoremer" , {alias_name: ""} , [
                 create_paragraph([
                     text(`收费标准是12元/人。`) , 
                 ]) , 
@@ -122,24 +120,24 @@ let tree = create_group("root" , {} , [
         text("这个定理告诉我们，天下是没有免费的午餐的。这是因为：") , 
     ]) ,
     create_structure("line" , {widths: "2,2"} , [
-        create_group("theorem" , {alias_name: ""} , [
+        create_group("theoremer" , {alias_name: ""} , [
             create_paragraph([
                 text(`午餐是要收费的。`) , 
             ]) , 
         ]) , 
-        create_group("theorem" , {alias_name: "收费定理"} , [
+        create_group("theoremer" , {alias_name: "收费定理"} , [
             create_paragraph([
                 text(`还有其他收费项目`) , 
             ]) , 
         ]) , 
     ]) ,
     create_structure("line" , {widths: "2,2"} , [
-        create_group("theorem" , {alias_name: ""} , [
+        create_group("theoremer" , {alias_name: ""} , [
             create_paragraph([
                 text(`不仅午餐要收费`) , 
             ]) , 
         ] , ) , 
-        create_group("theorem" , {alias_name: "超级收费定理"} , [
+        create_group("theoremer" , {alias_name: "超级收费定理"} , [
             create_paragraph([
                 text(`吃饭也要收费。`) , 
             ])

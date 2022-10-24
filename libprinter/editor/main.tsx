@@ -77,6 +77,8 @@ interface DefaultRendererhDict{
     "text"      : EditorRenderer<TextNode> , 
 }
 
+// TODO 注意编辑器使用一级还是二级概念
+// TODO 处理inline节点编辑消失的问题
 
 /** 编辑器核心。
  * 要创建一个编辑器，需要对每个一级概念指定一个渲染器。
@@ -235,7 +237,6 @@ class EditorCore{
 }
 
 
-type RemoveEditor<F> = F extends (editor: any, ...args: infer P) => infer R ? (...args: P) => R : never;
 type TreeOpeationsMixins = {
     set_node           : <NT extends Slate.Node & ConceptNode>                         (node: NT, new_val: Partial<NT>         ) => void
     set_node_by_path   : <NT extends Slate.Node & ConceptNode>                         (path:number[] , new_val: Partial<NT>   ) => void
@@ -512,20 +513,51 @@ class EditorComponent<RootType extends (GroupNode | AbstractNode)> extends React
 
     /** 在当前位置新建一个指定概念的节点。 */
     new_concept_node(type: Exclude<AllConceptTypes,"abstract">, name: string){
-        let newnode: Node | undefined = undefined
-        if(type == "group")
-            newnode = this.get_core().create_group(name)
-        else if (type == "inline")
-            newnode = this.get_core().create_inline(name)
-        else if (type == "structure")
-            newnode = this.get_core().create_structure(name)
-        else if (type == "support")
-            newnode = this.get_core().create_support(name)
-        else{
-            throw new UnexpectedParametersError("unknown node type")
+        let me = this
+
+        if(type == "support"){
+            let node = me.get_editorcore().create_support(name)
+            me.add_nodes_here(node) // 在当前选中位置插入节点。
+            return 
+        }
+        if(type == "structure"){        
+            let node = me.get_editorcore().create_structure(name)
+                me.add_nodes_here(node) // 在当前选中位置插入节点。
+            return 
+        }
+        if(type == "group"){
+            let selection = me.get_slate().selection
+            let flag = true
+            if (selection != undefined)
+                flag = JSON.stringify(selection.anchor) == JSON.stringify(selection.focus) // 是否没有选择
+            
+            let node = me.get_editorcore().create_group(name)
+            if(flag){ // 没有选东西，直接添加节点
+                me.add_nodes_here(node) // 在当前选中位置插入节点。
+            }
+            else{ // 选了东西，打包节点。
+                me.wrap_selected_nodes(node , {split: false})
+            }
+            return 
+        }
+        if(type == "inline"){
+            let selection = me.get_slate().selection
+            let flag = true // 是否没有选择任何东西
+            if(selection != undefined)
+                flag = JSON.stringify(selection.anchor) == JSON.stringify(selection.focus) // 是否没有选择
+
+            let node = me.get_editorcore().create_inline(name)
+
+            if(flag){ // 如果没有选择任何东西，就新建节点。
+                me.add_nodes_here(node) // 在当前选中位置插入节点。
+            }
+            else{ // 如果有节点，就把所有子节点打包成一个inline节点。
+                me.wrap_selected_nodes(node  , {match: (n:Slate.Node)=>Slate.Text.isText(n) , split: true}) // 所有子节点中是文本的那些。
+            }
+            return 
         }
 
-        this.add_nodes_here(newnode)
+        throw new UnexpectedParametersError("这这不能")
     }
 }
 

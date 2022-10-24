@@ -42,7 +42,7 @@ import {
     slate_concept_node2path , 
 } from "../../editor"
 import { AutoTooltip , Direction , AutoStack , AutoStackedPopper } from "./autodirection"
-import { DefaultParameterWithEditorWithDrawer , UniversalComponentProps } from "./parameter_container" 
+import { DefaultParameterWithEditorWithDrawer , EditorInformation } from "./parameter_container" 
 
 export {    
     DefaultParameterEditButton , 
@@ -79,7 +79,7 @@ function AutoIconButton(props:{
  * @param props.open 抽屉是否打开。
  * @param props.onClose 抽屉关闭时的行为。
  */
-class DefaultParameterEditButton extends React.PureComponent <UniversalComponentProps & {
+class DefaultParameterEditButton extends React.PureComponent <EditorInformation & {
     onClose?: (e:any)=>void , 
 }, {
     open: boolean
@@ -115,10 +115,10 @@ class DefaultParameterEditButton extends React.PureComponent <UniversalComponent
  * @param props.editor 这个组件所服务的编辑器。
  * @param props.element 这个组件所服务的节点。
  */
-function DefaultCloseButton(props: UniversalComponentProps){
+function DefaultCloseButton(props: EditorInformation){
     return <GlobalInfo.Consumer>{globalinfo=>{
-        let editor = globalinfo.editor
-        return <AutoIconButton onClick={e=>{editor.delete_node(props.node)}} title="删除组件" icon={CloseIcon} />
+        let editor = globalinfo.editor as EditorComponent<GroupNode>
+        return <AutoIconButton onClick={e=>{editor.delete_concept_node(props.node)}} title="删除组件" icon={CloseIcon} />
     }}</GlobalInfo.Consumer>
 }
 
@@ -129,9 +129,9 @@ import {Transforms} from "slate"
  * @param props.element 这个组件所服务的节点。
  * @param props.puretext 是否将子组件作为纯文本。
  */
-function DefaultSoftDeleteButton(props: UniversalComponentProps & {puretext?: boolean}){
+function DefaultSoftDeleteButton(props: EditorInformation & {puretext?: boolean}){
     return <GlobalInfo.Consumer>{globalinfo=>{
-        let editor = globalinfo.editor as EditorComponent
+        let editor = globalinfo.editor as EditorComponent<GroupNode>
         return <AutoIconButton onClick={e=>{
             if(props.puretext){
                 // XXX 可能保留内部样式会比较好...
@@ -151,9 +151,9 @@ function DefaultSoftDeleteButton(props: UniversalComponentProps & {puretext?: bo
  * @param props.editor 这个组件所服务的编辑器。
  * @param props.node 这个组件所服务的节点。
  */
-function NewParagraphButton(props: UniversalComponentProps){
+function NewParagraphButton(props: EditorInformation){
     return <GlobalInfo.Consumer>{globalinfo=>{
-        let editor = globalinfo.editor as EditorComponent
+        let editor = globalinfo.editor as EditorComponent<GroupNode>
         return <React.Fragment>
                 <AutoIconButton
                 onClick = { e => {editor.add_nodes_before(editor.get_core().create_paragraph() , props.node ) }}
@@ -223,7 +223,7 @@ function MyImg(props: {img_url: string}){
 function DefaultSwicth(props: {node: Slate.Node & ConceptNode}){
     let element = props.node as (Slate.Node & ( GroupNode | StructNode ))
     let globalinfo = React.useContext(GlobalInfo)
-    let editor = globalinfo.editor as EditorComponent
+    let editor = globalinfo.editor as EditorComponent<GroupNode>
 
     let [ checked , set_checked ] = useState(element.relation == "chaining") // 开关是否打开
 

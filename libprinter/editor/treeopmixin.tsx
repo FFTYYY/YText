@@ -155,7 +155,7 @@ let tree_op_mixin = {
         if(path.length == 0){
             throw new UnexpectedParametersError("这这不能")
         }
-        path[path.length-1] ++
+        path[path.length-1] ++ 
         Slate.Transforms.insertNodes<NT>(editor.get_slate() , nodes, {at: path})
     } , 
 
