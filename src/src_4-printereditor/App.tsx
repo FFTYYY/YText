@@ -10,6 +10,7 @@ import {
 	PrinterBackgroundPaper , 
 	RendererDict, 
 	DefaultRendererhDict, 
+	AbstractNode , 
 
 	DefaultPrinterComponent , 
 
@@ -53,25 +54,24 @@ let editorcore = new EditorCore({
 })
 
 class App extends React.Component<{},{
-	tree: GroupNode 
+	tree: AbstractNode 
 }>{
-	editor_ref: React.RefObject<DefaultEditorComponent<GroupNode>>
+	editor_ref: React.RefObject<DefaultEditorComponent>
 	constructor(props: {}){
 		super(props)
 
 		this.state = {
 			tree: {
-				type: "group" ,
+				type: "abstract" ,
 				concept: "root" , 
 				idx: 2333 , 
 				abstract: [] , 
-				relation: "separating" , 
 				parameters: {} , 
 				children: [] , 
 			}
 		}
 
-		this.editor_ref = React.createRef<DefaultEditorComponent<GroupNode>>()
+		this.editor_ref = React.createRef<DefaultEditorComponent>()
 	}
 	componentDidMount(): void {
 		this.update()
@@ -92,7 +92,7 @@ class App extends React.Component<{},{
 
 		return <div>
 			<div style = {{position: "absolute", width: "50%", height: "100%", backgroundColor: "rgb(123,244,254)"}}>
-				<DefaultEditorComponent<GroupNode>
+				<DefaultEditorComponent
 					editorcore = {editorcore}
 					init_rootchildren = {tree.children}
 					ref = {me.editor_ref}

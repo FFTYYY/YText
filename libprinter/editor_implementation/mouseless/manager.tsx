@@ -123,10 +123,7 @@ interface KeyEventManagerProps{
     children: React.ReactChild | React.ReactChild[]
 }
 /** 按键事件管理器的`state`。 */
-interface KeyEventManagerState{
-    /** 只在按下ctrl的状态下有效，记录哪些键和ctrl同时被按下了。 */
-    ctrl_key: {[key: string]: boolean}
-
+interface KeyEventManagerState{    
     /** 记录每个空间的当前激活位置。 */
     cur_positions: {[space:string]: string}
 
@@ -139,27 +136,36 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
     spaces: {[key: string]: KeyEventManagerSpaceItem}
     non_space_oprations: {[key: string]: KeyEventManagerNonSpaceItem}
 
+    /** 临时用来记录哪些按键和ctrl一起被按下了的状态。
+     * 注意，这个属性不使用state来处理，因为
+     * 1）这是一个临时属性，只在ctrl按下时生效，
+     * 2）这个属性不影响render，只影响对外提供的操作函数，本质上是操作函数之中的一个变量。
+     * 3）这个属性要求其修改即时响应。
+     XXX 但是我也不知道这样实现是不是合理的....
+     */
+    ctrl_key: {[key: string]: boolean}
+
     constructor(props: KeyEventManagerProps){
         super(props)
 
         this.state = {
-            ctrl_key: {} , 
             cur_positions: {} , 
             elements: {} , 
         }
 
         this.update_props()
+        this.ctrl_key = {}
     }
 
     /** 目前ctrl键是否处于按下状态。 */
     ctrl_down(){
-        return this.state.ctrl_key["Control"]
+        return this.ctrl_key["Control"]
     }
 
     /** 查询当前哪个空间正在被激活。 */
     get_cur_activating(){
         for(let x in this.state.cur_positions){
-            if(this.state.ctrl_key[x]){
+            if(this.ctrl_key[x]){
                 return x
             }
         }
@@ -321,34 +327,28 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
     flush_key_state(keydown: boolean , e: React.KeyboardEvent<HTMLDivElement>){
         let me = this
         if(e.ctrlKey){ 
-            if(keydown){ // 如果按下了ctrl，记录新按下了哪个键
-                if(!me.state.ctrl_key[e.key]){
-                    me.setState({ctrl_key: {...me.state.ctrl_key , [e.key]: true}})
+            if(e.key){
+                if(keydown){ // 如果按下了ctrl，记录新按下了哪个键
+                    me.ctrl_key[e.key] = true
                 }
-            }
-            else{ // 如果按下了ctrl，记录新抬起了哪个键
-                if(me.state.ctrl_key[e.key]){
-                    me.setState({ctrl_key: {...me.state.ctrl_key , [e.key]: undefined}})
+                else{ // 如果按下了ctrl，记录新抬起了哪个键
+                    delete me.ctrl_key[e.key]
                 }
             }
         }
         else{ // 如果没有按下ctrl，就清空状态。
-            if(Object.keys( me.state.ctrl_key ).length > 0){
-                me.setState({
-                    ctrl_key: {} , 
-                })
-            }
+            me.ctrl_key = {}
         }
     }
 
     // TODO 好像state更新有延迟...？
     // TODO 激活应该拿到keydown里面...
-    /** 这个函数代理按键按下事件。注意因为所有的操作都会在按键抬起时处理，因此这个函数实质上不会做任何事，只是
-     * 阻止那些将要被按键抬起函数处理的事件的传播。
-     * @return 是否被处理。返回`true`表示事件将会在之后被按键抬起函数处理，否则表示不会被本处理器处理。
+    /** 这个函数代理按键抬起事件。注意因为所有的操作都会在按键按下时处理，因此这个函数实质上不会做任何事，只是
+     * 阻止那些已经被按键按下函数处理的事件的传播。
+     * @return 是否被处理。返回`true`表示事件已经在按下时被处理，否则表示不会被本处理器处理。
     */
-    keydown_proxy(e: React.KeyboardEvent<HTMLDivElement>){
-        this.flush_key_state(true, e)
+    keyup_proxy(e: React.KeyboardEvent<HTMLDivElement>){
+        this.flush_key_state(false, e)
 
         // 这个函数有三种可能：没有按下ctrl因此什么也不做、激活了某一个空间或者非空间操作、在某个空间激活的情况下进行移动。
 
@@ -370,13 +370,25 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
             e.preventDefault()
             return true
         }
-
         // 如果当前某个空间已经被激活，且正在使用方向键在空间中移动，或者使用回车键触发某个元素。
         let cur_space = this.get_cur_activating()
         if(cur_space){ 
-            if(is_direction(cur_key) || is_enter(cur_key)){ 
+            if(is_direction(cur_key)){ // 当前按下了方向键。
+                let cur_dir = cur_key
+
+                let position_list = this.get_position_list(cur_space)
+                let cur_position = this.get_cur_position(cur_space)    
+                let new_position = this.spaces[cur_space].switch_position(position_list, cur_position, cur_dir)
+                this.setState(produce(this.state, state=>{
+                    state.cur_positions[cur_space] = new_position
+                }))
+                // 不用处理激活的问题，componentDidUpdate会自动处理。
                 e.preventDefault()
                 return true    
+            }
+            if(is_enter(cur_key)){ // 当前按下了enter键。
+                let cur_position = this.get_cur_position(cur_space)    
+                this.run_position(cur_space, cur_position)
             }
         }
 
@@ -384,10 +396,10 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
     }
 
 
-    /** 这个函数代理按键抬起事件，但是注意，只有当事件被自身所处理时才会阻止事件传递。 
+    /** 这个函数代理按键按下事件，但是注意，只有当事件被自身所处理时才会阻止事件传递。 
      * @return 是否被处理。返回`true`表示事件被本处理器处理了，否则表示没有被本处理器处理。
     */
-    keyup_proxy(e: React.KeyboardEvent<HTMLDivElement>){
+    keydown_proxy(e: React.KeyboardEvent<HTMLDivElement>){
         this.flush_key_state(true, e)
 
         // 这个函数有三种可能：没有按下ctrl因此什么也不做、激活了某一个空间或者非空间操作、在某个空间激活的情况下进行移动。
@@ -424,24 +436,12 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
         // 如果当前某个空间已经被激活，且正在使用方向键在空间中移动，或者使用回车键触发某个元素。
         let cur_space = this.get_cur_activating()
         if(cur_space){ 
-            if(is_direction(cur_key)){ // 当前按下了方向键。
-                let cur_dir = cur_key
-
-                let position_list = this.get_position_list(cur_space)
-                let cur_position = this.get_cur_position(cur_space)    
-                let new_position = this.spaces[cur_space].switch_position(position_list, cur_position, cur_dir)
-                this.setState(produce(this.state, state=>{
-                    state.cur_positions[cur_space] = new_position
-                }))
-                // 不用处理激活的问题，componentDidUpdate会自动处理。
+            if(is_direction(cur_key) || is_enter(cur_key)){ 
                 e.preventDefault()
                 return true    
             }
-            if(is_enter(cur_key)){ // 当前按下了enter键。
-                let cur_position = this.get_cur_position(cur_space)    
-                this.run_position(cur_space, cur_position)
-            }
         }
+
 
         return false
     }
