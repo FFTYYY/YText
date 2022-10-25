@@ -64,6 +64,9 @@ import {
 } from "./uibase"
 
 import { EditorInformation } from "./uibase" 
+import {
+    MouselessButton , 
+} from "./mouseless_imp/button"
 
 export { get_deafult_group_editor_with_appbar , get_deafult_group_editor_with_rightbar}
 
@@ -100,12 +103,12 @@ function get_deafult_group_editor_with_appbar({
                 <UnselecableBox>
                     <Toolbar sx={{overflow: "auto"}}><AutoStack>
                         <StructureTypography>{label}</StructureTypography>
-                        <DefaultParameterEditButton     node={node} />
-                        <DefaultAbstractEditorButtons   node={node} />
-                        <DefaultSwicth                  node={node} />
-                        <NewParagraphButton             node={node} />
-                        <DefaultCloseButton             node={node} />
-                        <DefaultSoftDeleteButton        node={node} />
+                        <MouselessButton key={0} node={node} idx={0} component={DefaultParameterEditButton}/>
+                        <MouselessButton key={1} node={node} idx={1} component={DefaultAbstractEditorButtons}/>
+                        <MouselessButton key={2} node={node} idx={2} component={DefaultSwicth}/>
+                        <MouselessButton key={3} node={node} idx={3} component={NewParagraphButton}/>
+                        <MouselessButton key={4} node={node} idx={4} component={DefaultCloseButton}/>
+                        <MouselessButton key={5} node={node} idx={5} component={DefaultSoftDeleteButton}/>
                         <E                              node={node} />
                     </AutoStack></Toolbar>
                 </UnselecableBox >

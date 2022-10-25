@@ -30,17 +30,17 @@ function MouselessElement(props: MouselessElementProps){
     let [regiester_func, unregister_func] = React.useContext(MouselessRegister)
 
     React.useEffect(()=>{
-        console.log("???")
+        console.log(props.position)
         regiester_func(space, position, ()=>set_act(true), ()=>set_act(false), run)
 
         return ()=>{
             unregister_func(space, position)
         }
-    }, [props.space, props.position, props.run, props.children])
+    }, [])
 
     return <Box sx={{
         border: act? "2px solid #112233" : "none"
     }}>
-        {props.children}
+        {children}
     </Box>
 }

@@ -55,7 +55,7 @@ function DefaultNewAbstract(props: {node: ConceptNode, anchor_element: any, open
 
     let globalinfo = React.useContext(GlobalInfo)
     let node = props.node 
-    let editor = globalinfo.editor as EditorComponent<GroupNode | AbstractNode>
+    let editor = globalinfo.editor as EditorComponent
 
     // 这个列表罗列所有可选的抽象概念以供选择。
     // TODO 不应该从renderers读取吧。
@@ -111,7 +111,7 @@ interface DefaultAbstractEditorState{
 class DefaultAbstractEditor extends React.Component<DefaultAbstractEditorProps , DefaultAbstractEditorState>{
 
     /** 这个组件提供的文档编辑器的`ref`。 */
-    subeditor_ref: React.RefObject<DefaultEditorComponent<AbstractNode>>
+    subeditor_ref: React.RefObject<DefaultEditorComponent>
 
 
     /**
@@ -166,7 +166,7 @@ class DefaultAbstractEditor extends React.Component<DefaultAbstractEditorProps ,
         })()
 
         return <GlobalInfo.Consumer>{globalinfo=>{
-            let father_editor = globalinfo.editor as EditorComponent<GroupNode | AbstractNode>
+            let father_editor = globalinfo.editor as EditorComponent
             return <Drawer
                 anchor      = {"left"}
                 open        = {me.props.open}
@@ -192,7 +192,7 @@ class DefaultAbstractEditor extends React.Component<DefaultAbstractEditorProps ,
                 }}
             >
                 <ForceContain.Provider value={true}>
-                    <DefaultEditorComponent<AbstractNode> 
+                    <DefaultEditorComponent
                         ref         = {me.subeditor_ref}
                         editorcore  = {father_editor.get_editorcore()}
                         init_rootchildren = {son_children}
@@ -249,7 +249,7 @@ function DefaultAbstractEditorButtons(props: EditorInformation){
     let [menu_edit_ae, set_menu_edit_ae] = useState<undefined | HTMLElement>(undefined)
 
     return <GlobalInfo.Consumer>{globalinfo=>{
-        let editor = globalinfo.editor as EditorComponent<AbstractNode | GroupNode>
+        let editor = globalinfo.editor as EditorComponent
         return <React.Fragment>
 
             <Box sx={{marginX: "auto"}}><AutoTooltip title="新建抽象">

@@ -126,9 +126,6 @@ interface KeyEventManagerProps{
 interface KeyEventManagerState{    
     /** 记录每个空间的当前激活位置。 */
     cur_positions: {[space:string]: string}
-
-    /** 记录每个空间中有的元素。 */
-    elements: {[space:string]: {[position: string]: MouselessRegisteration}}
 }
 
 /** 按键事件管理器。 */
@@ -145,16 +142,20 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
      */
     ctrl_key: {[key: string]: boolean}
 
+    // TODO 真的该把这个作为属性而不是状态吗...
+    /** 记录每个空间中有的元素。 */
+    elements: {[space:string]: {[position: string]: MouselessRegisteration}}
+
     constructor(props: KeyEventManagerProps){
         super(props)
 
         this.state = {
             cur_positions: {} , 
-            elements: {} , 
         }
 
         this.update_props()
         this.ctrl_key = {}
+        this.elements = {}
     }
 
     /** 目前ctrl键是否处于按下状态。 */
@@ -184,7 +185,7 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
 
     /** 获取一个空间内的所有元素位置。 */
     get_position_list(space: string): string[]{
-        let ret = this.state.elements[space]
+        let ret = this.elements[space]
         if(ret == undefined){
             return []
         }
@@ -197,7 +198,7 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
         position: string , 
         operation: keyof MouselessRegisteration , 
     ): MouselessRegisteration[keyof MouselessRegisteration] | undefined{
-        let _ret1 = this.state.elements[space]
+        let _ret1 = this.elements[space]
         if(_ret1 == undefined){
             return undefined
         }
@@ -252,37 +253,31 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
         on_unactivate: MouselessUnActivateOperation, 
         run: MouselessRun
     ){
-        if(this.state.elements[space] == undefined){
-            this.setState(produce(this.state, state=>{
-                state.elements[space] = {
-                    [position]: { // 如果之前不存在这个空间，那么空间中只有一个元素。
-                        activate: on_activate,
-                        unactivate: on_unactivate , 
-                        run: run , 
-                    }
+        if(this.elements[space] == undefined){
+            this.elements[space] = {
+                [position]: { // 如果之前不存在这个空间，那么空间中只有一个元素。
+                    activate: on_activate,
+                    unactivate: on_unactivate , 
+                    run: run , 
                 }
-            }))
+            }
             return 
         }
 
-        this.setState(produce(this.state, state=>{
-            state.elements[space][position] = { // 如果存在空间，则直接设置空间中的对应位置。
-                activate: on_activate,
-                unactivate: on_unactivate , 
-                run: run , 
-            }
-        }))
+        this.elements[space][position] = { // 如果存在空间，则直接设置空间中的对应位置。
+            activate: on_activate,
+            unactivate: on_unactivate , 
+            run: run , 
+        }
     }
 
     /** 取消一个空间。 */
     unregister_space(space: string, position: string){
-        if(this.state.elements[space] == undefined){ // 如果空间还不存在，说明根本没注册过。
+        if(this.elements[space] == undefined){ // 如果空间还不存在，说明根本没注册过。
             throw new UnexpectedParametersError("can not unregister a position that is not registered.")
         }
         
-        this.setState(produce(this.state, state=>{
-            delete state.elements[space][position]
-        }))
+        delete this.elements[space][position]
     }
 
     /** 这个函数从`props`整理出自身的`spaces`和`non_space_oprations`属性。 */
@@ -329,6 +324,9 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
         if(e.ctrlKey){ 
             if(e.key){
                 if(keydown){ // 如果按下了ctrl，记录新按下了哪个键
+                    if(me.ctrl_key[e.key]){
+                        return false // 提示已经被处理过了。
+                    }
                     me.ctrl_key[e.key] = true
                 }
                 else{ // 如果按下了ctrl，记录新抬起了哪个键
@@ -339,9 +337,57 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
         else{ // 如果没有按下ctrl，就清空状态。
             me.ctrl_key = {}
         }
+        return true
     }
 
-    // TODO 好像state更新有延迟...？
+    /** 
+     * 这个函数什么也不做，只是阻止事件传播
+     TODO 把文档写清楚啊
+     */
+    do_nothing(e: React.KeyboardEvent<HTMLDivElement>){
+        // 没有按下ctrl因此什么也不做。
+        if(!this.ctrl_down()){
+            return false
+        }
+
+        let cur_key = e.key
+
+        // 激活某个非空间操作。
+        if(this.non_space_oprations[cur_key]){ // 存在一个这个key的非空间操作。 
+            e.preventDefault()
+            return true
+        }
+
+        // 激活某个空间。
+        if(this.spaces[cur_key]){ // 刚刚激活一个空间。
+            e.preventDefault()
+            return true
+        }
+        // 如果当前某个空间已经被激活，且正在使用方向键在空间中移动，或者使用回车键触发某个元素。
+        let cur_space = this.get_cur_activating()
+        if(cur_space){ 
+            if(is_direction(cur_key)){ // 当前按下了方向键。
+                let cur_dir = cur_key
+
+                let position_list = this.get_position_list(cur_space)
+                let cur_position = this.get_cur_position(cur_space)    
+                let new_position = this.spaces[cur_space].switch_position(position_list, cur_position, cur_dir)
+                this.setState(produce(this.state, state=>{
+                    state.cur_positions[cur_space] = new_position
+                }))
+                // 不用处理激活的问题，componentDidUpdate会自动处理。
+                e.preventDefault()
+                return true    
+            }
+            if(is_enter(cur_key)){ // 当前按下了enter键。
+                let cur_position = this.get_cur_position(cur_space)    
+                this.run_position(cur_space, cur_position)
+            }
+        }
+
+        return false
+    }
+
     // TODO 激活应该拿到keydown里面...
     /** 这个函数代理按键抬起事件。注意因为所有的操作都会在按键按下时处理，因此这个函数实质上不会做任何事，只是
      * 阻止那些已经被按键按下函数处理的事件的传播。
@@ -400,7 +446,9 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
      * @return 是否被处理。返回`true`表示事件被本处理器处理了，否则表示没有被本处理器处理。
     */
     keydown_proxy(e: React.KeyboardEvent<HTMLDivElement>){
-        this.flush_key_state(true, e)
+        if(!this.flush_key_state(true, e)){
+            return this.do_nothing(e)
+        }
 
         // 这个函数有三种可能：没有按下ctrl因此什么也不做、激活了某一个空间或者非空间操作、在某个空间激活的情况下进行移动。
 

@@ -72,8 +72,15 @@ import {
 
 import {
     DefaultButtonbar , 
-    get_mouseless_space as buttonbar_get_mouseless_space , 
 } from "./buttobar"
+
+import {
+    get_mouseless_space as buttonbar_get_mouseless_space , 
+} from "./mouseless_imp/buttonbar"
+
+import {
+    get_mouseless_space as button_get_mouseless_space , // TODO 别叫button吧...
+} from "./mouseless_imp/button"
 
 export { DefaultEditorComponent }
 
@@ -147,7 +154,8 @@ class DefaultEditorComponent extends React.Component <EditorComponentProps & {
         return <ThemeProvider theme={createTheme(theme)}><EditorBackgroundPaper>
             <KeyEventManager
                 spaces = {[
-                    buttonbar_get_mouseless_space(me.get_editor())
+                    buttonbar_get_mouseless_space(me.get_editor()) , 
+                    button_get_mouseless_space(me.get_editor()) , 
                 ]}
                 non_space_oprations = {[
                     {

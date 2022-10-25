@@ -117,7 +117,7 @@ class DefaultParameterEditButton extends React.PureComponent <EditorInformation 
  */
 function DefaultCloseButton(props: EditorInformation){
     return <GlobalInfo.Consumer>{globalinfo=>{
-        let editor = globalinfo.editor as EditorComponent<GroupNode>
+        let editor = globalinfo.editor as EditorComponent
         return <AutoIconButton onClick={e=>{editor.delete_concept_node(props.node)}} title="删除组件" icon={CloseIcon} />
     }}</GlobalInfo.Consumer>
 }
@@ -131,7 +131,7 @@ import {Transforms} from "slate"
  */
 function DefaultSoftDeleteButton(props: EditorInformation & {puretext?: boolean}){
     return <GlobalInfo.Consumer>{globalinfo=>{
-        let editor = globalinfo.editor as EditorComponent<GroupNode>
+        let editor = globalinfo.editor as EditorComponent
         return <AutoIconButton onClick={e=>{
             if(props.puretext){
                 // XXX 可能保留内部样式会比较好...
@@ -153,7 +153,7 @@ function DefaultSoftDeleteButton(props: EditorInformation & {puretext?: boolean}
  */
 function NewParagraphButton(props: EditorInformation){
     return <GlobalInfo.Consumer>{globalinfo=>{
-        let editor = globalinfo.editor as EditorComponent<GroupNode>
+        let editor = globalinfo.editor as EditorComponent
         return <React.Fragment>
                 <AutoIconButton
                 onClick = { e => {editor.add_nodes_before(editor.get_core().create_paragraph() , props.node ) }}
@@ -215,17 +215,24 @@ function MyImg(props: {img_url: string}){
     return <img src={props.img_url}></img>
 }
 
-// TODO 撤销操作不会刷新switch状态。
-/** 这个组件给一个 Group 或 Struct 组件提供一个开关，用于控制 Group 的 relation 。 
+/** 这个组件给一个`Group`或`Struct`组件提供一个开关，用于控制`Group`或`Struct`的`relation`。 
  * @param props.editor 服务的编辑器。
  * @param props.element 服务的节点。
  */
-function DefaultSwicth(props: {node: Slate.Node & ConceptNode}){
-    let element = props.node as (Slate.Node & ( GroupNode | StructNode ))
+function DefaultSwicth(props: {node: Slate.Node & (GroupNode | StructNode)}){
+    let node = props.node
     let globalinfo = React.useContext(GlobalInfo)
-    let editor = globalinfo.editor as EditorComponent<GroupNode>
+    let editor = globalinfo.editor as EditorComponent
 
-    let [ checked , set_checked ] = useState(element.relation == "chaining") // 开关是否打开
+    let [ checked , set_checked ] = useState(node.relation == "chaining") // 开关是否打开
+
+    React.useEffect(()=>{
+
+        // 在节点被外部修改的情况下更新组件状态。主要是为了在撤销操作时正确的操作状态
+        if( (node.relation == "chaining") != checked){ 
+            set_checked(node.relation == "chaining")
+        }
+    })
 
     /** 处理开关的逻辑。 */
     function switch_check_change(e: any & {target: any & {checked: boolean}}){
@@ -234,12 +241,11 @@ function DefaultSwicth(props: {node: Slate.Node & ConceptNode}){
 
         // constraints会自动处理更改，不用担心
         if(checked == false){ // 从开到关
-            editor.set_node(element , { relation: "separating" })
+            editor.set_node(node , { relation: "separating" })
         }
         if(checked == true){ // 从关到开
-            editor.set_node(element , { relation: "chaining" } )
+            editor.set_node(node , { relation: "chaining" } )
         }
-
     }
 
     return <AutoTooltip title = "贴贴"><Switch checked={checked} onChange={switch_check_change}></Switch></AutoTooltip>
