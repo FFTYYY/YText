@@ -1,4 +1,5 @@
 /** 这个模块描述默认实现的按钮栏。
+ * 无鼠标操作的约定：所有位置用 JSON.stringify([number, number]) 表示，其中前一个表示行（0/1/2/3=组/行内/支持/结构），后一个表示第几个对象。
  * @module
  */
 import React  from "react"
@@ -54,17 +55,19 @@ import {
 
 export {
     DefaultButtonbar , 
-    SPACE , 
-    get_activate_position , 
-    get_switch_position , 
+    get_mouseless_space , 
 }
 
 const SPACE = "q"
 const TYPENAMES = ["group" , "inline" , "support" , "structure"]
 
-/** 以下几个函数定义无鼠标操作会用到的函数。 
- * 约定：所有位置用 JSON.stringify([number, number]) 表示，其中前一个表示行（0/1/2/3=组/行内/支持/结构），后一个表示第几个对象。
-*/
+function get_mouseless_space(editor: EditorComponent<GroupNode>){
+    return {
+        key: SPACE, 
+        activate_position: get_activate_position() , 
+        switch_position: get_switch_position(editor) , 
+    }
+}
 
 
 function get_position(typename: Exclude<AllConceptTypes, "abstract">, idx: number){

@@ -72,9 +72,7 @@ import {
 
 import {
     DefaultButtonbar , 
-    SPACE as ButtonbarSpace, 
-    get_activate_position as buttonbar_get_activate_position, 
-    get_switch_position as buttonbar_get_switch_position, 
+    get_mouseless_space as buttonbar_get_mouseless_space , 
 } from "./buttobar"
 
 export { DefaultEditorComponent }
@@ -149,11 +147,7 @@ class DefaultEditorComponent<RootType extends AbstractNode | GroupNode> extends 
         return <ThemeProvider theme={createTheme(theme)}><EditorBackgroundPaper>
             <KeyEventManager
                 spaces = {[
-                    {
-                        key: ButtonbarSpace , 
-                        activate_position: buttonbar_get_activate_position() , 
-                        switch_position: buttonbar_get_switch_position(me.get_editor()) , 
-                    }
+                    buttonbar_get_mouseless_space(me.get_editor())
                 ]}
                 non_space_oprations = {[
                     {
