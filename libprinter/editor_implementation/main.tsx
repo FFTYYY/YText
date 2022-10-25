@@ -58,6 +58,12 @@ import {
     merge_object ,
 
 } from "./uibase"
+import {
+    KeyEventManager , 
+    MouselessElement , 
+    KeyDownUpFunctionProxy , 
+    DirectionKey, 
+} from "./mouseless"
 
 import { EditorBackgroundPaper , EditorComponentEditingBox } from "./uibase"
 
@@ -65,106 +71,89 @@ export { DefaultEditorComponent }
 
 // TODO 完善无鼠标操作。
 
-interface DefaultButtonbarprops<RootType extends AbstractNode | GroupNode>{
-    editor: EditorComponent<RootType>
-    selecting: boolean
+/** 这个对象定义默认的按钮栏的无鼠标操作的各种操作。 
+ * 约定：所有位置用 JSON.stringify([number, number]) 表示，其中前一个表示行（0/1/2/3=组/行内/支持/结构），后一个表示第几个对象。
+*/
+let default_buttonbar_mouseless = {
+    typenames: ["group" , "inline" , "support" , "structure"] as ["group" , "inline" , "support" , "structure"] , 
+    space: "q" , 
 
+    register_position(typename: Exclude<AllConceptTypes, "abstract">, idx: number){
+        let typeidx = default_buttonbar_mouseless.typenames.indexOf(typename)
+        return JSON.stringify([typeidx, idx])
+    } , 
+    
+    get_run(editor: EditorComponent<GroupNode>, typename: Exclude<AllConceptTypes, "abstract">, pos_y: number){
+        return ()=>{
+            let concept_names = Object.keys( editor.get_core().renderers[typename] )
+            let concept_name = concept_names[pos_y]
+            editor.new_concept_node(typename , concept_name)
+        }
+    } , 
+
+    get_activate_position(){
+        return (position_list: string[], cur_position: string): string | undefined => {
+            if(cur_position != undefined){ // 如果之前已经选过值了，那就用之前的值。
+                return cur_position
+            }
+            if(position_list.length == 0){
+                return undefined
+            }
+            let positions = position_list.reduce((s,x)=>[...s, JSON.parse(x)], [])
+            positions.sort((a: [number,number],b: [number,number])=>(a[0] == b[0]) ? (a[1] - b[1]) : (a[0] - b[0]))
+            return JSON.stringify(positions[0]) // 最小的那个。
+        }
+    } , 
+
+    /** 这个函数以editor为参数，返回改变位置的函数。 */
+    get_switch_position(editor: EditorComponent<GroupNode | AbstractNode>){
+        if(editor == undefined){
+            return ()=>undefined
+        }
+        return (position_list: string[], cur_position: string, direction: DirectionKey) => {
+            if(cur_position == undefined){ // 如果都没有选中过位置，那就用最小的。
+                 return default_buttonbar_mouseless.get_activate_position()(position_list, cur_position)
+            }
+            let xmax = default_buttonbar_mouseless.typenames.length
+    
+            let [pos_x , pos_y]: [number , number] = JSON.parse(cur_position)
+            if(direction == "ArrowUp"){
+                pos_x --
+            }
+            else if(direction  == "ArrowDown"){
+                pos_x ++
+            }
+            pos_x = ((pos_x % xmax) + xmax) % xmax
+            
+            let typename = default_buttonbar_mouseless.typenames[pos_x]
+            let ymax = Object.keys( editor.get_core().renderers[typename] ).length // TODO renderers?
+            if(direction == "ArrowLeft"){
+                pos_y --
+            }
+            else if(direction  == "ArrowRight"){
+                pos_y ++ 
+            }
+            pos_y = ((pos_y % ymax) + ymax) % ymax
+
+            return JSON.stringify([pos_x, pos_y])
+        }
+    } , 
 }
 
+
+interface DefaultButtonbarProps<RootType extends AbstractNode | GroupNode>{
+    editor: EditorComponent<RootType>
+}
 /** 这个组件是编辑器的右边工具栏的组件按钮部分。 */
-class DefaultButtonbar<RootType extends AbstractNode | GroupNode> extends React.Component<DefaultButtonbarprops<RootType> , {
-    cur_type_idx: number , 
-    cur_styl_idx: number , 
-}>{
-    button_refs: {[k in Exclude<AllConceptTypes , "abstract">] : React.RefObject<HTMLButtonElement>[]}
-    constructor(props: DefaultButtonbarprops<RootType>){
+class DefaultButtonbar<RootType extends AbstractNode | GroupNode> extends React.Component<DefaultButtonbarProps<RootType>>{
+    constructor(props: DefaultButtonbarProps<RootType>){
         super(props)
-
-        this.state = {
-            cur_type_idx: 0, 
-            cur_styl_idx: 0, 
-        }
-
-        this.button_refs = {
-            group	    : Object.keys( this.get_editor().get_core().renderers["group"] 	    ).map( (x=>React.createRef<HTMLButtonElement>()) ) , 
-            inline	    : Object.keys( this.get_editor().get_core().renderers["inline"] 	).map( (x=>React.createRef<HTMLButtonElement>()) ) , 
-            support	    : Object.keys( this.get_editor().get_core().renderers["support"] 	).map( (x=>React.createRef<HTMLButtonElement>()) ) , 
-            structure	: Object.keys( this.get_editor().get_core().renderers["structure"] 	).map( (x=>React.createRef<HTMLButtonElement>()) ) , 
-        }
     }
 
     get_editor(){
         return this.props.editor
     }
-
-    /** get the name of all concepts */
-    get_concept_names(type: AllConceptTypes){
-        return Object.keys( this.get_editor().get_core().renderers[type] )
-    }
-
-    get_ref(type_idx?: number , styl_idx?: number){
-        if(type_idx == undefined || styl_idx == undefined){
-            return undefined
-        }
-        let type_order = ["group" , "inline" , "support" , "structure"]
-        let but_ref: React.RefObject<HTMLDivElement> = this.button_refs[type_order[type_idx]][styl_idx]
-        if(but_ref && but_ref.current){
-            return but_ref.current
-        }
-        return undefined
-    }
-
-    update_selection(old_state: { cur_type_idx?: number; cur_styl_idx?: number }){
-        let old_but = this.get_ref(old_state.cur_type_idx , old_state.cur_styl_idx)
-        let cur_but = this.get_ref(this.state.cur_type_idx , this.state.cur_styl_idx)
-        if(old_but){
-            old_but.style.border = "none"
-        }
-        if(cur_but){
-            cur_but.style.border = "2px solid #112233"
-        }
-    }
-
-    normalize_idx(type_idx: number, styl_idx: number){
-        const type_order = ["group" , "inline" , "support" , "structure"] as ["group" , "inline" , "support" , "structure"]
-        const typenum = type_order.length
-        type_idx = ((type_idx % typenum) + typenum) % typenum
-
-        let stylnum = this.get_concept_names(type_order[type_idx]).length
-        styl_idx = ((styl_idx % stylnum) + stylnum) % stylnum
-        return [type_idx , styl_idx]
-    }
-
-    // 移动
-    move({x = 0, y = 0} : {x?: number , y?: number}){
-        let [type_idx , styl_idx] = this.normalize_idx(this.state.cur_type_idx + y , this.state.cur_styl_idx + x)
-        this.setState({
-            cur_type_idx: type_idx , 
-            cur_styl_idx: styl_idx , 
-        })
-    }
-
-    // 假装点击了当前位置
-    force_click(){
-        const type_order = ["group" , "inline" , "support" , "structure"] as ["group" , "inline" , "support" , "structure"]
-        let cur_typename = type_order[this.state.cur_type_idx]
-        let cur_stylename = this.get_concept_names(cur_typename)[this.state.cur_styl_idx]
-        this.get_editor().new_concept_node(cur_typename , cur_stylename)
-    }
-
-    componentDidMount(): void {
-        this.update_selection({cur_type_idx: undefined , cur_styl_idx: undefined})
-    }
-
-    componentDidUpdate(
-        prevProps: Readonly<{ editor: EditorComponent<RootType>; selecting: boolean }>, 
-        prevState: Readonly<{ cur_type_idx: number; cur_styl_idx: number }>, 
-        snapshot?: any
-    ): void {
-        this.update_selection(prevState)
-    }
-
-
+    
     render(){
         let icons = {
             group: CalendarViewDayIcon , 
@@ -190,17 +179,21 @@ class DefaultButtonbar<RootType extends AbstractNode | GroupNode> extends React.
                         }}
                         title = {typename}
                     >{
-                        me.get_concept_names(typename).map( (stylename , idx) => 
-                            <React.Fragment key={idx}>
+                        Object.keys( this.get_editor().get_core().renderers[typename] ).map( (stylename , idx) => 
+                            <MouselessElement 
+                                key = {idx}
+                                space = {default_buttonbar_mouseless.space}
+                                position = {default_buttonbar_mouseless.register_position(typename, idx)}
+                                run = {default_buttonbar_mouseless.get_run(me.get_editor() as EditorComponent<GroupNode>, typename, idx)}
+                            >
                                 <Button 
                                     onClick = {e => me.get_editor().new_concept_node(typename , stylename)}
                                     variant = "text"
-                                    ref = {me.button_refs[typename][idx]}
                                 >
                                     {stylename}
                                 </Button>
                                 <Divider orientation="vertical" flexItem/>
-                            </React.Fragment>
+                            </MouselessElement>
                         )
                     }</AutoStackedPopperWithButton>
                 </React.Fragment>
@@ -209,98 +202,6 @@ class DefaultButtonbar<RootType extends AbstractNode | GroupNode> extends React.
     }
 }
 
-// TODO 别这样写mixin
-let KeyOpsMixin = {
-    is_selecting<RootType extends AbstractNode | GroupNode>(){
-        let me = this as any as DefaultEditorComponent<RootType>
-        return me.state.ctrl_key["q"]
-    } , 
-
-    flush_key_state<RootType extends AbstractNode | GroupNode>(keydown: boolean , e: React.KeyboardEvent<HTMLDivElement>){
-        let me = this as any as DefaultEditorComponent<RootType>
-
-        if(e.ctrlKey){
-            if(keydown){
-                if(!me.state.ctrl_key[e.key]){
-                    me.setState({ctrl_key: {...me.state.ctrl_key , [e.key]: true}})
-                }
-            }
-            else{
-                if(me.state.ctrl_key[e.key]){
-                    me.setState({ctrl_key: {...me.state.ctrl_key , [e.key]: undefined}})
-                }
-            }
-        }
-        else{
-            if(Object.keys( me.state.ctrl_key ).length > 0){
-                me.setState({
-                    ctrl_key: {} , 
-                })
-            }
-        }
-    } , 
-
-    prevent_key_down<RootType extends AbstractNode | GroupNode>(e: React.KeyboardEvent<HTMLDivElement>){
-        let me = this as any as DefaultEditorComponent<RootType>
-
-        if(me.state.ctrl_key["Control"] && e.key == "s"){ // ctrl + s
-            me.onSave() // 调用保存回调函数。
-            e.preventDefault()
-            return true
-        }
-        if(me.is_selecting()){
-            if(me.buttonbar_ref && me.buttonbar_ref.current){
-                let buttonbar = me.buttonbar_ref.current
-                if(e.key == "ArrowLeft" || e.key == "ArrowRight" || e.key == "ArrowDown" || e.key == "ArrowUp" || e.key == "Enter"){
-                    e.preventDefault()
-                    return true
-                }
-            }
-        }
-        return false
-    } , 
-
-    handle_key_up<RootType extends AbstractNode | GroupNode>(e: React.KeyboardEvent<HTMLDivElement>){
-        let me = this as any as DefaultEditorComponent<RootType>
-        if(me.state.ctrl_key["Control"] && e.key == "s"){
-            e.preventDefault()
-            return true
-        }
-        if(me.is_selecting()){
-            if(me.buttonbar_ref && me.buttonbar_ref.current){
-                let buttonbar = me.buttonbar_ref.current
-                if(e.key == "ArrowLeft"){
-                    buttonbar.move({x: -1})
-                    e.preventDefault()
-                    return true
-                }
-                if(e.key == "ArrowRight"){
-                    buttonbar.move({x: 1})
-                    e.preventDefault()
-                    return true
-                }
-                if(e.key == "ArrowDown"){
-                    buttonbar.move({y: 1})
-                    e.preventDefault()
-                    return true
-                }
-                if(e.key == "ArrowUp"){
-                    buttonbar.move({y: -1})
-                    e.preventDefault()
-                    return true
-                }
-                if(e.key == "Enter"){
-                    buttonbar.force_click()
-                    e.preventDefault()
-                    return true
-                }
-            }
-            return false
-        }
-        return false
-        
-    } , 
-}
 
 /** 
  * 这个组件提供一个开箱即用的默认编辑器组件。
@@ -311,13 +212,7 @@ class DefaultEditorComponent<RootType extends AbstractNode | GroupNode> extends 
     onSave?: ()=>void // 保存时操作。
 } , {
     ctrl_key: any
-}> {
-
-    is_selecting: () => boolean
-    flush_key_state: (keydown: boolean , e: React.KeyboardEvent<HTMLDivElement>) => void
-    prevent_key_down: (e: React.KeyboardEvent<HTMLDivElement>) => boolean
-    handle_key_up: (e: React.KeyboardEvent<HTMLDivElement>) => boolean
-    
+}> {    
     onUpdate: (newval: Node[]) => void
     onFocusChange: ()=>void
     onSave: ()=> void
@@ -325,17 +220,8 @@ class DefaultEditorComponent<RootType extends AbstractNode | GroupNode> extends 
     editor_ref		: React.RefObject<EditorComponent<RootType>>
     buttonbar_ref	: React.RefObject<DefaultButtonbar<RootType>>
 
-    use_mixins(){
-        this.is_selecting 		= KeyOpsMixin.is_selecting.bind(this)
-        this.flush_key_state 	= KeyOpsMixin.flush_key_state.bind(this)
-        this.prevent_key_down 	= KeyOpsMixin.prevent_key_down.bind(this)
-        this.handle_key_up 		= KeyOpsMixin.handle_key_up.bind(this)
-    }
-
     constructor(props: EditorComponentProps<RootType> & {theme?: ThemeOptions, extra_buttons?: any, onSave?: ()=>void}) {
         super(props)
-
-        this.use_mixins()
 
         this.state = {
             ctrl_key: {} , // 只在按下ctrl的状态下有效，记录哪些键被按下了
@@ -384,56 +270,63 @@ class DefaultEditorComponent<RootType extends AbstractNode | GroupNode> extends 
         let me = this
 
         return <ThemeProvider theme={createTheme(theme)}><EditorBackgroundPaper>
-            <Box sx = {{ 
-                position: "absolute" , 
-                height: "100%", 
-                width: "100%", 
-                overflow: "auto", 
-            }}><EditorComponentEditingBox>
-                <EditorComponent
-                    ref 		        = {me.editor_ref} 
+            <KeyEventManager
+                spaces = {[
+                    {
+                        key: default_buttonbar_mouseless.space , 
+                        activate_position: default_buttonbar_mouseless.get_activate_position() , 
+                        switch_position: default_buttonbar_mouseless.get_switch_position(me.get_editor()) , 
+                    }
+                ]}
+                non_space_oprations = {[]}
+            >
+                <Box sx = {{ 
+                    position: "absolute" , 
+                    height: "100%", 
+                    width: "100%", 
+                    overflow: "auto", 
+                }}><EditorComponentEditingBox>
+                    <KeyDownUpFunctionProxy.Consumer>{([onkeydown , onkeyup])=>{
+                        return <EditorComponent
+                            ref 		        = {me.editor_ref} 
 
-                    editorcore          = {me.props.editorcore}
-                    plugin              = {me.props.plugin}
-                    init_rootchildren   = {me.props.init_rootchildren}
-                    init_rootproperty   = {me.props.init_rootproperty}
+                            editorcore          = {me.props.editorcore}
+                            plugin              = {me.props.plugin}
+                            init_rootchildren   = {me.props.init_rootchildren}
+                            init_rootproperty   = {me.props.init_rootproperty}
 
-                    onUpdate            = {me.props.onUpdate}
-                    onKeyPress          = {me.props.onKeyPress}
-                    onFocusChange       = {me.props.onFocusChange}
-                    
-                
-                    onKeyDown = {e=>{
-                        this.flush_key_state(true , e)
-                        return this.prevent_key_down(e) // 这个函数没有副作用，唯一的用处是判断是否阻止传递
+                            onUpdate            = {me.props.onUpdate}
+                            onKeyPress          = {me.props.onKeyPress}
+                            onFocusChange       = {me.props.onFocusChange}
+                            
+                        
+                            onKeyDown = {onkeydown}
+                            onKeyUp = {onkeyup}
+                        />
                     }}
-                    onKeyUp = {e=>{
-                        this.flush_key_state(false , e)
-                        return this.handle_key_up(e) // 抬起来也是一种press
-                    }}
-                />
-            </EditorComponentEditingBox></Box>
+                    </KeyDownUpFunctionProxy.Consumer>
+                </EditorComponentEditingBox></Box>
 
-            <Box sx = {{
-                position: "absolute", 
-                height: "100%", 
-                left: number2percent(complement_width), 
-                width: toolbar_width
-            }}>{(()=>{
-                let editor = me.get_editor()
-                let root = me.get_root()
-                if(!(editor && root)){
-                    return <></>
-                }
-                return <AutoStack force_direction="column">
-                    <DefaultParameterEditButton node={me.editor_ref.current?.get_root()} />
-                    {/* <DefaultHiddenEditorButtons editor={editor} element={me.state.root} /> */}
-                    {me.props.extra_buttons}
-                    <Divider />
-                    <DefaultButtonbar editor={me.get_editor()} selecting={me.is_selecting()} ref={me.buttonbar_ref}/>
-                </AutoStack>
-            })()}</Box>
-
-            </EditorBackgroundPaper></ThemeProvider>
+                <Box sx = {{
+                    position: "absolute", 
+                    height: "100%", 
+                    left: number2percent(complement_width), 
+                    width: toolbar_width
+                }}>{(()=>{
+                    let editor = me.get_editor()
+                    let root = me.get_root()
+                    if(!(editor && root)){
+                        return <></>
+                    }
+                    return <AutoStack force_direction="column">
+                        <DefaultParameterEditButton node={me.editor_ref.current?.get_root()} />
+                        {/* <DefaultHiddenEditorButtons editor={editor} element={me.state.root} /> */}
+                        {me.props.extra_buttons}
+                        <Divider />
+                        <DefaultButtonbar editor={me.get_editor()} ref={me.buttonbar_ref}/>
+                    </AutoStack>
+                })()}</Box>
+            </KeyEventManager>
+        </EditorBackgroundPaper></ThemeProvider>
     }
 }

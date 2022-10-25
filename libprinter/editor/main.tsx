@@ -61,8 +61,8 @@ export type {
 interface RendererDict{
     "group"     : {[name: string] : EditorRenderer<GroupNode>} , 
     "inline"    : {[name: string] : EditorRenderer<InlineNode>} , 
-    "structure" : {[name: string] : EditorRenderer<StructNode>} , 
     "support"   : {[name: string] : EditorRenderer<SupportNode>} , 
+    "structure" : {[name: string] : EditorRenderer<StructNode>} , 
     "abstract"  : {[name: string] : EditorRenderer<AbstractNode>} , 
 }
 
@@ -70,8 +70,8 @@ interface RendererDict{
 interface DefaultRendererhDict{
     "group"     : EditorRenderer<GroupNode> , 
     "inline"    : EditorRenderer<InlineNode> , 
-    "structure" : EditorRenderer<StructNode> , 
     "support"   : EditorRenderer<SupportNode> , 
+    "structure" : EditorRenderer<StructNode> , 
     "abstract"  : EditorRenderer<AbstractNode> , 
     "paragraph" : EditorRenderer<ParagraphNode> , 
     "text"      : EditorRenderer<TextNode> , 
