@@ -112,7 +112,7 @@ interface KeyEventManagerNonSpaceItem{
     key: string
 
     /** 按下时操作。 */
-    on_activate: (event)=>boolean
+    on_activate: ()=>void
 }
 
 /** 按键事件管理器的`props`。 */
@@ -341,6 +341,8 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
         }
     }
 
+    // TODO 好像state更新有延迟...？
+    // TODO 激活应该拿到keydown里面...
     /** 这个函数代理按键按下事件。注意因为所有的操作都会在按键抬起时处理，因此这个函数实质上不会做任何事，只是
      * 阻止那些将要被按键抬起函数处理的事件的传播。
      * @return 是否被处理。返回`true`表示事件将会在之后被按键抬起函数处理，否则表示不会被本处理器处理。
@@ -399,7 +401,7 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
 
         // 激活某个非空间操作。
         if(this.non_space_oprations[cur_key]){ // 存在一个这个key的非空间操作。 
-            this.non_space_oprations[cur_key].on_activate(e)
+            this.non_space_oprations[cur_key].on_activate()
             e.preventDefault()
             return true
         }
