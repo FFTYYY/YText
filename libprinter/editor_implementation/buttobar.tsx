@@ -61,7 +61,7 @@ export {
 const SPACE = "q"
 const TYPENAMES = ["group" , "inline" , "support" , "structure"]
 
-function get_mouseless_space(editor: EditorComponent<GroupNode>){
+function get_mouseless_space(editor: EditorComponent){
     return {
         key: SPACE, 
         activate_position: get_activate_position() , 
@@ -75,7 +75,7 @@ function get_position(typename: Exclude<AllConceptTypes, "abstract">, idx: numbe
     return JSON.stringify([typeidx, idx])
 }
 
-function get_run(editor: EditorComponent<GroupNode>, typename: Exclude<AllConceptTypes, "abstract">, pos_y: number){
+function get_run(editor: EditorComponent, typename: Exclude<AllConceptTypes, "abstract">, pos_y: number){
     return ()=>{
         let concept_names = Object.keys( editor.get_core().renderers[typename] )
         let concept_name = concept_names[pos_y]
@@ -98,7 +98,7 @@ function get_activate_position(){
 } 
 
 /** 这个函数以editor为参数，返回改变位置的函数。 */
-function get_switch_position(editor: EditorComponent<GroupNode | AbstractNode>){
+function get_switch_position(editor: EditorComponent){
     if(editor == undefined){
         return ()=>undefined
     }
@@ -133,7 +133,7 @@ function get_switch_position(editor: EditorComponent<GroupNode | AbstractNode>){
 
 
 /** 这个组件是编辑器的右边工具栏的组件按钮部分。 */
-function DefaultButtonbar(props: {editor: EditorComponent<GroupNode>}){
+function DefaultButtonbar(props: {editor: EditorComponent}){
     let editor = props.editor
 
     let icons = {

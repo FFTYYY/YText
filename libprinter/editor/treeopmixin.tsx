@@ -43,11 +43,11 @@ export { tree_op_mixin }
 let tree_op_mixin = {
     
     /** 这个函数修改节点的某个属性。相当于`slate.Transforms.setNodes`。 */
-    set_node<RootType extends AbstractNode | GroupNode, NT extends Slate.Node & ConceptNode>(editor: EditorComponent<RootType>, node: NT, new_val: Partial<NT>){
+    set_node<NT extends Slate.Node & ConceptNode>(editor: EditorComponent, node: NT, new_val: Partial<NT>){
 
         let path = slate_concept_node2path(editor.get_root() , node)
         if(path.length == 0){ // 对于根节点的属性设置，单独处理。
-            let val = new_val as unknown as Partial<RootType>
+            let val = new_val as Partial<AbstractNode>
             if(val.children != undefined){
                 editor.set_root_children(val.children)
             }
@@ -60,9 +60,9 @@ let tree_op_mixin = {
     } , 
 
     /** 这个函数修改节点的某个属性。相当于`slate.Transforms.setNodes`。 */
-    set_node_by_path<RootType extends AbstractNode | GroupNode, NT extends Slate.Node & ConceptNode>(editor: EditorComponent<RootType>, path:number[] , new_val: Partial<NT>){
+    set_node_by_path<NT extends Slate.Node & ConceptNode>(editor: EditorComponent, path:number[] , new_val: Partial<NT>){
         if(path.length == 0){ // 对于根节点的属性设置，单独处理。
-            let val = new_val as unknown as Partial<RootType>
+            let val = new_val as Partial<AbstractNode>
             if(val.children != undefined){
                 editor.set_root_children(val.children)
             }
@@ -74,13 +74,13 @@ let tree_op_mixin = {
     } , 
 
     /** 如果一个节点有代理，这个函数就修改代理，同时修改参数，否则只修改参数。 */
-    auto_set_parameter<RootType extends AbstractNode | GroupNode, NT extends Slate.Node & ConceptNode>(editor: EditorComponent<RootType>, node: NT, parameters: ParameterList){
+    auto_set_parameter<NT extends Slate.Node & ConceptNode>(editor: EditorComponent, node: NT, parameters: ParameterList){
         let params = {parameters: {...node.parameters , ...parameters}} as Partial<NT> & {children: undefined} // 有他妈的毛病
-        tree_op_mixin.set_node<RootType,NT>(editor, node , params)
+        tree_op_mixin.set_node<NT>(editor, node , params)
     } , 
 
     /** 这个函数删除一个节点。 */
-    delete_concept_node<RootType extends AbstractNode | GroupNode, NT extends Slate.Node & ConceptNode>(editor: EditorComponent<RootType>, node: NT){
+    delete_concept_node<NT extends Slate.Node & ConceptNode>(editor: EditorComponent, node: NT){
         let path = slate_concept_node2path(editor.get_root() , node)
         if(path.length == 0){
             throw new UnexpectedParametersError("这这不能")
@@ -89,7 +89,7 @@ let tree_op_mixin = {
     } , 
 
     /** 这个函数删除一个节点。 */
-    delete_node_by_path<RootType extends AbstractNode | GroupNode, NT extends Slate.Node>(editor: EditorComponent<RootType>, path: number[]){
+    delete_node_by_path<NT extends Slate.Node>(editor: EditorComponent, path: number[]){
         if(path.length == 0){
             throw new UnexpectedParametersError("这这不能")
         }
@@ -97,7 +97,7 @@ let tree_op_mixin = {
     } , 
     
     /** 这个函数把一个节点移动到另一个位置。 */
-    move_concept_node<RootType extends AbstractNode | GroupNode, NT extends Slate.Node & ConceptNode>(editor: EditorComponent<RootType>, node_from: NT, position_to: number[]){
+    move_concept_node<NT extends Slate.Node & ConceptNode>(editor: EditorComponent, node_from: NT, position_to: number[]){
         let path = slate_concept_node2path(editor.get_root() , node_from)
         if(path.length == 0){
             throw new UnexpectedParametersError("这这不能")
@@ -110,7 +110,7 @@ let tree_op_mixin = {
     } , 
 
     /** 这个组件把节点的子节点提升到顶层。 */
-    unwrap_node<RootType extends AbstractNode | GroupNode, NT extends Slate.Node & ConceptNode>(editor: EditorComponent<RootType>, node: NT){
+    unwrap_node<NT extends Slate.Node & ConceptNode>(editor: EditorComponent, node: NT){
         let path = slate_concept_node2path(editor.get_root() , node)
         if(path.length == 0){
             throw new UnexpectedParametersError("这这不能")
@@ -119,7 +119,7 @@ let tree_op_mixin = {
         Slate.Transforms.unwrapNodes<NT>(editor.get_slate() , {at: path})
     } , 
 
-    move_node_by_path<RootType extends AbstractNode | GroupNode, NT extends Slate.Node>(editor: EditorComponent<RootType>, position_from: number[], position_to: number[]){
+    move_node_by_path<NT extends Slate.Node>(editor: EditorComponent, position_from: number[], position_to: number[]){
         if(position_from.length == 0 || position_to.length == 0){
             throw new UnexpectedParametersError("这这不能")
         }
@@ -131,7 +131,7 @@ let tree_op_mixin = {
     } , 
         
     /** 这个函数插入一个或者系列节点。 */
-    add_nodes<RootType extends AbstractNode | GroupNode, NT extends Slate.Node>(editor: EditorComponent<RootType>, nodes: (NT[]) | NT, path: number[]){
+    add_nodes<NT extends Slate.Node>(editor: EditorComponent, nodes: (NT[]) | NT, path: number[]){
         if(path.length == 0){
             throw new UnexpectedParametersError("这这不能")
         }
@@ -140,7 +140,7 @@ let tree_op_mixin = {
     } , 
 
     /** 这个函数在某个节点前面插入一个或者系列节点。 */
-    add_nodes_before<RootType extends AbstractNode | GroupNode, NT extends Slate.Node, TT extends Slate.Node & ConceptNode>(editor: EditorComponent<RootType> , nodes: (NT[]) | NT, target_node: TT){
+    add_nodes_before<NT extends Slate.Node, TT extends Slate.Node & ConceptNode>(editor: EditorComponent, nodes: (NT[]) | NT, target_node: TT){
         let path = slate_concept_node2path(editor.get_root() , target_node)
         if(path.length == 0){
             throw new UnexpectedParametersError("这这不能")
@@ -150,7 +150,7 @@ let tree_op_mixin = {
     } , 
 
     /** 这个函数在某个节点后面插入一个或者系列节点。 */
-    add_nodes_after<RootType extends AbstractNode | GroupNode, NT extends Slate.Node, TT extends Slate.Node & ConceptNode>(editor: EditorComponent<RootType>, nodes: (NT[]) | NT, target_node: TT){
+    add_nodes_after<NT extends Slate.Node, TT extends Slate.Node & ConceptNode>(editor: EditorComponent, nodes: (NT[]) | NT, target_node: TT){
         let path = slate_concept_node2path(editor.get_root() , target_node)
         if(path.length == 0){
             throw new UnexpectedParametersError("这这不能")
@@ -160,7 +160,7 @@ let tree_op_mixin = {
     } , 
 
     /** 这个函数在选中位置插入节点。 */
-    add_nodes_here<RootType extends AbstractNode | GroupNode, NT extends Slate.Node>(editor: EditorComponent<RootType>, nodes: (NT[]) | NT){
+    add_nodes_here<NT extends Slate.Node>(editor: EditorComponent, nodes: (NT[]) | NT){
         Slate.Transforms.insertNodes(editor.get_slate() , nodes)
     } , 
 
@@ -168,8 +168,8 @@ let tree_op_mixin = {
      * @param options.match 判断子节点中哪些要打包的函数。
      * @param options.split 是否允许分裂父节点。
     */
-    wrap_selected_nodes<RootType extends AbstractNode | GroupNode, NT extends Slate.BaseElement>(
-        editor:EditorComponent<RootType> , 
+    wrap_selected_nodes<NT extends Slate.BaseElement>(
+        editor , 
         node: NT, 
         options:{
             match?: (n:NT)=>boolean , 
@@ -195,8 +195,8 @@ let tree_op_mixin = {
      * @param options.match 判断子节点中哪些要打包的函数。
      * @param options.split 是否允许分裂父节点。
     */
-    wrap_nodes<RootType extends AbstractNode | GroupNode , NT extends Slate.BaseElement>(
-        editor:EditorComponent<RootType> , 
+    wrap_nodes< NT extends Slate.BaseElement>(
+        editor , 
         node: NT, 
         from: Slate.Point , 
         to: Slate.Point , 
@@ -226,7 +226,7 @@ let tree_op_mixin = {
 
 
     /** 这个函数把某个节点的全部子节点替换成给定节点。 */
-    replace_nodes<RootType extends AbstractNode | GroupNode, NT extends Slate.Node & ConceptNode, ST extends Slate.Node>(editor: EditorComponent<RootType>, father_node: NT, nodes: ST[]){
+    replace_nodes<NT extends Slate.Node & ConceptNode, ST extends Slate.Node>(editor: EditorComponent, father_node: NT, nodes: ST[]){
 
         let father_path = slate_concept_node2path(editor.get_root() , father_node)
 

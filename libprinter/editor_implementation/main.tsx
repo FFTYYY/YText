@@ -83,7 +83,7 @@ export { DefaultEditorComponent }
 /** 
  * 这个组件提供一个开箱即用的默认编辑器组件。
  */
-class DefaultEditorComponent<RootType extends AbstractNode | GroupNode> extends React.Component <EditorComponentProps<RootType> & {
+class DefaultEditorComponent extends React.Component <EditorComponentProps & {
     theme?: ThemeOptions
     extra_buttons?: any
     onSave?: ()=>void // 保存时操作。
@@ -94,9 +94,9 @@ class DefaultEditorComponent<RootType extends AbstractNode | GroupNode> extends 
     onFocusChange: ()=>void
     onSave: ()=> void
 
-    editor_ref		: React.RefObject<EditorComponent<RootType>>
+    editor_ref		: React.RefObject<EditorComponent>
 
-    constructor(props: EditorComponentProps<RootType> & {theme?: ThemeOptions, extra_buttons?: any, onSave?: ()=>void}) {
+    constructor(props: EditorComponentProps & {theme?: ThemeOptions, extra_buttons?: any, onSave?: ()=>void}) {
         super(props)
 
         this.state = {
@@ -108,7 +108,7 @@ class DefaultEditorComponent<RootType extends AbstractNode | GroupNode> extends 
         this.onFocusChange  = props.onFocusChange || (()=>{})
         this.onSave = props.onSave || (()=>{})
 
-        this.editor_ref = React.createRef<EditorComponent<RootType>>()
+        this.editor_ref = React.createRef<EditorComponent>()
     }
 
     get_editor(){
@@ -117,7 +117,7 @@ class DefaultEditorComponent<RootType extends AbstractNode | GroupNode> extends 
         return undefined
     }
 
-    get_root(): RootType{
+    get_root(): AbstractNode | undefined{
         return this.get_editor()?.get_root()
     }
 

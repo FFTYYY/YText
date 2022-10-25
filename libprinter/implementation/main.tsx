@@ -59,7 +59,7 @@ function merge_theme(theme_1: ThemeOptions, theme_2: ThemeOptions):ThemeOptions{
 /** 这是默认印刷器实现的props。 */
 interface DefaultPrinterProps {
     printer: Printer
-    root: GroupNode | AbstractNode
+    root: AbstractNode
     theme?: ThemeOptions
 }
 

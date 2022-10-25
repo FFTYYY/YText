@@ -12,32 +12,18 @@ import {
     PrinterRenderer , 
     Env , 
     Context , 
-    PrinterEnterFunction , 
-    PrinterExitFunction , 
-    PrinterRenderFunction , 
     ProcessedParameterList , 
 } from "./renderer"
 import {
-    InlineNode , 
-    GroupNode , 
-    SupportNode , 
-    StructNode , 
     AbstractNode , 
     ConceptNode, 
     Node , 
     AllNodeTypes , 
     AllConceptTypes , 
 
-    is_concetnode , 
-	is_inlinenode , 
-	is_groupnode , 
-	is_supportnode , 
-	is_abstractnode , 
-	is_structnode , 
 	is_paragraphnode , 
 	is_textnode, 
     ParameterList, 
-    //get_node_type, 
 } from "./intermidiate"
 import {
     UnexpectedParametersError , 
@@ -46,8 +32,6 @@ import {
     GlobalInfo , 
     GlobalInfoProvider , 
 } from "./globalinfo"
-import produce from "immer"
-import { ConsoleLogger } from "typedoc/dist/lib/utils"
 
 export type {
     FirstClassConceptDict , 
@@ -266,7 +250,7 @@ class Printer{
 /** 这是印刷器组件的Props类型。 */
 interface PrinterComponentProps {
     printer: Printer
-    root: GroupNode | AbstractNode 
+    root: AbstractNode 
 }
 
 /** 这个类定义印刷器的组件。印刷器组件和印刷器（核心）是分开的，组件只负责绘制，而不储存任何信息，印刷器只负责储存信息，而不负责

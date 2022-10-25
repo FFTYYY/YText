@@ -262,14 +262,14 @@ type TreeOpeationsMixins = {
                                                                                         }) => void
 }
 
-interface EditorComponentProps<RootType extends (GroupNode | AbstractNode)>{
+interface EditorComponentProps{
     editorcore: EditorCore 
 
     plugin?: EditorPlugin
 
-    init_rootchildren?: (SlateReact.ReactEditor & RootType)["children"] 
+    init_rootchildren?: (SlateReact.ReactEditor & AbstractNode)["children"] 
 
-    init_rootproperty?: Omit<RootType , "children">
+    init_rootproperty?: Omit<AbstractNode , "children">
 
     /** 节点树更新时的回调。 */
     onUpdate?: (v: any) => void
@@ -287,7 +287,7 @@ interface EditorComponentProps<RootType extends (GroupNode | AbstractNode)>{
     onFocusChange?: ()=>void
     
 }
-interface EditorComponent<RootType extends (GroupNode | AbstractNode)> extends TreeOpeationsMixins{
+interface EditorComponent extends TreeOpeationsMixins{
 
     /** 节点树更新时的回调。 */
     onUpdate: (v: any) => void
@@ -308,13 +308,13 @@ interface EditorComponent<RootType extends (GroupNode | AbstractNode)> extends T
 /**
  * 因为slate实际上是编辑`root`的`children`，所以`root`的property要单独处理。
  */
-class EditorComponent<RootType extends (GroupNode | AbstractNode)> extends React.Component<EditorComponentProps<RootType> , {
+class EditorComponent extends React.Component<EditorComponentProps , {
     slate: SlateReact.ReactEditor
-    root_property: Omit<RootType , "children">
-    root_children: (SlateReact.ReactEditor & RootType)["children"]
+    root_property: Omit<AbstractNode , "children">
+    root_children: (SlateReact.ReactEditor & AbstractNode)["children"]
 }>{
     
-    constructor(props:EditorComponentProps<RootType>){
+    constructor(props:EditorComponentProps){
         super(props)
 
         this.onUpdate       = props.onUpdate        || (()=>{})
@@ -329,7 +329,7 @@ class EditorComponent<RootType extends (GroupNode | AbstractNode)> extends React
         
         let with_outer_plugin = props.plugin || ((x,y)=>y)
         
-        let default_root = this.get_core().create_group("root") as RootType // 反正默认就是group了罢....
+        let default_root = this.get_core().create_abstract("root") as AbstractNode
         let [default_root_children, default_root_but_children] = (()=>{
             let {children, ..._} = default_root
             return [children, _] // 把默认根节点拆成儿子和非儿子的部分。
@@ -355,18 +355,18 @@ class EditorComponent<RootType extends (GroupNode | AbstractNode)> extends React
     }
 
     /** 将`root_children`和`root_property`组合成一棵树。 */
-    get_root(): Readonly<RootType & Slate.Editor>{
+    get_root(): Readonly<AbstractNode>{
         return {
             ...this.state.root_property ,
             children: this.state.root_children , 
-        } as Readonly<RootType & Slate.Editor>
+        }
     }
 
-    set_root_children(root_children: (SlateReact.ReactEditor & RootType)["children"]){
+    set_root_children(root_children: (SlateReact.ReactEditor & AbstractNode)["children"]){
         this.setState({root_children: root_children})
     }
 
-    set_root(root_property: Omit<Partial<RootType>, "children">){
+    set_root(root_property: Omit<Partial<AbstractNode>, "children">){
         this.setState({root_property: {...this.state.root_property , ...root_property}})
     }
 
@@ -402,7 +402,7 @@ class EditorComponent<RootType extends (GroupNode | AbstractNode)> extends React
     */
     update_value(value: Slate.Node[]){
         this.setState({
-            root_children: value as (SlateReact.ReactEditor & RootType)["children"]
+            root_children: value as (SlateReact.ReactEditor & AbstractNode)["children"]
         })
         this.onUpdate(value)
     }
