@@ -18,33 +18,16 @@ import {
     slate_is_concept , 
 } from "../../editor"
 import {
-    EditorInformation
-} from "../uibase"
+    EditorButtonInformation
+} from "./base"
 
 export {
     get_mouseless_space , 
-    MouselessButton , 
+    SPACE , 
+    get_position , 
 }
 
 const SPACE = "x"
-
-/** 包装一个按钮。 */
-function MouselessButton<OtherPropsType = {}>(props: {
-    idx: number
-    node: Slate.Node & ConceptNode
-    other_props?: OtherPropsType
-    component: React.FunctionComponent<EditorInformation & OtherPropsType> | React.ComponentClass<EditorInformation & OtherPropsType>
-}){
-    let C = props.component
-    let other_props = props.other_props || {} as OtherPropsType
-    return <MouselessElement
-        space = {SPACE}
-        run = {get_run()}
-        position = {get_position(props.node,props.idx)}
-    >
-        <C node={props.node} {...other_props} />
-    </MouselessElement>
-}
 
 function get_mouseless_space(editor: EditorComponent){
     return {
@@ -53,13 +36,6 @@ function get_mouseless_space(editor: EditorComponent){
         switch_position: get_switch_position(editor) , 
     }
 }
-
-function get_run(){
-    return ()=>{
-        console.log("hello!")
-    }
-}
-
 
 function get_position(node: Slate.Node & ConceptNode , idx: number){
     let node_idx = node.idx
@@ -135,15 +111,11 @@ function get_activate_position(editor: EditorComponent){
             return s
         } , [])
         
-        console.log(now_idx, cancidate_idx)
-        console.log(now_idx, position_list)
-
         if(cancidate_idx.length == 0){ // 所选中的节点没有按钮。
             return undefined
         }
         
         cancidate_idx.sort()
-        console.log(now_idx, cancidate_idx)
         return JSON.stringify([now_idx, cancidate_idx[0]])
     }
 }

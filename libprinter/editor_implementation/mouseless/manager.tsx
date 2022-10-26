@@ -66,7 +66,7 @@ type MouselessActivateOperation = ()=>void
 type MouselessUnActivateOperation = ()=>void
 
 /** 无鼠标元素响应操作。 */
-type MouselessRun = ()=>void
+type MouselessRun = (e?: React.KeyboardEvent<HTMLDivElement>)=>void
 
 /** 无鼠标元素注册函数。 */
 type MouselessRegisterFunction = ( 
@@ -230,10 +230,10 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
     }
 
     /** 调用一个位置。 */
-    run_position(space: string, position: string){
+    run_position(e: React.KeyboardEvent<HTMLDivElement>, space: string, position: string){
         let opration = this.get_position_operation(space, position, "run")
         if(opration != undefined){
-            opration()
+            opration(e)
         }
     }
 
@@ -366,22 +366,9 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
         // 如果当前某个空间已经被激活，且正在使用方向键在空间中移动，或者使用回车键触发某个元素。
         let cur_space = this.get_cur_activating()
         if(cur_space){ 
-            if(is_direction(cur_key)){ // 当前按下了方向键。
-                let cur_dir = cur_key
-
-                let position_list = this.get_position_list(cur_space)
-                let cur_position = this.get_cur_position(cur_space)    
-                let new_position = this.spaces[cur_space].switch_position(position_list, cur_position, cur_dir)
-                this.setState(produce(this.state, state=>{
-                    state.cur_positions[cur_space] = new_position
-                }))
-                // 不用处理激活的问题，componentDidUpdate会自动处理。
+            if(is_direction(cur_key) || is_enter(cur_key)){ 
                 e.preventDefault()
                 return true    
-            }
-            if(is_enter(cur_key)){ // 当前按下了enter键。
-                let cur_position = this.get_cur_position(cur_space)    
-                this.run_position(cur_space, cur_position)
             }
         }
 
@@ -416,6 +403,7 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
             e.preventDefault()
             return true
         }
+
         // 如果当前某个空间已经被激活，且正在使用方向键在空间中移动，或者使用回车键触发某个元素。
         let cur_space = this.get_cur_activating()
         if(cur_space){ 
@@ -434,7 +422,10 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
             }
             if(is_enter(cur_key)){ // 当前按下了enter键。
                 let cur_position = this.get_cur_position(cur_space)    
-                this.run_position(cur_space, cur_position)
+                this.run_position(e, cur_space, cur_position)                
+                e.preventDefault()
+                return true    
+
             }
         }
 
@@ -489,7 +480,6 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
                 return true    
             }
         }
-
 
         return false
     }

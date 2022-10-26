@@ -28,12 +28,15 @@ import {
     EditorRendererProps, 
 } from "../editor"
 
+import { 
+    DefaultParameterEditButton , 
+    DefaultCloseButton , 
+    AutoStackedPopperWithButton , 
+} from "./buttons"
 
 import { DefaultAbstractEditorButtons } from "./abstract"
-import { DefaultParameterEditButton , DefaultCloseButton } from "./uibase"
-import { EditorInformation , } from "./uibase"
+import { EditorButtonInformation , } from "./buttons"
 import { AutoStackedPopper , SimpleAutoStack , AutoStack , AutoTooltip  } from "./uibase"
-import { AutoStackedPopperWithButton } from "./uibase"
 import { 
     EditorComponentPaper as ComponentPaper , 
     EditorParagraphBox as ParagraphBox , 
@@ -56,8 +59,8 @@ function get_default_inline_editor({
     rightbar_extra  = (props) => <></> , 
 }: {
     get_label       ?: (n: InlineNode)=>string , 
-    surrounder      ?: (props: EditorInformation & {children: any}) => any , 
-    rightbar_extra  ?: (props: EditorInformation) => any  , 
+    surrounder      ?: (props: EditorButtonInformation & {children: any}) => any , 
+    rightbar_extra  ?: (props: EditorButtonInformation) => any  , 
 
 }): EditorRenderer{
     return (props: EditorRendererProps<InlineNode>) => {

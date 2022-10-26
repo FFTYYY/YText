@@ -45,7 +45,7 @@ import {
 import { 
     DefaultParameterEditButton , 
     AutoStackedPopperWithButton , 
-} from "./uibase"
+} from "./buttons"
 import { 
     AutoStack , 
     AutoTooltip , 
@@ -72,16 +72,11 @@ import {
 
 import {
     DefaultButtonbar , 
-} from "./buttobar"
-
+    get_mouseless_space as sidebar_get_mouseless_space , 
+} from "./sidebar"
 import {
-    get_mouseless_space as buttonbar_get_mouseless_space , 
-} from "./mouseless_imp/buttonbar"
-
-import {
-    get_mouseless_space as button_get_mouseless_space , // TODO 别叫button吧...
-} from "./mouseless_imp/button"
-
+    get_mouseless_space as buttons_get_mouseless_space
+} from "./buttons"
 export { DefaultEditorComponent }
 
 // TODO 完善无鼠标操作。
@@ -154,8 +149,8 @@ class DefaultEditorComponent extends React.Component <EditorComponentProps & {
         return <ThemeProvider theme={createTheme(theme)}><EditorBackgroundPaper>
             <KeyEventManager
                 spaces = {[
-                    buttonbar_get_mouseless_space(me.get_editor()) , 
-                    button_get_mouseless_space(me.get_editor()) , 
+                    sidebar_get_mouseless_space(me.get_editor()) , 
+                    buttons_get_mouseless_space(me.get_editor()) , 
                 ]}
                 non_space_oprations = {[
                     {

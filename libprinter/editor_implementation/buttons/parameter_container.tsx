@@ -42,22 +42,14 @@ import {
     GlobalInfo , 
 } from "../../core"
 
-import { EditorStructureTypography as StructureTypography } from "./components"
+import { EditorStructureTypography as StructureTypography } from "../uibase/components"
 import { EditorComponent } from "../../editor"
+import { EditorButtonInformation } from "./base"
 
 export { 
     DefaultParameterContainer , 
     DefaultParameterWithEditorWithDrawer , 
 }
-export type{
-    EditorInformation
-}
-
-/** 所有编辑器组件的通用信息。 */
-interface EditorInformation{
-    node: Slate.Node & ConceptNode
-}
-
 
 /** 参数项更新组件的`props`。 */
 interface ParameterItemComponentProps{
@@ -240,7 +232,7 @@ class DefaultParameterContainer extends React.Component <DefaultParameterContain
  * @param props.editor 这个组件所服务的编辑器。
  * @param props.element 这个组件所服务的节点。
  */
-class DefaultParameterWithEditor extends React.Component<EditorInformation>{
+class DefaultParameterWithEditor extends React.Component<EditorButtonInformation>{
 
     /** 参数菜单的引用。 */
     container_ref: React.RefObject<DefaultParameterContainer>
@@ -278,7 +270,7 @@ class DefaultParameterWithEditor extends React.Component<EditorInformation>{
 }
 
 /** 参数更新抽屉的`props` */
-type DefaultParameterWithEditorWithDrawerProps = EditorInformation & {
+type DefaultParameterWithEditorWithDrawerProps = EditorButtonInformation & {
 
     /** 抽屉是否打开。 */
     open: boolean 

@@ -45,10 +45,13 @@ import {
     DefaultParameterEditButton , 
     DefaultCloseButton , 
     AutoStackedPopperWithButton , 
-    NewParagraphButton , 
+    NewParagraphButtonUp , 
+    NewParagraphButtonDown , 
     DefaultSwicth ,
     DefaultSoftDeleteButton , 
-} from "./uibase/buttons"
+
+    EditorButtonInformation , 
+} from "./buttons"
 
 import { DefaultAbstractEditorButtons } from "./abstract"
 
@@ -63,10 +66,10 @@ import {
     EditorStructureTypography as StructureTypography , 
 } from "./uibase"
 
-import { EditorInformation } from "./uibase" 
 import {
-    MouselessButton , 
-} from "./mouseless_imp/button"
+    ButtonGroup , 
+    ButtonDescription , 
+} from "./buttons"
 
 export { get_deafult_group_editor_with_appbar , get_deafult_group_editor_with_rightbar}
 
@@ -83,12 +86,12 @@ let GroupPaper = (props: PaperProps & {node: GroupNode}) => <ComponentPaper {...
  */
 function get_deafult_group_editor_with_appbar({
     get_label       = (n:GroupNode)=>n.parameters["label"].val as string, 
-    appbar_extra  = (props) => <></> , 
+    appbar_extra  = (n:GroupNode) => [] , 
     surrounder    = (props) => <>{props.children}</>
 }: {
     get_label       ?: (n:GroupNode)=>string ,  
-    appbar_extra    ?: (props: EditorInformation) => any, 
-    surrounder      ?: (props: EditorInformation & {children: any}) => any ,
+    appbar_extra    ?: (node: GroupNode) => ButtonDescription[], 
+    surrounder      ?: (props: EditorButtonInformation & {children: any}) => any ,
 }): EditorRenderer{
     // 渲染器
     return (props: EditorRendererProps<Slate.Node & GroupNode>) => {
@@ -103,13 +106,19 @@ function get_deafult_group_editor_with_appbar({
                 <UnselecableBox>
                     <Toolbar sx={{overflow: "auto"}}><AutoStack>
                         <StructureTypography>{label}</StructureTypography>
-                        <MouselessButton key={0} node={node} idx={0} component={DefaultParameterEditButton}/>
-                        <MouselessButton key={1} node={node} idx={1} component={DefaultAbstractEditorButtons}/>
-                        <MouselessButton key={2} node={node} idx={2} component={DefaultSwicth}/>
-                        <MouselessButton key={3} node={node} idx={3} component={NewParagraphButton}/>
-                        <MouselessButton key={4} node={node} idx={4} component={DefaultCloseButton}/>
-                        <MouselessButton key={5} node={node} idx={5} component={DefaultSoftDeleteButton}/>
-                        <E                              node={node} />
+                        <ButtonGroup 
+                            node = {node}
+                            buttons = {[
+                                DefaultParameterEditButton , 
+                                // DefaultAbstractEditorButtons , 
+                                DefaultSwicth , 
+                                NewParagraphButtonUp , 
+                                NewParagraphButtonDown , 
+                                DefaultCloseButton , 
+                                DefaultSoftDeleteButton , 
+                                ... appbar_extra(node)
+                            ]}
+                        />
                     </AutoStack></Toolbar>
                 </UnselecableBox >
                 <Divider />
@@ -133,8 +142,8 @@ function get_deafult_group_editor_with_rightbar({
     surrounder      = (props) => <>{props.children}</>
 }: {
     get_label       ?: (n:GroupNode)=>string , 
-    rightbar_extra  ?: (props: EditorInformation) => any, 
-    surrounder      ?: (props: EditorInformation & {children: any}) => any ,
+    rightbar_extra  ?: (props: EditorButtonInformation) => any, 
+    surrounder      ?: (props: EditorButtonInformation & {children: any}) => any ,
 }): EditorRenderer{
 
     return (props: EditorRendererProps<Slate.Node & GroupNode>) => {
@@ -166,7 +175,7 @@ function get_deafult_group_editor_with_rightbar({
                             <DefaultSwicth                  node={node} />
                             <DefaultCloseButton             node={node} />
                             <DefaultSoftDeleteButton        node={node} />
-                            <NewParagraphButton             node={node} />
+                            <NewParagraphButtonUp             node={node} />
                         </AutoStackedPopperWithButton>
                     </AutoStack>
                 </UnselecableBox>

@@ -30,8 +30,8 @@ function MouselessElement(props: MouselessElementProps){
     let [regiester_func, unregister_func] = React.useContext(MouselessRegister)
 
     React.useEffect(()=>{
-        console.log(props.position)
         regiester_func(space, position, ()=>set_act(true), ()=>set_act(false), run)
+        console.log(space , position)
 
         return ()=>{
             unregister_func(space, position)
