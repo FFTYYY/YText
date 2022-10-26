@@ -98,18 +98,30 @@ class EditorCore{
         this.printer = params.printer 
     }
 
-    /** 查询一个渲染器。
+    get_sec_concept_list(type: AllConceptTypes){
+        return Object.keys( this.get_printer().secondClassConcepts[type] )
+    }
+
+    get_fst_concept_list(type: AllConceptTypes){
+        return Object.keys( this.get_printer().firstClassConcepts[type] )
+    }
+
+    get_printer(){
+        return this.printer
+    }
+
+    /** 从一级概念查询一个渲染器。
      * @param type 查找的节点类型。
-     * @param name 查找的概念名称。
+     * @param fst_concept 查找的概念名称。
      * 如果`type == "paragraph" || "text"`，那么`name`将会被忽略。
      * 反之，如果`type != "paragraph" && type != "text"`，那么`name`必须提供。
      */
-     get_renderer(type: AllNodeTypes , name?: string): EditorRenderer{
+    get_first_renderer(type: AllNodeTypes , fst_concept?: string): EditorRenderer{
         if(type != "paragraph" && type != "text"){// 概念节点。
-            if(name == undefined)
+            if(fst_concept == undefined)
                 return this.default_renderers[type]
 
-            let ret = this.renderers[type][name]
+            let ret = this.renderers[type][fst_concept]
             if(ret == undefined){ // 如果没有找到这个概念的渲染器，就返回一个这个概念类型的默认渲染器。
                 ret = this.default_renderers[type]
             }
@@ -118,19 +130,41 @@ class EditorCore{
 
         return this.default_renderers[type] // 在不是概念节点的情况下，直接返回默认渲染器。
     }
+    /** 从二级概念查询一个渲染器。
+     * @param type 查找的节点类型。
+     * @param sec_concept 查找的概念名称。
+     * 如果`type == "paragraph" || "text"`，那么`name`将会被忽略。
+     * 反之，如果`type != "paragraph" && type != "text"`，那么`name`必须提供。
+     */
+
+    get_second_renderer(type: AllNodeTypes , sec_concept?: string): EditorRenderer{
+        if(type == "paragraph" || type == "text"){
+            return this.get_first_renderer(type, sec_concept)
+        }
+        let sec_ccpt = this.get_printer().get_second_concept(type, sec_concept)
+        if(sec_ccpt == undefined){
+            return this.default_renderers[type]
+        }
+        let first_concept_name = sec_ccpt.firstConcept
+        let fst_ccpt = this.get_printer().get_first_concept(type, first_concept_name)
+        if(fst_ccpt == undefined){
+            return this.default_renderers[type]
+        }
+        return this.get_first_renderer(type, fst_ccpt.name)
+    }
 
     /** 这个函数直接从一个节点查询渲染器。 */
     get_node_renderer(node: Slate.Node & Node): EditorRenderer{
         let me = this
         if(slate_is_text(node)){ // 如果是文本节点，直接按类型查询。
-            return me.get_renderer("text")
+            return me.get_first_renderer("text")
         }
         else if(slate_is_paragraph(node)){ // 如果是段落节点，直接按类型查询。
-            return me.get_renderer("paragraph")
+            return me.get_first_renderer("paragraph")
         }
         let concept = me.printer.get_node_first_concept(node)
         let concept_name = concept ? concept.name : undefined
-        return me.get_renderer(node.type , concept_name) // 如果是概念节点，按类型和一级概念名查询。
+        return me.get_first_renderer(node.type , concept_name) // 如果是概念节点，按类型和一级概念名查询。
     }
 
     /** 新建一个文本节点。 */
@@ -324,7 +358,6 @@ class EditorComponent extends React.Component<EditorComponentProps , {
         this.onFocusChange  = props.onFocusChange   || (()=>{})
         this.use_tree_op_mixin()
         
-        
         let me = this
         
         let with_outer_plugin = props.plugin || ((x,y)=>y)
@@ -431,24 +464,27 @@ class EditorComponent extends React.Component<EditorComponentProps , {
         }
         
         // 如果这是个 inline 元素，就添加一个额外 style 。
-        let extra_style = {}
+        let isinline = false
         if(slate_is_concept(node)){
             let meta_param = this.get_core().get_meta_param(node)
             if(meta_param && meta_param.forceInline){
-                extra_style = {display: "inline-block"}
+                isinline = true
             }
             if(node.type == "inline"){
-                extra_style = {display: "inline-block"}
+                isinline = true
             }
         }
-        
-        return <div {...slate_attributes} style={extra_style}><R {...subprops}/></div>
+
+        if(isinline){
+            return <span {...slate_attributes}><R {...subprops}/></span>
+        }
+        return <div {...slate_attributes}><R {...subprops}/></div>
     }
 
     renderLeaf(props: SlateReact.RenderLeafProps){
         let me = this
 
-        let R = me.get_core().get_renderer("text")
+        let R = me.get_core().get_first_renderer("text")
 
         // 需要给 slate 提供的顶层属性。
         let slate_attributes = props.attributes
@@ -512,17 +548,17 @@ class EditorComponent extends React.Component<EditorComponentProps , {
     }
 
     /** 在当前位置新建一个指定概念的节点。 */
-    new_concept_node(type: Exclude<AllConceptTypes,"abstract">, name: string){
+    new_concept_node(type: Exclude<AllConceptTypes,"abstract">, sec_ccpt: string){
         let me = this
 
         if(type == "support"){
-            let node = me.get_editorcore().create_support(name)
+            let node = me.get_editorcore().create_support(sec_ccpt)
             me.add_nodes_here(node) // 在当前选中位置插入节点。
             return 
         }
         if(type == "structure"){        
-            let node = me.get_editorcore().create_structure(name)
-                me.add_nodes_here(node) // 在当前选中位置插入节点。
+            let node = me.get_editorcore().create_structure(sec_ccpt)
+            me.add_nodes_here(node) // 在当前选中位置插入节点。
             return 
         }
         if(type == "group"){
@@ -531,7 +567,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
             if (selection != undefined)
                 flag = JSON.stringify(selection.anchor) == JSON.stringify(selection.focus) // 是否没有选择
             
-            let node = me.get_editorcore().create_group(name)
+            let node = me.get_editorcore().create_group(sec_ccpt)
             if(flag){ // 没有选东西，直接添加节点
                 me.add_nodes_here(node) // 在当前选中位置插入节点。
             }
@@ -546,13 +582,13 @@ class EditorComponent extends React.Component<EditorComponentProps , {
             if(selection != undefined)
                 flag = JSON.stringify(selection.anchor) == JSON.stringify(selection.focus) // 是否没有选择
 
-            let node = me.get_editorcore().create_inline(name)
+            let node = me.get_editorcore().create_inline(sec_ccpt , "")
 
             if(flag){ // 如果没有选择任何东西，就新建节点。
                 me.add_nodes_here(node) // 在当前选中位置插入节点。
             }
             else{ // 如果有节点，就把所有子节点打包成一个inline节点。
-                me.wrap_selected_nodes(node  , {match: (n:Slate.Node)=>Slate.Text.isText(n) , split: true}) // 所有子节点中是文本的那些。
+                me.wrap_selected_nodes(node  , {split: true}) // 还是应该允许inline节点嵌套的...
             }
             return 
         }

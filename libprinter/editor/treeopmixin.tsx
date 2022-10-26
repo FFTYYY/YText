@@ -2,14 +2,6 @@
  * @module
 */
 
-/**
- TODO READ THIS
- 1 应该保证slate是所有修改的来源
- 2 应该加入一系列判断函数来将slate节点转成printer节点（e.g.：Slate.Node & ConceptNode)
- 3 编辑器不应该维护root
-
- */
-
 import * as Slate from "slate"
 import {
     slate_is_concept , 
@@ -169,7 +161,7 @@ let tree_op_mixin = {
      * @param options.split 是否允许分裂父节点。
     */
     wrap_selected_nodes<NT extends Slate.BaseElement>(
-        editor , 
+        editor: EditorComponent , 
         node: NT, 
         options:{
             match?: (n:NT)=>boolean , 

@@ -3,19 +3,19 @@
  * @module
  */
 
- import React from "react"
+import React from "react"
 
- import {
-     Typography , 
-     Box , 
-     Paper , 
-     Container , 
- } from "@mui/material"
- import type {
-     TypographyProps , 
-     PaperProps , 
-     BoxProps , 
- } from "@mui/material"
+import {
+    Typography , 
+    Box , 
+    Paper , 
+    Container , 
+} from "@mui/material"
+import type {
+    TypographyProps , 
+    PaperProps , 
+    BoxProps , 
+} from "@mui/material"
 import type { ThemeOptions } from "@mui/material/styles"
 
 export { 

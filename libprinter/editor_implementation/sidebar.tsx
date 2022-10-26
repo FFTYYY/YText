@@ -135,6 +135,7 @@ function DefaultButtonbar(props: {editor: EditorComponent}){
     return <React.Fragment>
         {["group" , "inline" , "support" , "structure"].map ( (typename: Exclude<AllConceptTypes , "abstract">)=>{
             let Icon = icons[typename]
+            let sec_concept_list = editor.get_core().get_sec_concept_list(typename)
             return <React.Fragment key={typename}>
                 <AutoStackedPopperWithButton
                     poper_props = {{
@@ -147,7 +148,7 @@ function DefaultButtonbar(props: {editor: EditorComponent}){
                     }}
                     title = {typename}
                 >{
-                    Object.keys( editor.get_core().renderers[typename] ).map( (stylename , idx) => 
+                    sec_concept_list.map( (sec_ccpt , idx) => 
                         <MouselessElement 
                             key = {idx}
                             space = {SPACE}
@@ -155,10 +156,10 @@ function DefaultButtonbar(props: {editor: EditorComponent}){
                             run = {get_run(editor, typename, idx)}
                         >
                             <Button 
-                                onClick = {e => editor.new_concept_node(typename , stylename)}
+                                onClick = {e => editor.new_concept_node(typename , sec_ccpt)}
                                 variant = "text"
                             >
-                                {stylename}
+                                {sec_ccpt}
                             </Button>
                             <Divider orientation="vertical" flexItem/>
                         </MouselessElement>

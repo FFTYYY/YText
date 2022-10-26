@@ -88,12 +88,12 @@ let GroupPaper = (props: PaperProps & {node: GroupNode}) => <ComponentPaper {...
  * @returns 一个用于渲染group的组件。
  */
 function get_deafult_group_editor_with_appbar({
-    get_label       = (n:GroupNode)=>n.parameters["label"].val as string, 
+    get_label     = (n:GroupNode)=>n.parameters["label"].val as string, 
     appbar_extra  = (n:GroupNode) => [] , 
     surrounder    = (props) => <>{props.children}</>
 }: {
-    get_label       ?: (n:GroupNode)=>string ,  
-    appbar_extra    ?: (node: GroupNode) => ButtonDescription[], 
+    get_label       ?: (n: GroupNode) => string ,  
+    appbar_extra    ?: (n: GroupNode) => ButtonDescription[], 
     surrounder      ?: (props: EditorButtonInformation & {children: any}) => any ,
 }): EditorRenderer{
     // 渲染器
@@ -115,7 +115,6 @@ function get_deafult_group_editor_with_appbar({
                                 DefaultParameterEditButton , 
                                 DefaultNewAbstractButton , 
                                 DefaultEditAbstractButton , 
-                                // DefaultAbstractEditorButtons , 
                                 DefaultSwicth , 
                                 NewParagraphButtonUp , 
                                 NewParagraphButtonDown , 
