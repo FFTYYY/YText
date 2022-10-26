@@ -21,7 +21,7 @@ import {
     FilterNone as FilterNoneIcon , 
 } from "@mui/icons-material"
 
-import { AutoTooltip , ForceContain , AutoStackedPopper, EditorInformation } from "./uibase"
+import { AutoTooltip , ForceContain , AutoStackedPopper } from "./uibase"
 import {
     ConceptNode , 
     AllNodeTypes , 
@@ -40,10 +40,15 @@ import {
 } from "./main"
 import type { EditorRendererProps , EditorRenderer } from "../editor"
 
+import {
+    EditorButtonInformation , 
+} from "./buttons"
+
 export {
     DefaultNewAbstract , 
     DefaultAbstractEditor , 
-    DefaultAbstractEditorButtons , 
+    DefaultNewAbstractButton , 
+    DefaultEditAbstractButton , 
     get_default_abstract_editor , 
 }
 
@@ -236,45 +241,120 @@ function DefaultAbstractEditorGroup(props: {node: Slate.Node & ConceptNode, anch
     </React.Fragment>  
 }
 
-/** 这个组件提供两个按钮，分别是新建抽象和编辑抽象。
+// TODO 完善抽象的无鼠标操作：New里面应该有退出按键，Edit里面也应该有，而且Edit应该自动设置光标
+
+/** 这个组件提供按钮新建抽象。
  * @param props.editor 这个组件所服务的编辑器。
- * @param props.element 这个组件所服务的节点。
  * @returns 一个渲染了两个 Button 的 
  */
-function DefaultAbstractEditorButtons(props: EditorInformation){
+class DefaultNewAbstractButton extends React.Component<EditorButtonInformation , {
+    ae: HTMLElement | undefined
+}>{
+    boxref: React.RefObject<HTMLDivElement>
+    constructor(props: EditorButtonInformation){
+        super(props)
 
-    let node = props.node
+        this.state = {
+            ae: undefined , 
+        }
 
-    let [menu_new_ae, set_menu_new_ae]   = useState<undefined | HTMLElement>(undefined)
-    let [menu_edit_ae, set_menu_edit_ae] = useState<undefined | HTMLElement>(undefined)
+        this.boxref = React.createRef()
+    }
 
-    return <GlobalInfo.Consumer>{globalinfo=>{
-        let editor = globalinfo.editor as EditorComponent
-        return <React.Fragment>
+    get_box(){
+        if(this.boxref && this.boxref.current){
+            return this.boxref.current
+        }
+        return undefined
+    }
 
-            <Box sx={{marginX: "auto"}}><AutoTooltip title="新建抽象">
-                <IconButton onClick={e=>set_menu_new_ae(e.currentTarget)}><AddBoxIcon/></IconButton>
-            </AutoTooltip></Box>
+    open(){
+        this.setState({ae: this.get_box()})
+    }
+    close(){
+        this.setState({ae: undefined})
+    }
 
-            <Box sx={{marginX: "auto"}}><AutoTooltip title="编辑抽象">
-                <IconButton onClick={e=>set_menu_edit_ae(e.currentTarget)}><FilterNoneIcon/></IconButton>
-            </AutoTooltip></Box>
-            
-            <DefaultNewAbstract
-                node = {node} 
-                anchor_element = {menu_new_ae}
-                open = {menu_new_ae != undefined} 
-                onClose = {e=>set_menu_new_ae(undefined)}
-            />
-            <DefaultAbstractEditorGroup 
-                node = {node} 
-                anchor_element = {menu_edit_ae}
-                open = {menu_edit_ae != undefined} 
-                onClose = {e=>{ set_menu_edit_ae(undefined) }}
-            />
-        </React.Fragment>
-    }}</GlobalInfo.Consumer>
+    run(){
+        this.open()
+    }
+
+    render(){
+        let node = this.props.node
+        
+        return <GlobalInfo.Consumer>{globalinfo=>{
+            let editor = globalinfo.editor as EditorComponent
+            return <React.Fragment>
+                <Box sx={{marginX: "auto"}} ref={this.boxref}><AutoTooltip title="新建抽象">
+                    <IconButton onClick={()=>this.open()}><AddBoxIcon/></IconButton>
+                </AutoTooltip></Box>
+                <DefaultNewAbstract
+                    node = {node} 
+                    anchor_element = {this.state.ae}
+                    open = {this.state.ae != undefined} 
+                    onClose = {()=>this.close()}
+                />
+            </React.Fragment>
+        }}</GlobalInfo.Consumer>
+    }
 }
+
+/** 这个组件提供按钮编辑抽象。
+ * @param props.editor 这个组件所服务的编辑器。
+ * @returns 
+ */
+ class DefaultEditAbstractButton extends React.Component<EditorButtonInformation , {
+    ae: HTMLElement | undefined
+ }>{
+    boxref: React.RefObject<HTMLDivElement>
+    constructor(props: EditorButtonInformation){
+        super(props)
+
+        this.state = {
+            ae: undefined , 
+        }
+
+        this.boxref = React.createRef()
+    }
+
+    get_box(){
+        if(this.boxref && this.boxref.current){
+            return this.boxref.current
+        }
+        return undefined
+    }
+
+    open(){
+        this.setState({ae: this.get_box()})
+    }
+    close(){
+        this.setState({ae: undefined})
+    }
+
+    run(){
+        this.open()
+    }
+
+    render(){
+        let node = this.props.node
+        
+        return <GlobalInfo.Consumer>{globalinfo=>{
+            let editor = globalinfo.editor as EditorComponent
+            return <React.Fragment>
+                <Box sx={{marginX: "auto"}} ref={this.boxref}><AutoTooltip title="编辑抽象">
+                    <IconButton onClick={()=>this.open()}><FilterNoneIcon/></IconButton>
+                </AutoTooltip></Box>
+                <DefaultAbstractEditorGroup 
+                    node = {node} 
+                    anchor_element = {this.state.ae}
+                    open = {this.state.ae != undefined} 
+                    onClose = {()=>this.close()}
+                />
+            </React.Fragment>
+        }}</GlobalInfo.Consumer>
+    }
+}
+
 
 /**
  * 这个函数是向编辑器提供的，抽象节点的渲染函数。注意因为抽象节点只能作根，因此这个函数只会作为根节点渲染。

@@ -34,7 +34,9 @@ import {
     AutoStackedPopperWithButton , 
 } from "./buttons"
 
-import { DefaultAbstractEditorButtons } from "./abstract"
+import { 
+    // TODO    
+} from "./abstract"
 import { EditorButtonInformation , } from "./buttons"
 import { AutoStackedPopper , SimpleAutoStack , AutoStack , AutoTooltip  } from "./uibase"
 import { 
@@ -92,7 +94,7 @@ function get_default_inline_editor({
                         >
                             <Typography>{label}</Typography>
                             <DefaultParameterEditButton     node={node}/>
-                            <DefaultAbstractEditorButtons   node={node} />
+                            {/* <DefaultAbstractEditorButtons   node={node} /> */}
                             <DefaultCloseButton             node={node} />
                         </AutoStackedPopperWithButton>
                     </AutoStack>

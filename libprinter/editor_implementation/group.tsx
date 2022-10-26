@@ -53,7 +53,10 @@ import {
     EditorButtonInformation , 
 } from "./buttons"
 
-import { DefaultAbstractEditorButtons } from "./abstract"
+import {     
+    DefaultNewAbstractButton , 
+    DefaultEditAbstractButton , 
+} from "./abstract"
 
 import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "./uibase"
 import { 
@@ -110,6 +113,8 @@ function get_deafult_group_editor_with_appbar({
                             node = {node}
                             buttons = {[
                                 DefaultParameterEditButton , 
+                                DefaultNewAbstractButton , 
+                                DefaultEditAbstractButton , 
                                 // DefaultAbstractEditorButtons , 
                                 DefaultSwicth , 
                                 NewParagraphButtonUp , 
@@ -171,7 +176,8 @@ function get_deafult_group_editor_with_rightbar({
                             title = "展开"
                         >
                             <DefaultParameterEditButton     node={node}/>
-                            <DefaultAbstractEditorButtons   node={node} />
+                            <DefaultNewAbstractButton   node={node} />
+                            <DefaultEditAbstractButton   node={node} />
                             <DefaultSwicth                  node={node} />
                             <DefaultCloseButton             node={node} />
                             <DefaultSoftDeleteButton        node={node} />
