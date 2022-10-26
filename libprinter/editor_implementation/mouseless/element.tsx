@@ -31,8 +31,6 @@ function MouselessElement(props: MouselessElementProps){
 
     React.useEffect(()=>{
         regiester_func(space, position, ()=>set_act(true), ()=>set_act(false), run)
-        console.log(space , position)
-
         return ()=>{
             unregister_func(space, position)
         }

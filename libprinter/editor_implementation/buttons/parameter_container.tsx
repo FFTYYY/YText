@@ -34,6 +34,7 @@ import {
 } from "@mui/icons-material"
 
 import * as Slate from "slate"
+import * as SlateReact from "slate-react"
 
 import {
     ConceptNode,
@@ -289,6 +290,9 @@ type DefaultParameterWithEditorWithDrawerProps = EditorButtonInformation & {
 function DefaultParameterWithEditorWithDrawer(props: DefaultParameterWithEditorWithDrawerProps){
     let onClose = props.onClose || ((e:any)=>{})
     let parametereditor_ref = React.useRef<DefaultParameterWithEditor | null>(null)
+    
+    // 记录进入时的光标位置，以便在退出时还原。
+    let [enter_selection , set_ec] = React.useState<Slate.Location | undefined>(undefined)
 
     return <GlobalInfo.Consumer>{globalinfo=>{
         let editor = globalinfo.editor as EditorComponent
@@ -301,11 +305,16 @@ function DefaultParameterWithEditorWithDrawer(props: DefaultParameterWithEditorW
                 keepMounted: true,
             }}
             SlideProps  = {{
+                onEnter: ()=>{
+                    set_ec({...editor.get_slate().selection})
+                } , 
                 onExited: () => {
                     if(parametereditor_ref && parametereditor_ref.current){ // 在退出时更新所服务的节点的参数。
                         let parameters = parametereditor_ref.current.get_parameters()
                         editor.auto_set_parameter(props.node, parameters)
                     }
+                    SlateReact.ReactEditor.focus(editor.get_slate())
+                    Slate.Transforms.select(editor.get_slate() , enter_selection)
                 }
             }}
             PaperProps  = {{sx: { width: "40%" }}}
@@ -313,6 +322,7 @@ function DefaultParameterWithEditorWithDrawer(props: DefaultParameterWithEditorW
             <Box><StructureTypography>idx: {props.node.idx}</StructureTypography></Box>
             <Divider />
             <DefaultParameterWithEditor node={props.node} ref={parametereditor_ref}/>
+            <Button onClick={onClose}>Close</Button>
         </Drawer>
     }}</GlobalInfo.Consumer>
 }

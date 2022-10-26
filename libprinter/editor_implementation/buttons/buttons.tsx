@@ -330,7 +330,7 @@ class DefaultSwicth extends React.Component<EditorButtonInformation<GroupNode | 
     }
     
     run(){
-        this.get_switch().click()
+        this.get_switch().click() // 模拟点击。
     }
     render(): React.ReactNode {
         return <AutoTooltip title = "贴贴">
