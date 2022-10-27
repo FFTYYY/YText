@@ -67,8 +67,7 @@ function get_position(typename: Exclude<AllConceptTypes, "abstract">, idx: numbe
 
 function get_run(editor: EditorComponent, typename: Exclude<AllConceptTypes, "abstract">, pos_y: number){
     return ()=>{
-        let concept_names = Object.keys( editor.get_core().renderers[typename] )
-        let concept_name = concept_names[pos_y]
+        let concept_name = editor.get_core().get_sec_concept_list(typename)[pos_y]
         editor.new_concept_node(typename , concept_name)
     }
 } 
