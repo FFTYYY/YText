@@ -141,11 +141,11 @@ function DefaultButtonbar(props: {editor: EditorComponent}){
                         stacker: AutoStackButtons ,
                         component: styled(Paper)({backgroundColor: "#aabbddbb" , }) ,  
                     }}
-                    button_class = {IconButton}
-                    button_props = {{
+                    outer_button = {IconButton}
+                    outer_props = {{
                         children: <Icon /> , 
                     }}
-                    title = {typename}
+                    label = {typename}
                 >{
                     sec_concept_list.map( (sec_ccpt , idx) => 
                         <MouselessElement 

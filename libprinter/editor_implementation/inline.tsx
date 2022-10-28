@@ -31,12 +31,11 @@ import {
 import { 
     DefaultParameterEditButton , 
     DefaultCloseButton , 
-    AutoStackedPopperWithButton , 
+    AutoStackedPopperWithButton, 
+    AutoStackedPopperButtonGroupMouseless, 
 } from "./buttons"
 
-import { 
-    // TODO    
-} from "./abstract"
+import { DefaultEditAbstractButton, DefaultNewAbstract, DefaultNewAbstractButton } from "./abstract"
 import { EditorButtonInformation , } from "./buttons"
 import { AutoStackedPopper , SimpleAutoStack , AutoStack , AutoTooltip  } from "./uibase"
 import { 
@@ -79,10 +78,12 @@ function get_default_inline_editor({
                 <UnselecableBox>
                     <AutoStack force_direction="row">
                         <Extra node={node}/>
-                        <AutoStackedPopperWithButton
+                        <AutoStackedPopperButtonGroupMouseless
+                            node = {node}
+                            idxs = {[0]}
                             close_on_otherclick
-                            button_class = {IconButton}
-                            button_props = {{
+                            outer_button = {IconButton}
+                            outer_props = {{
                                 sx: {
                                     height: "1rem" , 
                                     width: "1rem" , 
@@ -90,13 +91,16 @@ function get_default_inline_editor({
                                 } , 
                                 children: <KeyboardArrowDownIcon sx={{height: "1rem"}}/> ,
                             }} 
-                            title = {"展开" + (label ? ` / ${label}` : "") }
+                            label = {"展开" + (label ? ` / ${label}` : "") }
+                            buttons = {[
+                                DefaultParameterEditButton , 
+                                DefaultCloseButton , 
+                                DefaultNewAbstractButton , 
+                                DefaultEditAbstractButton , 
+                            ]}
                         >
                             <Typography>{label}</Typography>
-                            <DefaultParameterEditButton     node={node}/>
-                            {/* <DefaultAbstractEditorButtons   node={node} /> */}
-                            <DefaultCloseButton             node={node} />
-                        </AutoStackedPopperWithButton>
+                        </AutoStackedPopperButtonGroupMouseless>
                     </AutoStack>
                 </UnselecableBox>
             </AutoStack>

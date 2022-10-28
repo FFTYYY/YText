@@ -63,7 +63,7 @@ function is_enter(key: string): key is RunKey{
 type MouselessActivateOperation = ()=>void
 
 /** 无鼠标元素取消激活操作。 */
-type MouselessUnActivateOperation = ()=>void
+type MouselessUnActivateOperation = (new_position?: string)=>void
 
 /** 无鼠标元素响应操作。 */
 type MouselessRun = (e?: React.KeyboardEvent<HTMLDivElement>)=>void
@@ -213,7 +213,7 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
      * 注意，这个函数通常不需要调用，因为会在当前激活元素切换时在componentDidUpdate中自动调用。
     */
     activate_position(space: string, position: string){
-        let opration = this.get_position_operation(space, position, "activate")
+        let opration = this.get_position_operation(space, position, "activate") as MouselessActivateOperation
         if(opration != undefined){
             opration()
         }
@@ -222,16 +222,16 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
     /** 取消激活一个位置。 
      * 注意，这个函数通常不需要调用，因为会在当前激活元素切换时在componentDidUpdate中自动调用。
     */
-    unactivate_position(space: string, position: string){
-        let opration = this.get_position_operation(space, position, "unactivate")
+    unactivate_position(space: string, position: string, new_position: string){
+        let opration = this.get_position_operation(space, position, "unactivate") as MouselessUnActivateOperation
         if(opration != undefined){
-            opration()
+            opration(new_position) // 将即将转移到的新位置传递给取消激活操作。
         }
     }
 
     /** 调用一个位置。 */
     run_position(e: React.KeyboardEvent<HTMLDivElement>, space: string, position: string){
-        let opration = this.get_position_operation(space, position, "run")
+        let opration = this.get_position_operation(space, position, "run") as MouselessRun
         if(opration != undefined){
             opration(e)
         }
@@ -311,7 +311,7 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
             let old_cur = prevState.cur_positions[space]
             if(new_cur != old_cur){
                 if(old_cur != undefined){ // 如果是从某个位置切换过来的，取消其激活。
-                    this.unactivate_position(space, old_cur)
+                    this.unactivate_position(space, old_cur, new_cur)
                 }
                 this.activate_position(space, new_cur)
             }

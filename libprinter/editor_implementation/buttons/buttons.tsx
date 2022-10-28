@@ -79,48 +79,6 @@ function AutoIconButton(props:{
     </AutoTooltip>
 }
 
-/** 一个按钮，打开后显示一个按钮组。 */
-function AutoStackedPopperWithButton(props: {
-    button_class: any , 
-    poper_props?: any,
-    button_props?: any , 
-    title?: string ,  
-    children?: any , 
-    close_on_otherclick?: boolean,
-    onClose?: ()=>void , 
-}){
-    let B = props.button_class
-    let [menu_open, set_menu_open] = React.useState<boolean>(false)
-    // 展开栏挂载的元素。
-    let menu_anchor = React.useRef()
-    let onClose = props.onClose || (()=>{}) // TODO use MUI onExit
-
-    let my_set_menu_open = (new_val: boolean) => {
-        set_menu_open(new_val)
-        if(!new_val){ // 正在关闭
-            onClose()
-        }
-    }
-
-    let poper = <React.Fragment>
-        <AutoTooltip title={props.title}><B 
-            onClick = {e => my_set_menu_open(!menu_open)}
-            ref = {menu_anchor}
-            {...props.button_props}
-        /></AutoTooltip>
-        <AutoStackedPopper 
-            anchorEl = {menu_anchor.current} 
-            open = {menu_open}
-            {...props.poper_props}
-        >{props.children}</AutoStackedPopper>
-    </React.Fragment>
-
-    if(props.close_on_otherclick){
-        return <ClickAwayListener onClickAway={()=>{my_set_menu_open(false)}}><Box>{poper}</Box></ ClickAwayListener>
-    }
-    return poper
-}
-
 function MyImg(props: {img_url: string}){
     return <img src={props.img_url}></img>
 }
@@ -340,5 +298,114 @@ class DefaultSwicth extends React.Component<EditorButtonInformation<GroupNode | 
                 inputRef = {this.switchref}
             />
         </AutoTooltip>
+    }
+}
+
+
+
+
+/** 折叠起来的按钮组的`props`。 */
+interface AutoStackedPopperWithButtonProps {
+    /** 用来展开菜单的按钮的类型。 */
+    outer_button: any 
+
+    /** 用来展开菜单的按钮的`props`。 */
+    outer_props?: any 
+    
+    /** 传递给弹出框的`props` */
+    poper_props?: any
+
+    /** 鼠标移上去显示的字样。 */
+    label?: string 
+
+    /** 是否在点击其他位置时关闭。 */
+    close_on_otherclick?: boolean
+
+    /** 关闭时的其他行为。 */
+    onClose?: ()=>void 
+
+    /** 子元素。 */
+    children?: any , 
+}
+
+/**
+ * 这个组件定义一个折叠起来的按钮组。
+ */
+class AutoStackedPopperWithButton extends React.Component<AutoStackedPopperWithButtonProps, {
+    menu_open: boolean
+}>{
+
+    menu_anchor_ref: React.RefObject<HTMLAnchorElement>
+
+    /**
+     * 创建一个折叠起来的按钮组，且通过无鼠标的方式来操作。
+     * @param props.outer_button 用来展开菜单的按钮的类型。
+     * @param props.outer_props 用来展开菜单的按钮的`props`。
+     * @param props.poper_props 传递给弹出框的`props`
+     * @param props.label 鼠标移上去显示的字样。
+     * @param props.close_on_otherclick 是否在点击其他位置时关闭。
+     * @param props.onClose 关闭时的其他行为。
+     * @param props.children `children`会被渲染在按钮之前。
+     */
+    constructor(props: AutoStackedPopperWithButtonProps){
+        super(props)
+
+        this.state = {
+            menu_open: false , 
+        }
+
+        this.menu_anchor_ref = React.createRef()
+    }
+
+    /** 打开菜单。 */
+    set_menu_open(open: boolean){
+        this.setState({menu_open: open})
+        if(!open){ // 正在关闭
+            let onClose = this.props.onClose || (()=>{})
+            onClose() // TODO use MUI onExit
+        }
+    }
+
+    /** 获得按钮组件，作为菜单组件的定位。 */
+    get_anchor(){
+        if(this.menu_anchor_ref && this.menu_anchor_ref.current){
+            return this.menu_anchor_ref.current
+        }
+        return undefined
+    }
+
+    /** 模拟点击行为，切换菜单的关闭/打开。 
+     * @param _ 这是无鼠标操作的接口规定的参数，没有实际意义。
+     * @param force_open 为`undefined`表示切换状态，为`true`或者`false`表示强制设置状态。
+    */
+    run(_: any = undefined){
+        this.set_menu_open(!this.state.menu_open)
+    }
+
+    render(){
+        let props = this.props
+        let children = props.children || <></>
+        let B = props.outer_button
+
+
+        let poper = <React.Fragment>
+            <AutoTooltip title={props.label}><B 
+                onClick     = {this.run.bind(this)}
+                ref         = {this.menu_anchor_ref}
+                {...props.outer_props}
+            /></AutoTooltip>
+            <AutoStackedPopper 
+                anchorEl    = {this.get_anchor()} 
+                open        = {this.state.menu_open}
+                {...props.poper_props}
+            >
+                {children}
+            </AutoStackedPopper>
+        </React.Fragment>
+    
+        if(props.close_on_otherclick){
+            return <ClickAwayListener onClickAway={()=>{this.set_menu_open(false)}}><Box>{poper}</Box></ ClickAwayListener>
+        }
+        return poper
     }
 }

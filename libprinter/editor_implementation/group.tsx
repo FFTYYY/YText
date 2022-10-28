@@ -72,6 +72,7 @@ import {
 import {
     ButtonGroup , 
     ButtonDescription , 
+    AutoStackedPopperButtonGroupMouseless , 
 } from "./buttons"
 
 export { get_deafult_group_editor_with_appbar , get_deafult_group_editor_with_rightbar}
@@ -111,6 +112,7 @@ function get_deafult_group_editor_with_appbar({
                         <StructureTypography>{label}</StructureTypography>
                         <ButtonGroup 
                             node = {node}
+                            idxs = {[0]}
                             buttons = {[
                                 DefaultParameterEditButton , 
                                 DefaultNewAbstractButton , 
@@ -165,23 +167,27 @@ function get_deafult_group_editor_with_rightbar({
                     <AutoStack>
                         <E node={node}/>
                         <StructureTypography variant="overline">{label}</StructureTypography>
-                        <AutoStackedPopperWithButton
+                        <AutoStackedPopperButtonGroupMouseless
                             close_on_otherclick
-                            button_class = {IconButton}
-                            button_props = {{
+                            node = {node}
+                            idxs = {[0]}
+                            outer_button = {IconButton}
+                            outer_props = {{
                                 size: "small" , 
                                 children: <KeyboardArrowDownIcon fontSize="small"/> ,  
                             }}
-                            title = "展开"
+                            label = "展开"
+                            buttons = {[
+                                DefaultParameterEditButton , 
+                                DefaultNewAbstractButton , 
+                                DefaultEditAbstractButton , 
+                                DefaultSwicth , 
+                                DefaultCloseButton , 
+                                DefaultSoftDeleteButton , 
+                                NewParagraphButtonUp , 
+                            ]}
                         >
-                            <DefaultParameterEditButton     node={node}/>
-                            <DefaultNewAbstractButton   node={node} />
-                            <DefaultEditAbstractButton   node={node} />
-                            <DefaultSwicth                  node={node} />
-                            <DefaultCloseButton             node={node} />
-                            <DefaultSoftDeleteButton        node={node} />
-                            <NewParagraphButtonUp             node={node} />
-                        </AutoStackedPopperWithButton>
+                        </AutoStackedPopperButtonGroupMouseless>
                     </AutoStack>
                 </UnselecableBox>
             </SimpleAutoStack>

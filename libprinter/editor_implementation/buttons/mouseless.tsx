@@ -63,10 +63,10 @@ function get_switch_position(editor: EditorComponent){
         // 目前激活的按钮的编号的排名。
         let now_sub_idx = cancidate_idx.indexOf(now_sub)
 
-        if(direction == "ArrowLeft"){
+        if(direction == "ArrowLeft" || direction == "ArrowUp"){
             now_sub_idx --
         }
-        if(direction == "ArrowRight"){
+        if(direction == "ArrowRight" || direction == "ArrowDown"){
             now_sub_idx ++
         }
         now_sub_idx = ((now_sub_idx % cancidate_idx.length) + cancidate_idx.length) % cancidate_idx.length
