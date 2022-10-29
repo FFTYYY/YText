@@ -308,5 +308,20 @@ let second_concepts = second_concepts_from_json(`{
         "type" : "support" , 
         "fixed": {} , 
         "default" : {}
+    } , 
+    "行": {
+        "first": "齐言" , 
+        "type" : "structure" ,
+        "fixed": {} , 
+        "default" : {
+            "label": {
+                "val" : "行" , 
+                "type": "string"
+            } , 
+            "width": {
+                "val": "1" , 
+                "type": "string"
+            }
+        }
     }
 }`)

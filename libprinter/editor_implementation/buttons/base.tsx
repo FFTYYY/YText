@@ -129,11 +129,11 @@ class MouselessButton<OtherPropsType = {}> extends React.Component<MouselessButt
 /** 描述一个按钮。 */
 type ButtonDescription<OtherPropsType = {}> = {
     other_props?: OtherPropsType
-    component: React.ComponentClass | React.FunctionComponent
+    component: React.ComponentClass<EditorButtonInformation> | React.FunctionComponent<EditorButtonInformation>
 
     /** 是否要跳过无鼠标操作的选择。 */
     skip_mouseless?: boolean
-} | (React.ComponentClass | React.FunctionComponent)
+} | (React.ComponentClass<EditorButtonInformation> | React.FunctionComponent<EditorButtonInformation>)
 
 interface ButtonGroupProps{
     buttons: ButtonDescription[]
@@ -222,7 +222,7 @@ interface AutoStackedPopperButtonGroupMouselessProps {
     close_on_otherclick?: boolean
 
     /** 关闭时的其他行为。 */
-    onClose?: ()=>void 
+    onExit?: ()=>void 
 
     /** `children`会被渲染在按钮之前。 */
     children?: any , 
@@ -256,7 +256,7 @@ class AutoStackedPopperButtonGroupMouseless extends React.Component<AutoStackedP
      * @param props.poper_props 传递给弹出框的`props`
      * @param props.label 鼠标移上去显示的字样。
      * @param props.close_on_otherclick 是否在点击其他位置时关闭。
-     * @param props.onClose 关闭时的其他行为。
+     * @param props.onExit 关闭时的其他行为。
      * @param props.children `children`会被渲染在按钮之前。
      * @param props.node 所服务的节点。
      * @param props.buttons 所要用的按钮组。
@@ -353,7 +353,7 @@ class AutoStackedPopperButtonGroupMouseless extends React.Component<AutoStackedP
                 poper_props         = {this.props.poper_props}
                 label               = {this.props.label}
                 close_on_otherclick = {this.props.close_on_otherclick}
-                onClose             = {this.props.onClose}
+                onExit              = {this.props.onExit}
 
                 ref = {this.button_ref}
             >

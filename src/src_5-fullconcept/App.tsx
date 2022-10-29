@@ -11,8 +11,11 @@ import {
 	RendererDict, 
 	DefaultRendererhDict, 
 	AbstractNode , 
+	EditorRenderer , 
 
 	DefaultPrinterComponent , 
+	EditorRendererDict , 
+	EditorDefaultRendererhDict , 
 
 	EditorCore,
 	EditorComponent , 
@@ -23,16 +26,18 @@ import {
 } from "../../libprinter"
 import {
 	first_concepts , 
+} from "./first_concepts"
+import {
 	second_concepts , 
-} from "./concepts"
+} from "./second_concepts"
 import {
 	renderers , 
 	default_renderers , 
-} from "./renderers"
+} from "./print_renderers"
 import {
-	renderers as editor_renderers , 
-	default_renderers as editor_default_renderers , 
-} from "./editorrenderers"
+    editors , 
+    default_editors , 
+} from "./editor_renderers"
 import {
 	tree
 } from "./tree"
@@ -48,8 +53,8 @@ let printer = new Printer(
 )
 
 let editorcore = new EditorCore({
-	renderers: editor_renderers , 
-	default_renderers: editor_default_renderers , 
+	renderers: editors , 
+	default_renderers: default_editors, 
 	printer: printer , 
 })
 
@@ -72,6 +77,7 @@ class App extends React.Component<{},{
 		}
 
 		this.editor_ref = React.createRef<DefaultEditorComponent>()
+
 		console.log(tree)
 	}
 	componentDidMount(): void {

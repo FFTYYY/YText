@@ -55,7 +55,7 @@ export { get_default_inline_editor }
  * 见https://github.com/ianstormtaylor/slate/issues/4811
  */
 function get_default_inline_editor({
-    get_label       = (n: InlineNode)=>n["label"].val, 
+    get_label       = (n: InlineNode)=>(n.parameters["label"] && n.parameters["label"].val) as string, 
     surrounder      = (props) => <React.Fragment>{props.children}</React.Fragment> , 
     rightbar_extra  = (props) => <></> , 
 }: {
@@ -63,7 +63,7 @@ function get_default_inline_editor({
     surrounder      ?: (props: EditorButtonInformation & {children: any}) => any , 
     rightbar_extra  ?: (props: EditorButtonInformation) => any  , 
 
-}): EditorRenderer{
+}): EditorRenderer<InlineNode>{
     return (props: EditorRendererProps<InlineNode>) => {
         let node = props.node as InlineNode
         let label   = get_label(node)

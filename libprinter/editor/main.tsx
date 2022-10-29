@@ -56,10 +56,12 @@ export {
 }
 export type {
     EditorComponentProps , 
+    EditorRendererDict , 
+    EditorDefaultRendererhDict , 
 }
 
 /** 用来保存概念的编辑器渲染。 */
-interface RendererDict{
+interface EditorRendererDict{
     "group"     : {[name: string] : EditorRenderer<GroupNode>} , 
     "inline"    : {[name: string] : EditorRenderer<InlineNode>} , 
     "support"   : {[name: string] : EditorRenderer<SupportNode>} , 
@@ -68,7 +70,7 @@ interface RendererDict{
 }
 
 /** 编辑器的默认渲染。 */
-interface DefaultRendererhDict{
+interface EditorDefaultRendererhDict{
     "group"     : EditorRenderer<GroupNode> , 
     "inline"    : EditorRenderer<InlineNode> , 
     "support"   : EditorRenderer<SupportNode> , 
@@ -82,13 +84,13 @@ interface DefaultRendererhDict{
  * 要创建一个编辑器，需要对每个一级概念指定一个渲染器。
  */
 class EditorCore{
-    renderers: RendererDict 
-    default_renderers: DefaultRendererhDict 
+    renderers: EditorRendererDict 
+    default_renderers: EditorDefaultRendererhDict 
     printer: Printer
 
     constructor(params: {
-        renderers: RendererDict , 
-        default_renderers: DefaultRendererhDict, 
+        renderers: EditorRendererDict , 
+        default_renderers: EditorDefaultRendererhDict, 
         printer: Printer , 
     }){
         this.renderers = params.renderers 

@@ -97,7 +97,7 @@ import {
 } from "./buttons"
 
 
-export { get_default_struct_with_rightbar }
+export { get_default_struct_editor_with_rightbar }
 
 /** 为 Struct 类型的节点定制的 Paper ，在节点前后相连时会取消前后距离。 */
 let StructPaper = (props: PaperProps & {node: StructNode}) => <ComponentPaper {...props} 
@@ -114,7 +114,7 @@ let StructPaper = (props: PaperProps & {node: StructNode}) => <ComponentPaper {.
  * @param params.surrounder 包裹内容区域的组件。
  * @returns 一个用于渲染group的组件。
  */
-function get_default_struct_with_rightbar({
+function get_default_struct_editor_with_rightbar({
     get_label       = (n) => n.parameters.label.val as string, 
     get_numchildren = (n) => 1                                ,
     get_widths      = (n) => []                                 ,

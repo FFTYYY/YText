@@ -272,7 +272,6 @@ function get_default_paragraph_renderer({
             let pre_elements = elmt_consumer.get_context(context)
             let pre_texts = text_consumer.get_context(context)
 
-            // TODO pretext可能需要加点样式啥的？
             return <PrinterParagraphBox>
                 {Object.keys(pre_elements).map((eleid)=><React.Fragment key={eleid}>{pre_elements[eleid]}</React.Fragment>)}
                 {Object.keys(pre_texts).map((eleid)=><span key={eleid}>{pre_texts[eleid]}</span>)}

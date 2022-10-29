@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import App from './src_4-printereditor/App'
+import App from './src_5-fullconcept/App'
+// import App from "./src_4-printereditor/App"
 
 ReactDOM.render(
   <React.StrictMode>

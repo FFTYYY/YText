@@ -53,7 +53,7 @@ class FirstClassConcept{
     constructor({
         type , 
         name , 
-        parameter_prototype = {} , // XXX 一律用下划线命名法
+        parameter_prototype = {} ,
         meta_parameters = {} , 
     } : {
         type: "group" | "inline" | "structure" | "support" | "abstract" , 

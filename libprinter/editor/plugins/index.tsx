@@ -48,7 +48,6 @@ let plugins: EditorPlugin[] = [
     constraint_abstract , 
 ]
 
-
 function with_ytext_plugins(editor: EditorComponent, slate: SlateReact.ReactEditor): SlateReact.ReactEditor{
     for(let plugin of plugins){
         slate = plugin(editor , slate)

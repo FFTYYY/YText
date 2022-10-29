@@ -75,7 +75,7 @@ import {
     AutoStackedPopperButtonGroupMouseless , 
 } from "./buttons"
 
-export { get_deafult_group_editor_with_appbar , get_deafult_group_editor_with_rightbar}
+export { get_deafult_group_editor_with_appbar , get_default_group_editor_with_rightbar}
 
 /** 为 Group 类型的节点定制的 Paper ，在节点前后相连时会取消前后距离。 */
 let GroupPaper = (props: PaperProps & {node: GroupNode}) => <ComponentPaper {...props} 
@@ -89,20 +89,20 @@ let GroupPaper = (props: PaperProps & {node: GroupNode}) => <ComponentPaper {...
  * @returns 一个用于渲染group的组件。
  */
 function get_deafult_group_editor_with_appbar({
-    get_label     = (n:GroupNode)=>n.parameters["label"].val as string, 
+    get_label     = (n:GroupNode)=>(n.parameters["label"] && n.parameters["label"].val) as string, 
     appbar_extra  = (n:GroupNode) => [] , 
     surrounder    = (props) => <>{props.children}</>
 }: {
     get_label       ?: (n: GroupNode) => string ,  
     appbar_extra    ?: (n: GroupNode) => ButtonDescription[], 
     surrounder      ?: (props: EditorButtonInformation & {children: any}) => any ,
-}): EditorRenderer{
+}): EditorRenderer<GroupNode>{
     // 渲染器
     return (props: EditorRendererProps<Slate.Node & GroupNode>) => {
         let node = props.node as GroupNode
         let label   = get_label(node)
+        console.log(node)
 
-        let E = appbar_extra
         let SUR = surrounder
 
         return <GroupPaper node={node}>
@@ -142,15 +142,15 @@ function get_deafult_group_editor_with_appbar({
  * @param params.surrounder 包裹内容区域的组件。
  * @returns 一个用于渲染group的组件。
  */
-function get_deafult_group_editor_with_rightbar({
-    get_label       = (n) => n.parameters["label"].val as string, 
+function get_default_group_editor_with_rightbar({
+    get_label       = (n) => (n.parameters["label"] && n.parameters["label"].val) as string, 
     rightbar_extra  = (n) => [], 
     surrounder      = (props) => <>{props.children}</>
 }: {
     get_label       ?: (n:GroupNode) => string , 
     rightbar_extra  ?: (n:GroupNode) => ButtonDescription[], 
     surrounder      ?: (props: EditorButtonInformation & {children: any}) => any ,
-}): EditorRenderer{
+}): EditorRenderer<GroupNode>{
 
     return (props: EditorRendererProps<Slate.Node & GroupNode>) => {
         let node = props.node as GroupNode

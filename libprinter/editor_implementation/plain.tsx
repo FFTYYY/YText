@@ -22,15 +22,15 @@ import {
 import { EditorRenderer , EditorRendererProps } from "../editor"
 import { 
     EditorParagraphBox as ParagraphBox , 
-    EditorUnselecableBox , 
+    EditorUnselecableBox as UnselecableBox, 
     EditorStructureTypography , 
     EditorComponentPaper as ComponentPaper , 
     EditorComponentEditingBox as ComponentEditorBox , 
 } from "./uibase"
 
-export { get_default_renderers }
+export { get_default_editors }
 
-function get_default_block_renderer<NodeType extends Node>(){
+function get_default_block_editor<NodeType extends Node>(){
     return (props: EditorRendererProps<NodeType>) => (<ComponentPaper sx={{border: "2px block"}}>
         <ComponentEditorBox>
             {props.children}
@@ -38,12 +38,20 @@ function get_default_block_renderer<NodeType extends Node>(){
     </ComponentPaper>)
 }
 
-function get_default_renderers(): {[key in AllNodeTypes]: EditorRenderer}{
+function get_default_support_editor(){
+    return (props: EditorRendererProps<SupportNode>) => (<ComponentPaper sx={{border: "2px block"}}>
+    <UnselecableBox>
+        {props.children}
+    </UnselecableBox>
+</ComponentPaper>)
+}
+
+function get_default_editors(): {[key in AllNodeTypes]: EditorRenderer}{
     return {
-        "group"     : get_default_block_renderer<GroupNode>() , 
-        "inline"    : get_default_block_renderer<InlineNode>() , 
-        "structure" : get_default_block_renderer<StructNode>() , 
-        "support"   : get_default_block_renderer<SupportNode>() , 
+        "group"     : get_default_block_editor<GroupNode>() , 
+        "inline"    : get_default_block_editor<InlineNode>() , 
+        "structure" : get_default_block_editor<StructNode>() , 
+        "support"   : get_default_support_editor() , 
         "abstract"  : (props) => <Box>{props.children}</Box> , 
         "paragraph" : (props) => <ParagraphBox>{props.children}</ParagraphBox> , 
         "text"      : (props) => <span>{props.children}</span> , 

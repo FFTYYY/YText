@@ -12,16 +12,16 @@ import {
     ParagraphNode,
     ConceptNode, 
     get_default_inline_editor , 
-    get_default_renderers , 
-    get_deafult_group_editor_with_rightbar , 
-    get_default_struct_with_rightbar , 
+    get_default_editors , 
+    get_default_group_editor_with_rightbar , 
+    get_default_struct_editor_with_rightbar , 
 } from "../../libprinter"
 
 export {renderers , default_renderers}
 
 let renderers = {
     "group": {
-        "theorem": get_deafult_group_editor_with_rightbar({
+        "theorem": get_default_group_editor_with_rightbar({
             get_label: (n)=>"theorem"
         })
     } , 
@@ -31,7 +31,7 @@ let renderers = {
         })
     } , 
     "structure": {
-        "line": get_default_struct_with_rightbar({
+        "line": get_default_struct_editor_with_rightbar({
             get_label: (n)=>"行" , 
             get_numchildren:(n)=>{
                 let widths_s = n.parameters.widths.val as string
@@ -51,4 +51,4 @@ let renderers = {
     } ,
 }
 
-let default_renderers = get_default_renderers()
+let default_renderers = get_default_editors()

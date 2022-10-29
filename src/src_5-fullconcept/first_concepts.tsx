@@ -128,7 +128,7 @@ var delete_style      = new FirstClassConcept  ({type: "inline", name: "刊"   ,
     })
 })
 
-var delete_style      = new FirstClassConcept  ({type: "inline", name: "缀"   , 
+var link_style      = new FirstClassConcept  ({type: "inline", name: "缀"   , 
     parameter_prototype: make_param({
         label: "缀" ,
         target: "" , 
@@ -169,12 +169,18 @@ var ender_style       = new FirstClassConcept ({type: "support", name: "章节�
     } ) 
 })
 
-// var alignedwords_style= new FirstClassConcept  ({type: "group", name: "齐言"   , 
-//     {...w_univ_par , ...make({ label: "齐言" , widths: "1"}) } , 
-//     {...w_univ_lab , widths: "（相对）宽度列表，用逗号分隔"} , 
-// })
+var alignedwords_style = new FirstClassConcept({type: "structure", name: "齐言" , 
+    parameter_prototype: make_param( { 
+        label: "齐言" , 
+        widths: "1" , 
+    } ) 
+})
 
-// var dimwords_style    = new FirstClassConcept({type: "group", name: "穆言"   , {} , {})
+var dimwords_style    = new FirstClassConcept({type: "group", name: "穆言", 
+    parameter_prototype: make_param({
+        label: "穆言" , 
+    })
+})
 
 
 // var showchildren_style = new FirstClassConcept ({type: "group", name: "展示子节点" , make( { 
@@ -201,10 +207,12 @@ let first_concepts = [
 	subsection_style , 
 	strong_style , 
 	delete_style , 
-	delete_style , 
+	link_style , 
 	mathinline_style , 
 	image_style , 
 	newpara_style , 
 	ender_style , 
     sectioner_style , 
+    alignedwords_style , 
+    dimwords_style , 
 ]

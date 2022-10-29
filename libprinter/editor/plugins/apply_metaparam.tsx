@@ -54,8 +54,9 @@ function set_support(editor: EditorComponent , slate: SlateReact.ReactEditor): S
             if(fir_ccpt){
                 meta_params = fir_ccpt.meta_parameters
             }
-            if(meta_params.force_void || element.type == "support")
+            if(meta_params.force_void || element.type == "support"){
                 return true
+            }
         }
 
         return isVoid(element)

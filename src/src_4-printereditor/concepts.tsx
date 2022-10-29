@@ -13,7 +13,7 @@ export {
 let theorem = new FirstClassConcept({
     type: "group" , 
     name: "theorem" , 
-    parameterPrototype: {
+    parameter_prototype: {
         name: {
             type: "string" , 
             val: "theorem"  , 
@@ -32,15 +32,15 @@ let strong = new FirstClassConcept({
 
 let sec_theorem = new SecondClassConcept({
     type: "group" , 
-    firstConcept: "theorem" , 
+    first_concept: "theorem" , 
     name: "theoremer" , 
-    defaultOverride: {
+    default_override: {
         alias_name: {
             type: "string" , 
             val: ""
         }
     },
-    fixedIverride: {
+    fixed_override: {
         alias:{
             type: "function" , 
             val: "p=>p.alias_name.val ? `(${p.alias_name.val})` : ``" , 
@@ -54,14 +54,14 @@ let sec_theorem = new SecondClassConcept({
 
 let sec_strong = new SecondClassConcept({
     type: "inline" , 
-    firstConcept: "strong" , 
+    first_concept: "strong" , 
     name: "stronger" , 
 })
 
 let comment = new FirstClassConcept({
     type: "abstract" , 
     name: "comment" , 
-    parameterPrototype: {
+    parameter_prototype: {
         suffix: {
             type: "string" , 
             val: ""  , 
@@ -71,9 +71,9 @@ let comment = new FirstClassConcept({
 
 let sec_comment = new SecondClassConcept({
     type: "abstract" , 
-    firstConcept: "comment" , 
+    first_concept: "comment" , 
     name: "comment" , 
-    fixedIverride:{
+    fixed_override:{
         suffix: {
             type: "string" , 
             val: "haha"  , 
@@ -84,7 +84,7 @@ let sec_comment = new SecondClassConcept({
 let line = new FirstClassConcept({
     type: "structure" , 
     name: "line" , 
-    parameterPrototype: {
+    parameter_prototype: {
         widths: {
             type: "string" , 
             val: ""
@@ -94,9 +94,9 @@ let line = new FirstClassConcept({
 
 let sec_line = new SecondClassConcept({
     type: "structure" ,  
-    firstConcept: "line" , 
+    first_concept: "line" , 
     name: "line" , 
-    defaultOverride: {
+    default_override: {
         widths: {
             type: "string" , 
             val: ""
