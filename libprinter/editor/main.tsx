@@ -272,24 +272,25 @@ class EditorCore{
 
 
 type TreeOpeationsMixins = {
-    set_node           : <NT extends Slate.Node & ConceptNode>                         (node: NT, new_val: Partial<NT>         ) => void
-    set_node_by_path   : <NT extends Slate.Node & ConceptNode>                         (path:number[] , new_val: Partial<NT>   ) => void
-    auto_set_parameter : <NT extends Slate.Node & ConceptNode>                         (node: NT, parameters: ParameterList    ) => void
-    delete_concept_node: <NT extends Slate.Node & ConceptNode>                         (node: NT                               ) => void
-    delete_node_by_path: <NT extends Slate.Node              >                         (path: number[]                         ) => void
-    move_concept_node  : <NT extends Slate.Node & ConceptNode>                         (node_from: NT, posto: number[]         ) => void
-    unwrap_node        : <NT extends Slate.Node & ConceptNode>                         (node: NT                               ) => void
-    move_node_by_path  : <NT extends Slate.Node              >                         (posf: number[], posto: number[]        ) => void
-    add_nodes          : <NT extends Slate.Node              >                         (nodes: (NT[]) | NT, path: number[]     ) => void
-    add_nodes_before   : <NT extends Slate.Node, TT extends Slate.Node & ConceptNode>  (nodes: (NT[]) | NT, target_node: TT    ) => void
-    add_nodes_after    : <NT extends Slate.Node, TT extends Slate.Node & ConceptNode>  (nodes: (NT[]) | NT, target_node: TT    ) => void
-    add_nodes_here     : <NT extends Slate.Node              >                         (nodes: (NT[]) | NT                     ) => void
-    replace_nodes      : <NT extends Slate.Node & ConceptNode, ST extends Slate.Node>  (father_node: NT, nodes: ST[]           ) => void
-    wrap_selected_nodes: <NT extends Slate.BaseElement       >                         (node: NT, options:{
+    set_node            : <NT extends Slate.Node & ConceptNode>                         (node: NT, new_val: Partial<NT>         ) => void
+    set_node_by_path    : <NT extends Slate.Node & ConceptNode>                         (path:number[] , new_val: Partial<NT>   ) => void
+    auto_set_parameter  : <NT extends Slate.Node & ConceptNode>                         (node: NT, parameters: ParameterList    ) => void
+    delete_concept_node : <NT extends Slate.Node & ConceptNode>                         (node: NT                               ) => void
+    delete_node_by_path : <NT extends Slate.Node              >                         (path: number[]                         ) => void
+    delete_nodes_by_paths:<NT extends Slate.Node              >                         (paths: number[][]                      ) => void
+    move_concept_node   : <NT extends Slate.Node & ConceptNode>                         (node_from: NT, posto: number[]         ) => void
+    unwrap_node         : <NT extends Slate.Node & ConceptNode>                         (node: NT                               ) => void
+    move_node_by_path   : <NT extends Slate.Node              >                         (posf: number[], posto: number[]        ) => void
+    add_nodes           : <NT extends Slate.Node              >                         (nodes: (NT[]) | NT, path: number[]     ) => void
+    add_nodes_before    : <NT extends Slate.Node, TT extends Slate.Node & ConceptNode>  (nodes: (NT[]) | NT, target_node: TT    ) => void
+    add_nodes_after     : <NT extends Slate.Node, TT extends Slate.Node & ConceptNode>  (nodes: (NT[]) | NT, target_node: TT    ) => void
+    add_nodes_here      : <NT extends Slate.Node              >                         (nodes: (NT[]) | NT                     ) => void
+    replace_nodes       : <NT extends Slate.Node & ConceptNode, ST extends Slate.Node>  (father_node: NT, nodes: ST[]           ) => void
+    wrap_selected_nodes : <NT extends Slate.BaseElement       >                         (node: NT, options:{
                                                                                             match?: (n:NT)=>boolean , 
                                                                                             split?: boolean , 
                                                                                         }) => void
-    wrap_nodes         : <NT extends Slate.BaseElement       >                         (node: NT, from: Slate.Point, to: Slate.Point, 
+    wrap_nodes          : <NT extends Slate.BaseElement       >                         (node: NT, from: Slate.Point, to: Slate.Point, 
                                                                                         options:{
                                                                                             match?: (n:NT)=>boolean , 
                                                                                             split?: boolean , 
@@ -428,6 +429,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
         this.wrap_selected_nodes    = (node, options        ) => tree_op_mixin.wrap_selected_nodes  (me,node, options)
         this.wrap_nodes             = (node,fr,to,options   ) => tree_op_mixin.wrap_nodes           (me,node, fr, to, options)
         this.replace_nodes          = (father_node, nodes   ) => tree_op_mixin.replace_nodes        (me,father_node, nodes)  
+        this.delete_nodes_by_paths  = (paths                ) => tree_op_mixin.delete_nodes_by_paths(me, paths)
     }
 
     /** 

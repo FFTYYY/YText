@@ -12,10 +12,13 @@ import {
 import {
     MouselessElement , 
     DirectionKey , 
+    SwitchPositionFunction , 
 } from "../mouseless"
 import { 
     EditorComponent , 
     slate_is_concept , 
+    slate_concept_father , 
+    slate_idx_to_node , 
 } from "../../editor"
 import {
     EditorButtonInformation
@@ -42,14 +45,79 @@ function get_position(node: Slate.Node & ConceptNode , idx: number){
     return JSON.stringify([node_idx, idx])
 }
 
-function get_switch_position(editor: EditorComponent){
-    return (position_list: string[] , cur_position: string, direction: DirectionKey): string =>{
+/** 从候选位置中看有没有以当前节点开头的位置。 */
+function get_cancidate_idxs(node: Slate.Node & ConceptNode, position_list: string[]){
+    let cancidate_idxs = position_list.reduce((s,x)=>{ // 所选中的节点有哪些候选的位置。
+        let [nodeidx,subidx]: [number,number] = JSON.parse(x)
+        if(nodeidx == node.idx){
+            return [...s, subidx]
+        }
+        return s
+    } , [] as number [])
+    return cancidate_idxs
+}
+
+/** 获取离一个节点最近的有无鼠标元素的父亲。返回父亲和父亲的无鼠标元素列表。 */
+function get_mouseless_father(editor: EditorComponent, node: Slate.Node & ConceptNode, position_list: string[], only_father: boolean): [Slate.Node & ConceptNode , number[]]{
+    let now_node = node
+
+    // 如果想要只要父节点，就先迭代一次。
+    if(only_father){ 
+        now_node = slate_concept_father(editor.get_slate(), now_node)
+        if(now_node == undefined){ // 压根没找到父亲，直接离开
+            return [undefined , []]
+        }
+    }
+
+    let cancidate_idxs = get_cancidate_idxs(now_node, position_list) // 初始的（当前节点）的候选位置列表。
+
+    // 如果找到了根节点或者找到了至少有一个候选节点的父亲，就离开。
+    while(! (Slate.Editor.isEditor(now_node) || cancidate_idxs.length != 0)){
+        now_node = slate_concept_father(editor.get_slate(), now_node)
+        if(now_node == undefined){ // 压根没找到父亲，直接离开
+            break
+        }
+        cancidate_idxs = get_cancidate_idxs(now_node, position_list)
+    }
+
+    if(Slate.Editor.isEditor(now_node) || cancidate_idxs.length == 0){ // 这不是什么也没找到吗
+        return [undefined, cancidate_idxs]
+    }
+
+    return [now_node, cancidate_idxs]
+}
+
+function get_switch_position(editor: EditorComponent): SwitchPositionFunction{
+    return (position_list: string[] , cur_position: string, direction: DirectionKey, all_keys: {[k:string]: boolean}): string =>{
         if(cur_position == undefined){
             return get_activate_position(editor)(position_list, cur_position)
         }
 
+        let flag_multi = false // 是否有多个方向键同时按下，如果有，就进入父节点。
+        for(let dir of ["ArrowLeft", "ArrowRight", "ArrowDown", "ArrowUp"]){
+            if(all_keys[dir] && dir != direction){
+                flag_multi = true
+            }
+        }
+
         // 获得当前激活位置。
         let [now_idx, now_sub]: [number , number] = JSON.parse(cur_position)
+
+        while(flag_multi){ // 同时按下多个方向键以进入父节点。
+            let the_node = slate_idx_to_node(editor.get_slate(), now_idx)
+            if(!the_node){ // 如果节点不存在，那么就跳过此环节。
+                break
+            }
+
+            // 向上寻找父亲。
+            let [father, cancidate_idxs] = get_mouseless_father(editor, the_node, position_list, true)
+            if(father == undefined || cancidate_idxs.length == 0){ // 压根没找到父亲，直接离开
+                break
+            }
+
+            cancidate_idxs.sort()
+            return JSON.stringify([father.idx, cancidate_idxs[0]])
+        }
 
         // 所选中的节点有哪些候选的位置。
         let cancidate_idx = position_list.reduce<number[]>((s,x)=>{
@@ -83,17 +151,23 @@ function get_activate_position(editor: EditorComponent){
             return undefined
         }
 
+        // 向上寻找概念节点。
         let now_path = selection.anchor.path // 如果光标在编辑器上，那么就选择光标开始位置作为当前节点。
         while(now_path.length > 0 && !slate_is_concept(Slate.Editor.node(editor.get_slate(), now_path)[0])){
-            console.log(now_path)
             now_path = now_path.slice(0,now_path.length-1) // 反复向上寻找，直到找到一个概念节点。
         }
         let now_node = Slate.Editor.node(editor.get_slate(), now_path)[0]
         if(now_path.length == 0 || !slate_is_concept(now_node)){ // 如果退到了根节点，就退出。
             return undefined
         }
-        let now_idx = now_node.idx
-        console.log(now_idx, cur_position)
+
+        // 向上寻找一个带无鼠标元素的概念节点。
+        let [the_node, cancidate_idxs] = get_mouseless_father(editor, now_node, position_list, false)
+        if(the_node == undefined){
+            return cur_position
+        }
+
+        let now_idx = the_node.idx
 
         if(cur_position != undefined){
             let [old_nodeidx, _] = JSON.parse(cur_position)
@@ -102,20 +176,8 @@ function get_activate_position(editor: EditorComponent){
             }
         }
 
-        // 所选中的节点有哪些候选的位置。
-        let cancidate_idx = position_list.reduce((s,x)=>{
-            let [nodeidx,subidx]: [number,number] = JSON.parse(x)
-            if(nodeidx == now_idx){
-                return [...s, subidx]
-            }
-            return s
-        } , [])
         
-        if(cancidate_idx.length == 0){ // 所选中的节点没有按钮。
-            return undefined
-        }
-        
-        cancidate_idx.sort()
-        return JSON.stringify([now_idx, cancidate_idx[0]])
+        cancidate_idxs.sort()
+        return JSON.stringify([now_idx, cancidate_idxs[0]])
     }
 }

@@ -36,6 +36,7 @@ import {
 import {
     MouselessElement , 
     DirectionKey, 
+    SwitchPositionFunction , 
 } from "./mouseless"
 
 
@@ -87,7 +88,7 @@ function get_activate_position(){
 } 
 
 /** 这个函数以editor为参数，返回改变位置的函数。 */
-function get_switch_position(editor: EditorComponent){
+function get_switch_position(editor: EditorComponent): SwitchPositionFunction{
     if(editor == undefined){
         return ()=>undefined
     }

@@ -87,6 +87,18 @@ let tree_op_mixin = {
         }
         Slate.Transforms.removeNodes<NT>(editor.get_slate() , {at: path})
     } , 
+
+    /** 这个函数删除一个节点的若干子节点。 */
+    delete_nodes_by_paths<NT extends Slate.Node>(editor: EditorComponent, paths: number[][]){
+        if(paths.length == 0){
+            throw new UnexpectedParametersError("这这不能")
+        }
+        let path_strs = paths.reduce((s,x)=>[...s, JSON.stringify(x)] , [])
+
+        Slate.Transforms.removeNodes<NT>(editor.get_slate() , {
+            match: (node, path)=>path_strs.indexOf(JSON.stringify(path)) >= 0 // 只要在列表中...
+        })
+    } , 
     
     /** 这个函数把一个节点移动到另一个位置。 */
     move_concept_node<NT extends Slate.Node & ConceptNode>(editor: EditorComponent, node_from: NT, position_to: number[]){
@@ -188,7 +200,7 @@ let tree_op_mixin = {
      * @param options.split 是否允许分裂父节点。
     */
     wrap_nodes< NT extends Slate.BaseElement>(
-        editor , 
+        editor: EditorComponent , 
         node: NT, 
         from: Slate.Point , 
         to: Slate.Point , 

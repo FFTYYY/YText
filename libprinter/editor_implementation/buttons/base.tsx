@@ -129,13 +129,21 @@ class MouselessButton<OtherPropsType = {}> extends React.Component<MouselessButt
 /** 描述一个按钮。 */
 type ButtonDescription<OtherPropsType = {}> = {
     other_props?: OtherPropsType
-    component: any
-} | any
+    component: React.ComponentClass | React.FunctionComponent
+
+    /** 是否要跳过无鼠标操作的选择。 */
+    skip_mouseless?: boolean
+} | (React.ComponentClass | React.FunctionComponent)
 
 interface ButtonGroupProps{
     buttons: ButtonDescription[]
     node: Slate.Node & ConceptNode
+    
     idxs?: number[]
+
+    /** 是否自动确定方向。 */
+    autostack?: boolean
+
 
     /** 要额外执行的`run`函数。 */
     extra_run?: (new_pos: React.KeyboardEvent<HTMLDivElement>)=>void
@@ -163,13 +171,19 @@ class ButtonGroup extends React.Component<ButtonGroupProps>{
             idxs = [...idxs, Math.max(...idxs) + 1] // 每次加入最大元素+1。
         }
 
-        return Object.keys(buttons).map((subidx)=>{
+        let ret = Object.keys(buttons).map((subidx)=>{
             let res_other_props = {} 
             let res_component = buttons[subidx]
+            let res_skip_mouseless = false // 是否跳过无鼠标
             if(buttons[subidx]["component"]){ // 如果是object描述
-                let {other_props,component} = buttons[subidx]
-                res_other_props = other_props
+                let {other_props,component, skip_mouseless} = buttons[subidx]
+                res_other_props = other_props || {}
                 res_component   = component
+                res_skip_mouseless = skip_mouseless || false
+            }
+            if(res_skip_mouseless){
+                let C = res_component
+                return <C key={subidx} node={node} {...res_other_props}/> // 单独创建元素，不套上mouseless。
             }
             return <MouselessButton 
                 key         = {subidx}
@@ -181,9 +195,12 @@ class ButtonGroup extends React.Component<ButtonGroupProps>{
                 extra_run           = {this.props.extra_run}
                 extra_activate      = {this.props.extra_activate}
                 extra_unactivate    = {this.props.extra_unactivate}
-    
             />
         })
+        if(this.props.autostack){
+            return <AutoStack>{ret}</AutoStack>
+        }
+        return ret
     }
 }
 
@@ -294,7 +311,7 @@ class AutoStackedPopperButtonGroupMouseless extends React.Component<AutoStackedP
             }
         }
     }
-
+    
     componentDidMount(): void {
         let me = this
         let [regiester_func, _] = this.context as [MouselessRegisterFunction, MouselessUnRegisterFunction]

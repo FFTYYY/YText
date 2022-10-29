@@ -131,16 +131,9 @@ class DefaultEditorComponent extends React.Component <EditorComponentProps & {
 
     render() {
     
-        // 工具栏的宽度
-        let toolbar_width = {
-            xs: 0.15 , 
-            md: 0.10 , 
-            xl: 0.05 , 
-        }
-        // 除开工具栏之外的部分的宽度。
-        let complement_width = object_foreach(toolbar_width , (x:number)=>1-x)
-        // number2percent 用来将小数形式的表示转为字符串形式。MUI的sx的left属性不接受小数点表示。
-        let number2percent = (obj: {[k:string]:number}) => object_foreach(obj , x=>`${Math.floor(x*100)%100}%`)
+        
+        let paper_width   = {xs: "85%" , md: "90%" , xl: "95%"} // 纸张的宽度，
+        let toolbar_width = {xs: "15%" , md: "10%" , xl: "5%"} // 工具栏的宽度。
 
         let theme = merge_object(default_editor_theme , this.props.theme)
 
@@ -162,7 +155,7 @@ class DefaultEditorComponent extends React.Component <EditorComponentProps & {
                 <Box sx = {{ 
                     position: "absolute" , 
                     height: "100%", 
-                    width: "100%", 
+                    width: paper_width, 
                     overflow: "auto", 
                 }}><EditorComponentEditingBox>
                     <KeyDownUpFunctionProxy.Consumer>{([onkeydown , onkeyup])=>{
@@ -189,7 +182,7 @@ class DefaultEditorComponent extends React.Component <EditorComponentProps & {
                 <Box sx = {{
                     position: "absolute", 
                     height: "100%", 
-                    left: number2percent(complement_width), 
+                    left: paper_width, 
                     width: toolbar_width
                 }}>{(()=>{
                     let editor = me.get_editor()

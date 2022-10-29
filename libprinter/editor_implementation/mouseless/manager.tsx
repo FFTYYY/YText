@@ -23,6 +23,8 @@ export type {
     KeyEventManagerNonSpaceItem , 
     KeyEventManagerProps , 
     KeyEventManagerState , 
+    ActivatePositionFunction , 
+    SwitchPositionFunction , 
 }
 
 export {
@@ -93,16 +95,27 @@ interface MouselessRegisteration {
 /** 提供无鼠标元素注册函数的上下文。 */
 let MouselessRegister = React.createContext<[MouselessRegisterFunction, MouselessUnRegisterFunction]>([()=>{}, ()=>{}])
 
+/** 确定聚焦时位置的函数。 */
+type ActivatePositionFunction = (position_list: string[], cur_position: string) => string
+
+/** 确定按下方向键时的聚焦切换的函数。 */
+type SwitchPositionFunction = (
+    position_list: string[], 
+    cur_position: string, 
+    direction: DirectionKey, 
+    all_keys: {[key: string]: boolean}
+) => string
+
 /** 按键管理器的空间元素描述。 */
 interface KeyEventManagerSpaceItem{
     /** 匹配用按键。*/
     key: string
 
     /** 第一次聚焦时的位置。 */
-    activate_position: (position_list: string[], cur_position: string) => string
+    activate_position: ActivatePositionFunction
 
     /** 按下方向键时的聚焦切换。 */
-    switch_position: (position_list: string[], cur_position: string, direction: DirectionKey) => string
+    switch_position: SwitchPositionFunction
 }
 
 /** 按键事件管理器的非空间元素描述。 */
@@ -381,6 +394,7 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
      * @return 是否被处理。返回`true`表示事件已经在按下时被处理，否则表示不会被本处理器处理。
     */
     keyup_proxy(e: React.KeyboardEvent<HTMLDivElement>){
+        let me = this 
         this.flush_key_state(false, e)
 
         // 这个函数有三种可能：没有按下ctrl因此什么也不做、激活了某一个空间或者非空间操作、在某个空间激活的情况下进行移动。
@@ -409,10 +423,11 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
         if(cur_space){ 
             if(is_direction(cur_key)){ // 当前按下了方向键。
                 let cur_dir = cur_key
-
+                
                 let position_list = this.get_position_list(cur_space)
                 let cur_position = this.get_cur_position(cur_space)    
-                let new_position = this.spaces[cur_space].switch_position(position_list, cur_position, cur_dir)
+
+                let new_position = this.spaces[cur_space].switch_position(position_list, cur_position, cur_dir, me.ctrl_key)
                 this.setState(produce(this.state, state=>{
                     state.cur_positions[cur_space] = new_position
                 }))
@@ -440,7 +455,7 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
         if(!this.flush_key_state(true, e)){
             return this.do_nothing(e)
         }
-
+        
         // 这个函数有三种可能：没有按下ctrl因此什么也不做、激活了某一个空间或者非空间操作、在某个空间激活的情况下进行移动。
 
         // 没有按下ctrl因此什么也不做。

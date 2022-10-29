@@ -314,7 +314,9 @@ function DefaultParameterWithEditorWithDrawer(props: DefaultParameterWithEditorW
                         editor.auto_set_parameter(props.node, parameters)
                     }
                     SlateReact.ReactEditor.focus(editor.get_slate())
-                    Slate.Transforms.select(editor.get_slate() , enter_selection)
+                    if(enter_selection && enter_selection["anchor"] && enter_selection["anchor"]["path"]){
+                        Slate.Transforms.select(editor.get_slate() , enter_selection) // 设置为保存的selection。
+                    }
                 }
             }}
             PaperProps  = {{sx: { width: "40%" }}}

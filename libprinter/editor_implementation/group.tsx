@@ -143,18 +143,18 @@ function get_deafult_group_editor_with_appbar({
  * @returns 一个用于渲染group的组件。
  */
 function get_deafult_group_editor_with_rightbar({
-    get_label       = (n:GroupNode)=>n.parameters["label"].val as string, 
-    rightbar_extra  = (props) => <></> , 
+    get_label       = (n) => n.parameters["label"].val as string, 
+    rightbar_extra  = (n) => [], 
     surrounder      = (props) => <>{props.children}</>
 }: {
-    get_label       ?: (n:GroupNode)=>string , 
-    rightbar_extra  ?: (props: EditorButtonInformation) => any, 
+    get_label       ?: (n:GroupNode) => string , 
+    rightbar_extra  ?: (n:GroupNode) => ButtonDescription[], 
     surrounder      ?: (props: EditorButtonInformation & {children: any}) => any ,
 }): EditorRenderer{
 
     return (props: EditorRendererProps<Slate.Node & GroupNode>) => {
         let node = props.node as GroupNode
-        let label   = get_label(node)
+        let mylabel   = get_label(node)
         let E = rightbar_extra
         let SUR = surrounder
 
@@ -163,18 +163,21 @@ function get_deafult_group_editor_with_rightbar({
                 <ComponentEditorBox autogrow>
                     <SUR node={node}>{props.children}</SUR>
                 </ComponentEditorBox>                
-                <UnselecableBox sx={{textAlign: "center"}}>
+                <UnselecableBox>
                     <AutoStack>
-                        <E node={node}/>
-                        <StructureTypography variant="overline">{label}</StructureTypography>
-                        <AutoStackedPopperButtonGroupMouseless
-                            close_on_otherclick
+                        <ButtonGroup // 额外添加的元素。
+                            autostack 
                             node = {node}
-                            idxs = {[0]}
+                            buttons = {rightbar_extra(node)}
+                        />
+                        <StructureTypography variant = "overline">{mylabel}</StructureTypography>
+                        <AutoStackedPopperButtonGroupMouseless 
+                            node = {node}
+                            close_on_otherclick 
                             outer_button = {IconButton}
                             outer_props = {{
                                 size: "small" , 
-                                children: <KeyboardArrowDownIcon fontSize="small"/> ,  
+                                children: <KeyboardArrowDownIcon fontSize="small"/> , 
                             }}
                             label = "展开"
                             buttons = {[
@@ -185,9 +188,9 @@ function get_deafult_group_editor_with_rightbar({
                                 DefaultCloseButton , 
                                 DefaultSoftDeleteButton , 
                                 NewParagraphButtonUp , 
+                                NewParagraphButtonDown , 
                             ]}
-                        >
-                        </AutoStackedPopperButtonGroupMouseless>
+                        /> 
                     </AutoStack>
                 </UnselecableBox>
             </SimpleAutoStack>

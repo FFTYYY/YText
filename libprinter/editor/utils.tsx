@@ -23,6 +23,8 @@ export {
     slate_concept_node2path , 
     slate_is_same_concept_node , 
     slate_get_node_type , 
+    slate_concept_father , 
+    slate_idx_to_node , 
 }
 
 function slate_is_concept(node: Slate.Node): node is Slate.Node & ConceptNode{
@@ -73,4 +75,24 @@ function slate_concept_node2path<RootType>(root: RootType & Slate.Node, node: Sl
         }
     }
     return undefined
+}
+
+/** 获得一个概念节点的最近的概念父亲节点。 */
+function slate_concept_father<RootType = ConceptNode>(root: RootType & Slate.Node, node: Slate.Node & ConceptNode): (Slate.Node & ConceptNode) | undefined{
+    let candicate: (Slate.Node & ConceptNode) | undefined = undefined
+    for(let [nd,path] of Slate.Node.ancestors(root, slate_concept_node2path(root, node))){
+        if(slate_is_concept(nd)){
+            candicate = nd  // 因为`slate`按从上到下的顺序返回根节点，所以记录最后的匹配项。
+                            // XXX 要依赖这一点吗....
+        }
+    }
+    return candicate
+}
+
+function slate_idx_to_node<RootType = ConceptNode>(root: Slate.Editor, idx: number): (Slate.Node & ConceptNode) | undefined{
+    let ret = Array.from( Slate.Editor.nodes(root, {match: (nd)=>nd["idx"] == idx}) )
+    if(ret.length == 0){
+        return undefined
+    }
+    return ret[0][0] as ConceptNode
 }

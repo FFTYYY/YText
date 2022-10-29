@@ -12,13 +12,16 @@ import {
     ParagraphNode,
     ConceptNode, 
     get_default_inline_editor , 
+    get_default_renderers , 
+    get_deafult_group_editor_with_rightbar , 
+    get_default_struct_with_rightbar , 
 } from "../../libprinter"
 
 export {renderers , default_renderers}
 
 let renderers = {
     "group": {
-        "theorem": get_deafult_group_editor_with_appbar({
+        "theorem": get_deafult_group_editor_with_rightbar({
             get_label: (n)=>"theorem"
         })
     } , 
@@ -27,25 +30,25 @@ let renderers = {
             get_label: (n)=>"strong"
         })
     } , 
-    "structure": {} , 
+    "structure": {
+        "line": get_default_struct_with_rightbar({
+            get_label: (n)=>"行" , 
+            get_numchildren:(n)=>{
+                let widths_s = n.parameters.widths.val as string
+                let widths = widths_s.split(",")
+                return widths.length
+            } , 
+            get_widths: (n)=>{
+                let widths_s = n.parameters.widths.val as string
+                let widths = widths_s.split(",").reduce((s,x)=>([...s, parseInt(x)]) , [] as number[])
+                return widths
+            }
+        })
+    } , 
     "support": {} , 
     "abstract": {
         "comment": get_default_abstract_editor({get_label: (n)=>"comment"})
     } ,
 }
 
-let def = (props: EditorRendererProps<Slate.Node & ConceptNode>) => {return <div>{props.children}</div>}
-let default_renderers = {
-    "group": get_deafult_group_editor_with_appbar({
-        get_label: (n)=>"default"
-    }) , 
-    "inline": get_default_inline_editor({
-        get_label: (n)=>"fuck"
-    }) , 
-    "structure": def , 
-    "support": def , 
-    "abstract": def ,
-    "text": (props: EditorRendererProps<Slate.Node & TextNode>) => {return <span>{props.children}</span>} , 
-    "paragraph": (props: EditorRendererProps<Slate.Node & ParagraphNode>) => {return <div>{props.children}</div>}, 
-
-}
+let default_renderers = get_default_renderers()
