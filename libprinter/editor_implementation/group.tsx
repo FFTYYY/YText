@@ -81,7 +81,7 @@ export { get_deafult_group_editor_with_appbar , get_default_group_editor_with_ri
 let GroupPaper = (props: PaperProps & {node: GroupNode}) => <ComponentPaper {...props} 
     sx = { props.node.relation == "chaining" ? { marginTop: "0" } : {} }
 />
-
+// TODO 修改读取参数的方式，应该先解析再读取。
 /** 这个函数返回一个默认的带应用栏的 group 组件。用于比较大的 group 组件。
  * @param params.get_label 从参数列表获得 title 的方法。
  * @param params.appbar_extra 要额外向 appbar 里添加的组件。
