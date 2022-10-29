@@ -79,9 +79,6 @@ import {
 } from "./buttons"
 export { DefaultEditorComponent }
 
-// TODO 完善无鼠标操作。
-
-
 /** 
  * 这个组件提供一个开箱即用的默认编辑器组件。
  */

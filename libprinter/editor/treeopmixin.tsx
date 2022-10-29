@@ -12,6 +12,10 @@ import {
 } from "./utils"
 
 import {
+    set_normalize_status , 
+} from "./plugins"
+
+import {
     ConceptNode , 
     GroupNode , 
     InlineNode , 
@@ -180,7 +184,7 @@ let tree_op_mixin = {
             split?: boolean , 
         }
     ){
-        // TODO 这啥啊
+        // TODO 啊？复制粘贴为什么在这里处理？
         // if(options.split){ // 分裂节点有可能造成多个相同`idx`的节点，因此需要开启特殊检查。
         //     set_normalize_status({pasting: true})
         // }
@@ -209,7 +213,7 @@ let tree_op_mixin = {
             split?: boolean , 
         }
     ){
-        // TODO 这啥啊
+        // TODO 啊？
         // if(options.split){ // 分裂节点有可能造成多个相同`idx`的节点，因此需要开启特殊检查。
         //     set_normalize_status({pasting: true})
         // }

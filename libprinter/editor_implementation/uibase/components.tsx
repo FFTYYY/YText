@@ -16,7 +16,6 @@ import type {
     PaperProps , 
     BoxProps , 
 } from "@mui/material"
-import type { ThemeOptions } from "@mui/material/styles"
 
 export { 
     EditorComponentPaper , 
@@ -28,7 +27,7 @@ export {
     EditorStructureTypography , 
 }
 
-// TODO 加入一个通用抽屉
+// XXX 可以加入一个通用抽屉...
 
 /** 这个组件定义一个不可被选中的区域。用于 slate 的各种不希望被修改的辅助部分。 */
 const EditorUnselecableBox = (props: BoxProps) => <Box 

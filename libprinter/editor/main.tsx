@@ -42,6 +42,7 @@ import {
 import {
     EditorPlugin , 
     with_ytext_plugins , 
+    set_normalize_status , 
 } from "./plugins"
 
 import {
@@ -76,9 +77,6 @@ interface DefaultRendererhDict{
     "paragraph" : EditorRenderer<ParagraphNode> , 
     "text"      : EditorRenderer<TextNode> , 
 }
-
-// TODO 注意编辑器使用一级还是二级概念
-// TODO 处理inline节点编辑消失的问题
 
 /** 编辑器核心。
  * 要创建一个编辑器，需要对每个一级概念指定一个渲染器。
@@ -540,9 +538,8 @@ class EditorComponent extends React.Component<EditorComponentProps , {
                     }}
 
                     onPaste = {()=>{
-                        //TODO 啊？
-                        // set_normalize_status({pasting: true})
-                        // return false
+                        set_normalize_status({pasting: true})
+                        return false
                     }}
     
                     onKeyDown = {e=>me.onKeyDown(e)}

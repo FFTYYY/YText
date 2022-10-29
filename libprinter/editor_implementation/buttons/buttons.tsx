@@ -88,17 +88,15 @@ function MyImg(props: {img_url: string}){
 // XXX ?
 /**
  * 这个组件向具体的编辑器和具体的节点提供 DefaultParameterContainer ，同时还提供一个按钮。
- * @param props.editor 这个组件所服务的编辑器。
- * @param props.element 这个组件所服务的节点。
- * @param props.open 抽屉是否打开。
- * @param props.onClose 抽屉关闭时的行为。
+ * @param props.node 这个组件所服务的节点。
+ * @param props.onExit 抽屉关闭时的行为。
  */
 class DefaultParameterEditButton extends React.PureComponent <EditorButtonInformation & {
-    onClose?: (e:any)=>void , 
+    onExit?: (e:any)=>void , 
 }, {
     open: boolean
 }> implements ButtonBase {
-    constructor(props: EditorButtonInformation & {onClose?: (e:any)=>void}){
+    constructor(props: EditorButtonInformation & {onExit?: (e:any)=>void}){
         super(props)
 
         this.state = {
@@ -112,7 +110,7 @@ class DefaultParameterEditButton extends React.PureComponent <EditorButtonInform
 
     render(){
         let props = this.props
-        let onClose = props.onClose || ((e:any)=>{})
+        let onExit = props.onExit || ((e:any)=>{})
         let me = this
 
         return <Box sx={{marginX: "auto"}}>
@@ -121,7 +119,7 @@ class DefaultParameterEditButton extends React.PureComponent <EditorButtonInform
                 node = {props.node} 
                 open = {me.state.open} 
                 onClose = {e=>{ 
-                    onClose(e)
+                    onExit(e)
                     me.setState({open:false})
                 }} 
             />
@@ -130,8 +128,7 @@ class DefaultParameterEditButton extends React.PureComponent <EditorButtonInform
 }
 
 /** 这个组件提供一个直接删除节点的按钮。 
- * @param props.editor 这个组件所服务的编辑器。
- * @param props.element 这个组件所服务的节点。
+ * @param props.node 这个组件所服务的节点。
  */
 class DefaultCloseButton extends React.Component<EditorButtonInformation> implements ButtonBase{
     static contextType = GlobalInfo
@@ -152,8 +149,7 @@ class DefaultCloseButton extends React.Component<EditorButtonInformation> implem
 }
 
 /** 这个组件提供一个删除节点，但是将其子节点移动到节点外的按钮。 
- * @param props.editor 这个组件所服务的编辑器。
- * @param props.element 这个组件所服务的节点。
+ * @param props.node 这个组件所服务的节点。
  * @param props.puretext 是否将子组件作为纯文本。
  */
 class DefaultSoftDeleteButton extends React.Component<EditorButtonInformation & {puretext?: boolean}> implements ButtonBase{
@@ -184,7 +180,6 @@ class DefaultSoftDeleteButton extends React.Component<EditorButtonInformation & 
 }
 
 /** 这个组件提供一个在组件的上新建段落的节点。 
- * @param props.editor 这个组件所服务的编辑器。
  * @param props.node 这个组件所服务的节点。
  */
 class NewParagraphButtonUp extends React.Component<EditorButtonInformation> implements ButtonBase{
@@ -205,7 +200,6 @@ class NewParagraphButtonUp extends React.Component<EditorButtonInformation> impl
 }
 
 /** 这个组件提供一个在组件的下新建段落的节点。 
- * @param props.editor 这个组件所服务的编辑器。
  * @param props.node 这个组件所服务的节点。
  */
 class NewParagraphButtonDown extends React.Component<EditorButtonInformation> implements ButtonBase{
@@ -227,8 +221,7 @@ class NewParagraphButtonDown extends React.Component<EditorButtonInformation> im
 
 
 /** 这个组件给一个`Group`或`Struct`组件提供一个开关，用于控制`Group`或`Struct`的`relation`。 
- * @param props.editor 服务的编辑器。
- * @param props.element 服务的节点。
+ * @param props.node 服务的节点。
  */
 class DefaultSwicth extends React.Component<EditorButtonInformation<GroupNode | StructNode>, {
     checked: boolean
@@ -322,7 +315,7 @@ interface AutoStackedPopperWithButtonProps {
     close_on_otherclick?: boolean
 
     /** 关闭时的其他行为。 */
-    onClose?: ()=>void 
+    onExit?: ()=>void 
 
     /** 子元素。 */
     children?: any , 
@@ -344,7 +337,7 @@ class AutoStackedPopperWithButton extends React.Component<AutoStackedPopperWithB
      * @param props.poper_props 传递给弹出框的`props`
      * @param props.label 鼠标移上去显示的字样。
      * @param props.close_on_otherclick 是否在点击其他位置时关闭。
-     * @param props.onClose 关闭时的其他行为。
+     * @param props.onExit 关闭时的其他行为。
      * @param props.children `children`会被渲染在按钮之前。
      */
     constructor(props: AutoStackedPopperWithButtonProps){
@@ -361,8 +354,8 @@ class AutoStackedPopperWithButton extends React.Component<AutoStackedPopperWithB
     set_menu_open(open: boolean){
         this.setState({menu_open: open})
         if(!open){ // 正在关闭
-            let onClose = this.props.onClose || (()=>{})
-            onClose() // TODO use MUI onExit
+            let onExit = this.props.onExit || (()=>{})
+            onExit()
         }
     }
 

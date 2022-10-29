@@ -155,7 +155,7 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
      */
     ctrl_key: {[key: string]: boolean}
 
-    // TODO 真的该把这个作为属性而不是状态吗...
+    // XXX 真的该把这个作为属性而不是状态吗...
     /** 记录每个空间中有的元素。 */
     elements: {[space:string]: {[position: string]: MouselessRegisteration}}
 
@@ -353,9 +353,10 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
         return true
     }
 
-    /** 
-     * 这个函数什么也不做，只是阻止事件传播
-     TODO 把文档写清楚啊
+    /** 一个处理鼠标事件的代理函数会处理三种情况：没有按下ctrl因此什么也不做、激活了某一个空间或者非空间操作、在某个空间激活的情况下进行移动。
+     * 并且在执行了对应操作的情况下阻止事件传播。
+     * 这个函数在这三种情况下都什么也不做，只是阻止事件传播。
+     * @return 是否被本管理器处理。返回`true`表示本管理器（不一定是这个函数）会处理此事件。
      */
     do_nothing(e: React.KeyboardEvent<HTMLDivElement>){
         // 没有按下ctrl因此什么也不做。
@@ -387,11 +388,13 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
 
         return false
     }
-
-    // TODO 激活应该拿到keydown里面...
-    /** 这个函数代理按键抬起事件。注意因为所有的操作都会在按键按下时处理，因此这个函数实质上不会做任何事，只是
-     * 阻止那些已经被按键按下函数处理的事件的传播。
-     * @return 是否被处理。返回`true`表示事件已经在按下时被处理，否则表示不会被本处理器处理。
+    /** 这个函数代理按键抬起事件。
+     * 一个处理鼠标事件的代理函数会处理三种情况：没有按下ctrl因此什么也不做、激活了某一个空间或者非空间操作、在某个空间激活的情况下进行移动。
+     * 并且在执行了对应操作的情况下阻止事件传播。
+     * 
+     * 这个函数在激活了某一个空间或者非空间操作的情况下都什么也不做（只阻止事件传播），而只处理方向键和回车键的事件。
+     * 
+     * @return 是否被本管理器处理。返回`true`表示本管理器（不一定是这个函数）会处理此事件。
     */
     keyup_proxy(e: React.KeyboardEvent<HTMLDivElement>){
         let me = this 
@@ -448,8 +451,13 @@ class KeyEventManager extends React.Component<KeyEventManagerProps, KeyEventMana
     }
 
 
-    /** 这个函数代理按键按下事件，但是注意，只有当事件被自身所处理时才会阻止事件传递。 
-     * @return 是否被处理。返回`true`表示事件被本处理器处理了，否则表示没有被本处理器处理。
+    /** 这个函数代理按键按下事件。
+     * 一个处理鼠标事件的代理函数会处理三种情况：没有按下ctrl因此什么也不做、激活了某一个空间或者非空间操作、在某个空间激活的情况下进行移动。
+     * 并且在执行了对应操作的情况下阻止事件传播。
+     * 
+     * 这个函数处理激活某个空间和激活某个非空间操作的的事件，而在最后一种情况下什么也不做。
+     * 
+     * @return 是否被本管理器处理。返回`true`表示本管理器（不一定是这个函数）会处理此事件。
     */
     keydown_proxy(e: React.KeyboardEvent<HTMLDivElement>){
         if(!this.flush_key_state(true, e)){

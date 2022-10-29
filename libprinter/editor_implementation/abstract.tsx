@@ -61,7 +61,6 @@ function DefaultNewAbstract(props: {node: ConceptNode, anchor_element: any, open
     let editor = globalinfo.editor as EditorComponent
 
     // 这个列表罗列所有可选的抽象概念以供选择。
-    // TODO 不应该从renderers读取吧。
     let abstract_concepts = editor.get_editorcore().renderers["abstract"]
 
     let onClose = props.onClose || ((e:any)=>{})
@@ -132,24 +131,6 @@ class DefaultAbstractEditor extends React.Component<DefaultAbstractEditorProps ,
         
         this.subeditor_ref = React.createRef()
     }
-
-    // /** 这个函数将子编辑器的修改应用到父编辑器上。 */
-    // sub_apply(father_editor: YEditor){
-
-    //     let subeditor = this.get_editor()
-    //     if(!subeditor)
-    //         return 
-
-    //     let father = this.father
-    //     let son = this.son
-    //     let hidden_idx = get_hidden_idx(father , son)
-    //     let new_son = {...son , ...{children: subeditor.get_root().children}} // 更新之后的son。
-    //     let new_hiddens = update_kth(father.hiddens , hidden_idx , new_son) // 更新之后的 father.hiddens。
-        
-    //     // TODO：这里有个bug，slate的setNodes并不会立刻应用，这导致如果有多个setNodes，后面修改的会覆盖前面的。
-    //     // 应用变换。
-    //     father_editor.set_node( father , { hiddens: new_hiddens })
-    // }
 
     get_editor(){
         if(!(this.subeditor_ref && this.subeditor_ref.current && this.subeditor_ref.current.get_editor()))

@@ -50,7 +50,7 @@ export {
 
 
 const SPACE = "q"
-const TYPENAMES = ["group" , "inline" , "support" , "structure"]
+const TYPENAMES = ["group" , "inline" , "support" , "structure"] as ["group" , "inline" , "support" , "structure"]
 
 function get_mouseless_space(editor: EditorComponent){
     return {
@@ -108,7 +108,7 @@ function get_switch_position(editor: EditorComponent): SwitchPositionFunction{
         pos_x = ((pos_x % xmax) + xmax) % xmax
         
         let typename = TYPENAMES[pos_x]
-        let ymax = Object.keys( editor.get_core().renderers[typename] ).length // TODO renderers?
+        let ymax = editor.get_core().get_sec_concept_list(typename).length
         if(direction == "ArrowLeft"){
             pos_y --
         }

@@ -23,6 +23,10 @@ import {
     constraint_abstract , 
 } from "./constraints"
 
+export {
+    set_normalize_status , 
+    get_normalize_status
+} from "./base"
 
 export { 
     with_ytext_plugins , 

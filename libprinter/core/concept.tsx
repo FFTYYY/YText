@@ -53,7 +53,7 @@ class FirstClassConcept{
     constructor({
         type , 
         name , 
-        parameterPrototype = {} , // TODO 一律用下划线命名法
+        parameterPrototype = {} , // XXX 一律用下划线命名法
         metaParameters = {} , 
     } : {
         type: "group" | "inline" | "structure" | "support" | "abstract" , 
@@ -73,7 +73,7 @@ class FirstClassConcept{
 }
 
 
-// TODO 是否需要面向对象？（getter / setter）？
+// XXX 是否需要面向对象？（getter / setter）？
 /** 二级概念。
  * 二级概念继承一级概念以形成真正的概念。之所以这么设计，是为了让概念可以在编辑中动态创建而免于编程。
  * 二级概念描述如何重写一级概念的参数。

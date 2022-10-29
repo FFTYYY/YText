@@ -191,7 +191,6 @@ class Printer{
     }
 
     /** 这个函数将节点的参数列表还原成一级概念的参数列表。 
-      TODO 增加类型判断，最好是能抛出一个异常。
     */
     process_parameters(node: ConceptNode): ProcessedParameterList{
         let sec_ccpt = this.get_node_second_concept(node)
@@ -305,7 +304,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
                 all_parameters[my_path] = my_parameters // 由于参数列表不会改变，所以这里直接储存。
             }
 
-            // TODO 我们真的需要不可变操作吗 
+            // XXX 我们真的需要不可变操作吗 
             // 进入时操作。
             // 进入时先操作一次环境并建立一次上下文。使用produce来进行不可变更新。
             // 前面加个分号是为了防止被视为索引。
