@@ -19,13 +19,13 @@ export {
  interface MetaParameters{
 
     /** 是否强制节点渲染为行内样式。 */
-	forceInline?: boolean,
+	force_inline?: boolean,
 
     /** 是否强制节点渲染为块级样式。 */
-	forceBlock?: boolean,
+	force_block?: boolean,
 
     /** 是否强制没有子节点。 */
-	forceVoid?: boolean,
+	force_void?: boolean,
 }
 
 /** 固定参数项的可行类型。 */
@@ -45,29 +45,29 @@ class FirstClassConcept{
     name: string
 
     /** 参数列表。 */
-    parameterPrototype: ParameterList
+    parameter_prototype: ParameterList
     
     /** 元参数列表。如果没有提供会默认把所有项都设置为`undefined`。 */
-    metaParameters: MetaParameters
+    meta_parameters: MetaParameters
 
     constructor({
         type , 
         name , 
-        parameterPrototype = {} , // XXX 一律用下划线命名法
-        metaParameters = {} , 
+        parameter_prototype = {} , // XXX 一律用下划线命名法
+        meta_parameters = {} , 
     } : {
         type: "group" | "inline" | "structure" | "support" | "abstract" , 
         name: string , 
-        parameterPrototype?: ParameterList , 
-        metaParameters?: MetaParameters , 
+        parameter_prototype?: ParameterList , 
+        meta_parameters?: MetaParameters , 
     }){
         this.type = type
         this.name = name
-        this.metaParameters = metaParameters || {}
-        this.parameterPrototype = parameterPrototype || {
-            forceInline: undefined , 
-            forceBlock: undefined , 
-            forceVoid: undefined , 
+        this.meta_parameters = meta_parameters || {}
+        this.parameter_prototype = parameter_prototype || {
+            force_inline: undefined , 
+            force_block: undefined , 
+            force_void: undefined , 
         }
     }
 }
@@ -82,33 +82,33 @@ class SecondClassConcept{
     /** 对应的一级概念类型。 */
     type: string
     /** 对应的一级概念名称。 */
-    firstConcept: string
+    first_concept: string
 
     /** 二级概念名称。类型和名称是检索一个二级概念的唯一标志。 */
     name: string
 
     /** 要修改哪些参数的默认值。 */
-    defaultOverride: ParameterList
+    default_override: ParameterList
     /** 要固定哪些参数的值。 */
-    fixedIverride: FixedParameterList
+    fixed_override: FixedParameterList
 
     constructor({
         type, 
-        firstConcept , 
+        first_concept , 
         name , 
-        defaultOverride = {} , 
-        fixedIverride = {} , 
+        default_override = {} , 
+        fixed_override = {} , 
     }:{
         type: "group" | "inline" | "structure" | "support" | "abstract" , 
-        firstConcept: string , 
+        first_concept: string , 
         name: string , 
-        defaultOverride?: ParameterList , 
-        fixedIverride?: FixedParameterList , 
+        default_override?: ParameterList , 
+        fixed_override?: FixedParameterList , 
     }){
         this.type = type
-        this.firstConcept = firstConcept
+        this.first_concept = first_concept
         this.name = name
-        this.defaultOverride = defaultOverride || {}
-        this.fixedIverride = fixedIverride || {}
+        this.default_override = default_override || {}
+        this.fixed_override = fixed_override || {}
     }
 }

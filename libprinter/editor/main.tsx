@@ -147,7 +147,7 @@ class EditorCore{
         if(sec_ccpt == undefined){
             return this.default_renderers[type]
         }
-        let first_concept_name = sec_ccpt.firstConcept
+        let first_concept_name = sec_ccpt.first_concept
         let fst_ccpt = this.get_printer().get_first_concept(type, first_concept_name)
         if(fst_ccpt == undefined){
             return this.default_renderers[type]
@@ -188,7 +188,7 @@ class EditorCore{
     create_group(name: string, relation: "separating" | "chaining" = "separating"): GroupNode{
         let me = this
         let sec_concept = this.printer.get_second_concept("group" , name)
-        let parameters = sec_concept == undefined ? {} : {...sec_concept.defaultOverride}
+        let parameters = sec_concept == undefined ? {} : {...sec_concept.default_override}
 
         return {
             type: "group" , 
@@ -205,7 +205,7 @@ class EditorCore{
     create_inline(name: string, text: string = ""): InlineNode{
         let me = this
         let sec_concept = this.printer.get_second_concept("inline" , name)
-        let parameters = sec_concept == undefined ? {} : {...sec_concept.defaultOverride}
+        let parameters = sec_concept == undefined ? {} : {...sec_concept.default_override}
 
         return {
             type: "inline" , 
@@ -221,7 +221,7 @@ class EditorCore{
     create_support(name: string): SupportNode{
         let me = this
         let sec_concept = this.printer.get_second_concept("support" , name)
-        let parameters = sec_concept == undefined ? {} : {...sec_concept.defaultOverride}
+        let parameters = sec_concept == undefined ? {} : {...sec_concept.default_override}
 
         return {
             type: "support" , 
@@ -237,7 +237,7 @@ class EditorCore{
     create_structure(name: string, relation: "separating" | "chaining" = "separating"): StructNode{
         let me = this
         let sec_concept = this.printer.get_second_concept("structure" , name)
-        let parameters = sec_concept == undefined ? {} : {...sec_concept.defaultOverride}
+        let parameters = sec_concept == undefined ? {} : {...sec_concept.default_override}
 
         return {
             type: "structure" , 
@@ -254,7 +254,7 @@ class EditorCore{
     create_abstract(name: string): AbstractNode{
         let me = this
         let sec_concept = this.printer.get_second_concept("abstract" , name)
-        let parameters = sec_concept == undefined ? {} : {...sec_concept.defaultOverride}
+        let parameters = sec_concept == undefined ? {} : {...sec_concept.default_override}
 
         return {
             type: "abstract" , 
@@ -268,7 +268,7 @@ class EditorCore{
 
     get_meta_param(node: Slate.Element & ConceptNode){
         let concpt = this.printer.get_node_first_concept(node)
-        return concpt && concpt.metaParameters
+        return concpt && concpt.meta_parameters
     }
 }
 
@@ -471,7 +471,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
         let isinline = false
         if(slate_is_concept(node)){
             let meta_param = this.get_core().get_meta_param(node)
-            if(meta_param && meta_param.forceInline){
+            if(meta_param && meta_param.force_inline){
                 isinline = true
             }
             if(node.type == "inline"){

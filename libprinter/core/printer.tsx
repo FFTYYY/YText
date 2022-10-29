@@ -150,7 +150,7 @@ class Printer{
         if(sec_ccpt == undefined){
             return undefined
         }
-        let first_concept_name = sec_ccpt.firstConcept // 节点的一级概念名。
+        let first_concept_name = sec_ccpt.first_concept // 节点的一级概念名。
         return this.get_first_concept(node.type , first_concept_name)
     }
     
@@ -203,7 +203,7 @@ class Printer{
 
         // 应用二级概念的默认参数。
         let sec_parameters = {
-            ...sec_ccpt.defaultOverride , 
+            ...sec_ccpt.default_override , 
             ...node.parameters , 
         }
 
@@ -211,11 +211,11 @@ class Printer{
         let processed_fixedparams = {}
 
         // 处理二级概念的固定值参数（主要是处理函数值参数）。
-        for(let x in sec_ccpt.fixedIverride){
-            if(frt_ccpt.parameterPrototype[x] == undefined){ // 不处理没有被原型定义的参数
+        for(let x in sec_ccpt.fixed_override){
+            if(frt_ccpt.parameter_prototype[x] == undefined){ // 不处理没有被原型定义的参数
                 continue
             }
-            let v = sec_ccpt.fixedIverride[x]
+            let v = sec_ccpt.fixed_override[x]
             if(v.type != "function"){
                 processed_fixedparams[x] = v
             }
@@ -223,7 +223,7 @@ class Printer{
                 let val = Function(`return ${v.val}`)()(sec_parameters) // 将先前处理好的非固定参数作为参数
 
                 processed_fixedparams[x] = {
-                    type: frt_ccpt.parameterPrototype[x].type , 
+                    type: frt_ccpt.parameter_prototype[x].type , 
                     val: val , 
                 }
             }
@@ -231,7 +231,7 @@ class Printer{
 
         // 应用一级概念的原型，形成最终的参数列表。
         let _final_parameters = {
-            ...frt_ccpt.parameterPrototype ,  // 先应用默认列表。
+            ...frt_ccpt.parameter_prototype ,  // 先应用默认列表。
             ...sec_parameters , // 然后是可修改列表。
             ...processed_fixedparams ,  // 然后是固定列表。
         }

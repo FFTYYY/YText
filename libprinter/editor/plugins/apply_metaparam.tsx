@@ -28,11 +28,11 @@ function set_inline(editor: EditorComponent , slate: SlateReact.ReactEditor): Sl
         
             let fir_ccpt = editor.get_core().get_printer().get_node_first_concept(element) // 获得节点的一级概念
             if(fir_ccpt){
-                meta_params = fir_ccpt.metaParameters
+                meta_params = fir_ccpt.meta_parameters
             }
-            if(meta_params.forceInline || element.type == "inline")
+            if(meta_params.force_inline || element.type == "inline")
                 return true
-            if(meta_params.forceBlock)
+            if(meta_params.force_block)
                 return false
         }
         return isInline(element)
@@ -52,9 +52,9 @@ function set_support(editor: EditorComponent , slate: SlateReact.ReactEditor): S
         
             let fir_ccpt = editor.get_core().get_printer().get_node_first_concept(element) // 获得节点的一级概念
             if(fir_ccpt){
-                meta_params = fir_ccpt.metaParameters
+                meta_params = fir_ccpt.meta_parameters
             }
-            if(meta_params.forceVoid || element.type == "support")
+            if(meta_params.force_void || element.type == "support")
                 return true
         }
 
