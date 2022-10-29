@@ -134,9 +134,9 @@ function validate(tree: any, path: number[] = []): [boolean , string]{
                 return [false , univ_msg]
             }
 
-            // 要求只有一个子节点。
-            if(node["children"].length != 1){
-                return [false , make_msg(path,`Inline node has ${node["children"].length} children, but should be 1.`)]
+            // 要求至少有一个子节点。
+            if(node["children"].length == 0){
+                return [false , make_msg(path,`Inline node has ${node["children"].length} children, but should be at least 1.`)]
             }
 
             // 要求子节点是文本节点。

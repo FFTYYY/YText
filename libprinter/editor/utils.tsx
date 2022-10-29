@@ -13,7 +13,8 @@ import {
     is_concetnode , 
     AllNodeTypes , 
     GroupNode , 
-    AbstractNode , 
+    AbstractNode, 
+    AllConceptTypes, 
 } from "../core"
 
 export {
@@ -27,17 +28,21 @@ export {
     slate_idx_to_node , 
 }
 
-function slate_is_concept(node: Slate.Node): node is Slate.Node & ConceptNode{
+
+function slate_is_concept(node: Slate.Node , type?: undefined | AllConceptTypes): node is Slate.Node & ConceptNode{
+    if(type){
+        return node["idx"] != undefined && node["type"] == type
+    }
     return node["idx"] != undefined
 }
 
 function slate_is_paragraph(node: Slate.Node): node is Slate.Node & ParagraphNode{
-    return (!slate_is_concept(node)) && (node["children"] != undefined)
+    return (!slate_is_concept(node)) && (node["children"] != undefined) && (!Slate.Editor.isEditor(node))
 }
 
 
 function slate_is_text(node: Slate.Node): node is Slate.Node & TextNode{
-    let flag = slate_is_concept(node) || slate_is_paragraph(node)
+    let flag = slate_is_concept(node) || slate_is_paragraph(node) || Slate.Editor.isEditor(node)
     if(flag)
         return false
     if(node["text"] == undefined){

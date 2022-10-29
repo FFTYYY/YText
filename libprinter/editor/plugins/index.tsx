@@ -4,15 +4,27 @@ import {
 } from ".."
 
 import {
-    set_inline , 
-    set_support , 
-} from "./set_metaparam"
-import {
     EditorPlugin
 } from "./base"
 
+import {
+    set_inline , 
+    set_support , 
+} from "./apply_metaparam"
+import {
+    constraint_group_children , 
+    constraint_inline_children , 
+    constraint_struct_children , 
+    constraint_paragraph_children , 
+} from "./check_children"
+import {
+    constraint_paste , 
+    constraint_relation ,
+} from "./constraints"
+
+
 export { 
-    with_ytext_plugin , 
+    with_ytext_plugins , 
 }
 
 export type {
@@ -21,11 +33,17 @@ export type {
 
 let plugins: EditorPlugin[] = [
     set_inline , 
-    set_support
+    set_support , 
+    constraint_group_children , 
+    constraint_inline_children , 
+    constraint_struct_children , 
+    constraint_paragraph_children , 
+    constraint_paste , 
+    constraint_relation ,
 ]
 
 
-function with_ytext_plugin(editor: EditorComponent, slate: SlateReact.ReactEditor): SlateReact.ReactEditor{
+function with_ytext_plugins(editor: EditorComponent, slate: SlateReact.ReactEditor): SlateReact.ReactEditor{
     for(let plugin of plugins){
         slate = plugin(editor , slate)
     }

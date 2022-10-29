@@ -41,7 +41,7 @@ import {
 
 import {
     EditorPlugin , 
-    with_ytext_plugin , 
+    with_ytext_plugins , 
 } from "./plugins"
 
 import {
@@ -108,6 +108,10 @@ class EditorCore{
 
     get_printer(){
         return this.printer
+    }
+
+    gene_idx(){
+        return Math.floor( Math.random() * 233333333)
     }
 
     /** 从一级概念查询一个渲染器。
@@ -190,7 +194,7 @@ class EditorCore{
 
         return {
             type: "group" , 
-            idx: Math.floor( Math.random() * 233333) , 
+            idx: this.gene_idx() , 
             concept: name , 
             parameters: parameters , 
             relation: relation , 
@@ -207,7 +211,7 @@ class EditorCore{
 
         return {
             type: "inline" , 
-            idx: Math.floor( Math.random() * 233333) , 
+            idx: this.gene_idx() , 
             concept: name , 
             parameters: parameters , 
             children: [me.create_text(text)] , 
@@ -223,7 +227,7 @@ class EditorCore{
 
         return {
             type: "support" , 
-            idx: Math.floor( Math.random() * 233333) , 
+            idx: this.gene_idx() , 
             concept: name , 
             parameters: parameters , 
             children: [] , 
@@ -239,7 +243,7 @@ class EditorCore{
 
         return {
             type: "structure" , 
-            idx: Math.floor( Math.random() * 233333) , 
+            idx: this.gene_idx() , 
             concept: name , 
             parameters: parameters , 
             children: [] , 
@@ -256,7 +260,7 @@ class EditorCore{
 
         return {
             type: "abstract" , 
-            idx: Math.floor( Math.random() * 233333) , 
+            idx: this.gene_idx() , 
             concept: name , 
             parameters: parameters , 
             children: [me.create_paragraph("")] , 
@@ -371,7 +375,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
         
         this.state = {
             slate: with_outer_plugin(me , 
-                with_ytext_plugin(me , 
+                with_ytext_plugins(me , 
                     withHistory(
                         SlateReact.withReact(
                             Slate.createEditor() as SlateReact.ReactEditor

@@ -88,7 +88,7 @@ interface InlineNode{
 	parameters: ParameterList
 
 	/** 子节点列表。 */
-	children: [ TextNode ]
+	children: (TextNode | InlineNode)[]
 	/** 抽象列表。 */
 	abstract: AbstractNode []
 }
