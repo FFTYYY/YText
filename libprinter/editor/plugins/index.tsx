@@ -20,6 +20,7 @@ import {
 import {
     constraint_paste , 
     constraint_relation ,
+    constraint_abstract , 
 } from "./constraints"
 
 
@@ -40,6 +41,7 @@ let plugins: EditorPlugin[] = [
     constraint_paragraph_children , 
     constraint_paste , 
     constraint_relation ,
+    constraint_abstract , 
 ]
 
 

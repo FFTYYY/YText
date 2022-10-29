@@ -376,7 +376,6 @@ class AutoStackedPopperWithButton extends React.Component<AutoStackedPopperWithB
 
     /** 模拟点击行为，切换菜单的关闭/打开。 
      * @param _ 这是无鼠标操作的接口规定的参数，没有实际意义。
-     * @param force_open 为`undefined`表示切换状态，为`true`或者`false`表示强制设置状态。
     */
     run(_: any = undefined){
         this.set_menu_open(!this.state.menu_open)

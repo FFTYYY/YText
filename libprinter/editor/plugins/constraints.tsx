@@ -31,6 +31,7 @@ import {
 export {
     constraint_paste , 
     constraint_relation , 
+    constraint_abstract , 
 }
 
 
@@ -115,7 +116,6 @@ function constraint_relation(editor: EditorComponent , slate: SlateReact.ReactEd
 
                 // 不允许一个关系是 separating 的节点前面还是 group 或者 struct。
                 if(is_relation_type(last_node) && subnode.relation == "separating"){
-                    console.log("relation")
                     editor.add_nodes(editor.get_core().create_paragraph() , [...path,subidx])
                     return
                 }
@@ -124,7 +124,6 @@ function constraint_relation(editor: EditorComponent , slate: SlateReact.ReactEd
                 console.log("relation")
                 // 不允许一个关系是 chaining 的节点前面不是 group 或者 struct。
                 if((!is_relation_type(last_node)) && subnode.relation == "chaining"){
-                    console.log("relation")
                     editor.move_node_by_path([...path,subidx-1] , [...path,subidx]) // 将当前节点向前移动。
                     return
                 }

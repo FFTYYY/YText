@@ -310,6 +310,9 @@ class AutoStackedPopperButtonGroupMouseless extends React.Component<AutoStackedP
                 this.get_button().set_menu_open(false) // 如果激活了一个不是本节点的位置，那么就关闭菜单。
             }
         }
+        if(new_pos == undefined){ // 光标取消聚焦
+            this.get_button().set_menu_open(false)
+        }
     }
     
     componentDidMount(): void {
