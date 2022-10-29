@@ -77,8 +77,6 @@ class App extends React.Component<{},{
 		}
 
 		this.editor_ref = React.createRef<DefaultEditorComponent>()
-
-		console.log(tree)
 	}
 	componentDidMount(): void {
 		this.update()

@@ -126,8 +126,8 @@ interface SupportNode{
 	/** 节点的二级概念参数。 */
 	parameters: ParameterList
 	
-	/** 子节点列表。必定为空。 */
-	children: []
+	/** 子节点列表。必定为空。文本节点只是占位符（为了满足『叶节点必然是文本节点』的约定）。 */
+	children: [{text: ""}]
 	/** 抽象列表。 */
 	abstract: AbstractNode []
 }

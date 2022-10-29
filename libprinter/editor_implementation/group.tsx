@@ -101,7 +101,6 @@ function get_deafult_group_editor_with_appbar({
     return (props: EditorRendererProps<Slate.Node & GroupNode>) => {
         let node = props.node as GroupNode
         let label   = get_label(node)
-        console.log(node)
 
         let SUR = surrounder
 

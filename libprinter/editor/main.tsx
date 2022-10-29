@@ -230,7 +230,7 @@ class EditorCore{
             idx: this.gene_idx() , 
             concept: name , 
             parameters: parameters , 
-            children: [] , 
+            children: [{text: ""}] , 
             abstract: [] , 
         }
     }

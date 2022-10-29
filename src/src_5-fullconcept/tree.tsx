@@ -82,7 +82,8 @@ function create_support(concept , parameters , idx= undefined): SupportNode{
         idx: idx || Math.floor( Math.random() * 233333) , 
         concept: concept , 
         parameters: parameters , 
-        children: [{children: [{text: "haha"}]}] , 
+        // children: [{children: [{text: "haha"}]}] , 
+        children: [{text: ""}] , 
         abstract: [] , 
 
     }

@@ -61,6 +61,12 @@ function universal_concept(node: any, path: number[]): [boolean , string]{
         return [false , make_msg(path,`the type of property "children" should be Array, but it is not.`)]
     }
 
+    // 检查children属性是否存在。
+    if(node["children"].length <= 0){ 
+        return [false , make_msg(path,`ConceptNode must have at least 1 child.`)]
+    }
+
+
     // 检查参数列表是否合法。
     let [param_good , param_msg] = validate_parameters(node["parameters"] , (s: string) => make_msg(path , s))
     if(!param_good){ 
@@ -118,7 +124,7 @@ function validate(tree: any, path: number[] = []): [boolean , string]{
         for(let chil_idx in node.children){
             let x = node.children[chil_idx]
             if(!is_textnode(x) && x["type"] != "inline" && x["type"] != "support"){
-                return [false, make_msg(path, `the ${chil_idx}-th children is not text, inline nor support.`)]
+                return [false, make_msg(path, `the ${chil_idx}-th children of a paragraph is not text, inline nor support.`)]
             }
         }
     }
@@ -134,14 +140,12 @@ function validate(tree: any, path: number[] = []): [boolean , string]{
                 return [false , univ_msg]
             }
 
-            // 要求至少有一个子节点。
-            if(node["children"].length == 0){
-                return [false , make_msg(path,`Inline node has ${node["children"].length} children, but should be at least 1.`)]
-            }
-
-            // 要求子节点是文本节点。
-            if(!is_textnode(node["children"][0])){
-                return [false , make_msg(path,`the only child of inline node must be text, but it is not.`)]
+            // 检查children是否是文本或者行内。
+            for(let chil_idx in node.children){
+                let x = node.children[chil_idx]
+                if((!is_textnode(x)) && (x["type"] != "inline")){
+                    return [false, make_msg(path, `the ${chil_idx}-th children of the inline node is not text nor inline.`)]
+                }
             }
         }
         if(node["type"] == "group"){ // 组节点
@@ -156,6 +160,14 @@ function validate(tree: any, path: number[] = []): [boolean , string]{
             if(node["relation"] != "chaining" && node["relation"] != "separating"){
                 return [false , make_msg(path,`node "relation" should be either "chaining" or "separating", but turns out to be ${node["relation"]}.`)]
             }
+
+            // 检查children是否是不是文本或者行内。
+            for(let chil_idx in node.children){
+                let x = node.children[chil_idx]
+                if((is_textnode(x)) || (x["type"] == "inline")){
+                    return [false, make_msg(path, `the ${chil_idx}-th children of the group node is text or inline.`)]
+                }
+            }
         }
         if(node["type"] == "support"){ // support节点。
 
@@ -166,11 +178,11 @@ function validate(tree: any, path: number[] = []): [boolean , string]{
             }
 
             // 检查是否有子节点。
-            if(node["children"].length > 0){
-                return [false , make_msg(path,`support node should not have children.`)]
+            if(node["children"].length != 1){
+                return [false , make_msg(path,`support node should only have 1 child.`)]
             }
         }
-        if(node["type"] == "struct"){ // support节点。
+        if(node["type"] == "structure"){ // support节点。
 
             // 概念节点通用的检查。
             let [univ_res , univ_msg] = universal_concept(node , path) 
@@ -182,6 +194,15 @@ function validate(tree: any, path: number[] = []): [boolean , string]{
             if(node["relation"] != "chaining" && node["relation"] != "separate"){
                 return [false , make_msg(path,`node "relation" should be either "chaining" or "separate", but turns out to be ${node["relation"]}.`)]
             }
+
+                // 检查children是否都是组节点。
+                for(let chil_idx in node.children){
+                    let x = node.children[chil_idx]
+                    if(x["type"] != "group"){
+                        return [false, make_msg(path, `the ${chil_idx}-th children of the structure node is not group.`)]
+                    }
+                }
+            
         }
     }
 
