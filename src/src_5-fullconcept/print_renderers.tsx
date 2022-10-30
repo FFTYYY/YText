@@ -40,7 +40,7 @@ import {
 	AutoTooltip, 
 	ProcessedParameterList , 
 	get_default_structure_renderer , 
-} from "../../libprinter"
+} from "../../lib"
 import {
 	PrinterRenderer , 
 	GroupNode , 
@@ -51,7 +51,7 @@ import {
 	Context  , 
     PrinterRenderFunctionProps, 
     PrinterRenderFunction , 
-} from "../../libprinter"
+} from "../../lib"
 
 export {
 	renderers , 

@@ -5,7 +5,7 @@ import {
 	SecondClassConcept ,  
     ParameterValue ,
     ParameterList , 
-} from "../../libprinter"
+} from "../../lib"
 
 export {second_concepts}
 

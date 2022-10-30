@@ -17,7 +17,7 @@ import {
 
     MouselessParameterEditor , 
     ButtonDescription , 
-} from "../../../libprinter"
+} from "../../../lib"
 
 
 export { 
