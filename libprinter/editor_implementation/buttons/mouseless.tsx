@@ -61,7 +61,7 @@ function get_cancidate_idxs(node: Slate.Node & ConceptNode, position_list: strin
 function get_mouseless_father(editor: EditorComponent, node: Slate.Node & ConceptNode, position_list: string[], only_father: boolean): [Slate.Node & ConceptNode , number[]]{
     let now_node = node
 
-    // 如果想要只要父节点，就先迭代一次。
+    // 如果不想包括本节点，就先迭代一次。
     if(only_father){ 
         now_node = slate_concept_father(editor.get_slate(), now_node)
         if(now_node == undefined){ // 压根没找到父亲，直接离开
@@ -127,6 +127,7 @@ function get_switch_position(editor: EditorComponent): SwitchPositionFunction{
             }
             return s
         } , [])
+        cancidate_idx.sort()
         
         // 目前激活的按钮的编号的排名。
         let now_sub_idx = cancidate_idx.indexOf(now_sub)
@@ -144,6 +145,46 @@ function get_switch_position(editor: EditorComponent): SwitchPositionFunction{
     }
 }
 
+/** 这个函数是位置函数的备用方案，当在祖先节点中找不到一个带无鼠标元素的概念节点时，就去兄弟节点中找。 */
+function activate_position_brother(editor: EditorComponent, position_list: string[], cur_position: string): string{
+    let selection = editor.get_slate().selection
+    if(!selection){ // 如果光标不在编辑器上
+        return undefined
+    }
+
+    let now_path = selection.anchor.path // 如果光标在编辑器上，那么就选择光标开始位置作为当前节点。
+    let my_idx = now_path[now_path.length-2] || 0 // 自己在父节点中的位置
+    now_path = now_path.slice(0,now_path.length-2) // 向上两格，之所以要向上两格是为了跳出text，然后再跳出一格。
+
+    let father_node = Slate.Editor.node(editor.get_slate(), now_path)[0] // 父节点
+    let children = father_node["children"] as (Slate.Node[] | undefined)
+    if(!children){
+        return cur_position
+    }
+    let res_node: Slate.Node & ConceptNode = undefined
+    let res_cancidate_idxs = []
+    for(let _subidx in children){ // 枚举父节点的子节点。
+        let subidx = parseInt(_subidx)
+        if(subidx >= my_idx){ // 不要管后面的节点。
+            break
+        }
+        let subnode = children[subidx]
+        if(!slate_is_concept(subnode)){ // 跳过非概念节点。
+            continue
+        }
+        let cancidate_idxs = get_cancidate_idxs(subnode, position_list) // 当前节点的候选位置列表。
+        if(cancidate_idxs.length > 0){ // 如果有候选位置，那么就可以
+            res_node = subnode
+            res_cancidate_idxs = cancidate_idxs
+        }
+    }
+    if(!res_node){
+        return cur_position
+    }
+    res_cancidate_idxs.sort()
+    return JSON.stringify([res_node.idx, res_cancidate_idxs[0]])
+}
+
 function get_activate_position(editor: EditorComponent){
     return (position_list: string[], cur_position: string): string => {
         let selection = editor.get_slate().selection
@@ -158,13 +199,13 @@ function get_activate_position(editor: EditorComponent){
         }
         let now_node = Slate.Editor.node(editor.get_slate(), now_path)[0]
         if(now_path.length == 0 || !slate_is_concept(now_node)){ // 如果退到了根节点，就退出。
-            return undefined
+            return activate_position_brother(editor, position_list, cur_position)
         }
 
         // 向上寻找一个带无鼠标元素的概念节点。
         let [the_node, cancidate_idxs] = get_mouseless_father(editor, now_node, position_list, false)
         if(the_node == undefined){
-            return cur_position
+            return activate_position_brother(editor, position_list, cur_position)
         }
 
         let now_idx = the_node.idx
@@ -175,7 +216,6 @@ function get_activate_position(editor: EditorComponent){
                 return cur_position 
             }
         }
-
         
         cancidate_idxs.sort()
         return JSON.stringify([now_idx, cancidate_idxs[0]])
