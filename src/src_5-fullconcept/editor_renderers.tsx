@@ -21,9 +21,13 @@ export {
 } 
 
 
-let brightwords_editor  = get_deafult_group_editor_with_appbar({})
+let brightwords_editor  = get_deafult_group_editor_with_appbar({
+    get_label: (n,p) => p.category
+})
 
-var subsection_editor   = get_deafult_group_editor_with_appbar({get_label: (n)=>`次节：${n.parameters.title.val}`})
+var subsection_editor   = get_deafult_group_editor_with_appbar({
+    get_label: (n,p)=>`次节：${p.title}`
+})
 var formatted_editor    = get_default_group_editor_with_rightbar({})
 var followwords_editor  = get_default_group_editor_with_rightbar({})
 var mount_editor        = get_default_group_editor_with_rightbar({})

@@ -35,11 +35,14 @@ import {
     KeyboardArrowDown as KeyboardArrowDownIcon
 } from "@mui/icons-material"
 
-
 import * as Slate from "slate"
 
-import { GroupNode  } from "../core"
-import type { EditorRendererProps , EditorRenderer } from "../editor"
+import { GlobalInfo, GroupNode  } from "../core"
+import { 
+    EditorRendererProps , 
+    EditorRenderer , 
+    EditorComponent ,  
+} from "../editor"
 
 import { 
     DefaultParameterEditButton , 
@@ -75,6 +78,10 @@ import {
     AutoStackedPopperButtonGroupMouseless , 
 } from "./buttons"
 
+import {
+    EditorNodeInfoFunction , 
+} from "./base"
+
 export { get_deafult_group_editor_with_appbar , get_default_group_editor_with_rightbar}
 
 /** 为 Group 类型的节点定制的 Paper ，在节点前后相连时会取消前后距离。 */
@@ -89,18 +96,20 @@ let GroupPaper = (props: PaperProps & {node: GroupNode}) => <ComponentPaper {...
  * @returns 一个用于渲染group的组件。
  */
 function get_deafult_group_editor_with_appbar({
-    get_label     = (n:GroupNode)=>(n.parameters["label"] && n.parameters["label"].val) as string, 
-    appbar_extra  = (n:GroupNode) => [] , 
+    get_label     = (n,p)=>p.label, 
+    appbar_extra  = (n,p) => [] , 
     surrounder    = (props) => <>{props.children}</>
 }: {
-    get_label       ?: (n: GroupNode) => string ,  
-    appbar_extra    ?: (n: GroupNode) => ButtonDescription[], 
+    get_label       ?: EditorNodeInfoFunction<GroupNode, string> ,  
+    appbar_extra    ?: EditorNodeInfoFunction<GroupNode, ButtonDescription[]> , 
     surrounder      ?: (props: EditorButtonInformation & {children: any}) => any ,
 }): EditorRenderer<GroupNode>{
     // 渲染器
     return (props: EditorRendererProps<Slate.Node & GroupNode>) => {
-        let node = props.node as GroupNode
-        let label   = get_label(node)
+        let editor      = React.useContext(GlobalInfo).editor as EditorComponent
+        let node        = props.node
+        let parameters  = editor.get_core().get_printer().process_parameters(node)
+        let label       = get_label(node, parameters)
 
         let SUR = surrounder
 
@@ -121,7 +130,7 @@ function get_deafult_group_editor_with_appbar({
                                 NewParagraphButtonDown , 
                                 DefaultCloseButton , 
                                 DefaultSoftDeleteButton , 
-                                ... appbar_extra(node)
+                                ... appbar_extra(node, parameters)
                             ]}
                         />
                     </AutoStack></Toolbar>
@@ -142,19 +151,20 @@ function get_deafult_group_editor_with_appbar({
  * @returns 一个用于渲染group的组件。
  */
 function get_default_group_editor_with_rightbar({
-    get_label       = (n) => (n.parameters["label"] && n.parameters["label"].val) as string, 
-    rightbar_extra  = (n) => [], 
+    get_label       = (n,p)=>p.label, 
+    rightbar_extra  = (n,p) => [] , 
     surrounder      = (props) => <>{props.children}</>
 }: {
-    get_label       ?: (n:GroupNode) => string , 
-    rightbar_extra  ?: (n:GroupNode) => ButtonDescription[], 
+    get_label       ?: EditorNodeInfoFunction<GroupNode, string> ,  
+    rightbar_extra  ?: EditorNodeInfoFunction<GroupNode, ButtonDescription[]> , 
     surrounder      ?: (props: EditorButtonInformation & {children: any}) => any ,
 }): EditorRenderer<GroupNode>{
 
     return (props: EditorRendererProps<Slate.Node & GroupNode>) => {
-        let node = props.node as GroupNode
-        let mylabel   = get_label(node)
-        let E = rightbar_extra
+        let editor      = React.useContext(GlobalInfo).editor as EditorComponent
+        let node        = props.node
+        let parameters  = editor.get_core().get_printer().process_parameters(node)
+        let mylabel     = get_label(node, parameters)
         let SUR = surrounder
 
         return <GroupPaper node={node}>
@@ -166,8 +176,8 @@ function get_default_group_editor_with_rightbar({
                     <AutoStack>
                         <ButtonGroup // 额外添加的元素。
                             autostack 
-                            node = {node}
-                            buttons = {rightbar_extra(node)}
+                            node    = {node}
+                            buttons = {rightbar_extra(node, parameters)}
                         />
                         <StructureTypography variant = "overline">{mylabel}</StructureTypography>
                         <AutoStackedPopperButtonGroupMouseless 

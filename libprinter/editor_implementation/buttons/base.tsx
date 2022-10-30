@@ -8,6 +8,7 @@ import * as Slate from "slate"
 
 import {
     ConceptNode , 
+    ParameterList , 
 } from "../../core"
 
 import {
@@ -54,6 +55,8 @@ export {
 
 /** 所有按钮组件的通用信息。 */
 interface EditorButtonInformation<NodeType extends ConceptNode = ConceptNode>{
+
+    /** 按钮所服务的节点。 */
     node: Slate.Node & NodeType
 }
 

@@ -24,6 +24,7 @@ import {
 
     GlobalInfoProvider, 
     AllConceptTypes, 
+    ProcessedParameterList, 
 } from "../core"
 
 import {
@@ -272,6 +273,7 @@ class EditorCore{
         let concpt = this.printer.get_node_first_concept(node)
         return concpt && concpt.meta_parameters
     }
+    
 }
 
 

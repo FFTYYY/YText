@@ -7,28 +7,8 @@ import React, {useState , createRef} from "react"
 
 
 import {
-    Typography , 
-    Button , 
-    Menu , 
-    MenuItem , 
-    Drawer , 
-    AppBar , 
-    Box , 
-    AccordionDetails , 
-    Popper , 
-    Tooltip , 
-    Switch , 
-    Toolbar , 
-    Paper , 
     Grid , 
     IconButton , 
-    Divider  , 
-    Container , 
-    TextField , 
-    TableContainer  , 
-    TableRow , 
-    TableCell , 
-    Table , 
 } 
 from "@mui/material"
 import type {
@@ -96,6 +76,9 @@ import {
     AutoStackedPopperButtonGroupMouseless , 
 } from "./buttons"
 
+import {
+    EditorNodeInfoFunction , 
+} from "./base"
 
 export { get_default_struct_editor_with_rightbar }
 
@@ -115,36 +98,43 @@ let StructPaper = (props: PaperProps & {node: StructNode}) => <ComponentPaper {.
  * @returns 一个用于渲染group的组件。
  */
 function get_default_struct_editor_with_rightbar({
-    get_label       = (n) => n.parameters.label.val as string, 
-    get_numchildren = (n) => 1                                ,
-    get_widths      = (n) => []                                 ,
-    rightbar_extra  = (n) => []                          , 
-    surrounder      = (props) => <>{props.children}</>          , 
+    get_label       = (n,p) => p.label , 
+    get_numchildren = () => 1 ,
+    get_widths      = () => [] ,
+    rightbar_extra  = () => [] , 
+    surrounder      = (props) => <>{props.children}</> , 
 } : {
-    get_label       ?: (n:StructNode) => string , 
-    get_numchildren ?: (n:StructNode) => number , 
-    get_widths      ?: (n:StructNode) => number[]   ,
-    rightbar_extra  ?: (n:StructNode) => ButtonDescription [] , 
+    get_label       ?: EditorNodeInfoFunction<StructNode, string> , 
+    get_numchildren ?: EditorNodeInfoFunction<StructNode, number> , 
+    get_widths      ?: EditorNodeInfoFunction<StructNode, number[]> ,
+    rightbar_extra  ?: EditorNodeInfoFunction<StructNode, ButtonDescription []> , 
     surrounder      ?: (props: EditorButtonInformation<StructNode> & {children: any}) => any , 
 }): EditorRenderer<StructNode>{
 
     return (props: EditorRendererProps<StructNode>) => {
-        let node = props.node as StructNode
-        let globalinfo = React.useContext(GlobalInfo)
-        let editor = globalinfo["editor"]  as EditorComponent
+        let globalinfo  = React.useContext(GlobalInfo)
+        let editor      = globalinfo.editor as EditorComponent
+        let node        = props.node
+        let parameters  = editor.get_core().get_printer().process_parameters(node)
 
-        let mylabel = get_label(node)
+        let mylabel = get_label(node, parameters)
         let SUR     = surrounder
 
         let mychildren = node.children
         let mypath = slate_concept_node2path(editor.get_slate() , node)
-        let num_children = get_numchildren(node)
+        let num_children = get_numchildren(node, parameters)
         if(num_children < 0){
             num_children = mychildren.length
         }
 
-        React.useEffect(()=>{
+        // 获得并规范元素的相对长度。
+        let widths = get_widths(node, parameters)
+        widths = widths.splice(0,num_children) // 确保为widths元素不少
+        while(widths.length < num_children) // 确保widths元素不多
+            widths.push(1)
+        let widthsum = widths.reduce( (s,x)=>s+x , 0 ) // 求所有元素的和。
 
+        React.useEffect(()=>{
             // 规范子节点数量。
             if(num_children < mychildren.length){
                 let paths = []
@@ -162,12 +152,6 @@ function get_default_struct_editor_with_rightbar({
             }
         })
 
-        // 获得并规范元素的相对长度。
-        let widths = get_widths(node)
-        widths = widths.splice(0,num_children) // 确保为widths元素不少
-        while(widths.length < num_children) // 确保widths元素不多
-            widths.push(1)
-        let widthsum = widths.reduce( (s,x)=>s+x , 0 ) // 求所有元素的和。
 
         return <StructPaper node={node}>
             <AutoStack force_direction="row">
@@ -191,7 +175,7 @@ function get_default_struct_editor_with_rightbar({
                         <ButtonGroup // 额外添加的元素。
                             autostack 
                             node = {node}
-                            buttons = {rightbar_extra(node)}
+                            buttons = {rightbar_extra(node, parameters)}
                         />
                         <StructureTypography variant = "overline">{mylabel}</StructureTypography>
                         <AutoStackedPopperButtonGroupMouseless 

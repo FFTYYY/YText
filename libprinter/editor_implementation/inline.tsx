@@ -21,11 +21,13 @@ import {
 import {
     InlineNode , 
     ConceptNode , 
+    GlobalInfo , 
 } from "../core"
 
 import {
     EditorRenderer , 
     EditorRendererProps, 
+    EditorComponent , 
 } from "../editor"
 
 import { 
@@ -36,7 +38,7 @@ import {
 } from "./buttons"
 
 import { DefaultEditAbstractButton, DefaultNewAbstract, DefaultNewAbstractButton } from "./abstract"
-import { EditorButtonInformation , } from "./buttons"
+import { EditorButtonInformation } from "./buttons"
 import { AutoStackedPopper , SimpleAutoStack , AutoStack , AutoTooltip  } from "./uibase"
 import { 
     EditorComponentPaper as ComponentPaper , 
@@ -47,6 +49,9 @@ import {
     EditorComponentBox as ComponentBox , 
     EditorStructureTypography as StructureTypography , 
 } from "./uibase"
+import {
+    EditorNodeInfoFunction , 
+} from "./base"
 
 export { get_default_inline_editor }
 
@@ -55,18 +60,21 @@ export { get_default_inline_editor }
  * 见https://github.com/ianstormtaylor/slate/issues/4811
  */
 function get_default_inline_editor({
-    get_label       = (n: InlineNode)=>(n.parameters["label"] && n.parameters["label"].val) as string, 
+    get_label       = (n,p)=>p.label, 
     surrounder      = (props) => <React.Fragment>{props.children}</React.Fragment> , 
     rightbar_extra  = (props) => <></> , 
 }: {
-    get_label       ?: (n: InlineNode)=>string , 
+    get_label       ?: EditorNodeInfoFunction<InlineNode, string> , 
     surrounder      ?: (props: EditorButtonInformation & {children: any}) => any , 
     rightbar_extra  ?: (props: EditorButtonInformation) => any  , 
 
 }): EditorRenderer<InlineNode>{
     return (props: EditorRendererProps<InlineNode>) => {
-        let node = props.node as InlineNode
-        let label   = get_label(node)
+        let editor      = React.useContext(GlobalInfo).editor as EditorComponent
+        let node        = props.node
+        let parameters  = editor.get_core().get_printer().process_parameters(node)
+
+        let label   = get_label(node, parameters)
         let Extra = rightbar_extra
         let SUR = surrounder
 

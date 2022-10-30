@@ -42,6 +42,10 @@ import {
     EditorButtonInformation , 
 } from "./buttons"
 
+import {
+    EditorNodeInfoFunction , 
+} from "./base"
+
 export {
     DefaultNewAbstract , 
     DefaultAbstractEditor , 
@@ -341,13 +345,15 @@ class DefaultNewAbstractButton extends React.Component<EditorButtonInformation ,
  * @returns 
  */
 function get_default_abstract_editor({
-    get_label       = (n:AbstractNode)=>n.parameters["label"].val as string, 
+    get_label       = (n,p)=>p.label, 
 }: {
-    get_label       ?: (n:AbstractNode)=>string ,  
+    get_label       ?: EditorNodeInfoFunction<AbstractNode , string> ,  
 }){
     return (props: EditorRendererProps<Slate.Node & AbstractNode>) => {
-        let node = props.node as AbstractNode
-        let label   = get_label(node)
+        let editor      = React.useContext(GlobalInfo).editor as EditorComponent
+        let node        = props.node
+        let parameters  = editor.get_core().get_printer().process_parameters(node)
+        let label   = get_label(node, parameters)
 
         return <Box sx={{
             height: "100%" , 
