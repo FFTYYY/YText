@@ -77,15 +77,12 @@ class ParameterItemComponent extends React.Component <ParameterItemComponentProp
     
     /** 当外界询问时，这个函数向外提供修改过的参数。 */
     public get_item(): ParameterValue{
+        let {val, type, ...other_items} = this.props.parameter_item
         let ret = {
             val: this.state.val , 
             type: this.props.parameter_item.type , 
+            ...other_items
         } 
-        // TODO handle choice?
-        // if(this.type == "choice"){
-        //     type ChoiceItem = ParameterValue & {type: "choice"}
-        //     (ret as ChoiceItem).choices = (this.props.parameter_item as ChoiceItem).choices
-        // }
         return ret as ParameterValue
     }
     
@@ -115,6 +112,21 @@ class ParameterItemComponent extends React.Component <ParameterItemComponentProp
             marginLeft: "5%" , 
         }
 
+        if(this.props.parameter_item.choices){ // 如果有额外的一项choices
+            let choices = this.props.parameter_item.choices as (typeof val [])
+
+            return <FormControl sx = {{...standard_sx , width: "100%"}}>
+                <FormLabel>{name}</FormLabel>
+                <RadioGroup
+                    value = {val}
+                    onChange = {e=>{
+                        me.setState({val: e.target.value})
+                    }}
+                >
+                    {choices.map((c,idx)=><FormControlLabel sx={{marginLeft: "5%"}} key={idx} value={c} label={c} control={<Radio />}/>)}
+                </RadioGroup>
+            </FormControl>        
+        }
         if(type == "string"){
             return <TextField 
                 onChange = {e=>{
@@ -148,19 +160,6 @@ class ParameterItemComponent extends React.Component <ParameterItemComponentProp
         }
         // TODO handle choice?
         // if(type == "choice"){ // 帮助sb ts认识到下面的choices是合法的。
-        //     let choices = (me.props.parameter_item as ValidParameterItem & {type : "choice"}).choices
-
-        //     return <FormControl sx = {{...standard_sx , width: "100%"}}>
-        //         <FormLabel>{name}</FormLabel>
-        //         <RadioGroup
-        //             value = {val}
-        //             onChange = {e=>{
-        //                 me.setState({val: e.target.value})
-        //             }}
-        //         >
-        //             {choices.map((c,idx)=><FormControlLabel sx={{marginLeft: "5%"}} key={idx} value={c} label={c} control={<Radio />}/>)}
-        //         </RadioGroup>
-        //     </FormControl>        
         // }
         return <></>
     }

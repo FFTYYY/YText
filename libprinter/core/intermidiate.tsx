@@ -47,9 +47,9 @@ interface ParagraphNode {
 
 /** 所有参数项的可行类型。 */
 type ParameterValue = 
-	{type: "string" , val: string} |
-	{type: "number" , val: number} | 
-	{type: "boolean" , val: boolean}
+	{type: "string"  , val: string , [other_items: string]: any} |
+	{type: "number"  , val: number , [other_items: string]: any} | 
+	{type: "boolean" , val: boolean, [other_items: string]: any}
 
 
 /** 参数列表。 */

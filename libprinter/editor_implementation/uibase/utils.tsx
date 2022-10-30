@@ -1,4 +1,7 @@
-export {object_foreach , merge_object}
+export {
+    object_foreach , 
+    merge_object ,
+}
 
 
 
@@ -35,4 +38,3 @@ function merge_object(obj_1: any, obj_2: any){
     }
     return ret
 }
-

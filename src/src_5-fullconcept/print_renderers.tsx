@@ -83,26 +83,23 @@ function remtimes(rem:string , num: number){
 
 /** 根据给定的编号和编号格式，生成编号字符串。 */
 function make_oerder_str(order: number , ordering: string){
-	if(ordering == "chinese"){
+	if(ordering == "head"){
 		return num2chinese(order)
 	}
-	if(ordering == "arab"){
-		return `${order}`
-	}
-	if(ordering == "arab-circle"){
+	if(ordering == "discuss"){
 		if(order > 0 && order <= 20){
 			let m = ["①","②","③", "④", "⑤", "⑥", "⑦", "⑧", "⑨", "⑩", "⑪", "⑫", "⑬", "⑭", "⑮", "⑯", "⑰", "⑱","⑲", "⑳"]
 			return m[order-1]
 		}
 		return `(${order})`
 	}
-	if(ordering == "chinese-bracket"){
+	if(ordering == "title"){
 		return `【${num2chinese(order)}】`
 	}
-	if(ordering == "arab-bracket"){
+	if(ordering == "list-separating"){
 		return `[${order}]`
 	}
-	if(ordering == "arab-round-bracket"){
+	if(ordering == "list-chaining"){
 		return `${order})`
 	}
 	return ""
@@ -510,7 +507,7 @@ let renderers = {
 
 let default_renderers = {
 	"group"     : default_renderer_block , 
-    "structure"    : default_renderer_block , 
+    "structure" : default_renderer_block , 
     "support"   : default_renderer_block , 
     "abstract"  : default_renderer_block , 
     "paragraph" : get_default_paragraph_renderer({}) , 

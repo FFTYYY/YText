@@ -37,7 +37,8 @@ import {
     slate_is_paragraph , 
     slate_is_same_concept_node , 
     slate_is_text , 
-    slate_get_node_type , 
+    slate_get_node_type, 
+    DoSomething, 
 } from "./utils"
 
 import {
@@ -355,6 +356,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
     root_children: (SlateReact.ReactEditor & AbstractNode)["children"]
 }>{
     
+    update_debounce: DoSomething<Slate.Node[]>
     constructor(props:EditorComponentProps){
         super(props)
 
@@ -388,6 +390,8 @@ class EditorComponent extends React.Component<EditorComponentProps , {
             root_children: props.init_rootchildren || default_root_children , 
             root_property: props.init_rootproperty || default_root_but_children , 
         }
+
+        this.update_debounce = new DoSomething((val)=>{this.update_value(val)} , 500)
     }
 
     get_core(){
@@ -528,7 +532,8 @@ class EditorComponent extends React.Component<EditorComponentProps , {
                         // 实际上没有改变，就不更新了。
                         return
                     }
-                    me.update_value(value)
+                    me.update_debounce.go(value)
+                    // me.update_value(value)
                     me.onFocusChange()
                 }}
             >
@@ -546,9 +551,9 @@ class EditorComponent extends React.Component<EditorComponentProps , {
                         return false
                     }}
     
-                    onKeyDown = {e=>me.onKeyDown(e)}
-                    onKeyUp = {e=>me.onKeyUp(e)}
-                    onKeyPress = {e=>{me.onKeyPress(e)}}
+                    onKeyDown   = {e=>me.onKeyDown(e)}
+                    onKeyUp     = {e=>me.onKeyUp(e)}
+                    onKeyPress  = {e=>{me.onKeyPress(e)}}
                 />
             </SlateReact.Slate>
         </GlobalInfoProvider>

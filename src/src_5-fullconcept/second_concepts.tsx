@@ -104,35 +104,35 @@ let second_concepts = second_concepts_from_json(`{
         "first" : "属言" , 
         "type" : "group" , 
         "fixed": {
-            "prefix": {
-              "val": "p=>p.alias.val ? \`($\{p.alias.val\})\`: '' ",
-              "type": "function"
-            },
-            "suffix": {
-              "val": "",
-              "type": "string"
-            },
-            "title": {
-              "val": "",
-              "type": "string"
-            },
-            "close": {
-              "val": "",
-              "type": "string"
-            },
-            "label": {
-              "val": "列表",
-              "type": "string"
-            },
-            "clustering": {
-              "val": true,
-              "type": "boolean"
-            },
-            "ordering": {
-              "val": "arab-round-bracket",
-              "type": "string"
-            }
-          } , 
+          "prefix": {
+            "val": "p=>p.alias.val ? \`($\{p.alias.val\})\`: '' ",
+            "type": "function"
+          },
+          "suffix": {
+            "val": "",
+            "type": "string"
+          },
+          "title": {
+            "val": "",
+            "type": "string"
+          },
+          "close": {
+            "val": "",
+            "type": "string"
+          },
+          "label": {
+            "val": "列表",
+            "type": "string"
+          },
+          "clustering": {
+            "val": true,
+            "type": "boolean"
+          },
+          "ordering": {
+            "val": "list-chaining",
+            "type": "string"
+          }
+        } , 
         "default" : {
             "alias": {
               "val": "",

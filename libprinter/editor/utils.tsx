@@ -26,6 +26,8 @@ export {
     slate_get_node_type , 
     slate_concept_father , 
     slate_idx_to_node , 
+
+    DoSomething , 
 }
 
 
@@ -101,3 +103,38 @@ function slate_idx_to_node<RootType = ConceptNode>(root: Slate.Editor, idx: numb
     }
     return ret[0][0] as ConceptNode
 }
+
+/** 这个类帮助做某件事，但是控制每次做的间隔。 */
+class DoSomething<ParameterType = undefined>{
+    ask_flag: boolean
+    trigger_flag: boolean
+    task: (parameters?: ParameterType)=>any
+    remember_params?: ParameterType
+    constructor(task: (parameters?: ParameterType)=>any, time: number = 1000){
+        this.ask_flag = false
+        this.trigger_flag = true
+        this.task = task
+        this.remember_params = undefined
+        let me = this
+        setInterval( ()=>{
+            me.trigger_flag = true 
+            me.trigger()
+        } , time)
+    }
+
+    go(parameters?: ParameterType){
+        this.remember_params = parameters // 如果这次没有调用，就保存这次的参数用于下次调用
+        this.ask_flag = true
+        this.trigger()
+    }
+
+    trigger(){
+        // 只有当既被要求，时间上又说得过去时，才执行操作。
+        if(this.ask_flag && this.trigger_flag){
+            this.ask_flag = false
+            this.trigger_flag = false
+            this.task(this.remember_params)
+        }
+    }
+}
+

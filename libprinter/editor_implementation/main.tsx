@@ -128,7 +128,6 @@ class DefaultEditorComponent extends React.Component <EditorComponentProps & {
 
     render() {
     
-        
         let paper_width   = {xs: "85%" , md: "90%" , xl: "95%"} // 纸张的宽度，
         let toolbar_width = {xs: "15%" , md: "10%" , xl: "5%"} // 工具栏的宽度。
 
@@ -169,8 +168,8 @@ class DefaultEditorComponent extends React.Component <EditorComponentProps & {
                             onFocusChange       = {me.props.onFocusChange}
                             
                         
-                            onKeyDown = {onkeydown}
-                            onKeyUp = {onkeyup}
+                            onKeyDown           = {onkeydown}
+                            onKeyUp             = {onkeyup}
                         />
                     }}
                     </KeyDownUpFunctionProxy.Consumer>
