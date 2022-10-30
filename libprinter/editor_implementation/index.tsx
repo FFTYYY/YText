@@ -6,4 +6,5 @@ export * from "./inline"
 export * from "./mouseless"
 export * from "./plain"
 export * from "./struct"
+export * from "./support"
 

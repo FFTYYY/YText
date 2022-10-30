@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 import ReactDom from "react-dom"
 
 import {
-	Box , Link , Typography , Divider
+	Box , Link , Typography , Divider , Grid
 } from "@mui/material"
 
 import {
@@ -38,6 +38,8 @@ import {
 	GlobalInfo , 
 	GlobalInfoProvider, 
 	AutoTooltip, 
+	ProcessedParameterList , 
+	get_default_structure_renderer , 
 } from "../../libprinter"
 import {
 	PrinterRenderer , 
@@ -444,6 +446,36 @@ let default_renderer_text = new PrinterRenderer({
     }
 })
 
+let renderer_line = (()=>{
+    function get_widths(node: StructNode, parameters: ProcessedParameterList){
+        
+        let widths_str = parameters.widths || ""
+        let widths = widths_str.split(",").map(x=>(x == "" ? 1 : parseInt(x))) as number [] // convert to int list 
+        if(widths.length > node.children.length){
+            widths = widths.slice(0,node.children.length)
+        }
+        while(widths.length < node.children.length){
+            widths.push(1)
+        }
+        return widths
+    }
+    let renderer = get_default_structure_renderer({
+        inner(props){
+            let {node , parameters , context , children} = props
+            let widths = get_widths(node , parameters)
+            let sum = widths.reduce((s , x)=>s + x , 0)
+            return <Grid container columns={sum} sx={{width: "100%"}} spacing={2}>{props.children}</Grid>
+        } , 
+        subinner(props){
+            let {node , parameters , context , children , subidx} = props
+            let widths = get_widths(node , parameters)
+            let my_width = widths[subidx]
+            return <Grid item xs={my_width} sx={{align: "center"}}>{props.children}</Grid>
+        }
+    })
+    return renderer
+})()
+
 
 let renderers = {
 	"group":{
@@ -459,7 +491,6 @@ let renderers = {
 	} ,
 	"inline" : {
 		"强"  : strong_printer , 
-		"图"  : image_printer , 
 		"刊"  : delete_printer , 
 		"缀"  : link_printer , 
 		"数学": mathinline_printer , 
@@ -467,9 +498,12 @@ let renderers = {
 	"support": {
 		"小节线": sectioner_printer , 
 		"章节线": ender_printer , 
+		"图"  : image_printer , 
 	} , 
 	"abstract": {} , 
-	"structure": {} , 
+	"structure": {
+		"行": renderer_line , 
+	} , 
 }
 
 

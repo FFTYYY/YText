@@ -8,6 +8,8 @@ import {
     get_default_abstract_editor , 
     get_default_editors , 
     get_default_struct_editor_with_rightbar , 
+    get_default_spliter_editor , 
+    get_default_display_editor , 
 
     EditorComponent , 
     GlobalInfo , 
@@ -56,8 +58,8 @@ var mathblock_editor    = get_default_group_editor_with_rightbar({
 })
 let subwords_editor     = get_default_group_editor_with_rightbar({})
 
-// var sectioner_editor    = get_DefaultSplitterEditor({get_title: (n) => get_param_val(n,"title") as string})
-// var ender_editor        = get_DefaultSplitterEditor({get_title: () => "章节"})
+let sectioner_editor    = get_default_spliter_editor({get_title: (n,p)=>p.title})
+let ender_editor        = get_default_spliter_editor({get_title: (n,p)=>"章节"})
 
 
 var strong_editor       = get_default_inline_editor({})
@@ -66,49 +68,42 @@ var link_editor         = get_default_inline_editor({surrounder: (props)=><u>{pr
 var mathinline_editor   = get_default_inline_editor({surrounder: (props)=><>{props.children}</>        })
 
 
-// var image_editor = get_DefaultDisplayerEditor({
-//     get_label: ()=>"图片" , 
-//     is_empty: (n)=>!!get_param_val(n , "target") , 
-//     render_element: (props) => {
-//         let [ url , set_url ] = React.useState("")
-//         let target = get_param_val(props.element , "target") as string
-//         let type = get_param_val(props.element , "type")
+var image_editor = get_default_display_editor({
+    get_label: ()=>"图片" , 
+    is_empty: (n,p)=>!!(p.target) , 
+    render_element: (props) => {
+        let [ url , set_url ] = React.useState("")
+        let node    = props.node
+        let target  = node.parameters.target.val as string
+        let type    = node.parameters.type.val as string
+        let height  = node.parameters.height.val as number
+        let width   = node.parameters.width.val as number
 
-//         React.useEffect(()=>{(async ()=>{
-//             if(type == "internal"){
-//                 let resource_info = await Interaction.get.resource_info(target , BackendData.node_id)
-//                 if(!resource_info.url){
-//                     set_url("")
-//                 }
-//                 else{
-//                     set_url(url_from_root(resource_info.url))
-//                 }
-//                 // 其实直接`set_url(resource_info.url)`也行，套一层`url_from_root`主要是为了调试方便。
-//             }
-//             else{
-//                 set_url(target)
-//             }
-//         })()})
+        React.useEffect(()=>{(async ()=>{
+            if(type == "internal"){
+                // TODO ...
+            }
+            else{
+                set_url(target)
+            }
+        })()})
 
-//         let p_width = get_param_val(props.element , "width")
-//         let p_height = get_param_val(props.element , "height")
-
-//         return <img src={url || undefined } style={{
-//             width: p_width > 0 ? `${p_width}rem` : "100%", 
-//             height: p_height > 0 ? `${p_height}rem` : "100%" , 
-//         }}/>
-//     } , 
-// })
+        return <img src={url || undefined } style={{
+            width : width  > 0 ? `${width}rem`  : "100%", 
+            height: height > 0 ? `${height}rem` : "100%" , 
+        }}/>
+    } , 
+})
 
 var alignedwords_editor = get_default_struct_editor_with_rightbar({
     get_label: (n)=>n.parameters.label.val as string, 
-    get_numchildren: (n) => {
-        let widths_str = n.parameters.widths.val as string
+    get_numchildren: (n, p) => {
+        let widths_str = p.widths as string
         let widths = widths_str.split(",").reduce((s,x)=>[...s,parseInt(x)] , [] as number[])
         return widths.length
     },
-    get_widths: (n)=>{
-        let widths_str = n.parameters.widths.val as string
+    get_widths: (n, p)=>{
+        let widths_str = p.widths as string
         let widths = widths_str.split(",").reduce((s,x)=>[...s,parseInt(x)] , [] as number[])
         return widths
     }
@@ -144,7 +139,11 @@ let editors = {
     "structure": {
         "齐言": alignedwords_editor , 
     } , 
-    "support": {} , 
+    "support": {
+        "图": image_editor , 
+        "小节线": sectioner_editor , 
+        "章节线": ender_editor , 
+    } , 
     "abstract": {
         "穆言": get_default_abstract_editor({get_label: (n)=>"comment"})
     } ,

@@ -247,7 +247,7 @@ class EditorCore{
             idx: this.gene_idx() , 
             concept: name , 
             parameters: parameters , 
-            children: [] , 
+            children: [this.create_group("support-child", "chaining")] , 
             abstract: [] , 
             relation: relation , 
         }

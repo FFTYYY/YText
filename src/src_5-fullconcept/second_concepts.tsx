@@ -95,15 +95,7 @@ let second_concepts = second_concepts_from_json(`{
             },
             "ordering": {
               "val": "none",
-              "type": "string",
-              "choices": [
-                "chinese",
-                "arab",
-                "arab-circle",
-                "chinese-bracket",
-                "number-bracket",
-                "none"
-              ]
+              "type": "string"
             }
           } , 
         "default" : {}
@@ -275,7 +267,7 @@ let second_concepts = second_concepts_from_json(`{
     }  , 
     "图片": {
         "first" : "图" , 
-        "type" : "inline" , 
+        "type" : "support" , 
         "fixed": {
             "label": {
               "val": "图片",
@@ -318,7 +310,7 @@ let second_concepts = second_concepts_from_json(`{
                 "val" : "行" , 
                 "type": "string"
             } , 
-            "width": {
+            "widths": {
                 "val": "1" , 
                 "type": "string"
             }

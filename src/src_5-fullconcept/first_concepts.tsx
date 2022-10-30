@@ -50,13 +50,12 @@ var words_params = {
         val: "chinese" , 
         type: "string" as "string" ,
         choices: [
-            "chinese" , // 一
-            "arab" ,  // 1
-            "arab-circle" ,  // ①
-            "chinese-bracket" , // 【一】
-            "arab-bracket" ,  // [1]
-            "arab-round-bracket" ,  // 1)
-            "none"
+            "head" , // 一
+            "list-chaining" ,  // 1)
+            "list-separating" ,  // [1]
+            "discuss" ,  // ①
+            "title" , // 【一】
+            "none" , 
         ] ,
     }
 }
@@ -143,7 +142,7 @@ var mathinline_style  = new FirstClassConcept  ({type: "inline", name: "数学" 
 })
 
 
-var image_style       = new FirstClassConcept ({type: "inline", name: "图"   , 
+var image_style       = new FirstClassConcept ({type: "support", name: "图"   , 
     parameter_prototype: make_param({ 
         label: "图片" , 
         target: ""  , 
