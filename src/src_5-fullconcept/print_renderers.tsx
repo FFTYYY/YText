@@ -300,7 +300,8 @@ var display_printer = (()=>{
 			let {node , parameters , context , children} = props
 			return <AutoStack force_direction="column">
 				<PrinterDisplayText sx={{
-					fontSize: (theme)=>remtimes(theme.fonts.structure.fontSize , 2) //字号翻倍
+					fontSize: (theme)=>remtimes(theme.fonts.structure.fontSize , 2) , //字号翻倍
+					lineHeight: (theme)=>remtimes(theme.fonts.structure.lineHeight , 2) ,  //行高翻倍
 				}}>{props.children}</PrinterDisplayText>
 			</AutoStack>
 		} , 
