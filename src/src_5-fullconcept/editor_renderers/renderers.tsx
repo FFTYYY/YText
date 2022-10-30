@@ -14,7 +14,10 @@ import {
     EditorComponent , 
     GlobalInfo , 
     ConceptNode , 
-} from "../../libprinter"
+
+    MouselessParameterEditor , 
+    ButtonDescription , 
+} from "../../../libprinter"
 
 
 export { 
@@ -26,7 +29,6 @@ export {
 let brightwords_editor  = get_deafult_group_editor_with_appbar({
     get_label: (n,p) => p.category
 })
-
 var subsection_editor   = get_deafult_group_editor_with_appbar({
     get_label: (n,p)=>`次节：${p.title}`
 })
@@ -34,39 +36,41 @@ var formatted_editor    = get_default_group_editor_with_rightbar({})
 var followwords_editor  = get_default_group_editor_with_rightbar({})
 var mount_editor        = get_default_group_editor_with_rightbar({})
 var display_editor      = get_default_group_editor_with_rightbar({})
-var mathblock_editor    = get_default_group_editor_with_rightbar({
-    rightbar_extra(n) {/** 在右侧提供一个用于快速输入退出符号的文本框。 */
-        class _Ex extends React.Component<{node: ConceptNode}>{
-            constructor(props){super(props)}
-            render(){
-                let node = this.props.node
-                let universal_props = {variant: "standard" as "standard" , sx: {width: "2rem" , marginBottom: "0.5rem" , hright: "1rem"}}
-                let label = <Typography sx={{fontSize: "0.7rem"}}>extra</Typography>
-                let suffix_default = node.parameters.suffix.val // 注意，这里假设close必不用代理。
-                return <GlobalInfo.Consumer>{globalinfo => {
-                    let editor = globalinfo.editor as EditorComponent
-                    return <TextField {...universal_props} label={label} defaultValue={suffix_default} onChange = {(e)=>{
-                        let val = e.target.value
-                        editor.auto_set_parameter( node , {suffix: {type: "string" , val: val}})
-                    }}/>
-                }}</ GlobalInfo.Consumer>
-            }
-        }
-
-        return [_Ex]
-    },
-})
 let subwords_editor     = get_default_group_editor_with_rightbar({})
-
 let sectioner_editor    = get_default_spliter_editor({get_title: (n,p)=>p.title})
 let ender_editor        = get_default_spliter_editor({get_title: (n,p)=>"章节"})
-
-
 var strong_editor       = get_default_inline_editor({})
 var delete_editor       = get_default_inline_editor({surrounder: (props)=><del>{props.children}</del>  })
 var link_editor         = get_default_inline_editor({surrounder: (props)=><u>{props.children}</u>      })
 var mathinline_editor   = get_default_inline_editor({surrounder: (props)=><>{props.children}</>        })
+var alignedwords_editor = get_default_struct_editor_with_rightbar({
+    get_label: (n)=>n.parameters.label.val as string, 
+    get_numchildren: (n, p) => {
+        let widths_str = p.widths as string
+        let widths = widths_str.split(",").reduce((s,x)=>[...s,parseInt(x)] , [] as number[])
+        return widths.length
+    },
+    get_widths: (n, p)=>{
+        let widths_str = p.widths as string
+        let widths = widths_str.split(",").reduce((s,x)=>[...s,parseInt(x)] , [] as number[])
+        return widths
+    }
+})
 
+var mathblock_editor    = get_default_group_editor_with_rightbar({
+    rightbar_extra(n) {/** 在右侧提供一个用于快速输入退出符号的文本框。 */
+
+        return [{
+            component: MouselessParameterEditor , 
+            other_props: {
+                idx: 0 , 
+                parameter_name: "suffix" , 
+                label: "extra" , 
+            } , 
+            skip_mouseless: true , 
+        }] as any 
+    },
+})
 
 var image_editor = get_default_display_editor({
     get_label: ()=>"图片" , 
@@ -95,19 +99,6 @@ var image_editor = get_default_display_editor({
     } , 
 })
 
-var alignedwords_editor = get_default_struct_editor_with_rightbar({
-    get_label: (n)=>n.parameters.label.val as string, 
-    get_numchildren: (n, p) => {
-        let widths_str = p.widths as string
-        let widths = widths_str.split(",").reduce((s,x)=>[...s,parseInt(x)] , [] as number[])
-        return widths.length
-    },
-    get_widths: (n, p)=>{
-        let widths_str = p.widths as string
-        let widths = widths_str.split(",").reduce((s,x)=>[...s,parseInt(x)] , [] as number[])
-        return widths
-    }
-})
 
 
 // var showchildren_editor = get_defaultSupportEditor_with_RightBar({

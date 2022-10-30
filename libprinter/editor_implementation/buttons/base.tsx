@@ -5,11 +5,17 @@
 
 import React from "react"
 import * as Slate from "slate"
+import * as SlateReact from "slate-react"
 
 import {
     ConceptNode , 
     ParameterList , 
+    GlobalInfo , 
 } from "../../core"
+
+import {
+    EditorComponent ,
+} from "../../editor"
 
 import {
     MouselessElement , 
@@ -37,6 +43,8 @@ import {
     ClickAwayListener  , 
     Box, 
     Button, 
+    Typography , 
+    TextField , 
 } from "@mui/material"
 
 import {AutoStackedPopperWithButton} from "./buttons"
@@ -46,11 +54,13 @@ export type {
     ButtonBase ,     
     ButtonDescription , 
     ButtonGroupProps , 
+    MouselessParameterEditorProps ,
 }
 
 export {
     ButtonGroup , 
     AutoStackedPopperButtonGroupMouseless , 
+    MouselessParameterEditor , 
 }
 
 /** 所有按钮组件的通用信息。 */
@@ -132,11 +142,11 @@ class MouselessButton<OtherPropsType = {}> extends React.Component<MouselessButt
 /** 描述一个按钮。 */
 type ButtonDescription<OtherPropsType = {}> = {
     other_props?: OtherPropsType
-    component: React.ComponentClass<EditorButtonInformation> | React.FunctionComponent<EditorButtonInformation>
+    component: React.ComponentClass<EditorButtonInformation & OtherPropsType> | React.FunctionComponent<EditorButtonInformation & OtherPropsType>
 
     /** 是否要跳过无鼠标操作的选择。 */
     skip_mouseless?: boolean
-} | (React.ComponentClass<EditorButtonInformation> | React.FunctionComponent<EditorButtonInformation>)
+} | (React.ComponentClass<EditorButtonInformation & OtherPropsType> | React.FunctionComponent<EditorButtonInformation & OtherPropsType>)
 
 interface ButtonGroupProps{
     buttons: ButtonDescription[]
@@ -375,4 +385,127 @@ class AutoStackedPopperButtonGroupMouseless extends React.Component<AutoStackedP
     }
 }
 
+interface MouselessParameterEditorProps{
+    node: ConceptNode & Slate.Node
+    parameter_name: string
+    idx: number
+    label: string
+}
 
+
+/** 这个组件提供一个无鼠标非按钮组件，用来快速编辑某个字符串参数。 */
+class MouselessParameterEditor extends React.Component<MouselessParameterEditorProps , {
+    active: boolean
+    enter_selection: Slate.Location | undefined
+}>{
+    static contextType = MouselessRegister
+
+    input_ref: React.RefObject<HTMLInputElement>
+
+    constructor(props: MouselessParameterEditorProps){
+        super(props)
+
+        this.state = {
+            active: false , 
+            enter_selection: undefined , 
+        }
+
+        this.input_ref = React.createRef()
+    }
+
+    focus_blur_input(focus: boolean){
+        if(this.input_ref && this.input_ref.current){
+            let input = this.input_ref.current
+            if(focus){
+                console.log(this.input_ref.current)
+                input.focus()
+            }
+            else{
+                input.blur()
+            }
+        }
+    }
+
+    set_active(val: boolean){
+        this.setState({active: val})
+    }
+
+    get_position(){
+        return get_position(this.props.node, this.props.idx)
+    }
+
+    record_selection(editor: EditorComponent){
+        this.setState({enter_selection: {...editor.get_slate().selection}})
+    }
+
+    restore_selection(editor: EditorComponent){
+        SlateReact.ReactEditor.focus(editor.get_slate())
+        let enter_selection = this.state.enter_selection
+        if(enter_selection && enter_selection["anchor"] && enter_selection["anchor"]["path"]){
+            Slate.Transforms.select(editor.get_slate() , enter_selection) // 设置为保存的selection。
+        }
+    }
+
+    componentDidMount(): void {
+        let me = this
+        let [regiester_func, _] = this.context as [MouselessRegisterFunction, MouselessUnRegisterFunction]
+        console.log(this.context.GlobalInfo)
+        regiester_func(SPACE, this.get_position() , 
+            ()=>{ // 获得焦点，并记录之前的焦点。
+                me.set_active(true)
+                me.focus_blur_input(true)
+            }  ,  
+            () => { // 取消激活后还原焦点
+                me.set_active(false)
+                me.focus_blur_input(false)
+            } , 
+            ()=>{} // run则设呢么也不做
+        )
+    }
+
+    componentWillUnmount(): void {
+        let [_, unregister_func] = this.context as [MouselessRegisterFunction, MouselessUnRegisterFunction]
+        unregister_func(SPACE, this.get_position() )
+    }
+
+    render(){
+        let me = this
+        let node = this.props.node
+        let param_name = this.props.parameter_name
+        let label = this.props.label
+        if(!(node.parameters && node.parameters[param_name])){
+            return <></>
+        }
+        let param_init = node.parameters[param_name].val
+
+        return <Box sx={{
+            border: this.state.active ? "2px solid #112233" : "none"
+        }}><GlobalInfo.Consumer>{globalinfo => {
+            let editor = globalinfo.editor as EditorComponent
+            return <TextField 
+                variant         = "standard" 
+                sx              = {{width: "2rem" , marginBottom: "0.5rem" , hright: "1rem"}} 
+                label           = {<Typography sx={{fontSize: "0.7rem"}}>{label}</Typography>} 
+                defaultValue    = {param_init} 
+                onChange        = {(e)=>{
+                    let val = e.target.value
+                    editor.auto_set_parameter( node , {[param_name]: {type: "string" , val: val}})
+                }}
+                onFocus         = {(e)=>{
+                    me.record_selection(editor)
+                }}
+                onBlur          = {(e)=>{
+                    me.restore_selection(editor)
+                }} 
+                inputRef        = {me.input_ref}
+
+                onKeyDown         = {(e)=>{
+                    if(e.key == "Enter"){
+                        me.focus_blur_input(false)
+                        return true
+                    }
+                }}
+            />
+        }}</ GlobalInfo.Consumer></Box>
+    }
+}

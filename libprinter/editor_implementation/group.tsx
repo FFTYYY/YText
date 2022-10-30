@@ -167,6 +167,8 @@ function get_default_group_editor_with_rightbar({
         let mylabel     = get_label(node, parameters)
         let SUR = surrounder
 
+        let extra_buttons = rightbar_extra(node, parameters)
+
         return <GroupPaper node={node}>
             <SimpleAutoStack force_direction="row">
                 <ComponentEditorBox autogrow>
@@ -177,7 +179,7 @@ function get_default_group_editor_with_rightbar({
                         <ButtonGroup // 额外添加的元素。
                             autostack 
                             node    = {node}
-                            buttons = {rightbar_extra(node, parameters)}
+                            buttons = {extra_buttons}
                         />
                         <StructureTypography variant = "overline">{mylabel}</StructureTypography>
                         <AutoStackedPopperButtonGroupMouseless 
@@ -199,6 +201,7 @@ function get_default_group_editor_with_rightbar({
                                 NewParagraphButtonUp , 
                                 NewParagraphButtonDown , 
                             ]}
+                            idxs = {[extra_buttons.length]} // 从extra_buttons.length开始编号。
                         /> 
                     </AutoStack>
                 </UnselecableBox>

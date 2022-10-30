@@ -2,6 +2,8 @@
  * @module
 */
 
+import React from "react"
+
 import * as Slate from "slate"
 import {
     ConceptNode, 
