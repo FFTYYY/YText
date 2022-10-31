@@ -20,8 +20,6 @@ export type {
     PreprocessFunction , 
 }
   
-// TODO 额外提供两个type，一个是预处理过程中用到的所有信息（npec），一个是使用预处理过程中的信息生成东西的函数。
-
 /** 在预处理阶段可以访问的信息。 */
 interface PreprocessInformation<NodeType = Node>{
     node: Readonly<NodeType>

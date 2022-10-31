@@ -139,10 +139,6 @@ function constraint_relation(editor: EditorComponent , slate: SlateReact.ReactEd
  function constraint_abstract(editor: EditorComponent , slate: SlateReact.ReactEditor): SlateReact.ReactEditor{
     const normalizeNode = slate.normalizeNode
 
-    let is_relation_type = (node: Slate.Node): node is GroupNode | StructNode => {
-        return slate_is_concept(node) && (node.type == "group" || node.type == "structure")
-    }
-
     slate.normalizeNode = (entry:[Node, number[]]) => {
         const [node , path]: [Node, number[]] = entry
 

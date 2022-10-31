@@ -158,9 +158,6 @@ class ParameterItemComponent extends React.Component <ParameterItemComponentProp
                 sx = {standard_sx}
             />
         }
-        // TODO handle choice?
-        // if(type == "choice"){ // 帮助sb ts认识到下面的choices是合法的。
-        // }
         return <></>
     }
 }

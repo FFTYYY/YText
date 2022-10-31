@@ -335,7 +335,6 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
                 }
             }
 
-            // TODO 保存cache结果
             // 退出时再操作一次环境和上下文。
             // ([nowenv , nowcontext] = produce([nowenv , nowcontext] , ([e,c]) => {
             //     let [flag2 , cache] = renderer.exit(node , my_parameters , e , c)

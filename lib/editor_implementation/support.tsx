@@ -72,8 +72,6 @@ export {
     get_default_display_editor , 
 }
 
-// TODO 我超，support组件怎么搞无鼠标操作哦
-
 /** 这个函数返回一个默认的分界符组件。 */
 function get_default_spliter_editor({
     get_title = (n,p)=>p.title

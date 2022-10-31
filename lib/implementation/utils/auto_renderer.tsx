@@ -44,7 +44,7 @@ function auto_renderer<NodeType extends Node = Node>({
             }
         } , 
         exit: (node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context)=>{
-            let cache = {} // TODO 这个没有真正地被处理
+            let cache = {}
             let flag = true
             for(let cer of contexters){
                 let contexter = cer({node , parameters , env , context}) // 创建contexter
