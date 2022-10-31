@@ -533,7 +533,6 @@ class EditorComponent extends React.Component<EditorComponentProps , {
                         return
                     }
                     me.update_debounce.go(value)
-                    // me.update_value(value)
                     me.onFocusChange()
                 }}
             >

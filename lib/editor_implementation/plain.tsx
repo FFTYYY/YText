@@ -31,11 +31,13 @@ import {
 export { get_default_editors }
 
 function get_default_block_editor<NodeType extends Node>(){
-    return (props: EditorRendererProps<NodeType>) => (<ComponentPaper sx={{border: "2px block"}}>
-        <ComponentEditorBox>
-            {props.children}
-        </ComponentEditorBox>
-    </ComponentPaper>)
+    return (props: EditorRendererProps<NodeType>) => {
+        return <ComponentPaper sx={{border: "2px block"}}>
+            <ComponentEditorBox>
+                {props.children}
+            </ComponentEditorBox>
+        </ComponentPaper>
+    }
 }
 
 function get_default_support_editor(){

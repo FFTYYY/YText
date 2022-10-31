@@ -214,9 +214,9 @@ let tree_op_mixin = {
         }
     ){
         // TODO 啊？
-        // if(options.split){ // 分裂节点有可能造成多个相同`idx`的节点，因此需要开启特殊检查。
-        //     set_normalize_status({pasting: true})
-        // }
+        if(options.split){ // 分裂节点有可能造成多个相同`idx`的节点，因此需要开启特殊检查。
+            set_normalize_status({pasting: true})
+        }
         
         Slate.Transforms.wrapNodes<NT>(
             editor.get_slate() , 

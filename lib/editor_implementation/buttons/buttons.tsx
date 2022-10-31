@@ -70,6 +70,7 @@ function AutoIconButton(props:{
 }){
     let Icon = props.icon
     let component = props.component || "button"
+
     return <AutoTooltip title={props.title}>
         <IconButton onClick={props.onClick} size={props.size} component={component}>
             <Icon/>
@@ -128,7 +129,7 @@ class DefaultParameterEditButton extends React.PureComponent <EditorButtonInform
 /** 这个组件提供一个直接删除节点的按钮。 
  * @param props.node 这个组件所服务的节点。
  */
-class DefaultCloseButton extends React.Component<EditorButtonInformation> implements ButtonBase{
+class DefaultCloseButton extends React.PureComponent<EditorButtonInformation> implements ButtonBase{
     static contextType = GlobalInfo
 
     constructor(props: EditorButtonInformation){
@@ -150,7 +151,7 @@ class DefaultCloseButton extends React.Component<EditorButtonInformation> implem
  * @param props.node 这个组件所服务的节点。
  * @param props.puretext 是否将子组件作为纯文本。
  */
-class DefaultSoftDeleteButton extends React.Component<EditorButtonInformation & {puretext?: boolean}> implements ButtonBase{
+class DefaultSoftDeleteButton extends React.PureComponent<EditorButtonInformation & {puretext?: boolean}> implements ButtonBase{
     static contextType = GlobalInfo
 
     constructor(props: EditorButtonInformation & {puretext?: boolean}){
@@ -180,7 +181,7 @@ class DefaultSoftDeleteButton extends React.Component<EditorButtonInformation & 
 /** 这个组件提供一个在组件的上新建段落的节点。 
  * @param props.node 这个组件所服务的节点。
  */
-class NewParagraphButtonUp extends React.Component<EditorButtonInformation> implements ButtonBase{
+class NewParagraphButtonUp extends React.PureComponent<EditorButtonInformation> implements ButtonBase{
     static contextType = GlobalInfo
 
     constructor(props: EditorButtonInformation){
@@ -200,7 +201,7 @@ class NewParagraphButtonUp extends React.Component<EditorButtonInformation> impl
 /** 这个组件提供一个在组件的下新建段落的节点。 
  * @param props.node 这个组件所服务的节点。
  */
-class NewParagraphButtonDown extends React.Component<EditorButtonInformation> implements ButtonBase{
+class NewParagraphButtonDown extends React.PureComponent<EditorButtonInformation> implements ButtonBase{
     static contextType = GlobalInfo
 
     constructor(props: EditorButtonInformation){
@@ -221,7 +222,7 @@ class NewParagraphButtonDown extends React.Component<EditorButtonInformation> im
 /** 这个组件给一个`Group`或`Struct`组件提供一个开关，用于控制`Group`或`Struct`的`relation`。 
  * @param props.node 服务的节点。
  */
-class DefaultSwicth extends React.Component<EditorButtonInformation<GroupNode | StructNode>, {
+class DefaultSwicth extends React.PureComponent<EditorButtonInformation<GroupNode | StructNode>, {
     checked: boolean
 }> implements ButtonBase{
     static contextType = GlobalInfo
@@ -322,7 +323,7 @@ interface AutoStackedPopperWithButtonProps {
 /**
  * 这个组件定义一个折叠起来的按钮组。
  */
-class AutoStackedPopperWithButton extends React.Component<AutoStackedPopperWithButtonProps, {
+class AutoStackedPopperWithButton extends React.PureComponent<AutoStackedPopperWithButtonProps, {
     menu_open: boolean
 }>{
 
@@ -376,7 +377,6 @@ class AutoStackedPopperWithButton extends React.Component<AutoStackedPopperWithB
         let props = this.props
         let children = props.children || <></>
         let B = props.outer_button
-
 
         let poper = <React.Fragment>
             <AutoTooltip title={props.label}><B 

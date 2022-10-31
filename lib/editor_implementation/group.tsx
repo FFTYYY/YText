@@ -110,7 +110,7 @@ function get_deafult_group_editor_with_appbar({
         let node        = props.node
         let parameters  = editor.get_core().get_printer().process_parameters(node)
         let label       = get_label(node, parameters)
-
+        
         let SUR = surrounder
 
         return <GroupPaper node={node}>

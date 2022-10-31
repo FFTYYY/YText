@@ -101,7 +101,7 @@ class App extends React.Component<{},{
 		}
 	}
 	update_cache(new_cache: PrinterCache){
-		console.log(new_cache)
+		// console.log(new_cache)
 	}
 	render(){
 		let me = this

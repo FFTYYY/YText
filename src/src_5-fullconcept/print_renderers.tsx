@@ -313,8 +313,8 @@ var display_printer = (()=>{
 			let {node , parameters , context , children} = props
 			return <AutoStack force_direction="column">
 				<PrinterDisplayText sx={{
-					fontSize: (theme)=>remtimes(theme.fonts.structure.fontSize , 2) , //字号翻倍
-					lineHeight: (theme)=>remtimes(theme.fonts.structure.lineHeight , 2) ,  //行高翻倍
+					fontSize: (theme)=>remtimes(theme.fonts.structure.fontSize , 1.4) , //字号翻倍
+					lineHeight: (theme)=>remtimes(theme.fonts.structure.lineHeight , 1.4) ,  //行高翻倍
 				}}>{props.children}</PrinterDisplayText>
 			</AutoStack>
 		} , 
@@ -444,7 +444,10 @@ var link_printer = (()=>{
 
 let default_renderer_block = new PrinterRenderer({
     renderer(props: PrinterRenderFunctionProps):React.ReactElement<PrinterRenderFunctionProps>{
-        let node = props.node as GroupNode
+		let node = props.node
+		if(node["type"] == "structure"){
+			console.log(node)
+		}
         return <div>{props.children}</div>
     }
 })
@@ -462,7 +465,7 @@ let default_renderer_text = new PrinterRenderer({
     }
 })
 
-let renderer_line = (()=>{
+let line_printer = (()=>{
     function get_widths(node: StructNode, parameters: ProcessedParameterList){
         
         let widths_str = parameters.widths || ""
@@ -480,12 +483,14 @@ let renderer_line = (()=>{
             let {node , parameters , context , children} = props
             let widths = get_widths(node , parameters)
             let sum = widths.reduce((s , x)=>s + x , 0)
+			console.log(sum)
             return <Grid container columns={sum} sx={{width: "100%"}} spacing={2}>{props.children}</Grid>
         } , 
         subinner(props){
             let {node , parameters , context , children , subidx} = props
             let widths = get_widths(node , parameters)
             let my_width = widths[subidx]
+			console.log(my_width)
             return <Grid item xs={my_width} sx={{align: "center"}}>{props.children}</Grid>
         }
     })
@@ -518,7 +523,7 @@ let renderers = {
 	} , 
 	"abstract": {} , 
 	"structure": {
-		"行": renderer_line , 
+		"齐言": line_printer , 
 	} , 
 }
 

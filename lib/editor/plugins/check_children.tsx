@@ -138,7 +138,7 @@ function constraint_struct_children(editor: EditorComponent , slate: SlateReact.
     return slate
 }
 
-/** 这个插件规范组节点的子节点类型（不能是文本或者行内）。
+/** 这个插件规范段落的子节点类型。
 */
 function constraint_paragraph_children(editor: EditorComponent , slate: SlateReact.ReactEditor): SlateReact.ReactEditor{
     const normalizeNode = slate.normalizeNode
@@ -156,10 +156,12 @@ function constraint_paragraph_children(editor: EditorComponent , slate: SlateRea
                 editor.add_nodes( editor.get_core().create_text("") , [...path , 0] )
                 return 
             }
-                        
+            
+
             // 子节点不能不是行内或者文本
             if(! (slate_is_concept(node.children[0], "inline") || slate_is_text(node.children[0]))){ 
-                editor.delete_node_by_path([...path, 0])
+                editor.move_node_by_path([...path,0] , path) // 拿到自己后面去。
+                // editor.delete_node_by_path([...path, 0])
                 return 
             }
         }

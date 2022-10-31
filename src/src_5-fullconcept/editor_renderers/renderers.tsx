@@ -44,7 +44,7 @@ var delete_editor       = get_default_inline_editor({surrounder: (props)=><del>{
 var link_editor         = get_default_inline_editor({surrounder: (props)=><u>{props.children}</u>      })
 var mathinline_editor   = get_default_inline_editor({surrounder: (props)=><>{props.children}</>        })
 var alignedwords_editor = get_default_struct_editor_with_rightbar({
-    get_label: (n)=>n.parameters.label.val as string, 
+    get_label: ()=>"行" , 
     get_numchildren: (n, p) => {
         let widths_str = p.widths as string
         let widths = widths_str.split(",").reduce((s,x)=>[...s,parseInt(x)] , [] as number[])
