@@ -41,7 +41,7 @@ import {
 
 
 export {
-    DefaultButtonbar , 
+    DefaultSidebar , 
     SPACE , 
     get_mouseless_space , 
     get_position , 
@@ -65,6 +65,11 @@ function get_position(typename: Exclude<AllConceptTypes, "abstract">, idx: numbe
     let typeidx = TYPENAMES.indexOf(typename)
     return JSON.stringify([typeidx, idx])
 }
+
+function get_extra_position(exidx: number){
+    return JSON.stringify([exidx + TYPENAMES.length, 0])
+}
+
 
 function get_run(editor: EditorComponent, typename: Exclude<AllConceptTypes, "abstract">, pos_y: number){
     return ()=>{
@@ -96,34 +101,57 @@ function get_switch_position(editor: EditorComponent): SwitchPositionFunction{
         if(cur_position == undefined){ // 如果都没有选中过位置，那就用最小的。
              return get_activate_position()(position_list, cur_position)
         }
-        let xmax = TYPENAMES.length
 
         let [pos_x , pos_y]: [number , number] = JSON.parse(cur_position)
+
+        let xs = position_list.reduce((s,pos)=>[...s, JSON.parse(pos)[0]] , [] as number[]) // 获得所有x
+        xs = Array.from( new Set(xs) )
+        xs.sort()
+        let pos_x_in_xs = xs.indexOf(pos_x)
+        console.log(xs)
         if(direction == "ArrowUp"){
-            pos_x --
+            pos_x_in_xs --
         }
         else if(direction  == "ArrowDown"){
-            pos_x ++
+            pos_x_in_xs ++
         }
-        pos_x = ((pos_x % xmax) + xmax) % xmax
-        
-        let typename = TYPENAMES[pos_x]
-        let ymax = editor.get_core().get_sec_concept_list(typename).length
+        pos_x_in_xs = ((pos_x_in_xs % xs.length) + xs.length) % xs.length
+        pos_x = xs[pos_x_in_xs]
+
+        let ys = position_list.reduce((s,pos)=>{
+            let [_x,_y] = JSON.parse(pos)
+            return (_x == pos_x) ? [...s , _y] : s
+        } , [] as number[])
+        ys.sort()
+        let pos_y_in_ys = ys.indexOf(pos_y)
+        if(pos_y_in_ys < 0){ // 如果没有找到，就用最后一个。
+            pos_y_in_ys = ys.length - 1
+        }
         if(direction == "ArrowLeft"){
-            pos_y --
+            pos_y_in_ys --
         }
         else if(direction  == "ArrowRight"){
-            pos_y ++ 
+            pos_y_in_ys ++ 
         }
-        pos_y = ((pos_y % ymax) + ymax) % ymax
-
+        pos_y = ((pos_y_in_ys % ys.length) + ys.length) % ys.length
+        pos_y = ys[pos_y_in_ys]
         return JSON.stringify([pos_x, pos_y])
     }
 }
 
-/** 这个组件是编辑器的右边工具栏的组件按钮部分。 */
-function DefaultButtonbar(props: {editor: EditorComponent}){
+/** 这个组件是编辑器的右边工具栏的组件按钮部分。 
+ * @param props.editor 所服务的编辑器。
+ * @param props.extra 所要额外添加的按钮列表。
+*/
+function DefaultSidebar(props: {
+    editor: EditorComponent
+    extra?: (editor: EditorComponent) => {
+        button: React.ReactElement
+        run: ()=>void
+    }[]
+}){
     let editor = props.editor
+    let extra = props.extra ? props.extra(editor) : []
 
     let icons = {
         group: CalendarViewDayIcon , 
@@ -132,40 +160,65 @@ function DefaultButtonbar(props: {editor: EditorComponent}){
         structure: QrCodeIcon , 
     }
 
+    let refs = {
+        group: React.useRef<AutoStackedPopperWithButton>() , 
+        inline: React.useRef<AutoStackedPopperWithButton>() , 
+        support: React.useRef<AutoStackedPopperWithButton>() , 
+        structure: React.useRef<AutoStackedPopperWithButton>() , 
+    }
+
     return <React.Fragment>
         {["group" , "inline" , "support" , "structure"].map ( (typename: Exclude<AllConceptTypes , "abstract">)=>{
             let Icon = icons[typename]
             let sec_concept_list = editor.get_core().get_sec_concept_list(typename)
             return <React.Fragment key={typename}>
-                <AutoStackedPopperWithButton
-                    poper_props = {{
-                        stacker: AutoStackButtons ,
-                        component: styled(Paper)({backgroundColor: "#aabbddbb" , }) ,  
-                    }}
-                    outer_button = {IconButton}
-                    outer_props = {{
-                        children: <Icon /> , 
-                    }}
-                    label = {typename}
-                >{
-                    sec_concept_list.map( (sec_ccpt , idx) => 
-                        <MouselessElement 
-                            key = {idx}
-                            space = {SPACE}
-                            position = {get_position(typename, idx)}
-                            run = {get_run(editor, typename, idx)}
-                        >
-                            <Button 
-                                onClick = {e => editor.new_concept_node(typename , sec_ccpt)}
-                                variant = "text"
+                <MouselessElement 
+                    space = {SPACE}
+                    position = {get_position(typename , 0)}
+                    run = {()=>{refs[typename].current ? refs[typename].current.run() : 0}}
+                >
+                    <AutoStackedPopperWithButton
+                        poper_props     = {{
+                            stacker: AutoStackButtons ,
+                            component: styled(Paper)({backgroundColor: "#aabbddbb" , }) ,  
+                        }}
+                        outer_button    = {IconButton}
+                        outer_props     = {{
+                            children: <Icon /> , 
+                        }}
+                        label           = {typename}
+                        ref             = {refs[typename]}
+                    >{
+                        sec_concept_list.map( (sec_ccpt , idx) => 
+                            <MouselessElement 
+                                key = {idx}
+                                space = {SPACE}
+                                position = {get_position(typename, idx + 1)} // 因为按钮本身要占一个位置，所以子按钮从1开始编号。
+                                run = {get_run(editor, typename, idx)}
                             >
-                                {sec_ccpt}
-                            </Button>
-                            <Divider orientation="vertical" flexItem/>
-                        </MouselessElement>
-                    )
-                }</AutoStackedPopperWithButton>
+                                <Button 
+                                    onClick = {e => editor.new_concept_node(typename , sec_ccpt)}
+                                    variant = "text"
+                                >
+                                    {sec_ccpt}
+                                </Button>
+                                <Divider orientation="vertical" flexItem/>
+                            </MouselessElement>
+                        )
+                    }</AutoStackedPopperWithButton>
+                </MouselessElement>
             </React.Fragment>
+        })}
+        {Object.keys(extra).map(_exidx=>{
+            let exidx = parseInt(_exidx)
+            let exbutton = extra[exidx].button
+            let exrun = extra[exidx].run
+            return <MouselessElement 
+                key = {exidx}
+                space = {SPACE}
+                position = {get_extra_position(exidx)}
+                run = {()=>{exrun ? exrun() : 0}}
+            >{exbutton}</MouselessElement>
         })}
     </React.Fragment>
 }

@@ -4,6 +4,7 @@
 
 import React, {useState , createRef} from "react"
 import * as Slate from "slate"
+import * as SlateReact from "slate-react"
 import produce from "immer"
 
 import {
@@ -17,6 +18,7 @@ import {
 import { 
     AddBox as AddBoxIcon , 
     FilterNone as FilterNoneIcon , 
+    ArrowRightAlt as ArrowRightAltIcon
 } from "@mui/icons-material"
 
 import { AutoTooltip , ForceContain , AutoStackedPopper } from "./uibase"
@@ -86,9 +88,12 @@ function DefaultNewAbstract(props: {node: ConceptNode, anchor_element: any, open
         anchorEl = {props.anchor_element}
         open = {props.open}
         onClose = {onClose}
-    >{Object.keys(abstract_concepts).map(name=>{
-        return <MenuItem onClick={get_new_abstract_func(name)} key={name}>{name}</ MenuItem>
-    })}</Menu>
+    >
+        {Object.keys(abstract_concepts).map(name=>{
+            return <MenuItem onClick={get_new_abstract_func(name)} key={name}>{name}</ MenuItem>
+        })}
+        <MenuItem onClick={e=>onClose(e)}>算了</MenuItem>
+    </Menu>
 }
 
 /** 抽象节点编辑器的`props`。 */
@@ -109,6 +114,7 @@ interface DefaultAbstractEditorProps{
 /** 抽象节点编辑器的`state`。 */
 interface DefaultAbstractEditorState{
     drawer_open: boolean
+    enter_selection: Slate.Location | undefined
 }
 
 /** 这个组件提供默认的Abstract编辑页面。 
@@ -130,7 +136,8 @@ class DefaultAbstractEditor extends React.Component<DefaultAbstractEditorProps ,
         super(props)
 
         this.state = {
-            drawer_open: false
+            drawer_open: false , 
+            enter_selection: undefined , 
         }
         
         this.subeditor_ref = React.createRef()
@@ -162,20 +169,38 @@ class DefaultAbstractEditor extends React.Component<DefaultAbstractEditorProps ,
                 ModalProps  = {{keepMounted: true}}
                 PaperProps  = {{sx: { width: "60%"}}}
                 SlideProps = {{
+                    onEnter: ()=>{
+                        let subeditor = me.get_editor()
+                        if(!subeditor){
+                            return
+                        } 
+                        me.setState({enter_selection: {...father_editor.get_slate().selection}})
+
+                        setTimeout(()=>{ // 稍微延迟一点，然后focus在新编辑器上。延迟一点是为了等抽屉弹出来。
+                            SlateReact.ReactEditor.focus(subeditor.get_slate())
+                        } , 1000)
+                    } , 
                     onExited: () => {
                         let subeditor = me.get_editor()
                         if(!subeditor){
                             return
                         } 
-                        let root = subeditor.get_root()
 
+                        // 更新抽象。
+                        let root = subeditor.get_root()
                         let father = me.props.father
                         let father_abstract_list = father.abstract
                         let new_abstract_list = produce(father_abstract_list, alis=>{
                             alis[me.props.sonidx].children = root.children
                         })
+                        father_editor.set_node(father, {abstract: new_abstract_list}) 
 
-                        father_editor.set_node(father, {abstract: new_abstract_list})
+                        // 还原父编辑器的焦点。
+                        SlateReact.ReactEditor.focus(father_editor.get_slate())
+                        let enter_selection = me.state.enter_selection
+                        if(enter_selection && enter_selection["anchor"] && enter_selection["anchor"]["path"]){
+                            Slate.Transforms.select(father_editor.get_slate() , enter_selection) // 设置为保存的selection。
+                        }
                     } , 
                 }}
             >
@@ -185,6 +210,17 @@ class DefaultAbstractEditor extends React.Component<DefaultAbstractEditorProps ,
                         editorcore  = {father_editor.get_editorcore()}
                         init_rootchildren = {son_children}
                         init_rootproperty = {son_but_children}
+
+                        sidebar_extra = {(editor)=>{ // 添加一个额外的退出按钮，方便在编辑抽象时退出。
+                            return [{
+                                button: <IconButton onClick={e=>{
+                                    me.props.onClose(e)
+                                    e.preventDefault()
+                                }}><ArrowRightAltIcon /></IconButton> , 
+                                run : ()=>{me.props.onClose(undefined)}
+                            }]
+                        }}
+    
                     />
                 </ForceContain.Provider>
             </Drawer>
@@ -206,11 +242,14 @@ function DefaultAbstractEditorGroup(props: {node: Slate.Node & ConceptNode, anch
             anchorEl = {props.anchor_element}
             open = {props.open}
             onClose = {props.onClose}
-        >{Object.keys(abstract).map((idx)=>{
-            return <MenuItem key={idx} onClick={e=>{set_drawer_open(idx);onClose(e)}}>
-                {abstract[idx].concept}-{idx}
-            </ MenuItem>
-        })}</Menu>
+        >
+            {Object.keys(abstract).map((idx)=>{
+                return <MenuItem key={idx} onClick={e=>{set_drawer_open(idx);onClose(e)}}>
+                    {abstract[idx].concept}-{idx}
+                </ MenuItem>
+            })}
+            <MenuItem onClick={e=>{onClose(e)}}>算了</MenuItem>
+        </Menu>
 
         {Object.keys(abstract).map((idx)=>{
             return <DefaultAbstractEditor
@@ -223,8 +262,6 @@ function DefaultAbstractEditorGroup(props: {node: Slate.Node & ConceptNode, anch
         })}
     </React.Fragment>  
 }
-
-// TODO 完善抽象的无鼠标操作：New里面应该有退出按键，Edit里面也应该有，而且Edit应该自动设置光标
 
 /** 这个组件提供按钮新建抽象。
  * @param props.editor 这个组件所服务的编辑器。

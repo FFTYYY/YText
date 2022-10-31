@@ -1,6 +1,15 @@
 /** 这一个src是为了测试能否将之前的格式转成新的格式。 */
 
 import React from "react"
+
+import {
+	IconButton ,
+} from "@mui/material"
+import {
+    ArrowRightAlt  as ArrowRightAltIcon  , 
+}
+from "@mui/icons-material"
+
 import {
 	Printer ,
 	PrinterComponent ,
@@ -42,8 +51,6 @@ import {
 import {
 	tree
 } from "./tree"
-import { createTheme, ThemeProvider, styled } from "@mui/material/styles"
-import type { ThemeOptions } from "@mui/material/styles"
 import {my_theme} from "./theme"
 
 let printer = new Printer(

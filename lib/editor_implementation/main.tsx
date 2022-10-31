@@ -71,7 +71,7 @@ import {
 } from "./uibase"
 
 import {
-    DefaultButtonbar , 
+    DefaultSidebar , 
     get_mouseless_space as sidebar_get_mouseless_space , 
 } from "./sidebar"
 import {
@@ -79,31 +79,32 @@ import {
 } from "./buttons"
 export { DefaultEditorComponent }
 
-/** 
- * 这个组件提供一个开箱即用的默认编辑器组件。
- */
-class DefaultEditorComponent extends React.Component <EditorComponentProps & {
+type DefaultEditorComponentprops = EditorComponentProps & {
     theme?: ThemeOptions
     extra_buttons?: any
     onSave?: ()=>void // 保存时操作。
-} , {
-    ctrl_key: any
-}> {    
+
+    sidebar_extra?: (editor: EditorComponent)=>{
+        button: React.ReactElement
+        run: ()=>void
+    }[]
+}
+
+/** 
+ * 这个组件提供一个开箱即用的默认编辑器组件。
+ */
+class DefaultEditorComponent extends React.Component <DefaultEditorComponentprops> {    
     onUpdate: (newval: Node[]) => void
     onFocusChange: ()=>void
     onSave: ()=> void
 
     editor_ref		: React.RefObject<EditorComponent>
 
-    constructor(props: EditorComponentProps & {theme?: ThemeOptions, extra_buttons?: any, onSave?: ()=>void}) {
+    constructor(props: DefaultEditorComponentprops) {
         super(props)
 
-        this.state = {
-            ctrl_key: {} , // 只在按下ctrl的状态下有效，记录哪些键被按下了
-        }
 
         this.onUpdate = props.onUpdate || ((newval: Node[])=>{})
-        // this.onMount  = props.onMount || (()=>{})
         this.onFocusChange  = props.onFocusChange || (()=>{})
         this.onSave = props.onSave || (()=>{})
 
@@ -191,7 +192,10 @@ class DefaultEditorComponent extends React.Component <EditorComponentProps & {
                         {/* <DefaultHiddenEditorButtons editor={editor} element={me.state.root} /> */}
                         {me.props.extra_buttons}
                         <Divider />
-                        <DefaultButtonbar editor={me.get_editor()}/>
+                        <DefaultSidebar 
+                            editor = {me.get_editor()}
+                            extra = {me.props.sidebar_extra}
+                        />
                     </AutoStack>
                 })()}</Box>
             </KeyEventManager>

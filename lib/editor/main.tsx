@@ -1,7 +1,7 @@
 /** 这个模块定义editor的组件。
  * @module
  */
-import React, { StatelessComponent } from "react"
+import React from "react"
 import * as Slate from "slate"
 import * as SlateReact from "slate-react"
 import { withHistory } from "slate-history"
