@@ -490,7 +490,6 @@ let line_printer = (()=>{
             let {node , parameters , context , children , subidx} = props
             let widths = get_widths(node , parameters)
             let my_width = widths[subidx]
-			console.log(my_width)
             return <Grid item xs={my_width} sx={{align: "center"}}>{props.children}</Grid>
         }
     })

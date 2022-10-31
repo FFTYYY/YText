@@ -184,10 +184,10 @@ let tree_op_mixin = {
             split?: boolean , 
         }
     ){
-        // TODO 啊？复制粘贴为什么在这里处理？
-        // if(options.split){ // 分裂节点有可能造成多个相同`idx`的节点，因此需要开启特殊检查。
-        //     set_normalize_status({pasting: true})
-        // }
+        // 分裂节点有可能造成多个相同`idx`的节点，因此虽然这里不是在复制粘贴，但是也需要开启复制粘贴的特殊检查。
+        if(options.split){ // 
+            set_normalize_status({pasting: true})
+        }
         
         Slate.Transforms.wrapNodes<NT>(
             editor.get_slate() , 
@@ -213,8 +213,8 @@ let tree_op_mixin = {
             split?: boolean , 
         }
     ){
-        // TODO 啊？
-        if(options.split){ // 分裂节点有可能造成多个相同`idx`的节点，因此需要开启特殊检查。
+        // 分裂节点有可能造成多个相同`idx`的节点，因此虽然这里不是在复制粘贴，但是也需要开启复制粘贴的特殊检查。
+        if(options.split){ 
             set_normalize_status({pasting: true})
         }
         

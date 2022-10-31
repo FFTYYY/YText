@@ -552,7 +552,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
     
                     onKeyDown   = {e=>me.onKeyDown(e)}
                     onKeyUp     = {e=>me.onKeyUp(e)}
-                    onKeyPress  = {e=>{me.onKeyPress(e)}}
+                    onKeyPress  = {e=>me.onKeyPress(e)}
                 />
             </SlateReact.Slate>
         </GlobalInfoProvider>

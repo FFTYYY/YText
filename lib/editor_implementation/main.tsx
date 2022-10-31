@@ -168,7 +168,6 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
                             onKeyPress          = {me.props.onKeyPress}
                             onFocusChange       = {me.props.onFocusChange}
                             
-                        
                             onKeyDown           = {onkeydown}
                             onKeyUp             = {onkeyup}
                         />

@@ -30,7 +30,7 @@ export {
     get_position , 
 }
 
-const SPACE = "x"
+const SPACE = "e"
 
 function get_mouseless_space(editor: EditorComponent){
     return {
