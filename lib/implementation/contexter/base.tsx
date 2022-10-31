@@ -7,7 +7,8 @@ import {
     PrinterEnterFunction , 
     PrinterExitFunction , 
     ProcessedParameterList , 
-} from "../../core/renderer"
+    PrinterCacheItem , 
+} from "../../core"
 import { 
 	Node , 
 
@@ -65,8 +66,8 @@ class ContexterBase<NodeType = Node, ContextType = any, EnvType = any>{
     enter(node: Readonly<NodeType> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context){}
     
     /** 退出时操作。子类需要重写这个函数。 */
-    exit(node: Readonly<NodeType> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context): [any, boolean]{
-        return [undefined , true]
+    exit(node: Readonly<NodeType> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context): [PrinterCacheItem, boolean]{
+        return [{} , true]
     }
 
     /** 这个函数确保自己的环境存在，如果没有就创建一个。 */

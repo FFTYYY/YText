@@ -13,6 +13,7 @@ import {
     GroupNode , 
     AbstractNode , 
     GlobalInfoProvider , 
+    PrinterCache , 
 } from "../core"
 import {
     default_theme , 
@@ -61,6 +62,7 @@ interface DefaultPrinterProps {
     printer: Printer
     root: AbstractNode
     theme?: ThemeOptions
+    onUpdateCache?: (cache: PrinterCache) => void
 }
 
 /** 这个类提供一个默认的印刷器实现。 */
@@ -88,6 +90,7 @@ class DefaultPrinterComponent extends React.Component<DefaultPrinterProps>{
                     <PrinterComponent 
                         printer = {me.props.printer}
                         root = {me.props.root}
+                        onUpdateCache = {me.props.onUpdateCache}
                     />
                 </PrinterBackgroundPaper>
             </GlobalInfoProvider>

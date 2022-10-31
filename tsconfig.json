@@ -18,11 +18,11 @@
 		"types": ["vite/client"] , 
 	},
 	"include": [
-		"./libprinter/", 
+		"./lib/", 
 	] , 
 	"typedocOptions": {
 		"entryPoints": [
-			"libprinter/index.tsx" , 
+			"lib/index.tsx" , 
 		],
 		"out": "docs" , 
 	} ,

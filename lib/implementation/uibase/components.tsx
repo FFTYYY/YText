@@ -1,3 +1,5 @@
+import React from "react" 
+
 import {
     Typography , 
     Box , 
@@ -10,7 +12,6 @@ import type {
     BoxProps , 
     DividerProps , 
 } from "@mui/material"
-import type { SxProps } from "@mui/material/styles"
 
 export { 
     PrinterDivider , 

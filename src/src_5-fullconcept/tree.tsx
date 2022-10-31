@@ -7,7 +7,7 @@ import {
     TextNode , 
     Node , 
     validate , 
-} from "../../libprinter"
+} from "../../lib"
 
 export {tree}
 
@@ -35,7 +35,18 @@ function create_group(concept , parameters , children , relation , idx = undefin
                 val: parameters[x] , 
             }
         }
+
+        if(x == "ordering"){
+            parameters[x].val = {
+                chinese: "head" , 
+                "arab-circle": "discuss" , 
+                "chinese-bracket": "title" , 
+                "arab-bracket": "list-separating" , 
+                "arab-round-bracket": "list-chaining" , 
+            }[parameters[x].val]
+        }
     }
+
 
     return {
         type: "group" as "group" , 

@@ -8,7 +8,8 @@ import {
     PrinterEnterFunction , 
     PrinterExitFunction , 
     ProcessedParameterList , 
-} from "../../core/renderer"
+    PrinterCacheItem , 
+} from "../../core"
 import { 
 	Node , 
 
@@ -35,7 +36,7 @@ class OrderContexter<NT = Node> extends ContexterBase<NT , number , {[order_key:
         e[this.order_key] ++
         this.set_context(context , e[this.order_key])
     }
-    exit(node: Readonly<NT> , parameters: Readonly<ProcessedParameterList> , env: Env , context: Context): [any , boolean]{
-        return [undefined , true]
+    exit(node: Readonly<NT> , parameters: Readonly<ProcessedParameterList> , env: Env , context: Context): [PrinterCacheItem , boolean]{
+        return [{} , true]
     }
 }

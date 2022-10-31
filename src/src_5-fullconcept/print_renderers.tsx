@@ -40,6 +40,8 @@ import {
 	AutoTooltip, 
 	ProcessedParameterList , 
 	get_default_structure_renderer , 
+
+	ReferenceContexter , 
 } from "../../lib"
 import {
 	PrinterRenderer , 
@@ -126,10 +128,16 @@ var subsection_printer = (()=>{
 var brightwords_printer = (()=>{
 
 	let orderer_gene = (info:PreprocessInformation<GroupNode>)=>new OrderContexter<GroupNode>(info.parameters.label)
-
+	let reference_gene = ()=>(new ReferenceContexter<GroupNode>( (info) => {
+		let orderer = orderer_gene(info) // 现场生成orderer。
+		let order = orderer.get_context(info.context) // 获得自身的编号。
+		let order_str = make_oerder_str(order , info.parameters.ordering) // 生成标题字符串
+		return `${info.parameters.title} ${order_str}`
+	} ))
 	let printer = get_default_group_renderer({
 		contexters: [
 			orderer_gene, 
+			reference_gene , 
 		] , 
 		pre_element: (info: PreprocessInformation<GroupNode>) => {
             let {node , context , parameters , env} = info
@@ -205,11 +213,18 @@ var followwords_printer = (()=>{
 /** 『属言』表示一段正文的，但是处于附属地位的话。 */
 var subwords_printer = (()=>{
 	let orderer_gene = (info:PreprocessInformation<GroupNode>)=>new OrderContexter<GroupNode>(info.parameters.label)
+	let reference_gene = ()=>(new ReferenceContexter<GroupNode>( (info) => {
+		let orderer = orderer_gene(info) // 现场生成orderer。
+		let order = orderer.get_context(info.context) // 获得自身的编号。
+		let order_str = make_oerder_str(order , info.parameters.ordering) // 生成标题字符串
+		return `${order_str}`
+	} ))
 
 	return get_default_group_renderer({
 		// small_margin_enter: true , //前面不要空一坨 // TODO 加上small_margin_enter
 		contexters: [
 			orderer_gene , 
+			reference_gene , 
 		] , 
 		pre_element: (info: PreprocessInformation<GroupNode>) => {
 			let prefix = info.parameters.prefix // 前缀
@@ -253,7 +268,6 @@ var subwords_printer = (()=>{
 		} , 
 	})
 })()
-
 
 /** 『裱示』表示一段正式的展示。如引用一首诗。 */
 var mount_printer = (()=>{
@@ -311,9 +325,14 @@ var display_printer = (()=>{
 /** 小节线。 */
 var sectioner_printer = (()=>{
 	let orderer_gene = (info:PreprocessInformation<SupportNode>)=>new OrderContexter<SupportNode>(info.parameters.label)
+	let reference_gene = ()=>(new ReferenceContexter<SupportNode>( (info) => {
+		let orderer = orderer_gene(info) // 现场生成orderer。
+		let order = orderer.get_context(info.context) // 获得自身的编号。
+		return `第${num2chinese(order)}节`
+	} ))
 
 	return auto_renderer<SupportNode>({
-		contexters: [orderer_gene] , 
+		contexters: [orderer_gene, reference_gene] , 
 
 		render_function: (props: PrinterRenderFunctionProps<SupportNode>)=>{
 			let {node,parameters,context,children} = props

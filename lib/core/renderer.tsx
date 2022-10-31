@@ -20,6 +20,8 @@ export type {
     PrinterRenderFunctionProps , 
     PrinterRenderFunction , 
     ProcessedParameterList , 
+    PrinterCacheItem , 
+    PrinterCache , 
 }
 
 /** 渲染器所需要维护的环境。 */
@@ -27,6 +29,13 @@ type Env = {[key: string | number]: any}
 
 /** 渲染器所需要维护的节点的上下文。 */
 type Context = {[key: string | number]: any}
+
+/** 印刷器的临时缓存的项目。 */
+type PrinterCacheItem = {[key: string]: any}
+
+/** 印刷器的临时缓存。 */
+type PrinterCache = {[idx: number]: PrinterCacheItem}
+
 
 /** 经过处理的参数列表。 */
 type ProcessedParameterList = {[key: string]: any}
@@ -45,7 +54,7 @@ type PrinterExitFunction<NodeType extends Node = Node> = (
     parameters: Readonly<ProcessedParameterList>, 
     env_draft: Env, 
     context_draft: Context
-) => [cache_result: any, finished: boolean]
+) => [cache_result: PrinterCacheItem, finished: boolean]
 
 /** 渲染器的渲染函数的props。 */
 interface PrinterRenderFunctionProps<NodeType extends Node = Node> {
@@ -98,11 +107,11 @@ class PrinterRenderer<NodeType extends Node = Node>{
     constructor(funcs:{
         enter?: PrinterEnterFunction<NodeType>, 
         exit?: PrinterExitFunction<NodeType>, 
-        renderer?: PrinterRenderFunction<NodeType> ,
+        renderer: PrinterRenderFunction<NodeType> ,
         renderer_as_property?: NodeType extends AbstractNode ? PrinterRenderFunction<NodeType> : never , 
     }){
         this.enter = funcs.enter || ((n,p,e,c)=>{})
-        this.exit = funcs.exit || ((n,p,e,c)=>[undefined, true])
+        this.exit = funcs.exit || ((n,p,e,c)=>[{}, true])
         this.renderer = funcs.renderer
 
         this.renderer_as_property = funcs.renderer_as_property

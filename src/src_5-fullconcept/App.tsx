@@ -22,7 +22,8 @@ import {
 	default_editor_theme, 
 	GlobalInfo, 
 
-	DefaultEditorComponent , 
+	DefaultEditorComponent, 
+	PrinterCache, 
 } from "../../lib"
 import {
 	first_concepts , 
@@ -92,6 +93,9 @@ class App extends React.Component<{},{
 			this.setState({tree: edieditor.get_root()})
 		}
 	}
+	update_cache(new_cache: PrinterCache){
+		console.log(new_cache)
+	}
 	render(){
 		let me = this
 
@@ -112,6 +116,7 @@ class App extends React.Component<{},{
 					printer = {printer} 
 					root = {this.state.tree}
 					theme = {my_theme}
+					onUpdateCache = {(cache)=>{this.update_cache(cache)}}
 				></DefaultPrinterComponent>
 			</div>
 

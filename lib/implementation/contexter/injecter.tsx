@@ -13,6 +13,7 @@ import {
     Context , 
     Node , 
     ProcessedParameterList , 
+    PrinterCacheItem , 
 } from "../../core"
 
 
@@ -72,12 +73,12 @@ class InjectContexter<NodeType extends Node = Node, InfoType = any> extends Cont
         if(theinfo != undefined)
             e.push( theinfo )
     }
-    exit(node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): [any, boolean] {
+    exit(node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): [PrinterCacheItem, boolean] {
         let e = this.get_subenv(env)
         let theinfo = this.aftinfo({node,parameters,env,context})
         if(theinfo != undefined)
             e.push( theinfo )
-        return [undefined , true]
+        return [{} , true]
     }
 }
 

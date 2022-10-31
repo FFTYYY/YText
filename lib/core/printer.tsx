@@ -13,6 +13,8 @@ import {
     Env , 
     Context , 
     ProcessedParameterList , 
+    PrinterCacheItem , 
+    PrinterCache , 
 } from "./renderer"
 import {
     AbstractNode , 
@@ -23,7 +25,8 @@ import {
 
 	is_paragraphnode , 
 	is_textnode, 
-    ParameterList, 
+    ParameterList,
+    is_concetnode, 
 } from "./intermidiate"
 import {
     UnexpectedParametersError , 
@@ -250,6 +253,8 @@ class Printer{
 interface PrinterComponentProps {
     printer: Printer
     root: AbstractNode 
+
+    onUpdateCache?: (cache: PrinterCache)=>void
 }
 
 /** 这个类定义印刷器的组件。印刷器组件和印刷器（核心）是分开的，组件只负责绘制，而不储存任何信息，印刷器只负责储存信息，而不负责
@@ -262,7 +267,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
     }
 
     /**这个函数在印刷之前生成环境和上下文。 */
-    preprocess(): [Env , {[path: string]: Context} , {[path: string]: ProcessedParameterList}]{
+    preprocess(): [Env , {[path: string]: Context} , {[path: string]: ProcessedParameterList}, PrinterCache]{
         let me = this 
         let printer = me.props.printer
         let root = me.props.root
@@ -271,16 +276,18 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
          * @param nowenv 当前的环境。
          * @param node 当前节点。
          * @param path 当前节点到根的路径。
-         * @param contexts 所有节点的上下文的储存。
+         * @param all_contexts 所有节点的上下文的储存。
          * @param all_parameters 所有节点的处理好的参数的储存。
+         * @param all_caches 所有概念节点的缓存信息的储存。
          * 注意这个函数对`nowenv`是不改变的，但是对`contexts`却是改变的。
         */
         function _preprocess(
             nowenv: Env , 
             node: Node , 
             path: number[] , 
-            contexts: {[path: string]: Context} , 
+            all_contexts: {[path: string]: Context} , 
             all_parameters: {[path: string]: ProcessedParameterList} , 
+            all_caches: PrinterCache
         ): [Env , boolean]
         {
             let renderer = printer.get_node_renderer(node) // 向印刷器请求渲染器。
@@ -289,7 +296,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
             let flag = true // 这个变量表示处理是否结束。只要有一个子节点的处理没有结束那就没有结束。
             
             // 初始化上下文
-            let nowcontext: Context = contexts[my_path] // 使用path来作为每个节点的索引。
+            let nowcontext: Context = all_contexts[my_path] // 使用path来作为每个节点的索引。
             if(nowcontext == undefined){
                 nowcontext = {}
             }
@@ -320,7 +327,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
 
                     // 向下处理子节点。
                     let [env_1 , flag_1] = _preprocess(
-                        nowenv , c , [...path , parseInt(c_idx)] , contexts, all_parameters
+                        nowenv , c , [...path , parseInt(c_idx)] , all_contexts , all_parameters , all_caches
                     ) 
 
                     flag = flag && flag_1 // 只要有一个子节点返回`false`，本节点就返回`false`。
@@ -334,39 +341,44 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
             //     let [flag2 , cache] = renderer.exit(node , my_parameters , e , c)
             //     flag = flag && flag2
             // }))
-            let [flag2 , cache] = renderer.exit(node , my_parameters , nowenv , nowcontext)
+            let [cache, flag2] = renderer.exit(node , my_parameters , nowenv , nowcontext)
             flag = flag && flag2
 
-            contexts[my_path] = nowcontext //记录/更新 上下文。
+
+            if(is_concetnode(node)){
+                all_caches[node.idx] = cache || {}
+            }
+            all_contexts[my_path] = nowcontext //记录/更新 上下文。
             return [nowenv , flag]
         }
 
         let env = {}
-        let contexts = {}
+        let all_contexts = {}
+        let all_caches = {}
         let all_parameters = {}
         let flag = false // 处理是否结束。如果为`false`就要继续处理。
         while(!flag){
-            let [newenv , newflag] = _preprocess(env , root , [] , contexts , all_parameters)
+            let [newenv , newflag] = _preprocess(env , root , [] , all_contexts , all_parameters , all_caches)
             env = newenv 
             flag = newflag
-            break
+            break // TODO 目前没有实现多次遍历，而是只有一次。
         }
-        return [env , contexts , all_parameters]
+        return [env , all_contexts , all_parameters, all_caches]
     }
     
     /** 这个函数渲染一个子节点。 */
     subrender(props: {
         node: Node , 
         path: number [] , 
-        contexts: {[path: string]: Context} , 
+        all_contexts: {[path: string]: Context} , 
         all_parameters: {[path: string]: ProcessedParameterList} , 
     }): React.ReactElement{
         let me = this
-        let [node, path, contexts, all_parameters] = [props.node, props.path, props.contexts, props.all_parameters]
+        let [node, path, all_contexts, all_parameters] = [props.node, props.path, props.all_contexts, props.all_parameters]
         let ThisFunction = me.subrender.bind(this)
         
         let my_path = JSON.stringify(path) // 获取本节点
-        let my_context = contexts[my_path] // 本节点的上下文信息。
+        let my_context = all_contexts[my_path] // 本节点的上下文信息。
         let my_parameters = all_parameters[my_path] // 获取参数列表。
 
 
@@ -389,7 +401,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
                 key      = {subidx}
                 node     = {mychildren[subidx]} 
                 path     = {[...path , parseInt(subidx)]}
-                contexts = {contexts}
+                all_contexts = {all_contexts}
                 all_parameters = {all_parameters}
             />)}</React.Fragment>
         }
@@ -406,7 +418,10 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         let me = this
         let R = me.subrender.bind(this)
 
-        let [env , contexts , all_parameters] = me.preprocess()
+        let [env , all_contexts , all_parameters, all_caches] = me.preprocess()
+        if(this.props.onUpdateCache){ // XXX 嘶...好像不太该在这里调用外部函数....
+            this.props.onUpdateCache(all_caches)
+        }
 
         // 通过React注入器提供给用户定义的渲染器的全局信息。
         let globalinfo = {
@@ -414,8 +429,9 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
             "root": me.props.root , 
             "printerComponent": me ,
             "env": env , // 这一项提供所有节点的环境。
-            "contexts": contexts , // 这一项提供所有节点的上下文。
+            "all_contexts": all_contexts , // 这一项提供所有节点的上下文。
             "all_parameters": all_parameters ,  // 这一项提供所有节点的处理好的参数。
+            "all_caches": all_caches ,  // 这一项提供所有临时缓存结果。
         }
 
         return <GlobalInfoProvider 
@@ -423,7 +439,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         ><R
             node = {me.props.root} 
             path = {[]}
-            contexts = {contexts}
+            all_contexts = {all_contexts}
             all_parameters = {all_parameters}
         /></GlobalInfoProvider>
     }

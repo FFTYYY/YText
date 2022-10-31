@@ -1,6 +1,5 @@
 /** 
  * 这个模块提供所有约束。
- * TODO 使用behaviors
  * @module
  */
 
@@ -120,8 +119,6 @@ function constraint_relation(editor: EditorComponent , slate: SlateReact.ReactEd
                     return
                 }
 
-                
-                console.log("relation")
                 // 不允许一个关系是 chaining 的节点前面不是 group 或者 struct。
                 if((!is_relation_type(last_node)) && subnode.relation == "chaining"){
                     editor.move_node_by_path([...path,subidx-1] , [...path,subidx]) // 将当前节点向前移动。
