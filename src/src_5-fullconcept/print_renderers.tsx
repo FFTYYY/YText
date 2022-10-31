@@ -277,7 +277,7 @@ var mount_printer = (()=>{
 
 			let title = parameters.title // 标题
 			let close = parameters.close // 结尾
-			let center = parameters.center as boolean // 结尾
+			let center = parameters.long as boolean // 结尾
 
 			let text_jsx = <PrinterDisplayText align="center">{props.children}</PrinterDisplayText>
 			if(!center){

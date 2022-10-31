@@ -94,6 +94,7 @@ var mount_style       = new FirstClassConcept   ({type: "group", name: "裱示" 
     parameter_prototype: make_param({
         ...words_params , 
         label: "裱示" ,
+        long: false , 
     })
 })
 var display_style     = new FirstClassConcept   ({type: "group", name: "彰示"   , 

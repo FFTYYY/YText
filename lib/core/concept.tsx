@@ -2,7 +2,7 @@
  * @module
 */
 
-import { ParameterValue , ParameterList } from './intermidiate'
+import { ParameterValue , ParameterList, AllConceptTypes } from './intermidiate'
 export type {
     MetaParameters , 
     FixedParameterValue , 
@@ -40,7 +40,8 @@ interface FixedParameterList{[key: string]: FixedParameterValue}
 */
 class FirstClassConcept{
     /** 对应的节点类型。 */
-    type: "group" | "inline" | "structure" | "support" | "abstract"
+    type: AllConceptTypes
+
     /** 概念的名称。一级概念的名称和类型的二元组是其唯一标志。 */
     name: string
 
@@ -80,7 +81,8 @@ class FirstClassConcept{
  */
 class SecondClassConcept{
     /** 对应的一级概念类型。 */
-    type: string
+    type: AllConceptTypes
+
     /** 对应的一级概念名称。 */
     first_concept: string
 
