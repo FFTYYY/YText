@@ -33,7 +33,4 @@ class ImpossibleError extends Error{
  * @param obj 要检测的对象
  * TODO 没写完
 */
-function assert_properties<key , type>(obj: any){
-    let s = "" as key
-    //
-}
+function assert_properties<key , type>(obj: any){}
