@@ -20,7 +20,7 @@ import {
 	GlobalInfo, 
 
 	DefaultEditorComponent , 
-} from "../../libprinter"
+} from "../../lib"
 import {
 	first_concepts , 
 	second_concepts , 

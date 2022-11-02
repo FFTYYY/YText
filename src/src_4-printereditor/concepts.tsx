@@ -3,7 +3,7 @@ import {
 	PrinterComponent ,
 	FirstClassConcept , 
 	SecondClassConcept ,  
-} from "../../libprinter"
+} from "../../lib"
 
 export {
     first_concepts , 

@@ -31,6 +31,7 @@ export {
     constraint_paste , 
     constraint_relation , 
     constraint_abstract , 
+    constraint_parameters , 
 }
 
 
@@ -161,3 +162,48 @@ function constraint_relation(editor: EditorComponent , slate: SlateReact.ReactEd
     }
     return slate
 }
+
+/**
+ * 这个插件修复节点的参数和其概念的定义不匹配的问题。
+ * @param slate 这个constraint服务的编辑器。
+ * @returns slate
+ */
+ function constraint_parameters(editor: EditorComponent , slate: SlateReact.ReactEditor): SlateReact.ReactEditor{
+    const normalizeNode = slate.normalizeNode
+
+    slate.normalizeNode = (entry:[Node, number[]]) => {
+        const [node , path]: [Node, number[]] = entry
+
+        if(get_normalize_status("initializing")){
+            normalizeNode(entry)
+            return 
+        }
+        
+        if(slate_is_concept(node)){
+            let sec_ccpt = editor.get_core().get_printer().get_node_second_concept(node)
+            if(!sec_ccpt){ // 没有找到二级参数
+                normalizeNode(entry)
+                return     
+            }
+            for(let name in sec_ccpt.default_override){
+                if(node.parameters[name] == undefined){ // 规定了的参数却没有。
+                    editor.auto_set_parameter(node , {
+                        [name]: {...sec_ccpt.default_override[name]}
+                    })
+                    return 
+                }
+            }
+            for(let name in node.parameters){
+                if(sec_ccpt.default_override[name] == undefined){ // 有超出规定的参数
+                    let new_params = {...node.parameters}
+                    delete new_params[name]
+                    editor.set_node(node, {parameters: new_params})                    
+                    return 
+                }
+            }
+        }
+        normalizeNode(entry)
+    }
+    return slate
+}
+

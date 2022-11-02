@@ -125,7 +125,7 @@ let tree = create_group("root" , {} , [
                 text(`午餐是要收费的。`) , 
             ]) , 
         ]) , 
-        create_group("theoremer" , {alias_name: "收费定理"} , [
+        create_group("theoremer" , {alias_name: "收费定理", haha: "yes!"} , [
             create_paragraph([
                 text(`还有其他收费项目`) , 
             ]) , 

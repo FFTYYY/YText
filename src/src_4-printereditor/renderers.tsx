@@ -29,7 +29,7 @@ import {
     useless_renderer_inline ,
     useless_renderer_text,
     ProcessedParameterList, 
-} from "../../libprinter"
+} from "../../lib"
 
 export {default_renderers , renderers}
 

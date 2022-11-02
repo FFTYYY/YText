@@ -21,6 +21,7 @@ import {
     constraint_paste , 
     constraint_relation ,
     constraint_abstract , 
+    constraint_parameters , 
 } from "./constraints"
 
 export {
@@ -46,6 +47,7 @@ let plugins: EditorPlugin[] = [
     constraint_paste , 
     constraint_relation ,
     constraint_abstract , 
+    constraint_parameters , 
 ]
 
 function with_ytext_plugins(editor: EditorComponent, slate: SlateReact.ReactEditor): SlateReact.ReactEditor{

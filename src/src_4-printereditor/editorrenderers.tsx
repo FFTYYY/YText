@@ -15,7 +15,7 @@ import {
     get_default_editors , 
     get_default_group_editor_with_rightbar , 
     get_default_struct_editor_with_rightbar , 
-} from "../../libprinter"
+} from "../../lib"
 
 export {renderers , default_renderers}
 
