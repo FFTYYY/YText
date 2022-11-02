@@ -7,9 +7,9 @@ import {
     TextNode , 
     Node , 
     validate , 
-} from "../../lib"
+} from "../../../lib"
 
-import * as tree_data from "./tree.json" 
+import  tree_data from "./tree.json" 
 
 export {tree}
 

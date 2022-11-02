@@ -1,32 +1,4 @@
-import {
-	Printer ,
-	PrinterComponent ,
-	FirstClassConcept , 
-	SecondClassConcept ,  
-    ParameterValue ,
-    ParameterList , 
-} from "../../lib"
-
-export {second_concepts}
-
-function second_concepts_from_json(json: string){
-    let infos = JSON.parse(json)
-
-    let ret: SecondClassConcept[] = []
-    for(let x in infos){
-        let info = infos[x]
-        ret.push( new SecondClassConcept({
-            name: x , 
-            type: info.type , 
-            first_concept: info.first , 
-            default_override: info.default , 
-            fixed_override: info.fixed , 
-        }))
-    }
-    return ret
-}
-
-let second_concepts = second_concepts_from_json(`{
+{
     "命题": {
         "first": "昭言" , 
         "type" : "group" , 
@@ -105,7 +77,7 @@ let second_concepts = second_concepts_from_json(`{
         "type" : "group" , 
         "fixed": {
           "prefix": {
-            "val": "p=>p.alias.val ? \`($\{p.alias.val\})\`: '' ",
+            "val": "p=>p.alias.val ? `(${p.alias.val})`: '' ",
             "type": "function"
           },
           "suffix": {
@@ -316,4 +288,4 @@ let second_concepts = second_concepts_from_json(`{
             }
         }
     }
-}`)
+}

@@ -38,9 +38,6 @@ import {
 	first_concepts , 
 } from "./first_concepts"
 import {
-	second_concepts , 
-} from "./second_concepts"
-import {
 	renderers , 
 	default_renderers , 
 } from "./print_renderers"
@@ -49,13 +46,15 @@ import {
     default_editors , 
 } from "./editor_renderers"
 import {
-	tree
-} from "./tree"
+	get_tree , 
+	get_second_concepts , 
+} from "./data"
 import {my_theme} from "./theme"
 
+let tree = get_tree()
 let printer = new Printer(
 	first_concepts , 
-	second_concepts , 
+	get_second_concepts() , 
 	renderers as RendererDict , 
 	default_renderers as DefaultRendererhDict , 
 )
