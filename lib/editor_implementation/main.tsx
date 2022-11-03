@@ -125,6 +125,8 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
         let me = this
 
         while(!this.get_editor()); // 确保editor存在
+        
+        this.forceUpdate()
     }
 
     render() {

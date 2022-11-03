@@ -171,6 +171,7 @@ function DefaultSidebar(props: {
         {["group" , "inline" , "support" , "structure"].map ( (typename: Exclude<AllConceptTypes , "abstract">)=>{
             let Icon = icons[typename]
             let sec_concept_list = editor.get_core().get_sec_concept_list(typename)
+            console.log("???")
             return <React.Fragment key={typename}>
                 <MouselessElement 
                     space = {SPACE}
