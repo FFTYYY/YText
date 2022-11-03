@@ -134,9 +134,9 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
 
     render() {
     
-        let paper_widths  = {xs: "83%" , md: "88%" , xl: "93%"} // 纸张的宽度，
-        let paper_right   = {xs: "85%" , md: "90%" , xl: "95%"} // 纸张的宽度，
-        let toolbar_width = {xs: "15%" , md: "10%" , xl: "5%"} // 工具栏的宽度。
+        let paper_widths  = {xs: "87%" , md: "90%" , xl: "93%"} // 纸张的宽度，
+        let paper_right   = {xs: "89%" , md: "92%" , xl: "95%"} // 纸张的宽度，
+        let toolbar_width = {xs: "10%" , md: "7%" , xl: "5%"} // 工具栏的宽度。
 
         let theme = merge_object(default_editor_theme , this.props.theme)
 

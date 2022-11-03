@@ -55,7 +55,7 @@ function MouselessElement(props: MouselessElementProps){
     }, [])
 
     return <Box sx={{
-        border: act? "2px solid #112233" : "none"
+        border: act? "2px solid" : "none"
     }}>
         {children}
     </Box>

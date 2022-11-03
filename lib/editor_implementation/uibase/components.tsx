@@ -98,7 +98,7 @@ const EditorComponentPaper = (props: PaperProps & {is_inline?: boolean}) =>{
     let {children , is_inline, ...other_props} = props
 
     return <Paper 
-        elevation = {net_level * 2}
+        elevation = {net_level}
         square 
         {...other_props} // 去掉自己定义的属性。
         sx = {[
@@ -111,17 +111,17 @@ const EditorComponentPaper = (props: PaperProps & {is_inline?: boolean}) =>{
                     ? { // 行内
                         display : "inline-block" ,
                         minHeight  :  (theme) => theme.editor.fonts.body.lineHeight , 
-                        color   : (theme) => theme.palette.text.secondary , 
+                        color   : (theme) => theme.palette.text.primary , 
                         marginX : (theme) => theme.editor.margins.small , 
                     } : { // 块级
                         marginTop  :  (theme) => theme.editor.margins.paragraph ,      
-                        color   : (theme) => theme.palette.text.secondary ,        
+                        color   : (theme) => theme.palette.text.primary ,        
                     }
                 ) , 
             } , 
             ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
         ]}
-    ><EditorComponentPaperNestLevel.Provider value = {net_level + 1}>
+    ><EditorComponentPaperNestLevel.Provider value = {net_level + 2}>
         {children}
     </EditorComponentPaperNestLevel.Provider></Paper>
 }

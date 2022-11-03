@@ -9,6 +9,7 @@ import {
     Button , 
     Paper ,
     Divider , 
+    Box , 
 } from "@mui/material"
 import {
     CalendarViewDay as CalendarViewDayIcon , 
@@ -108,7 +109,7 @@ function get_switch_position(editor: EditorComponent): SwitchPositionFunction{
         xs = Array.from( new Set(xs) )
         xs.sort()
         let pos_x_in_xs = xs.indexOf(pos_x)
-        console.log(xs)
+
         if(direction == "ArrowUp"){
             pos_x_in_xs --
         }
@@ -171,8 +172,8 @@ function DefaultSidebar(props: {
         {["group" , "inline" , "support" , "structure"].map ( (typename: Exclude<AllConceptTypes , "abstract">)=>{
             let Icon = icons[typename]
             let sec_concept_list = editor.get_core().get_sec_concept_list(typename)
-            console.log("???")
-            return <React.Fragment key={typename}>
+
+            return <Box key={typename} sx={{marginX: "auto"}}>
                 <MouselessElement 
                     space = {SPACE}
                     position = {get_position(typename , 0)}
@@ -208,7 +209,7 @@ function DefaultSidebar(props: {
                         )
                     }</AutoStackedPopperWithButton>
                 </MouselessElement>
-            </React.Fragment>
+            </Box>
         })}
         {Object.keys(extra).map(_exidx=>{
             let exidx = parseInt(_exidx)
