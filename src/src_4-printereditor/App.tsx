@@ -19,7 +19,9 @@ import {
 	default_editor_theme, 
 	GlobalInfo, 
 
-	DefaultEditorComponent , 
+	DefaultEditorComponent ,
+	
+	ScrollBarBox , 
 } from "../../lib"
 import {
 	first_concepts , 
@@ -92,7 +94,7 @@ class App extends React.Component<{},{
 		let me = this
 
 		return <div>
-			<div style = {{position: "absolute", width: "50%", height: "100%", backgroundColor: "rgb(123,244,254)"}}>
+			<div style = {{position: "absolute", top: "1%" , width: "50%", height: "98%", backgroundColor: "rgb(123,244,254)"}}>
 				<DefaultEditorComponent
 					editorcore = {editorcore}
 					init_rootchildren = {tree.children}
@@ -102,14 +104,13 @@ class App extends React.Component<{},{
 					}}
 				/>
 			</div>
-			<pre>{JSON.stringify(this.state.tree)}</pre>
-			<div style = {{position: "absolute", width: "50%", left: "50%", backgroundColor: "rgb(233,244,254)"}}>
+			<ScrollBarBox style = {{position: "absolute", width: "50%", left: "50%", top: "1%" , height: "98%", backgroundColor: "rgb(233,244,254)"}}>
 				<DefaultPrinterComponent 
 					printer = {printer} 
 					root = {this.state.tree}
 					theme = {my_theme}
 				></DefaultPrinterComponent>
-			</div>
+			</ScrollBarBox>
 
 		</div>
 	}
