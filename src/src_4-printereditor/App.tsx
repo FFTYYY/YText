@@ -74,9 +74,9 @@ class App extends React.Component<{},{
 		}
 
 		this.editor_ref = React.createRef<DefaultEditorComponent>()
-		console.log(tree)
 	}
 	componentDidMount(): void {
+		this.setState({tree: {...this.state.tree, children: tree.children}})
 		this.update()
 	}
 	update(){
@@ -93,18 +93,22 @@ class App extends React.Component<{},{
 	render(){
 		let me = this
 
+		let {children , ...tree_props} = tree as any as AbstractNode
+
 		return <div>
+			<div style = {{position: "absolute", width: "40%", left: "55%", top: "1%" , height: "3%"}}>{this.state.tree.parameters?.haha?.val}</div>
 			<div style = {{position: "absolute", top: "1%" , width: "50%", height: "98%", backgroundColor: "rgb(123,244,254)"}}>
 				<DefaultEditorComponent
 					editorcore = {editorcore}
-					init_rootchildren = {tree.children}
+					init_rootchildren = {children}
+					init_rootproperty = {tree_props}
 					ref = {me.editor_ref}
 					onSave = {()=>{
 						me.update()
 					}}
 				/>
 			</div>
-			<ScrollBarBox style = {{position: "absolute", width: "50%", left: "50%", top: "1%" , height: "98%", backgroundColor: "rgb(233,244,254)"}}>
+			<ScrollBarBox style = {{position: "absolute", width: "50%", left: "50%", top: "5%" , height: "94%", backgroundColor: "rgb(233,244,254)"}}>
 				<DefaultPrinterComponent 
 					printer = {printer} 
 					root = {this.state.tree}

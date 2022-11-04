@@ -89,7 +89,7 @@ function inln(concept , parameters , text , abstract: any[] = []){
     }
 }
 
-let tree = create_group("root" , {} , [
+let tree = create_group("root" , {"haha": {val: 12, type: "number"}} , [
     create_paragraph([
         text("今天教大家一个") , 
         inln("stronger" , {} , "简单") , 

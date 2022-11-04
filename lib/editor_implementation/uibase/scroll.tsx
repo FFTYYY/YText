@@ -23,15 +23,13 @@ function ScrollBarBox(props: BoxProps){
     let {children, ...other_props} = props
     
     React.useEffect(()=>{
-        setTimeout(()=>{
-            if(divref && divref.current){
-                let sb = Scrollbar.init(divref.current , {delegateTo: divref.current, renderByPixels: true})
-                scrollinfo.scrollbar = sb
-                sb.addListener(()=>{
-                    divref.current.dispatchEvent(new Event("scroll")) // 手动触发原生事件
-                })
-            }
-        } , 30)
+        while(!(divref && divref.current)); // 等待ref创建
+        
+        let sb = Scrollbar.init(divref.current , {delegateTo: divref.current, renderByPixels: true})
+        scrollinfo.scrollbar = sb
+        sb.addListener(()=>{
+            divref.current.dispatchEvent(new Event("scroll")) // 手动触发原生事件
+        })
     } , [])
 
 
