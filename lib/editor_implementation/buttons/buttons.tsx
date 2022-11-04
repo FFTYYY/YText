@@ -329,6 +329,8 @@ class AutoStackedPopperWithButton extends React.PureComponent<AutoStackedPopperW
     menu_open: boolean
 }>{
 
+    static contextType = GlobalInfo
+
     menu_anchor_ref: React.RefObject<HTMLAnchorElement>
 
     /**
@@ -379,6 +381,9 @@ class AutoStackedPopperWithButton extends React.PureComponent<AutoStackedPopperW
         let props = this.props
         let children = props.children || <></>
         let B = props.outer_button
+
+        let globalinfo = this.context
+        let editor = globalinfo.editor as EditorComponent
 
         let poper = <React.Fragment>
             <AutoTooltip title={props.label}><B 

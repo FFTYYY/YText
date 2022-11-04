@@ -162,7 +162,7 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
                     paddingRight: "1%" , 
                     width: paper_widths, 
                     overflow: "auto" , 
-                }} data-scrollbar >
+                }}>
                     <EditorComponentEditingBox>
                         <KeyDownUpFunctionProxy.Consumer>{([onkeydown , onkeyup])=>{
                             return <Box><EditorComponent
