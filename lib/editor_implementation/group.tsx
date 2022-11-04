@@ -68,6 +68,8 @@ import {
     EditorUnselecableBox as UnselecableBox , 
     EditorComponentBox as ComponentBox , 
     EditorStructureTypography as StructureTypography , 
+
+    ScrollBarBox , 
 } from "./uibase"
 
 import {
@@ -117,7 +119,7 @@ function get_deafult_group_editor_with_appbar({
         return <GroupPaper node={node}>
             <AutoStack force_direction="column">
                 <UnselecableBox>
-                    <Toolbar sx={{overflow: "auto"}}><AutoStack>
+                    <Toolbar sx={{overflow: "auto"}}><ScrollBarBox><AutoStack>
                         <StructureTypography>{label}</StructureTypography>
                         <ButtonGroup 
                             node = {node}
@@ -134,7 +136,7 @@ function get_deafult_group_editor_with_appbar({
                                 ... appbar_extra(node, parameters)
                             ]}
                         />
-                    </AutoStack></Toolbar>
+                    </AutoStack></ScrollBarBox></Toolbar>
                 </UnselecableBox >
                 <Divider />
                 <ComponentEditorBox autogrow>
