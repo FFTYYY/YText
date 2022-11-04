@@ -237,12 +237,11 @@ function DefaultSidebar(props: {
             let exidx = parseInt(_exidx)
             let exbutton = extra[exidx].button
             let exrun = extra[exidx].run
-            return <MouselessElement 
-                key = {exidx}
+            return <Box sx={{marginX: "auto"}} key = {exidx}><MouselessElement 
                 space = {SPACE}
                 position = {get_extra_position(exidx)}
                 run = {()=>{exrun ? exrun() : 0}}
-            >{exbutton}</MouselessElement>
+            >{exbutton}</MouselessElement></Box>
         })}
     </React.Fragment>
 }

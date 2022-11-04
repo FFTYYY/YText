@@ -31,7 +31,7 @@ function ScrollBarBox(props: BoxProps){
                     divref.current.dispatchEvent(new Event("scroll")) // 手动触发原生事件
                 })
             }
-        } , 300)
+        } , 30)
     } , [])
 
 

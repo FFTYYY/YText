@@ -39,7 +39,8 @@ import {
     Node , 
     AllConceptTypes , 
     AllNodeTypes, 
-    AbstractNode, 
+    AbstractNode,
+    GlobalInfoProvider, 
 } from "../core"
 
 import { 
@@ -142,7 +143,7 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
 
         let me = this
 
-        return <ThemeProvider theme={createTheme(theme)}><EditorBackgroundPaper>
+        return <GlobalInfoProvider value={{theme: theme}}><ThemeProvider theme={createTheme(theme)}><EditorBackgroundPaper>
             <KeyEventManager
                 spaces = {[
                     sidebar_get_mouseless_space(me.get_editor()) , 
@@ -209,6 +210,6 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
                     </AutoStack>
                 })()}</Box>
             </KeyEventManager>
-        </EditorBackgroundPaper></ThemeProvider>
+        </EditorBackgroundPaper></ThemeProvider></GlobalInfoProvider>
     }
 }

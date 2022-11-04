@@ -13,6 +13,7 @@ import {
 	get_default_group_renderer , 
     get_default_paragraph_renderer , 
     get_default_inline_renderer , 
+	get_default_abstract_renderer , 
 
     ContexterBase , 
     OrderContexter , 
@@ -513,6 +514,11 @@ let line_printer = (()=>{
     return renderer
 })()
 
+let hiddenwords_renderer = (()=>{
+	let renderer = get_default_abstract_renderer({})
+	return renderer
+})()
+
 
 let renderers = {
 	"group":{
@@ -537,7 +543,9 @@ let renderers = {
 		"章节线": ender_printer , 
 		"图"  : image_printer , 
 	} , 
-	"abstract": {} , 
+	"abstract": {
+		"穆言": hiddenwords_renderer , 
+	} , 
 	"structure": {
 		"齐言": line_printer , 
 	} , 
