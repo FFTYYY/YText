@@ -38,7 +38,7 @@ import {
 } from "./buttons"
 
 import { DefaultEditAbstractButton, DefaultNewAbstract, DefaultNewAbstractButton } from "./abstract"
-import { EditorButtonInformation } from "./buttons"
+import { EditorButtonInformation , DefaultSoftDeleteButton } from "./buttons"
 import { AutoStackedPopper , SimpleAutoStack , AutoStack , AutoTooltip  } from "./uibase"
 import { 
     EditorComponentPaper as ComponentPaper , 
@@ -103,6 +103,7 @@ function get_default_inline_editor({
                             buttons = {[
                                 DefaultParameterEditButton , 
                                 DefaultCloseButton , 
+                                DefaultSoftDeleteButton , 
                                 DefaultNewAbstractButton , 
                                 DefaultEditAbstractButton , 
                             ]}
