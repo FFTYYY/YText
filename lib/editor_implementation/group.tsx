@@ -24,10 +24,8 @@ import {
     IconButton , 
     Divider  , 
     Container , 
-} 
-from "@mui/material"
-import type {
-    PaperProps
+
+    PaperProps ,
 } 
 from "@mui/material"
 

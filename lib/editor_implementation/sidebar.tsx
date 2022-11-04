@@ -9,7 +9,9 @@ import {
     Button , 
     Paper ,
     Divider , 
-    Box , 
+    Box, 
+    PaperProps, 
+    BoxProps , 
 } from "@mui/material"
 import {
     CalendarViewDay as CalendarViewDayIcon , 
@@ -25,14 +27,14 @@ import {
     EditorComponent , 
 } from "../editor"
 import {
-    AllConceptTypes , 
+    AllConceptTypes, GlobalInfo , 
 } from "../core"
 
 import { 
     AutoStackedPopperWithButton , 
 } from "./buttons"
 import { 
-    AutoStackButtons , 
+    AutoStackButtons, ScrollBarBox , 
 } from "./uibase"
 import {
     MouselessElement , 
@@ -107,7 +109,7 @@ function get_switch_position(editor: EditorComponent): SwitchPositionFunction{
 
         let xs = position_list.reduce((s,pos)=>[...s, JSON.parse(pos)[0]] , [] as number[]) // 获得所有x
         xs = Array.from( new Set(xs) )
-        xs.sort()
+        xs.sort((a,b)=>(parseInt(a) - parseInt(b)))
         let pos_x_in_xs = xs.indexOf(pos_x)
 
         if(direction == "ArrowUp"){
@@ -123,7 +125,7 @@ function get_switch_position(editor: EditorComponent): SwitchPositionFunction{
             let [_x,_y] = JSON.parse(pos)
             return (_x == pos_x) ? [...s , _y] : s
         } , [] as number[])
-        ys.sort()
+        ys.sort((a,b)=>(parseInt(a) - parseInt(b)))
         let pos_y_in_ys = ys.indexOf(pos_y)
         if(pos_y_in_ys < 0){ // 如果没有找到，就用最后一个。
             pos_y_in_ys = ys.length - 1
@@ -134,9 +136,26 @@ function get_switch_position(editor: EditorComponent): SwitchPositionFunction{
         else if(direction  == "ArrowRight"){
             pos_y_in_ys ++ 
         }
-        pos_y = ((pos_y_in_ys % ys.length) + ys.length) % ys.length
+        pos_y_in_ys = ((pos_y_in_ys % ys.length) + ys.length) % ys.length
         pos_y = ys[pos_y_in_ys]
+
         return JSON.stringify([pos_x, pos_y])
+    }
+}
+
+/** 每个小部分的容器。 */
+class SideBarContainer extends React.Component<{children: React.ReactChild}>{
+    constructor(props: {children: React.ReactChild}){
+        super(props)
+    }
+    render(): React.ReactNode {
+        let me = this
+        return <ScrollBarBox 
+            sx = {{
+                maxWidth: "30rem" , 
+            }}
+            overflow = "auto"
+        >{me.props.children}</ScrollBarBox>
     }
 }
 
@@ -182,7 +201,7 @@ function DefaultSidebar(props: {
                     <AutoStackedPopperWithButton
                         poper_props     = {{
                             stacker: AutoStackButtons ,
-                            component: styled(Paper)({backgroundColor: "#aabbddbb" , }) ,  
+                            component: SideBarContainer ,  
                         }}
                         outer_button    = {IconButton}
                         outer_props     = {{
@@ -192,20 +211,23 @@ function DefaultSidebar(props: {
                         ref             = {refs[typename]}
                     >{
                         sec_concept_list.map( (sec_ccpt , idx) => 
-                            <MouselessElement 
-                                key = {idx}
-                                space = {SPACE}
-                                position = {get_position(typename, idx + 1)} // 因为按钮本身要占一个位置，所以子按钮从1开始编号。
-                                run = {get_run(editor, typename, idx)}
-                            >
-                                <Button 
-                                    onClick = {e => editor.new_concept_node(typename , sec_ccpt)}
-                                    variant = "text"
+                            <Box key = {idx}   flexShrink = {0}>
+                                <MouselessElement 
+                                    space = {SPACE}
+                                    position = {get_position(typename, idx + 1)} // 因为按钮本身要占一个位置，所以子按钮从1开始编号。
+                                    run = {get_run(editor, typename, idx)}
                                 >
-                                    {sec_ccpt}
-                                </Button>
-                                <Divider orientation="vertical" flexItem/>
-                            </MouselessElement>
+                                    <Button 
+                                        onClick = {e => editor.new_concept_node(typename , sec_ccpt)}
+                                        variant = "text"
+                                        sx = {{
+                                            marginX: "0.1rem"
+                                        }}
+                                    >
+                                        {sec_ccpt}
+                                    </Button>
+                                </MouselessElement>
+                            </Box>
                         )
                     }</AutoStackedPopperWithButton>
                 </MouselessElement>

@@ -41,7 +41,7 @@ import {
     EditorComponent , 
     slate_concept_node2path , 
 } from "../../editor"
-import { AutoTooltip , Direction , AutoStack , AutoStackedPopper } from "../uibase"
+import { AutoTooltip , Direction , AutoStack , AutoStackedPopper , AutoStackedPopperProps } from "../uibase"
 import { DefaultParameterWithEditorWithDrawer } from "./parameter_container" 
 
 import {
@@ -307,7 +307,7 @@ interface AutoStackedPopperWithButtonProps {
     outer_props?: any 
     
     /** 传递给弹出框的`props` */
-    poper_props?: any
+    poper_props?: Omit<Omit<Omit<AutoStackedPopperProps , "ref"> , "anchorEl"> , "open">
 
     /** 鼠标移上去显示的字样。 */
     label?: string 
