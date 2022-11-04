@@ -24,6 +24,7 @@ import {
     IconButton , 
     Divider  , 
     Container , 
+    Card , 
 
     PaperProps ,
 } 
@@ -40,6 +41,7 @@ import {
     EditorRendererProps , 
     EditorRenderer , 
     EditorComponent ,  
+    slate_is_concept , 
 } from "../editor"
 
 import { 
@@ -92,6 +94,9 @@ let GroupPaper = (props: PaperProps & {node: GroupNode}) => {
     />
 }
 
+// XXX 可以在Toolbar滚动的时候加一个指示...
+// TODO 能不能想办法给不可编辑区域弄点花纹啥的...
+
 /** 这个函数返回一个默认的带应用栏的 group 组件。用于比较大的 group 组件。
  * @param params.get_label 从参数列表获得 title 的方法。
  * @param params.appbar_extra 要额外向 appbar 里添加的组件。
@@ -119,7 +124,10 @@ function get_deafult_group_editor_with_appbar({
         return <GroupPaper node={node}>
             <AutoStack force_direction="column">
                 <UnselecableBox>
-                    <Toolbar sx={{overflow: "auto"}}><ScrollBarBox><AutoStack>
+                    <Box sx={{
+                        overflow: "auto" , 
+                        marginX: "1rem"
+                    }}><ScrollBarBox><AutoStack>
                         <StructureTypography>{label}</StructureTypography>
                         <ButtonGroup 
                             node = {node}
@@ -136,7 +144,7 @@ function get_deafult_group_editor_with_appbar({
                                 ... appbar_extra(node, parameters)
                             ]}
                         />
-                    </AutoStack></ScrollBarBox></Toolbar>
+                    </AutoStack></ScrollBarBox></Box>
                 </UnselecableBox >
                 <Divider />
                 <ComponentEditorBox autogrow>
@@ -172,13 +180,16 @@ function get_default_group_editor_with_rightbar({
 
         let extra_buttons = rightbar_extra(node, parameters)
 
+        // 根据node子节点数量估计这个组件是长的还是高的。
+        let guess_high = (node.children.reduce((s,x)=>s += (slate_is_concept(x , "group") ? 3 : 1) , 0)) >= 4
+
         return <GroupPaper node={node}>
             <SimpleAutoStack force_direction="row">
                 <ComponentEditorBox autogrow>
                     <SUR node={node}>{props.children}</SUR>
                 </ComponentEditorBox>                
                 <UnselecableBox>
-                    <AutoStack>
+                    <AutoStack force_direction = {guess_high ? "column" : "row"}>
                         <ButtonGroup // 额外添加的元素。
                             autostack 
                             node    = {node}
