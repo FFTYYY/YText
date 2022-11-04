@@ -107,7 +107,7 @@ function get_default_inline_editor({
                                 DefaultEditAbstractButton , 
                             ]}
                         >
-                            <Typography>{label}</Typography>
+                            <StructureTypography sx={{marginY: "0.2rem", marginX: "auto"}}>{label}</StructureTypography>
                         </AutoStackedPopperButtonGroupMouseless>
                     </AutoStack>
                 </UnselecableBox>

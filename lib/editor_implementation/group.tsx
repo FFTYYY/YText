@@ -181,7 +181,7 @@ function get_default_group_editor_with_rightbar({
         let extra_buttons = rightbar_extra(node, parameters)
 
         // 根据node子节点数量估计这个组件是长的还是高的。
-        let guess_high = (node.children.reduce((s,x)=>s += (slate_is_concept(x , "group") ? 3 : 1) , 0)) >= 4
+        let guess_high = (node.children.reduce((s,x)=>s += (slate_is_concept(x , "group") ? 2 : 1) , 0)) >= 3
 
         return <GroupPaper node={node}>
             <SimpleAutoStack force_direction="row">

@@ -45,7 +45,7 @@ function MouselessElement(props: MouselessElementProps){
                 let scrollinfo = globalinfo["scrollinfo"] // 离本元素最近的滚动条。
                 if(eleref && eleref.current && scrollinfo && scrollinfo.scrollbar){
                     let scrollbar = scrollinfo.scrollbar as Scrollbar
-                    scrollbar.scrollIntoView(eleref.current , {onlyScrollIfNeeded: true})
+                    scrollbar.scrollIntoView(eleref.current )
                 }
 
                 set_act(true)
