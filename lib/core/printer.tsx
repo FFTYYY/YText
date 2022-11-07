@@ -26,6 +26,7 @@ import {
 	is_paragraphnode , 
 	is_textnode, 
     ParameterList,
+    is_inlinenode , 
     is_concetnode, 
 } from "./intermidiate"
 import {
@@ -82,6 +83,21 @@ interface DefaultRendererhDict{
     "abstract"  : PrinterRenderer , 
     "paragraph" : PrinterRenderer , 
     "text"      : PrinterRenderer , 
+}
+
+/** 这个函数判断一个节点是否应该被渲染成行内元素。 */
+function should_inline(printer: Printer, node: Node){
+    if(is_textnode(node) || is_inlinenode(node)){
+        return true
+    }
+    if(is_paragraphnode(node)){
+        return false
+    }
+    let first_concept = printer.get_node_first_concept(node)
+    if(!first_concept){
+        return false
+    }
+    return first_concept.meta_parameters.force_inline
 }
 
 /**
@@ -253,6 +269,7 @@ class Printer{
 interface PrinterComponentProps {
     printer: Printer
     root: AbstractNode 
+    init_env?: Env
 
     onUpdateCache?: (cache: PrinterCache)=>void
 }
@@ -262,15 +279,66 @@ interface PrinterComponentProps {
  */
 class PrinterComponent extends React.Component<PrinterComponentProps>{
 
+    idx2path: {[idx: number]: number[]}
+    path_refs: {[path_str: string]: React.RefObject<HTMLDivElement>} // 如果写 HTMLDivElement | SpanElement则div会报错，事儿真多。
+
     constructor(props:PrinterComponentProps){
         super(props)
+
+        this.path_refs = {}
+        this.idx2path = {} // 将idx映射成path，每渲染一次就会更改一次。
+                            // XXX 其实正确的写法是在componentDidUpdate / componentDidMount里更改，但是我懒得写了，就这样反正也是对的。
+    }
+
+    get_printer(){
+        return this.props.printer
+    }
+
+    /** 这个函数为渲染时提供用来绑定的ref对象。如果对象不存在会自动创建。 */
+    bind_ref(path: number[]){
+        let path_str = JSON.stringify(path)
+        if(!this.path_refs[path_str]){
+            this.path_refs[path_str] = React.createRef()
+        }
+        return this.path_refs[path_str]
+    }
+
+    get_ref(path: number[]){
+        let path_str = JSON.stringify(path)
+        if(this.path_refs[path_str] && this.path_refs[path_str].current){
+            return this.path_refs[path_str].current
+        }
+        return undefined
+    }
+
+    get_ref_from_idx(idx: number){
+        if(this.idx2path[idx] == undefined){
+            return undefined
+        }
+        return this.get_ref(this.idx2path[idx])
+    }
+
+    scroll_to_idx(idx: number){ 
+        if(this.idx2path[idx] == undefined){
+            return
+        }
+        this.scroll_to(this.idx2path[idx])
+    }
+    
+    scroll_to(path: number[]){ // XXX 似乎有些时候不会滚动到正确的位置...
+        let component = this.get_ref(path)
+        if(!component){
+            return 
+        }
+        component.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"})
     }
 
     /**这个函数在印刷之前生成环境和上下文。 */
-    preprocess(): [Env , {[path: string]: Context} , {[path: string]: ProcessedParameterList}, PrinterCache]{
+    preprocess({root, init_env}:{root?: AbstractNode, init_env?: Env} = {}): [Env , {[path: string]: Context} , {[path: string]: ProcessedParameterList}, PrinterCache]{
         let me = this 
         let printer = me.props.printer
-        let root = me.props.root
+        root = root || me.props.root
+        init_env = init_env || me.props.init_env || {}
 
         /** 这个函数递归地检查整个节点树，并让每个节点对环境做处理。最终的结果被记录在全局变量中。 
          * @param nowenv 当前的环境。
@@ -351,7 +419,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
             return [nowenv , flag]
         }
 
-        let env = {}
+        let env = init_env // 如果指定了初始环境，就使用初始环境。
         let all_contexts = {}
         let all_caches = {}
         let all_parameters = {}
@@ -380,7 +448,6 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         let my_context = all_contexts[my_path] // 本节点的上下文信息。
         let my_parameters = all_parameters[my_path] // 获取参数列表。
 
-
         if(my_parameters == undefined){
             throw new UnexpectedParametersError(`all_parameters should contain ${my_path} but it doesn't.`)
         }
@@ -389,7 +456,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         }
 
         let renderer = me.props.printer.get_node_renderer(node) // 向印刷器请求渲染器。
-        let RR = renderer.renderer // 真正的渲染函数。
+        let RR =  renderer.renderer // 真正的渲染函数。
 
         // 先渲染子节点。
         let children_component = <></>
@@ -405,12 +472,23 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
             />)}</React.Fragment>
         }
 
-        // 渲染本节点。
-        return <RR 
+        if(is_concetnode(node)){
+            this.idx2path[node.idx] = [...path]
+        }
+
+        let node_should_inline = should_inline(me.props.printer, node)
+        if(node_should_inline){
+            return <span ref={me.bind_ref(path)}><RR 
+                context = {my_context}
+                node = {node}
+                parameters = {my_parameters}
+            >{children_component}</RR></span>
+        }
+        return <div ref={me.bind_ref(path)} ><RR 
             context = {my_context}
             node = {node}
             parameters = {my_parameters}
-        >{children_component}</RR>
+        >{children_component}</RR></div>
     }
 
     render(){
@@ -418,6 +496,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         let R = me.subrender.bind(this)
 
         let [env , all_contexts , all_parameters, all_caches] = me.preprocess()
+
         if(this.props.onUpdateCache){ // XXX 嘶...好像不太该在这里调用外部函数....
             this.props.onUpdateCache(all_caches)
         }
@@ -426,7 +505,7 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
         let globalinfo = {
             "printer": me.props.printer , 
             "root": me.props.root , 
-            "printerComponent": me ,
+            "printer_component": me ,
             "env": env , // 这一项提供所有节点的环境。
             "all_contexts": all_contexts , // 这一项提供所有节点的上下文。
             "all_parameters": all_parameters ,  // 这一项提供所有节点的处理好的参数。

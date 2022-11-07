@@ -37,21 +37,14 @@ function MouselessElement(props: MouselessElementProps){
     let [regiester_func, unregister_func] = React.useContext(MouselessRegister)
     let eleref = React.useRef<HTMLDivElement | undefined>(undefined)
 
-    let globalinfo = React.useContext(GlobalInfo)
-
     React.useEffect(()=>{
         regiester_func(space, position, 
             () => {
-                let scrollinfo = globalinfo["scrollinfo"] // 离本元素最近的滚动条。
-                if(eleref && eleref.current && scrollinfo && scrollinfo.scrollbar){
-                    let scrollbar = scrollinfo.scrollbar as Scrollbar
-                    scrollbar.scrollIntoView(eleref.current )
-                }
-
                 set_act(true)
                 if(extra_activate){
                     extra_activate()
                 }
+                eleref.current.scrollIntoView({block: "center", inline: "center"}) // 自动滚到
             }, 
             (new_pos) => {
                 set_act(false)

@@ -46,6 +46,7 @@ import {
     DefaultSoftDeleteButton , 
 
     EditorButtonInformation , 
+    CopyButton , 
 } from "./buttons"
 import { 
     DefaultNewAbstractButton , 
@@ -177,6 +178,11 @@ function get_default_struct_editor_with_rightbar({
                         />
                         <StructureTypography sx={{marginX: "auto"}}>{mylabel}</StructureTypography>
                         <AutoStackedPopperButtonGroupMouseless 
+                            poper_props = {{
+                                sx:{
+                                    opacity: "80%" , 
+                                }
+                            }}
                             node = {node}
                             close_on_otherclick 
                             outer_button = {IconButton}
@@ -194,6 +200,7 @@ function get_default_struct_editor_with_rightbar({
                                 DefaultSoftDeleteButton , 
                                 NewParagraphButtonUp , 
                                 NewParagraphButtonDown , 
+                                CopyButton , 
                             ]}
                         /> 
                     </AutoStack>

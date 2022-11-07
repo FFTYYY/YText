@@ -1,6 +1,9 @@
 /** 这个模块提供一个组件，这个组件向下提供滚动条。
+ * 
  * @module
 */
+// TODO 这个组件定义在editor_implementation中，但是printer的滚动方法却依赖之
+
 import React from "react"
 import {
     Box , 
@@ -10,30 +13,38 @@ import {
     GlobalInfo , 
     GlobalInfoProvider , 
 } from "../../core"
-import Scrollbar from "smooth-scrollbar"
+import "overlayscrollbars/overlayscrollbars.css"
+import { OverlayScrollbars } from "overlayscrollbars"
+
 
 export { ScrollBarBox }
 
-function ScrollBarBox(props: BoxProps){
+/**
+ * 注意，这个里面的所有东西都必须先被box包起来...
+ */
+class ScrollBarBox extends React.Component<BoxProps>{
+    divref: React.RefObject<HTMLDivElement>
+    os: OverlayScrollbars
 
-    // let [my_scrollbar , set_sb] = React.useState<undefined | Scrollbar>(undefined)
-    let scrollinfo = {scrollbar: undefined } // 我决定不把这个变量作为状态，因为useContext的更新有bug。
+    constructor(props: BoxProps){
+        super(props)
+        this.divref = React.createRef()
+        this.os = undefined
+    }
 
-    let divref = React.useRef<HTMLDivElement>()
-    let {children, ...other_props} = props
-    
-    React.useEffect(()=>{
-        while(!(divref && divref.current)); // 等待ref创建
-        
-        let sb = Scrollbar.init(divref.current , {delegateTo: divref.current, renderByPixels: true})
-        scrollinfo.scrollbar = sb
-        sb.addListener(()=>{
-            divref.current.dispatchEvent(new Event("scroll")) // 手动触发原生事件
-        })
-    } , [])
+    componentDidMount(): void {
+        while(!(this.divref && this.divref.current)); // 等待ref创建
+        this.os = OverlayScrollbars(this.divref.current, {
+            scrollbars:{
+                autoHide: "leave", 
+                autoHideDelay: 700 , 
+            }
+        });
+    }
 
-
-    return <GlobalInfoProvider value={{scrollinfo: scrollinfo}}>
-        <Box {...other_props} data-scrollbar ref={divref}>{children}</Box>
-    </GlobalInfoProvider>
+    render(){
+        let {children, ...other_props} = this.props
+        return <Box {...other_props} data-overlayscrollbars="" ref={this.divref}>{children}</Box>
+    }
 }
+

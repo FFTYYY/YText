@@ -1,6 +1,6 @@
 {
 	"name": "@ftyyy/ytext",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"files": [
 		"dist"
 	],
@@ -28,12 +28,12 @@
 		"@mui/material": "^5.2.7",
 		"immer": "^9.0.15",
 		"jquery": "^3.6.0",
+		"overlayscrollbars": "^2.0.0-beta.3",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
 		"slate": "^0.72.3",
 		"slate-history": "^0.66.0",
 		"slate-react": "^0.72.1",
-		"smooth-scrollbar": "^8.8.1",
 		"typedoc": "^0.22.18",
 		"typedoc-plugin-missing-exports": "^0.22.6"
 	},

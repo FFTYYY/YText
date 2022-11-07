@@ -157,7 +157,7 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
                     }
                 ]}
             >
-                <ScrollBarBox sx = {{ 
+                <ScrollBarBox key="area-1" sx = {{ 
                     position: "absolute" , 
                     top: "1%" , 
                     height: "98%", 
@@ -167,7 +167,7 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
                 }}>
                     <EditorComponentEditingBox>
                         <KeyDownUpFunctionProxy.Consumer>{([onkeydown , onkeyup])=>{
-                            return <Box><EditorComponent
+                            return <EditorComponent
                                 ref 		        = {me.editor_ref} 
 
                                 editorcore          = {me.props.editorcore}
@@ -181,13 +181,13 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
                                 
                                 onKeyDown           = {onkeydown}
                                 onKeyUp             = {onkeyup}
-                            /></Box>
+                            />
                         }}
                         </KeyDownUpFunctionProxy.Consumer>
                     </EditorComponentEditingBox>
                 </ScrollBarBox>
 
-                <Box sx = {{
+                <Box key="area-2" sx = {{
                     position: "absolute", 
                     top: "1%" , 
                     height: "99%", 
