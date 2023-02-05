@@ -1,0 +1,16 @@
+{
+  "name": "doczdoc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+		"dev": "docz dev",
+		"build": "docz build",
+		"serve": "docz build && docz serve"
+  },
+  "author": "yyy",
+  "license": "MIT",
+  "dependencies": {
+    "docz": "^2.4.0"
+  }
+}
