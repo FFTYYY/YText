@@ -1,6 +1,5 @@
 ---
-name: Introduction
-route: /
+name: 1. Introduction
 ---
 
 # Introduction
@@ -57,14 +56,14 @@ Each concept type defines specifies a group of parameter prototype, which is cal
 Each concept type also defines a local grammar, namely what type of nodes can its children be. 
 The detailed definition of each type will be discussed later, but here I breifly explain each type, to give you a intuiation about each type.
 1. A __group__ node is a list of paragrahs, which is it self be seen as a whole. 
-For examples a theorem in a mathmatics paper can be viewed as a group node. The \\item element in LateX can also be viewed as a group.
-Group nodes can form series, in which the group nodes comes one after the other (I call this "chaining"), 
-for example the enumerate environment in LateX. 
+For examples a theorem in a mathmatics paper can be viewed as a group node. The `\item` element in LateX can also be viewed as a group.
+Group nodes can form series, in which the group nodes comes one after the other (I call this __chaining__), 
+for example the `enumerate` environment in LateX. 
 A proof comes right after a theorem in a mathmatics paper is also an example of chaining group nodes.
 2. A __structure__ node consists of several Group nodes. 
 A structure node should be rendered in a a different direction of the ordinary direction of the document. 
 If the document is rendered from top to bottom, then a structure node renders from left to right. One line in a table is an example.
-3. An __inline__ node is of the same position of text nodes, but with styles. The \<strong\> tag in HTML is an example.
+3. An __inline__ node is of the same position of text nodes, but with styles. The `<strong>` tag in HTML is an example.
 4. A __support__ node is a visual element that does not contain text contents 
 (or more generally, can only contain an empty text node as its child). 
 Support nodes are the non-text visual elements in an article. For example figures, images, table lines. 
@@ -103,9 +102,9 @@ The second class concept fill in those slots by inidcating first class parameter
 
 ## Abstract
 
-Each concept node has another property "abstracts", which is a list of abstract nodes (can be empty). 
+Each concept node has another property "abstract", which is a list of abstract nodes (can be empty). 
 As mentioned before, abstract nodes are roots of an intermediate tree. 
-Therefore, the "abstracts" property allows we write a new article which ties at the current node.
+Therefore, the "abstract" property allows us to write a new article which ties at the current node.
 
 The use of abstract can be quite flexible. For example, it can be used to write footnotes and sidenotes 
 (the way of rendering it is up to our implementation). 
@@ -118,14 +117,14 @@ The structure of an article needs no longer to be linear. An article can be fiss
 
 ## Implementation
 
-To use YText, a user should specify three components: the implementation of editor, the implementation of printer, 
-and the definition of concepts. However, a user might not want to define an editor from their own. 
+To use YText, a user need to specify three components: the implementation of editor, the implementation of printer, 
+and the definition of concepts. However, a user might not want to write an editor from their own. 
 To this end, YText provides a default implementation of editor and printer, 
 for those who don't care about the implementation of editors and printers.
 
 The decomposing of editor, printer and concepts also means every component can be used in a plugin manner. 
 A user can use the editor of imeplementation A of YText, and use printer of imeplementation B of YText, 
 and define their own concepts. 
-They can even combine different imeplementations, like 
-using just a small component of imeplementation A and other parts of imeplementation B. 
+They can even combine different imeplementations, 
+like using just a small component of imeplementation A and other parts of imeplementation B. 
 
