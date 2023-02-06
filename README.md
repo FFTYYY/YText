@@ -6,5 +6,5 @@ YText doesn't have an explicit user interface, it is more like a collection of r
 
 [Here is the documentation](https://fftyyy.github.io/YText/docs/prologue/introduction/).
 
-[Here is a Demo](https://fftyyy.github.io/YText/demo/).
+[Here is a Demo](https://fftyyy.github.io/YText/example/).
 

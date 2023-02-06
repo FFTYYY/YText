@@ -255,3 +255,5 @@ It will result in a React component like this:
 The left part is the editing area, where we can write texts and add theorems. 
 When pressing ctrl+s, the printer (on the right) will be updated:
 ![img-2](pic2.png)
+
+The full code of the example in this page can be found [here](https://github.com/FFTYYY/YText/tree/master/example/example1).

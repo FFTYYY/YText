@@ -11,6 +11,8 @@ images: []
 Here in __[this page](./example/index.html)__ I created a demo editor with a rather complete definition of concepts, 
 where you can try the editor. The content is from a part of one of my blog posts on convex analysis (translated from Chinese).
 
+The full project can be found [here](https://github.com/FFTYYY/YText/tree/master/example/example-full).
+
 &nbsp;
 
 &nbsp;
