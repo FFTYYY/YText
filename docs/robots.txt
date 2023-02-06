@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fftyyy.github.io/YText/sitemap.xml

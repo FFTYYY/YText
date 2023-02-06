@@ -1,0 +1,785 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="preload" as="font" href="https://fftyyy.github.io/YText/fonts/vendor/jost/jost-v4-latin-regular.woff2" type="font/woff2" crossorigin>
+<link rel="preload" as="font" href="https://fftyyy.github.io/YText/fonts/vendor/jost/jost-v4-latin-500.woff2" type="font/woff2" crossorigin>
+<link rel="preload" as="font" href="https://fftyyy.github.io/YText/fonts/vendor/jost/jost-v4-latin-700.woff2" type="font/woff2" crossorigin>
+
+  <script>(()=>{var t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,e=localStorage.getItem("theme");t&&e===null&&(localStorage.setItem("theme","dark"),document.documentElement.setAttribute("data-dark-mode","")),t&&e==="dark"&&document.documentElement.setAttribute("data-dark-mode",""),e==="dark"&&document.documentElement.setAttribute("data-dark-mode","")})()</script>
+
+  <link rel="stylesheet" href="https://fftyyy.github.io/YText/main.4f92e8015fa152e23e4d03a7858c1e3eb731f58ced6b39d83582c11edb24599da77c6ff64026e491a781f26c2e4f3e316091d76d756debd241f44aa252efc1ec.css" integrity="sha512-T5LoAV&#43;hUuI&#43;TQOnhYwePrcx9YztaznYNYLBHtskWZ2nfG/2QCbkkaeB8mwuTz4xYJHXbXVt69JB9EqiUu/B7A==" crossorigin="anonymous">
+<noscript><style>img.lazyload { display: none; }</style></noscript>
+  <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+    <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <title>Introduction  YText</title>
+<meta name="description" content="I believe articles are not barely texts, nor visual elements. Although our language is linear, words come one after another, we humen&amp;rsquo;s mind is far from linear, structures, branching, moods exist therein. Therefore I build YText, a text editor library that decouples the abstract structure and concrete visualization of an article.
+YText is composed of three major components:
+Editor, which allows one to edit the structure of an article without specifying how to render it.">
+  <link rel="canonical" href="https://fftyyy.github.io/YText/docs/prologue/introduction/">
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Introduction">
+<meta property="og:description" content="I believe articles are not barely texts, nor visual elements. Although our language is linear, words come one after another, we humen&rsquo;s mind is far from linear, structures, branching, moods exist therein. Therefore I build YText, a text editor library that decouples the abstract structure and concrete visualization of an article.
+YText is composed of three major components:
+Editor, which allows one to edit the structure of an article without specifying how to render it.">
+<meta property="og:url" content="https://fftyyy.github.io/YText/docs/prologue/introduction/">
+<meta property="og:site_name" content="YText">
+<meta property="article:published_time" content="2023-02-05T23:16:03-05:00">
+  <meta property="article:modified_time" content="2023-02-05T23:16:03-05:00">
+  
+  
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="">
+<meta name="twitter:creator" content="">
+<meta name="twitter:title" content="Introduction">
+<meta name="twitter:description" content="">
+<meta name="twitter:card" content="summary">
+    <meta name="twitter:image:alt" content="Introduction">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+        "@id": "https://fftyyy.github.io/#/schema/person/1",
+      "name": "",
+      "url": "https://fftyyy.github.io/",
+      "sameAs": [
+        ],
+      "image": {
+          "@type": "ImageObject",
+          "@id": "https://fftyyy.github.io/#/schema/image/1",
+          "url": "https://fftyyy.github.io/\u003cnil\u003e",
+          "width":  null ,
+          "height":  null ,
+          "caption": ""
+        }
+      },
+    {
+      "@type": "WebSite",
+      "@id": "https://fftyyy.github.io/#/schema/website/1",
+      "url": "https://fftyyy.github.io/",
+      "name": "YText",
+      "description": "",
+      "publisher": {
+          "@id": "https://fftyyy.github.io/#/schema/person/1"
+        }
+      },
+    {
+      "@type": "WebPage",
+      "@id": "https://fftyyy.github.io/YText/docs/prologue/introduction/",
+      "url": "https://fftyyy.github.io/YText/docs/prologue/introduction/",
+      "name": "Introduction",
+      "description": "",
+      "isPartOf": {
+        "@id": "https://fftyyy.github.io/#/schema/website/1"
+      },
+      "about": {
+          "@id": "https://fftyyy.github.io/#/schema/person/1"
+        },
+      "datePublished": "2023-02-05T23:16:03CET",
+      "dateModified": "2023-02-05T23:16:03CET",
+      "breadcrumb": {
+        "@id": "https://fftyyy.github.io/YText/docs/prologue/introduction/#/schema/breadcrumb/1"
+      },
+      "primaryImageOfPage": {
+        "@id": "https://fftyyy.github.io/YText/docs/prologue/introduction/#/schema/image/2"
+      },
+      "inLanguage": "",
+      "potentialAction": [{
+        "@type": "ReadAction", "target": ["https://fftyyy.github.io/YText/docs/prologue/introduction/"]
+      }]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://fftyyy.github.io/YText/docs/prologue/introduction/#/schema/breadcrumb/1",
+      "name": "Breadcrumbs",
+      "itemListElement": [{
+        "@type": "ListItem",
+        "position":  1 ,
+        "item": {
+          "@type": "WebPage",
+          "@id": "https://fftyyy.github.io/YText/",
+          "url": "https://fftyyy.github.io/YText/",
+          "name": "Home"
+          }
+        },{
+        "@type": "ListItem",
+        "position":  2 ,
+        "item": {
+          "@type": "WebPage",
+          "@id": "https://fftyyy.github.io/YText/docs/",
+          "url": "https://fftyyy.github.io/YText/docs/",
+          "name": "Docs"
+          }
+        },{
+        "@type": "ListItem",
+        "position":  3 ,
+        "item": {
+          "@type": "WebPage",
+          "@id": "https://fftyyy.github.io/YText/docs/prologue/",
+          "url": "https://fftyyy.github.io/YText/docs/prologue/",
+          "name": "Prologue"
+          }
+        },{
+        "@type": "ListItem",
+        "position":  4 ,
+        "item": {
+          "@id": "https://fftyyy.github.io/YText/docs/prologue/introduction/"
+          }
+        }]
+    },
+
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Article",
+          "@id": "https://fftyyy.github.io/#/schema/article/1",
+          "headline": "Introduction",
+          "description": "",
+          "isPartOf": {
+            "@id": "https://fftyyy.github.io/YText/docs/prologue/introduction/"
+          },
+          "mainEntityOfPage": {
+            "@id": "https://fftyyy.github.io/YText/docs/prologue/introduction/"
+          },
+          "datePublished": "2023-02-05T23:16:03CET",
+          "dateModified": "2023-02-05T23:16:03CET",
+          "author": {
+            "@id": "https://fftyyy.github.io/#/schema/person/2"
+          },
+          "publisher": {
+              "@id": "https://fftyyy.github.io/#/schema/person/1"
+            },
+          "image": {
+            "@id": "https://fftyyy.github.io/YText/docs/prologue/introduction/#/schema/image/2"
+          }
+        }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Person",
+          "@id": "https://fftyyy.github.io/#/schema/person/2",
+          "name":  null ,
+          "sameAs": [
+            ]
+        }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "ImageObject",
+          "@id": "https://fftyyy.github.io/YText/docs/prologue/introduction/#/schema/image/2",
+          "url":  null ,
+          "contentUrl":  null ,
+          "caption": "Introduction"
+        }
+      ]
+    }
+
+  ]
+}
+</script>
+
+  <meta name="theme-color" content="#fff">
+<link rel="icon" href="https://fftyyy.github.io/YText/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" sizes="180x180" href="https://fftyyy.github.io/YText/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://fftyyy.github.io/YText/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="https://fftyyy.github.io/YText/favicon-16x16.png">
+<link rel="manifest" crossorigin="use-credentials" href="https://fftyyy.github.io/YText/site.webmanifest">
+
+  
+
+</head>
+
+  <body class="docs single">
+    <div class="sticky-top">
+<div class="header-bar"></div>
+
+<header class="navbar navbar-expand-lg navbar-light doks-navbar">
+  <nav class="container-xxl flex-wrap flex-lg-nowrap" aria-label="Main navigation">
+
+    <a class="navbar-brand order-0" href="/" aria-label="YText">
+      YText
+    </a>
+
+    <button class="btn btn-link order-0 ms-auto d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+    </button>
+    <div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+      <div class="header-bar"></div>
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasExampleLabel">Browse docs</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <aside class="doks-sidebar mt-n3">
+          <nav id="doks-docs-nav" aria-label="Tertiary navigation">
+            
+<ul class="list-unstyled collapsible-sidebar">
+  
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-5f2cae171c6192fa410df4385f7218aa" aria-expanded="true">
+          Prologue
+        </button>
+        <div class="collapse show" id="section-5f2cae171c6192fa410df4385f7218aa">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded active" href="https://fftyyy.github.io/YText/docs/prologue/introduction/">Introduction</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://fftyyy.github.io/YText/docs/prologue/getstarted/">Get Started</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-584b97eb3b7b53ebc3eb190536033168" aria-expanded="false">
+          Advanced Tutorials
+        </button>
+        <div class="collapse" id="section-584b97eb3b7b53ebc3eb190536033168">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://fftyyy.github.io/YText/docs/advanced/advanced/">Advanced</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-aa42c0f81e500964f1467187ff870b17" aria-expanded="false">
+          Notes in Chinese
+        </button>
+        <div class="collapse" id="section-aa42c0f81e500964f1467187ff870b17">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://fftyyy.github.io/YText/docs/notes-in-chinese/intro/">Introduction</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://fftyyy.github.io/YText/docs/notes-in-chinese/mouseless/">Mouseless</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+  
+</ul>
+
+          </nav>
+        </aside>
+      </div>
+    </div>
+    <button class="btn btn-menu order-2 d-block d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDoks" aria-controls="offcanvasDoks" aria-label="Open main menu">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    </button>
+    <div class="offcanvas offcanvas-end border-0 py-lg-1" tabindex="-1" id="offcanvasDoks" data-bs-backdrop="true" aria-labelledby="offcanvasDoksLabel">
+      <div class="header-bar d-lg-none"></div>
+      <div class="offcanvas-header d-lg-none">
+        <h2 class="h5 offcanvas-title ps-2" id="offcanvasDoksLabel"><a class="text-dark" href="/">YText</a></h2>
+        <button type="button" class="btn-close text-reset me-2" data-bs-dismiss="offcanvas" aria-label="Close main menu"></button>
+      </div>
+      <div class="offcanvas-body p-4 p-lg-0">
+        <ul class="nav flex-column flex-lg-row align-items-lg-center mt-2 mt-lg-0 ms-lg-2 me-lg-auto">
+              <li class="nav-item">
+                <a class="nav-link ps-0 py-1 active" href="/YText/docs/prologue/introduction/">Docs</a>
+              </li>
+            
+          </ul>
+
+        <hr class="text-black-50 my-4 d-lg-none">
+        <form class="doks-search position-relative flex-grow-1 ms-lg-auto me-lg-2">
+          <input id="search" class="form-control is-search" type="search" placeholder="Search docs..." aria-label="Search docs..." autocomplete="off">
+          <div id="suggestions" class="shadow bg-white rounded d-none"></div>
+        </form>
+        <hr class="text-black-50 my-4 d-lg-none">
+        <ul class="nav flex-column flex-lg-row">
+          <li class="nav-item">
+              <a class="nav-link social-link" href="https://github.com/FFTYYY/YText"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-github"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg><small class="ms-2 d-lg-none">GitHub</small></a>
+            </li>
+          </ul>
+
+        <hr class="text-black-50 my-4 d-lg-none">
+        <button id="mode" class="btn btn-link" type="button" aria-label="Toggle user interface mode">
+          <span class="toggle-dark"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-moon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></span>
+          <span class="toggle-light"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sun"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
+        </button>
+        </div>
+    </div>
+  </nav>
+</header>
+
+
+</div>
+<div class="container-xxl">
+  <aside class="doks-sidebar">
+    <nav id="doks-docs-nav" class="collapse d-lg-none" aria-label="Tertiary navigation">
+      
+<ul class="list-unstyled collapsible-sidebar">
+  
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-5f2cae171c6192fa410df4385f7218aa" aria-expanded="true">
+          Prologue
+        </button>
+        <div class="collapse show" id="section-5f2cae171c6192fa410df4385f7218aa">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded active" href="https://fftyyy.github.io/YText/docs/prologue/introduction/">Introduction</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://fftyyy.github.io/YText/docs/prologue/getstarted/">Get Started</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-584b97eb3b7b53ebc3eb190536033168" aria-expanded="false">
+          Advanced Tutorials
+        </button>
+        <div class="collapse" id="section-584b97eb3b7b53ebc3eb190536033168">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://fftyyy.github.io/YText/docs/advanced/advanced/">Advanced</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-aa42c0f81e500964f1467187ff870b17" aria-expanded="false">
+          Notes in Chinese
+        </button>
+        <div class="collapse" id="section-aa42c0f81e500964f1467187ff870b17">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://fftyyy.github.io/YText/docs/notes-in-chinese/intro/">Introduction</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://fftyyy.github.io/YText/docs/notes-in-chinese/mouseless/">Mouseless</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+  
+</ul>
+
+    </nav>
+  </aside>
+</div>
+
+
+    <div class="wrap container-xxl" role="document">
+      <div class="content">
+        
+	<div class="row flex-xl-nowrap">
+		<div class="col-lg-5 col-xl-4 docs-sidebar d-none d-lg-block">
+			<nav class="docs-links" aria-label="Main navigation">
+				
+<ul class="list-unstyled collapsible-sidebar">
+  
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-5f2cae171c6192fa410df4385f7218aa" aria-expanded="true">
+          Prologue
+        </button>
+        <div class="collapse show" id="section-5f2cae171c6192fa410df4385f7218aa">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded active" href="https://fftyyy.github.io/YText/docs/prologue/introduction/">Introduction</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://fftyyy.github.io/YText/docs/prologue/getstarted/">Get Started</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-584b97eb3b7b53ebc3eb190536033168" aria-expanded="false">
+          Advanced Tutorials
+        </button>
+        <div class="collapse" id="section-584b97eb3b7b53ebc3eb190536033168">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://fftyyy.github.io/YText/docs/advanced/advanced/">Advanced</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+      
+      <li class="mb-1">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#section-aa42c0f81e500964f1467187ff870b17" aria-expanded="false">
+          Notes in Chinese
+        </button>
+        <div class="collapse" id="section-aa42c0f81e500964f1467187ff870b17">
+          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://fftyyy.github.io/YText/docs/notes-in-chinese/intro/">Introduction</a></li>
+              
+            
+              
+                
+                <li><a class="docs-link rounded" href="https://fftyyy.github.io/YText/docs/notes-in-chinese/mouseless/">Mouseless</a></li>
+              
+            
+          </ul>
+        </div>
+      </li>
+    
+  
+</ul>
+
+			</nav>
+		</div>
+		<nav class="docs-toc d-none d-xl-block col-xl-3" aria-label="Secondary navigation">
+			<div class="d-xl-none">
+  <button class="btn btn-outline-primary btn-sm doks-toc-toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#onThisPage" aria-controls="doks-docs-nav" aria-expanded="false" aria-label="Toggle On this page navigation">
+    <span>On this page</span>
+    <span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="doks doks-expand" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>Expand</title><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="doks doks-collapse" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>Collapse</title><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>
+    </span>
+  </button>
+  <div class="collapse" id="onThisPage">
+    <div class="card card-body mt-3 py-1">
+      <div class="page-links">
+        <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#about-realization">About &ldquo;Realization&rdquo;</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#concept--concept-nodes">Concept &amp; Concept nodes</a>
+      <ul>
+        <li><a href="#concept-types">Concept Types</a></li>
+        <li><a href="#meta-parameters">Meta Parameters</a></li>
+        <li><a href="#first-class-concepts-and-second-class-concepts">First Class Concepts and Second Class Concepts</a></li>
+      </ul>
+    </li>
+    <li><a href="#abstract">Abstract</a></li>
+    <li><a href="#implementation">Implementation</a></li>
+  </ul>
+</nav>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="page-links d-none d-xl-block">
+  <h3>On this page</h3>
+  <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#about-realization">About &ldquo;Realization&rdquo;</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#concept--concept-nodes">Concept &amp; Concept nodes</a>
+      <ul>
+        <li><a href="#concept-types">Concept Types</a></li>
+        <li><a href="#meta-parameters">Meta Parameters</a></li>
+        <li><a href="#first-class-concepts-and-second-class-concepts">First Class Concepts and Second Class Concepts</a></li>
+      </ul>
+    </li>
+    <li><a href="#abstract">Abstract</a></li>
+    <li><a href="#implementation">Implementation</a></li>
+  </ul>
+</nav>
+  </div>
+
+		</nav>
+		<main class="docs-content col-lg-11 col-xl-9">
+		
+			<h1>Introduction</h1>
+			<p class="lead"></p>
+			<nav class="d-xl-none" aria-label="Quaternary navigation">
+				<div class="d-xl-none">
+  <button class="btn btn-outline-primary btn-sm doks-toc-toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#onThisPage" aria-controls="doks-docs-nav" aria-expanded="false" aria-label="Toggle On this page navigation">
+    <span>On this page</span>
+    <span>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="doks doks-expand" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>Expand</title><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="doks doks-collapse" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><title>Collapse</title><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>
+    </span>
+  </button>
+  <div class="collapse" id="onThisPage">
+    <div class="card card-body mt-3 py-1">
+      <div class="page-links">
+        <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#about-realization">About &ldquo;Realization&rdquo;</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#concept--concept-nodes">Concept &amp; Concept nodes</a>
+      <ul>
+        <li><a href="#concept-types">Concept Types</a></li>
+        <li><a href="#meta-parameters">Meta Parameters</a></li>
+        <li><a href="#first-class-concepts-and-second-class-concepts">First Class Concepts and Second Class Concepts</a></li>
+      </ul>
+    </li>
+    <li><a href="#abstract">Abstract</a></li>
+    <li><a href="#implementation">Implementation</a></li>
+  </ul>
+</nav>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="page-links d-none d-xl-block">
+  <h3>On this page</h3>
+  <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#about-realization">About &ldquo;Realization&rdquo;</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#concept--concept-nodes">Concept &amp; Concept nodes</a>
+      <ul>
+        <li><a href="#concept-types">Concept Types</a></li>
+        <li><a href="#meta-parameters">Meta Parameters</a></li>
+        <li><a href="#first-class-concepts-and-second-class-concepts">First Class Concepts and Second Class Concepts</a></li>
+      </ul>
+    </li>
+    <li><a href="#abstract">Abstract</a></li>
+    <li><a href="#implementation">Implementation</a></li>
+  </ul>
+</nav>
+  </div>
+
+			</nav>
+			<p>I believe articles are not barely texts, nor visual elements.
+Although our language is linear, words come one after another, we humen&rsquo;s mind is far from linear,
+structures, branching, moods exist therein.
+Therefore I build <strong>YText</strong>, a text editor library that decouples the abstract structure and concrete visualization of an article.</p>
+<p>YText is composed of three major components:</p>
+<ul>
+<li>Editor, which allows one to edit the structure of an article without specifying how to render it.</li>
+<li>Printer, which allows one to define how to render the abatract representation of an article (say into a web page).</li>
+<li>Concept System, which is shared by editor and printer, defining how to represent an article by the abstract representation.</li>
+</ul>
+<p>The so called &ldquo;abstract representation&rdquo;
+(terminology wise I call it  <strong>intermediate representation</strong>, since the word &ldquo;abstract&rdquo; is used in another situation)
+of an article is organized as a tree
+(a json tree in implementation), whose nodes are concepts or trivial nodes.</p>
+<h3 id="about-realization">About &ldquo;Realization&rdquo; <a href="#about-realization" class="anchor" aria-hidden="true">#</a></h3>
+<p>Sometimes I use the word &ldquo;realization&rdquo;, it is analogous to the term with the same name in OOP programing.
+In YText, some times an element provides a name and a group of <em>parameter prototype</em>,
+and another element specify a name and <em>values of paramater</em>, which is of the same type with the coresponding parameter prototype.
+In this case, I say the latter elements realizes the former element.</p>
+<p>Notice that in YText, element names (or together with some other properties, like class), serves as the unique indicator of an element,
+which is like class name in OOP. The parameter prototype does not only defines how a parameter would be,
+but also serves as the default value of the parameters which can be used when coresponding term is not specified and can be overrided.</p>
+<h1 id="the-grammar-of-intermediate-representation">The Grammar of Intermediate Representation <a href="#the-grammar-of-intermediate-representation" class="anchor" aria-hidden="true">#</a></h1>
+<p>As mentioned before, the intermediate representation in YText is a tree. Therefore two types of non-leaf nodes in this tree:</p>
+<ol>
+<li>Concept nodes, and</li>
+<li>Paragraph nodes,</li>
+</ol>
+<p>and leaf nodes are all called text nodes. A text node is basically a string, which corresponding to a phrase in the article.
+A paragraph node is a list of text nodes and inline concept nodes (will explain later), which corresponding to a paragraph in the article.</p>
+<h2 id="concept--concept-nodes">Concept &amp; Concept nodes <a href="#concept--concept-nodes" class="anchor" aria-hidden="true">#</a></h2>
+<p>Each concept node belongs to a concept, which is specified by user, and it also provodes a group of parameters which <em>realizes</em> the concept.
+Each <strong>concept</strong> should specifies four properties:</p>
+<ol>
+<li>The concept type, which is in {&ldquo;group&rdquo;, &ldquo;structure&rdquo;, &ldquo;inline&rdquo;, &ldquo;support&rdquo;, &ldquo;abstract&rdquo;}, which defines which kind of concept the concept is.</li>
+<li>The parameter prototype of this concept.</li>
+<li>The values of meta parameters. Meta -parameters are specified by YText.</li>
+<li>The values of inherent parameters. Inherent are specified by YText.</li>
+<li>The rendering method which takes concept parameter realization as input and defines how to render this concept into a visual element.</li>
+</ol>
+<h3 id="concept-types">Concept Types <a href="#concept-types" class="anchor" aria-hidden="true">#</a></h3>
+<p>Concept types are pre-defined in YText. There are five concept types: group, structure, inline, support and abstract.
+Each concept type defines specifies a group of parameter prototype, which is called the inherent parameters of this concept type.
+Each concept type also defines a local grammar, namely what type of nodes can its children be.
+The detailed definition of each type will be discussed later, but here I breifly explain each type, to give you a intuiation about each type.</p>
+<ol>
+<li>A <strong>group</strong> node is a list of paragrahs, which is it self be seen as a whole.
+For examples a theorem in a mathmatics paper can be viewed as a group node. The <code>\item</code> element in LateX can also be viewed as a group.
+Group nodes can form series, in which the group nodes comes one after the other (I call this <strong>chaining</strong>),
+for example the <code>enumerate</code> environment in LateX.
+A proof comes right after a theorem in a mathmatics paper is also an example of chaining group nodes.</li>
+<li>A <strong>structure</strong> node consists of several Group nodes.
+A structure node should be rendered in a a different direction of the ordinary direction of the document.
+If the document is rendered from top to bottom, then a structure node renders from left to right. One line in a table is an example.</li>
+<li>An <strong>inline</strong> node is of the same position of text nodes, but with styles. The <code>&lt;strong&gt;</code> tag in HTML is an example.</li>
+<li>A <strong>support</strong> node is a visual element that does not contain text contents
+(or more generally, can only contain an empty text node as its child).
+Support nodes are the non-text visual elements in an article. For example figures, images, table lines.
+It can even be non-visualable to printer and just serve as an aid to editor.</li>
+<li>An <strong>abstract</strong> node is simply the root node of a tree.
+The word &ldquo;abstract&rdquo; comes from a machanism in YText which allows an article fissions into several in the middle,
+which we will dicuss detailly later.</li>
+</ol>
+<h3 id="meta-parameters">Meta Parameters <a href="#meta-parameters" class="anchor" aria-hidden="true">#</a></h3>
+<p>YText specified meta parameter prototype, which should be realized by every concept node. There are three values to be specified:</p>
+<ol>
+<li>force-block: If we force an element (mainly inline or support) to be rendered as a block in HTML.</li>
+<li>force-inline: If we force an element (mainly group, structure or support) to be rendered as an inline element in HTML.</li>
+<li>force-void: If we force an element to be uneditable (which is like support nodes).</li>
+</ol>
+<h3 id="first-class-concepts-and-second-class-concepts">First Class Concepts and Second Class Concepts <a href="#first-class-concepts-and-second-class-concepts" class="anchor" aria-hidden="true">#</a></h3>
+<p>As wise readers might have noticed, each concept node have two types of properties:
+those for defining intermediate trees and those for specifying how a node to rendered.
+Theoretically this might not be a problem, but technically, if a user of YText might not be the user of the editor:
+User A might use YText to develop a library, providing an implementation of the printer and editor,
+and provided it to user B who defines concepts and use them to write articles. Here problems occurs:
+when a library author leave users the freedom of defining their own concepts,
+they don&rsquo;t mean to let users write js code to define how to render the concept nodes.
+Therefore, the rendering part and the structure defining part of a concept must be splitted.
+To this end, each concept in YText is composed of two parts, I call them first class concepts and second class concepts.</p>
+<p>A first class concept, which should be provided by the library developer,
+specifies the concept type, a parameter prototype and the render function.
+A second class concept, which should be provided by the terminal user,
+specifies a first class concept and another parameter prototype
+and the <em>rule to convert second class parameters into first class parameters</em>.</p>
+<p>Generally speaking, a first class concept should be universal enough which has several &ldquo;slots&rdquo; and agnostic to second class concepts.
+The second class concept fill in those slots by inidcating first class parameters.</p>
+<h2 id="abstract">Abstract <a href="#abstract" class="anchor" aria-hidden="true">#</a></h2>
+<p>Each concept node has another property &ldquo;abstract&rdquo;, which is a list of abstract nodes (can be empty).
+As mentioned before, abstract nodes are roots of an intermediate tree.
+Therefore, the &ldquo;abstract&rdquo; property allows us to write a new article which ties at the current node.</p>
+<p>The use of abstract can be quite flexible. For example, it can be used to write footnotes and sidenotes
+(the way of rendering it is up to our implementation).
+It can also be used to fold too long or not important contents, like the proof of a theorem in a mathmatics paper,
+a supplementary figure, or a comment that breaks the coherency wherever it is placed in the main text.</p>
+<p>Notice that absract defines a new article, that has no difference with the original one, which means it can be as complecated,
+and the elements therein can also have abstracts. This mechanism allows a quite complex structure of an article, like a net.
+The structure of an article needs no longer to be linear. An article can be fissioned at the half and each goes to a complete article.</p>
+<h2 id="implementation">Implementation <a href="#implementation" class="anchor" aria-hidden="true">#</a></h2>
+<p>To use YText, a user need to specify three components: the implementation of editor, the implementation of printer,
+and the definition of concepts. However, a user might not want to write an editor from their own.
+To this end, YText provides a default implementation of editor and printer,
+for those who don&rsquo;t care about the implementation of editors and printers.</p>
+<p>The decomposing of editor, printer and concepts also means every component can be used in a plugin manner.
+A user can use the editor of imeplementation A of YText, and use printer of imeplementation B of YText,
+and define their own concepts.
+They can even combine different imeplementations,
+like using just a small component of imeplementation A and other parts of imeplementation B.</p>
+
+			<div class="page-footer-meta d-flex flex-column flex-md-row justify-content-between">
+				</div>
+			<div class="docs-navigation d-flex justify-content-between">
+	
+	<a href="/YText/docs/notes-in-chinese/intro/">
+			<div class="card my-1">
+				<div class="card-body py-2">
+					&larr; Introduction
+				</div>
+			</div>
+		</a>
+	<a class="ms-auto" href="/YText/docs/notes-in-chinese/mouseless/">
+			<div class="card my-1">
+				<div class="card-body py-2">
+					Mouseless &rarr;
+				</div>
+			</div>
+		</a>
+	</div>
+
+			
+		</main>
+	</div>
+
+      </div>
+    </div>
+    
+    
+    <footer class="footer text-muted">
+  <div class="container-xxl">
+    <div class="row">
+      <div class="col-lg-8 order-last order-lg-first">
+        <ul class="list-inline">
+          <li class="list-inline-item">Powered by <a class="text-muted" href="https://www.netlify.com/">Netlify</a>, <a class="text-muted" href="https://gohugo.io/">Hugo</a>, and <a class="text-muted" href="https://getdoks.org/">Doks</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-8 order-first order-lg-last text-lg-end">
+        <ul class="list-inline">
+          </ul>
+      </div>
+    </div>
+  </div>
+</footer>
+    
+
+<script src="/YText/js/bootstrap.min.8a4a3d8b214130d694b91942f330a0ec0c040217d0a2d422dd41c29176f49518f95cfb7846634f3b82e7fe358e0ba64b9b80263c759b07e85b7cc479c8875628.js" integrity="sha512-iko9iyFBMNaUuRlC8zCg7AwEAhfQotQi3UHCkXb0lRj5XPt4RmNPO4Ln/jWOC6ZLm4AmPHWbB&#43;hbfMR5yIdWKA==" crossorigin="anonymous" defer></script>
+  <script src="/YText/js/highlight.min.3f0a703c54cbed82ca277187e23cf2d272da28c15ce7e33cde685d40b53d741893d5b74d35bb2d20a81f56c289084f245bdd0c9145d39d7094d3dfbc62d1326a.js" integrity="sha512-PwpwPFTL7YLKJ3GH4jzy0nLaKMFc5&#43;M83mhdQLU9dBiT1bdNNbstIKgfVsKJCE8kW90MkUXTnXCU09&#43;8YtEyag==" crossorigin="anonymous" defer></script>
+  <script src="/YText/main.min.cb2e2ebbf2e4002f3117addc33582923b2b3ae5265c22944cd117ebec7abe61c170417c4506d7a0f8f0fc9053dfdf441421d53601ac467042ff3d06ec0ba07fa.js" integrity="sha512-yy4uu/LkAC8xF63cM1gpI7KzrlJlwilEzRF&#43;vser5hwXBBfEUG16D48PyQU9/fRBQh1TYBrEZwQv89BuwLoH&#43;g==" crossorigin="anonymous" defer></script>
+  <script src="https://fftyyy.github.io/YText/index.min.16b63cd12bf755694bd784855f5c7d19fe965ae51be07a68bfe6561972614fb9f0e908f33424beeb7d32ca4fbff2f8d7444e4b5bdbfdaeaa3a56e9ebee56475c.js" integrity="sha512-FrY80Sv3VWlL14SFX1x9Gf6WWuUb4Hpov&#43;ZWGXJhT7nw6QjzNCS&#43;630yyk&#43;/8vjXRE5LW9v9rqo6Vunr7lZHXA==" crossorigin="anonymous" defer></script>
+  
+    
+  </body>
+</html>

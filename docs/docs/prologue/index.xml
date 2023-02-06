@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Prologue on </title>
+    <link>https://fftyyy.github.io/YText/docs/prologue/</link>
+    <description>Recent content in Prologue on </description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Tue, 06 Oct 2020 08:48:45 +0000</lastBuildDate><atom:link href="https://fftyyy.github.io/YText/docs/prologue/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Introduction</title>
+      <link>https://fftyyy.github.io/YText/docs/prologue/introduction/</link>
+      <pubDate>Sun, 05 Feb 2023 23:16:03 -0500</pubDate>
+      
+      <guid>https://fftyyy.github.io/YText/docs/prologue/introduction/</guid>
+      <description>I believe articles are not barely texts, nor visual elements. Although our language is linear, words come one after another, we humen&amp;rsquo;s mind is far from linear, structures, branching, moods exist therein. Therefore I build YText, a text editor library that decouples the abstract structure and concrete visualization of an article.
+YText is composed of three major components:
+Editor, which allows one to edit the structure of an article without specifying how to render it.</description>
+    </item>
+    
+    <item>
+      <title>Get Started</title>
+      <link>https://fftyyy.github.io/YText/docs/prologue/getstarted/</link>
+      <pubDate>Sun, 05 Feb 2023 23:18:39 -0500</pubDate>
+      
+      <guid>https://fftyyy.github.io/YText/docs/prologue/getstarted/</guid>
+      <description>In this page, we show the basic usage of YText by creating a simple example project.
+Installation #Make sure you are in a React project and simply use npm to install YText:
+npm install @ftyyy/ytextand can import ytext in your code:
+import * from &amp;quot;@ftyyy/ytext&amp;quot;Use YText in your Project #In this section, we set up an example project to show how to use YText. There are three major steps: create concepts, create printer, and create editor.</description>
+    </item>
+    
+  </channel>
+</rss>
