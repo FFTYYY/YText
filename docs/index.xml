@@ -21,5 +21,23 @@
       <description></description>
     </item>
     
+    <item>
+      <title>Demo</title>
+      <link>https://fftyyy.github.io/YText/example/</link>
+      <pubDate>Tue, 06 Oct 2020 08:47:36 +0000</pubDate>
+      
+      <guid>https://fftyyy.github.io/YText/example/</guid>
+      <description>Here in this page I created a demo editor with a rather complete definition of concepts, where you can try the editor. The content is from a part of one of my blog posts on convex analysis (translated from Chinese).</description>
+    </item>
+    
+    <item>
+      <title>Full Reference</title>
+      <link>https://fftyyy.github.io/YText/nameref/</link>
+      <pubDate>Tue, 06 Oct 2020 08:47:36 +0000</pubDate>
+      
+      <guid>https://fftyyy.github.io/YText/nameref/</guid>
+      <description>See this page for a full reference of all names that are exported from YText.</description>
+    </item>
+    
   </channel>
 </rss>
