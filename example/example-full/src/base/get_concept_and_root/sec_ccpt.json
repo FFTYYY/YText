@@ -1,0 +1,361 @@
+{
+    "Proposition": {
+        "first": "昭言" , 
+        "type" : "group" , 
+        "fixed": {
+            "label": {
+                "val": "p=>p.category.val",
+                "type": "function"
+            } ,
+            "title": {
+                "val": "p=>p.category.val",
+                "type": "function"
+            },
+            "prefix": {
+                "val": "p=>p.alias.val",
+                "type": "function"
+            },
+            "ordering": {
+                "val": "bare",
+                "type": "string"
+            }
+        } , 
+        "default": {
+            "alias": {
+                "val": "",
+                "type": "string"
+            },
+            "category": {
+                "val": "Proposition",
+                "type": "string",
+                "choices": [
+                    "Theorem" ,
+                    "Lemma" ,
+                    "Corollary" ,
+                    "Assertion" , 
+                    "Proposition"
+                ]
+            }
+        }
+    } , 
+    "SubSection": {
+        "first": "昭言" , 
+        "type" : "group" , 
+        "fixed": {} , 
+        "default": {
+            "title": {
+                "val": "",
+                "type": "string"
+            }
+        }
+    } , 
+    "Item": {
+        "first": "昭言" , 
+        "type" : "group" , 
+        "fixed": {
+            "label": {
+                "val": "p=>p.name.val",
+                "type": "function"
+            } ,
+            "title": {
+                "val": "p=>p.name.val",
+                "type": "function"
+            },
+            "prefix": {
+                "val": "p=>p.alias.val",
+                "type": "function"
+            },
+            "ordering": {
+                "val": "list-chaining",
+                "type": "string"
+            }
+        } , 
+        "default": {
+            "alias": {
+                "val": "",
+                "type": "string"
+            },
+            "name": {
+                "val": "",
+                "type": "string"
+            }
+        }
+    } , 
+    "Proof": {
+        "first" : "随言" , 
+        "type" : "group" , 
+        "fixed": {
+            "label": {
+                "val": "Proof",
+                "type": "string"
+            },
+            "title": {
+                "val": "Proof",
+                "type": "string"
+            },
+            "close": {
+                "val": "■",
+                "type": "string"
+            },
+            "ordering": {
+                "val": "none",
+                "type": "string"
+            }
+          } , 
+        "default" : {}
+    }  , 
+    "List": {
+        "first" : "属言" , 
+        "type" : "group" , 
+        "fixed": {
+            "prefix": {
+                "val": "p=> (p.alias.val ? `(${p.alias.val})`: '') + (p.leading.val ? `${p.leading.val} `: '')   ",
+                "type": "function"
+            },
+            "label": {
+                "val": "List",
+                "type": "string"
+            },
+            "clustering": {
+                "val": true,
+                "type": "boolean"
+            },
+            "ordering": {
+                "val": "bare",
+                "type": "string"
+            }
+        } , 
+        "default" : {
+            "alias": {
+                "val": "",
+                "type": "string"
+            } , 
+            "leading": {
+                "val": "" , 
+                "type": "string"
+            }
+        }
+    }  , 
+    "Discuss": {
+        "first" : "属言" , 
+        "type" : "group" , 
+        "fixed": {
+            "label": {
+                "val": "Discuss",
+                "type": "string"
+            },
+            "clustering": {
+                "val": false,
+                "type": "boolean"
+            },
+            "ordering": {
+                "val": "discuss",
+                "type": "string"
+            }
+        } , 
+        "default" : {}
+    }  , 
+    "Quote": {
+        "first" : "裱示" , 
+        "type" : "group" , 
+        "fixed": {
+            "ordering": {
+                "val": "none",
+                "type": "string"
+            },
+            "label": {
+                "val": "Quote",
+                "type": "string"
+            } ,
+            "title": {
+                "val": "p=>p.enter.val" ,
+                "type": "function"
+            } ,
+            "close": {
+                "val": "p=>p.exit.val" ,
+                "type": "function"
+            }
+        } , 
+        "default" : {
+            "long": {
+                "val": false , 
+                "type": "boolean"
+            } ,
+            "enter": {
+                "val": "" ,
+                "type": "string" 
+            } , 
+            "exit": {
+                "val": "" , 
+                "type": "string"
+            }
+        }
+    }  , 
+    "BigQuote": {
+        "first" : "彰示" , 
+        "type" : "group" , 
+        "fixed": {
+            "label": {
+              "val": "BigQuote",
+              "type": "string"
+            }
+          } , 
+        "default" : {}
+    }  , 
+    "code": {
+        "first" : "格式" , 
+        "type" : "group" , 
+        "fixed": {
+            "label": {
+              "val": "code",
+              "type": "string"
+            }
+          } , 
+        "default" : {
+            "format": {
+                "val": "" ,
+                "type": "string"
+            }
+        }
+    }  , 
+    "strong": {
+        "first" : "强" , 
+        "type" : "inline" , 
+        "fixed": {
+            "label": {
+              "val": "strong",
+              "type": "string"
+            }
+          } , 
+        "default" : {}
+    }  , 
+    "strikethrough": {
+        "first" : "刊" , 
+        "type" : "inline" , 
+        "fixed": {
+            "label": {
+              "val": "strikethrough",
+              "type": "string"
+            }
+          } , 
+        "default" : {}
+    }  , 
+    "Link": {
+        "first" : "缀" , 
+        "type" : "inline" , 
+        "fixed": {
+            "label": {
+              "val": "Link",
+              "type": "string"
+            }
+          } , 
+        "default" : {
+            "type": {
+                "val": "internal" , 
+                "type": "string" , 
+                "choices": ["index", "outer-index", "http"]
+            } , 
+            "target": {
+                "val": "" , 
+                "type": "string"
+            } , 
+            "autotext": {
+                "val": false ,
+                "type": "boolean"
+            }
+        }
+    }  , 
+    "Image": {
+        "first" : "图" , 
+        "type" : "support" , 
+        "fixed": {
+            "label": {
+                "val": "Image",
+                "type": "string"
+            }
+        } , 
+        "default" : {
+            "target": {
+                "val": "",
+                "type": "string"
+            } , 
+            "width": {
+                "val": 10,
+                "type": "number"
+            } , 
+            "height": {
+                "val": -1,
+                "type": "number"
+            } , 
+            "type": {
+                "val": "internal" , 
+                "type": "string" , 
+                "choices": ["internal", "url"]
+            }
+        }
+    }  , 
+    "MathBlock": {
+        "first" : "数学" , 
+        "type" : "group" , 
+        "fixed": {} , 
+        "default" : {
+            "environ": {
+                "val": "align" , 
+                "type": "string"
+            } ,
+            "suffix": {
+                "val": "" , 
+                "type": "string"
+            }
+        }
+    }  , 
+    "MathInline": {
+        "first" : "数学" , 
+        "type" : "inline" , 
+        "fixed": {} , 
+        "default" : {}
+    } , 
+    "SectionLine": {
+        "first": "小节线" , 
+        "type" : "support" , 
+        "fixed": {} , 
+        "default" : {
+            "title": {
+                "val": "" , 
+                "type": "string" 
+            } , 
+            "alone": {
+                "val": false , 
+                "type": "boolean"
+            }
+        }
+    } , 
+    
+    "BottomLine": {
+        "first": "章节线" , 
+        "type" : "support" , 
+        "fixed": {} , 
+        "default" : {}
+    } , 
+    "TableLine": {
+        "first": "齐言" , 
+        "type" : "structure" ,
+        "fixed": {} , 
+        "default" : {
+            "label": {
+                "val" : "TableLine" , 
+                "type": "string"
+            } , 
+            "widths": {
+                "val": "1" , 
+                "type": "string"
+            }
+        }
+    } ,
+    "SideNotes": {
+        "first": "穆言" , 
+        "type" : "abstract" ,
+        "fixed": {} , 
+        "default" : {}
+    }
+}

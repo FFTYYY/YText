@@ -16,7 +16,6 @@ import {
 
 	EditorCore,
 	EditorComponent , 
-	default_editor_theme, 
 	GlobalInfo, 
 
 	DefaultEditorComponent ,

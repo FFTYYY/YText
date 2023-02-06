@@ -1,24 +1,13 @@
 {
-	"name": "@ftyyy/ytext",
-	"version": "0.0.16",
-	"files": [
-		"dist"
-	],
-	"main": "./dist/ytext.umd.js",
-	"types": "./dist/lib/index.d.js",
-	"module": "./dist/ytext.es.js",
-	"exports": {
-		".": {
-			"import": "./dist/ytext.es.js",
-			"require": "./dist/ytext.umd.js"
-		}
-	},
-	"scripts": {
-		"dev": "vite",
-		"build": "tsc && vite build",
-		"build-dev": "tsc && vite build --mode development",
-		"preview": "vite preview"
-	},
+  "name": "example-full",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
 	"dependencies": {
 		"@emotion/react": "^11.7.1",
 		"@emotion/styled": "^11.6.0",
