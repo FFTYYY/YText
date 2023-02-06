@@ -28,6 +28,7 @@
       
       <guid>https://fftyyy.github.io/YText/example/</guid>
       <description>Here in this page I created a demo editor with a rather complete definition of concepts, where you can try the editor. The content is from a part of one of my blog posts on convex analysis (translated from Chinese).
+(In this demo, can edit the content on the left part, and press ctrl+s to apply changes to the right part).
 The full project can be found here.</description>
     </item>
     
