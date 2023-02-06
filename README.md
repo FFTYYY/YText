@@ -8,7 +8,7 @@ YText doesn't have an explicit user interface, it is more like a collection of r
 
 [Here is a demonstration](https://fftyyy.github.io/YText/example/).
 
-
+### Installation
 
 To install:
 ```
