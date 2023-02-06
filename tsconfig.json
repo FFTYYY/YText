@@ -24,6 +24,6 @@
 		"entryPoints": [
 			"lib/index.tsx" , 
 		],
-		"out": "typedocs" , 
+		"out": "docs-proj/docs-proj/content/en/nameref/typedoc_doc" , 
 	} ,
 }
