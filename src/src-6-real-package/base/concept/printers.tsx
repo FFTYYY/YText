@@ -44,7 +44,7 @@ import {
 	get_default_structure_renderer , 
 
 	ReferenceContexter , 
-} from "../../../../lib"
+} from "@ftyyy/ytext"
 import {
 	PrinterRenderer , 
 	GroupNode , 
@@ -57,7 +57,7 @@ import {
     PrinterRenderFunction , 
 
 	ThemeContext , 
-} from "../../../../lib"
+} from "@ftyyy/ytext"
 
 import {
 	num2chinese  , 
@@ -164,6 +164,8 @@ var brightwords_printer = (()=>{
 			return <PrinterStructureBoxText inline>{inject_content}</PrinterStructureBoxText>
 		} , 
 		outer: (props) => {
+			let theme = React.useContext(ThemeContext)
+			console.log(theme)
 			return <PrinterPartBox subtitle_like>{props.children}</PrinterPartBox>
 		} , 
 	})

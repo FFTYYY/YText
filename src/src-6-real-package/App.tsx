@@ -12,6 +12,9 @@ import {
 	Container, 
 	Typography, 
 	Card , 
+
+	ThemeProvider as MUIThemeProvider , 
+	createTheme as MUIcreateTheme , 
 } from "@mui/material"
 
 import {
@@ -44,7 +47,7 @@ import {
 	Theme , 
 	ThemeProvider , 
 	default_theme , 
-} from "../../lib"
+} from "@ftyyy/ytext"
 
 import * as Slate from "slate"
 import * as SlateReact from "slate-react"
@@ -64,9 +67,12 @@ import { FileManageButton , UploadFileButton } from "./buttons/manage_files"
 import { BackendEdit , NodeStructEdit , NodeStructEditShallow , NodeView} from "./buttons/edit_others"
 import { parse_second_concepts } from "./base/utils"
 import { MathJaxContext } from "./base/construction"
-import CssBaseline from '@mui/material/CssBaseline';
+import CssBaseline from '@mui/material/CssBaseline'
 import {get_root, get_ccpt} from "./base/get_concept_and_root/get_root_and_sec_ccpt"
+import { createTheme } from "@mui/material"
 
+import "overlayscrollbars/overlayscrollbars.css"
+import { OverlayScrollbars } from "overlayscrollbars"
 let default_tree = {
 	type: "abstract" as "abstract" ,
 	concept: "root" , 
@@ -226,7 +232,9 @@ class App extends  React.Component<{}, {
 		let me = this
 		let MainPart = this.mainpart.bind(this)
 
-		return <ThemeProvider value={my_theme}><CssBaseline /><Box sx={{
+		console.log("render main")
+
+		return <MUIThemeProvider theme={MUIcreateTheme(my_theme.mui)}><CssBaseline /><ThemeProvider value={my_theme} mui><Box sx={{
 			position: "absolute" , 
 			top: "2%" ,
 			left: "1%" , 
@@ -257,7 +265,7 @@ class App extends  React.Component<{}, {
 				height: "100%" , 
 			}}/>
 			
-		</Box></ThemeProvider>
+		</Box></ThemeProvider></MUIThemeProvider>
 	}
 
 }

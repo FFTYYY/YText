@@ -1,4 +1,4 @@
-import { Theme } from "../../../lib"
+import { Theme } from "@ftyyy/ytext"
 export { my_theme }
 
 const my_theme: Theme = {
