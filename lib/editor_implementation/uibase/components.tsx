@@ -124,7 +124,7 @@ const EditorComponentPaper = (props: PaperProps & {is_inline?: boolean, componen
     let theme = React.useContext(ThemeContext)
 
     return <CONT 
-        elevation = {net_level}
+        elevation = {net_level + 2}
         square 
         {...other_props} // 去掉自己定义的属性。
         sx = {[
@@ -167,16 +167,17 @@ const EditorComponentBox = (props: BoxProps) => {
 }
 
 /** 包裹整个编辑器的纸张。 */
-const EditorBackgroundPaper = (props: PaperProps) => <Paper 
+const EditorBackgroundPaper = (props: PaperProps) => <Box 
     elevation = {0}
     variant = "outlined"
-    square 
+    // square 
     {...props}
     sx = {[
         {
+            border: "1px solid" , 
             width: "100%" , 
             height: "100%" , 
-            overflow: "hidden" ,         
+            overflow: "hidden" , 
         },
         ...(Array.isArray(props.sx) ? props.sx : [props.sx]) , 
     ]}

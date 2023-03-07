@@ -12,6 +12,9 @@ import {
 	Container, 
 	Typography, 
 	Card , 
+	ThemeProvider as MUIThemeProvider , 
+	createTheme as MUIcreateTheme , 
+
 } from "@mui/material"
 
 import {
@@ -226,7 +229,7 @@ class App extends  React.Component<{}, {
 		let me = this
 		let MainPart = this.mainpart.bind(this)
 
-		return <ThemeProvider value={my_theme}><CssBaseline /><Box sx={{
+		return <MUIThemeProvider theme={MUIcreateTheme(my_theme.mui)}><ThemeProvider value={my_theme}><CssBaseline /><Box sx={{
 			position: "absolute" , 
 			top: "2%" ,
 			left: "1%" , 
@@ -257,7 +260,7 @@ class App extends  React.Component<{}, {
 				height: "100%" , 
 			}}/>
 			
-		</Box></ThemeProvider>
+		</Box></ThemeProvider></MUIThemeProvider>
 	}
 
 }

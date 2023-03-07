@@ -4,27 +4,29 @@ export { my_theme }
 const my_theme: Theme = {
     mui:{
         palette: {
-            divider: "#eeeeee" , 
-            mode: "dark",
+            divider: "#060606" , 
+            mode: "light",
             primary: {
-                main: '#aeaef5',
+                main: "#404080",
+            },
+            info: {
+                main: "#666677",
             },
             secondary: {
-                main: '#cb3f75',
+                main: "#8080AA",
             },
             background: {
-                default: 'rgba(35,35,48,0.98)',
-                paper: '#393942',
+                default: "rgba(220,220,220,0.96)",
+                paper: "rgba(208,210,213,1)",
             },
             text: {
-                primary: '#ffffff',
-                secondary: 'rgba(255,255,255,0.71)',
-                disabled: 'rgba(255,255,255,0.5)',
+                primary     : "#020202",
+                secondary   : "rgba(6,6,6,0.70)" , 
+                disabled    : "rgba(6,6,6,0.5)",
             },
-        },    
+        },
     } , 
     printer: {
-
         margins: {
             paragraph: "0.4rem" ,  
             special: "1.0rem" ,  
@@ -34,19 +36,29 @@ const my_theme: Theme = {
         fonts: {
             body: {
                 fontFamily: "STXihei" , 
+                fontSize: "1.0rem" ,
+                lineHeight: "1.5rem" , 
             },
             title: {
                 fontFamily: "SimHei" , 
+                fontSize: "1.0rem" ,
+                lineHeight: "1.5rem" , 
             } , 
             structure: {
                 fontFamily: "SimHei" , 
+                fontSize: "1.0rem" ,
+                lineHeight: "1.5rem" , 
             } , 
             display: {
                 fontFamily: "KaiTi" , 
+                fontSize: "1.1rem" ,
+                lineHeight: "1.5rem" , 
             } , 
             weaken: {
                 fontFamily: "FangSong" , 
+                fontSize: "1.0rem" ,
+                lineHeight: "1.5rem" , 
             }
         } , 
-    } , 
+    }
 }
