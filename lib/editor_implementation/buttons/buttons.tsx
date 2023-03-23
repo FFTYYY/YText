@@ -42,7 +42,7 @@ import {
     EditorComponent , 
     slate_concept_node2path , 
 } from "../../editor"
-import { AutoTooltip , Direction , AutoStack , AutoStackedPopper , AutoStackedPopperProps } from "../uibase"
+import { AutoTooltip , Direction , AutoStack , AutoStackedPopper , AutoStackedPopperProps } from "../../uibase"
 import { DefaultParameterWithEditorWithDrawer } from "./parameter_edit" 
 
 import {

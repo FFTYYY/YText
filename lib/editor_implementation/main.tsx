@@ -9,20 +9,12 @@ import {
     AccordionSummary , 
     Toolbar , 
     Typography , 
-    IconButton , 
     Button , 
     Box , 
     Paper ,
     Divider , 
     Popover , 
 } from "@mui/material"
-import {
-    CalendarViewDay as CalendarViewDayIcon , 
-    CloseFullscreen as CloseFullscreenIcon , 
-    Coffee as CoffeeIcon , 
-    Settings as SettingsIcon , 
-    QrCode as QrCodeIcon , 
-} from "@mui/icons-material"
 
 import * as Slate from "slate"
 import * as SlateReact from "slate-react"
@@ -51,7 +43,7 @@ import {
     AutoTooltip , 
     AutoStackedPopper , 
     AutoStackButtons , 
-} from "./uibase"
+} from "../uibase"
 import {
     object_foreach , 
     merge_object ,
@@ -68,8 +60,10 @@ import {
 import { 
     EditorBackgroundPaper , 
     EditorComponentEditingBox  ,
-    ScrollBarBox , 
 } from "./uibase"
+import { 
+    ScrollBarBox , 
+} from "../uibase"
 
 import {
     DefaultSidebar , 

@@ -7,7 +7,7 @@ import React, { ReactFragment } from "react"
 
 import {
     ScrollBarBox , 
-} from "./scroll"
+} from "../../uibase/scroll"
 
 import {
     Typography , 

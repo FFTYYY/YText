@@ -42,7 +42,7 @@ import {
     AutoStack , 
     AutoTooltip , 
     Direction  , 
-} from "./uibase"
+} from "../uibase"
 import {  
     DefaultCloseButton , 
     DefaultParameterEditButton , 

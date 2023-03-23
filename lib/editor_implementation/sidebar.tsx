@@ -34,8 +34,10 @@ import {
     AutoStackedPopperWithButton , 
 } from "./buttons"
 import { 
-    AutoStackButtons, ScrollBarBox , 
-} from "./uibase"
+    AutoStackButtons, 
+    ScrollBarBox , 
+    TextIcon , 
+} from "../uibase"
 import {
     MouselessElement , 
     DirectionKey, 
@@ -174,10 +176,10 @@ function DefaultSidebar(props: {
     let extra = props.extra ? props.extra(editor) : []
 
     let icons = {
-        group: CalendarViewDayIcon , 
-        inline: CloseFullscreenIcon , 
-        support: CoffeeIcon , 
-        structure: QrCodeIcon , 
+        group: ((props)=><TextIcon {...props} text="组" />), 
+        inline: ((props)=><TextIcon {...props} text="行" />) , 
+        support: ((props)=><TextIcon {...props} text="支" />) , 
+        structure: ((props)=><TextIcon {...props} text="结" />) , 
     }
 
     let refs = {

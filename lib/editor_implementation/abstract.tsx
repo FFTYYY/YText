@@ -22,7 +22,7 @@ import {
     ArrowRightAlt as ArrowRightAltIcon
 } from "@mui/icons-material"
 
-import { AutoTooltip , ForceContain , AutoStackedPopper } from "./uibase"
+import { AutoTooltip , ForceContain , AutoStackedPopper } from "../uibase"
 import {
     ConceptNode , 
     AllNodeTypes , 

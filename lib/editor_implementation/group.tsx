@@ -62,7 +62,7 @@ import {
     DefaultEditAbstractButton , 
 } from "./abstract"
 
-import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "./uibase"
+import { AutoTooltip  , AutoStack , Direction , SimpleAutoStack , AutoStackedPopper} from "../uibase"
 import { 
     EditorComponentPaper as ComponentPaper , 
     EditorParagraphBox as ParagraphBox , 
@@ -71,9 +71,10 @@ import {
     EditorUnselecableBox as UnselecableBox , 
     EditorComponentBox as ComponentBox , 
     EditorStructureTypography as StructureTypography , 
-
-    ScrollBarBox , 
 } from "./uibase"
+import { 
+    ScrollBarBox , 
+} from "../uibase"
 
 import {
     ButtonGroup , 

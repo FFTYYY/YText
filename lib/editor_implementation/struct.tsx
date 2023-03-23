@@ -59,7 +59,7 @@ import {
     Direction , 
     SimpleAutoStack , 
     AutoStackedPopper
-} from "./uibase"
+} from "../uibase"
 
 import { 
     EditorComponentPaper as ComponentPaper , 

@@ -36,7 +36,7 @@ import {
     Direction , 
     AutoStack , 
     AutoStackedPopper 
-} from "../uibase"
+} from "../../uibase"
 import { 
     Tooltip , 
     IconButton , 

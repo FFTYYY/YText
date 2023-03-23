@@ -2,7 +2,7 @@
  * 
  * @module
 */
-// TODO 这个组件定义在editor_implementation中，但是printer的滚动方法却依赖之
+// XXX 这个组件定义在editor_implementation中，但是printer的滚动方法却依赖之
 
 import React from "react"
 import {
@@ -12,7 +12,7 @@ import {
 import {
     GlobalInfo , 
     GlobalInfoProvider , 
-} from "../../core"
+} from "../core"
 import "overlayscrollbars/overlayscrollbars.css"
 import { OverlayScrollbars } from "overlayscrollbars"
 
