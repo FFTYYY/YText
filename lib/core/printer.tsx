@@ -263,82 +263,12 @@ class Printer{
         
         return final_parameters
     }
-}
-
-/** 这是印刷器组件的Props类型。 */
-interface PrinterComponentProps {
-    printer: Printer
-    root: AbstractNode 
-    init_env?: Env
-
-    onUpdateCache?: (cache: PrinterCache)=>void
-}
-
-/** 这个类定义印刷器的组件。印刷器组件和印刷器（核心）是分开的，组件只负责绘制，而不储存任何信息，印刷器只负责储存信息，而不负责
- * 绘制。在使用时，将印刷器和节点树一起传入印刷器组件来印刷文章。
- */
-class PrinterComponent extends React.Component<PrinterComponentProps>{
-
-    idx2path: {[idx: number]: number[]}
-    path_refs: {[path_str: string]: React.RefObject<HTMLDivElement>} // 如果写 HTMLDivElement | SpanElement则div会报错，事儿真多。
-
-    constructor(props:PrinterComponentProps){
-        super(props)
-
-        this.path_refs = {}
-        this.idx2path = {} // 将idx映射成path，每渲染一次就会更改一次。
-                            // XXX 其实正确的写法是在componentDidUpdate / componentDidMount里更改，但是我懒得写了，就这样反正也是对的。
-    }
-
-    get_printer(){
-        return this.props.printer
-    }
-
-    /** 这个函数为渲染时提供用来绑定的ref对象。如果对象不存在会自动创建。 */
-    bind_ref(path: number[]){
-        let path_str = JSON.stringify(path)
-        if(!this.path_refs[path_str]){
-            this.path_refs[path_str] = React.createRef()
-        }
-        return this.path_refs[path_str]
-    }
-
-    get_ref(path: number[]){
-        let path_str = JSON.stringify(path)
-        if(this.path_refs[path_str] && this.path_refs[path_str].current){
-            return this.path_refs[path_str].current
-        }
-        return undefined
-    }
-
-    get_ref_from_idx(idx: number){
-        if(this.idx2path[idx] == undefined){
-            return undefined
-        }
-        return this.get_ref(this.idx2path[idx])
-    }
-
-    scroll_to_idx(idx: number){ 
-        if(this.idx2path[idx] == undefined){
-            return
-        }
-        this.scroll_to(this.idx2path[idx])
-    }
-    
-    scroll_to(path: number[]){ // XXX 似乎有些时候不会滚动到正确的位置...
-        let component = this.get_ref(path)
-        if(!component){
-            return 
-        }
-        component.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"})
-    }
 
     /**这个函数在印刷之前生成环境和上下文。 */
-    preprocess({root, init_env}:{root?: AbstractNode, init_env?: Env} = {}): [Env , {[path: string]: Context} , {[path: string]: ProcessedParameterList}, PrinterCache]{
+    preprocess({root, init_env}:{root: AbstractNode, init_env?: Env}): [Env , {[path: string]: Context} , {[path: string]: ProcessedParameterList}, PrinterCache]{
         let me = this 
-        let printer = me.props.printer
-        root = root || me.props.root
-        init_env = init_env || me.props.init_env || {}
+        let printer = me
+        init_env = init_env || {}
 
         /** 这个函数递归地检查整个节点树，并让每个节点对环境做处理。最终的结果被记录在全局变量中。 
          * @param nowenv 当前的环境。
@@ -431,6 +361,81 @@ class PrinterComponent extends React.Component<PrinterComponentProps>{
             break // TODO 目前没有实现多次遍历，而是只有一次。
         }
         return [env , all_contexts , all_parameters, all_caches]
+    }
+    
+}
+
+/** 这是印刷器组件的Props类型。 */
+interface PrinterComponentProps {
+    printer: Printer
+    root: AbstractNode 
+    init_env?: Env
+
+    onUpdateCache?: (cache: PrinterCache)=>void
+}
+
+/** 这个类定义印刷器的组件。印刷器组件和印刷器（核心）是分开的，组件只负责绘制，而不储存任何信息，印刷器只负责储存信息，而不负责
+ * 绘制。在使用时，将印刷器和节点树一起传入印刷器组件来印刷文章。
+ */
+class PrinterComponent extends React.Component<PrinterComponentProps>{
+
+    idx2path: {[idx: number]: number[]}
+    path_refs: {[path_str: string]: React.RefObject<HTMLDivElement>} // 如果写 HTMLDivElement | SpanElement则div会报错，事儿真多。
+
+    constructor(props:PrinterComponentProps){
+        super(props)
+
+        this.path_refs = {}
+        this.idx2path = {} // 将idx映射成path，每渲染一次就会更改一次。
+                            // XXX 其实正确的写法是在componentDidUpdate / componentDidMount里更改，但是我懒得写了，就这样反正也是对的。
+    }
+
+    get_printer(){
+        return this.props.printer
+    }
+
+    /** 这个函数为渲染时提供用来绑定的ref对象。如果对象不存在会自动创建。 */
+    bind_ref(path: number[]){
+        let path_str = JSON.stringify(path)
+        if(!this.path_refs[path_str]){
+            this.path_refs[path_str] = React.createRef()
+        }
+        return this.path_refs[path_str]
+    }
+
+    get_ref(path: number[]){
+        let path_str = JSON.stringify(path)
+        if(this.path_refs[path_str] && this.path_refs[path_str].current){
+            return this.path_refs[path_str].current
+        }
+        return undefined
+    }
+
+    get_ref_from_idx(idx: number){
+        if(this.idx2path[idx] == undefined){
+            return undefined
+        }
+        return this.get_ref(this.idx2path[idx])
+    }
+
+    scroll_to_idx(idx: number){ 
+        if(this.idx2path[idx] == undefined){
+            return
+        }
+        this.scroll_to(this.idx2path[idx])
+    }
+    
+    scroll_to(path: number[]){ // XXX 似乎有些时候不会滚动到正确的位置...
+        let component = this.get_ref(path)
+        if(!component){
+            return 
+        }
+        component.scrollIntoView({behavior: "smooth", block: "center", inline: "nearest"})
+    }
+
+    preprocess({root, init_env}:{root?: AbstractNode, init_env?: Env} = {}): [Env , {[path: string]: Context} , {[path: string]: ProcessedParameterList}, PrinterCache]{
+        let printer = this.props.printer
+        return printer.preprocess({root: root || this.props.root, init_env: init_env || this.props.init_env})
     }
     
     /** 这个函数渲染一个子节点。 */

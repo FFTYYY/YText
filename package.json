@@ -1,6 +1,6 @@
 {
 	"name": "@ftyyy/ytext",
-	"version": "0.0.22",
+	"version": "0.0.23",
 	"files": [
 		"dist"
 	],
@@ -16,7 +16,7 @@
 	"scripts": {
 		"dev": "vite",
 		"build": "tsc && vite build",
-		"build-dev": "tsc && vite build --mode development",
+		"build-dev": "tsc && vite build --mode development", 
 		"preview": "vite preview"
 	},
 	"dependencies": {
