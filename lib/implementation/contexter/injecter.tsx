@@ -67,13 +67,13 @@ class InjectContexter<NodeType extends Node = Node, InfoType = any> extends Cont
         }
         return e[this.infokey]
     }
-    enter(node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): void {
+    enter(node: Readonly<NodeType>, path: Readonly<number[]>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): void {
         let e = this.get_subenv(env)
         let theinfo = this.preinfo({node,parameters,env,context})
         if(theinfo != undefined)
             e.push( theinfo )
     }
-    exit(node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): [PrinterCacheItem, boolean] {
+    exit(node: Readonly<NodeType>, path: Readonly<number[]>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): [PrinterCacheItem, boolean] {
         let e = this.get_subenv(env)
         let theinfo = this.aftinfo({node,parameters,env,context})
         if(theinfo != undefined)
@@ -131,7 +131,7 @@ class ConsumerContexter<NodeType extends Node = Node , InfoType = any> extends C
         return context[this.key][this.infokey]
     }
 
-    enter(node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): void {
+    enter(node: Readonly<NodeType>, path: Readonly<number[]>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): void {
         let info = [...this.get_subenv(env)] // 复制已有的信息。其实不用这么写，不过也无所谓吧。
         this.set_subenv(env , []) // 删除已经吃到的信息。
         this.set_context(context , info)

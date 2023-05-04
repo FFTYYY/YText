@@ -30,13 +30,13 @@ class OrderContexter<NT = Node> extends ContexterBase<NT , number , {[order_key:
         this.order_key = order_key
     }
 
-    enter(node: Readonly<NT> , parameters: Readonly<ProcessedParameterList> , env: Env , context: Context){
+    enter(node: Readonly<NT> , path: Readonly<number[]>, parameters: Readonly<ProcessedParameterList> , env: Env , context: Context){
         let e = this.get_env(env)
         e[this.order_key] = e[this.order_key] || 0 // 初始化这一项的排序
         e[this.order_key] ++
         this.set_context(context , e[this.order_key])
     }
-    exit(node: Readonly<NT> , parameters: Readonly<ProcessedParameterList> , env: Env , context: Context): [PrinterCacheItem , boolean]{
+    exit(node: Readonly<NT> , path: Readonly<number[]>, parameters: Readonly<ProcessedParameterList> , env: Env , context: Context): [PrinterCacheItem , boolean]{
         return [{} , true]
     }
 }

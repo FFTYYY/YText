@@ -31,7 +31,7 @@ class ReferenceContexter<NodeType extends Node = Node> extends ContexterBase<Nod
         this.get_reference = get_reference
     }
 
-    exit(node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): [PrinterCacheItem, boolean] {
+    exit(node: Readonly<NodeType>, path: Readonly<number[]>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context): [PrinterCacheItem, boolean] {
         let cache_val = this.get_reference({node,parameters,env,context})
         return [{[this.key]: cache_val} , true]
     }

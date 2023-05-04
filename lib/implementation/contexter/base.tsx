@@ -61,10 +61,22 @@ class ContexterBase<NodeType = Node, ContextType = any, EnvType = any>{
     }
 
     /** 进入时操作。子类需要重写这个函数。 */
-    enter(node: Readonly<NodeType> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context){}
+    enter(
+        node: Readonly<NodeType> , 
+        path: Readonly<number[]>, 
+        parameters: Readonly<ProcessedParameterList>, 
+        env: Env , 
+        context: Context , 
+    ){}
     
     /** 退出时操作。子类需要重写这个函数。 */
-    exit(node: Readonly<NodeType> , parameters: Readonly<ProcessedParameterList>, env: Env , context: Context): [PrinterCacheItem, boolean]{
+    exit(
+        node: Readonly<NodeType> , 
+        path: Readonly<number[]>, 
+        parameters: Readonly<ProcessedParameterList>, 
+        env: Env , 
+        context: Context , 
+    ): [PrinterCacheItem, boolean]{
         return [{} , true]
     }
 

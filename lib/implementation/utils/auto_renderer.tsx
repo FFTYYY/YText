@@ -36,20 +36,32 @@ function auto_renderer<NodeType extends Node = Node>({
     render_function_as_property?: NodeType extends AbstractNode ? PrinterRenderFunction<NodeType> : never
 }): PrinterRenderer<NodeType>{
     return new PrinterRenderer({
-        enter: (node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context)=>{
+        enter: (
+            node: Readonly<NodeType>, 
+            path: Readonly<number []>, 
+            parameters: Readonly<ProcessedParameterList>, 
+            env: Env, 
+            context: Context , 
+        )=>{
             for(let cer of contexters){
                 let contexter = cer({node , parameters , env , context}) // 创建contexter
                 
-                contexter.enter(node,parameters,env,context)
+                contexter.enter(node,path,parameters,env,context)
             }
         } , 
-        exit: (node: Readonly<NodeType>, parameters: Readonly<ProcessedParameterList>, env: Env, context: Context)=>{
+        exit: (
+            node: Readonly<NodeType>, 
+            path: Readonly<number []>, 
+            parameters: Readonly<ProcessedParameterList>, 
+            env: Env, 
+            context: Context , 
+        )=>{
             let cache = {}
             let flag = true
             for(let cer of contexters){
                 let contexter = cer({node , parameters , env , context}) // 创建contexter
 
-                let [subcache , subflag] = contexter.exit(node,parameters,env,context)
+                let [subcache , subflag] = contexter.exit(node,path,parameters,env,context)
                 cache = {...cache , ...(subcache || {})} // 合并cache和cache
                 flag = flag && subflag
             }

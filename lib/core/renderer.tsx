@@ -43,6 +43,7 @@ type ProcessedParameterList = {[key: string]: any}
 /** 进入时操作。注意，这个操作应是原地操作。 */
 type PrinterEnterFunction<NodeType extends Node = Node> = (
     node: Readonly<NodeType>, 
+    path: Readonly<number []> , 
     parameters: Readonly<ProcessedParameterList>, 
     env_draft: Env, 
     context_draft: Context
@@ -50,7 +51,8 @@ type PrinterEnterFunction<NodeType extends Node = Node> = (
 
 /** 离开时操作。 注意，这操作应是原地操作。*/
 type PrinterExitFunction<NodeType extends Node = Node> = (
-    node: Readonly<NodeType>, 
+    node: Readonly<NodeType> , 
+    path: Readonly<number []> , 
     parameters: Readonly<ProcessedParameterList>, 
     env_draft: Env, 
     context_draft: Context
@@ -110,8 +112,8 @@ class PrinterRenderer<NodeType extends Node = Node>{
         renderer: PrinterRenderFunction<NodeType> ,
         renderer_as_property?: NodeType extends AbstractNode ? PrinterRenderFunction<NodeType> : never , 
     }){
-        this.enter = funcs.enter || ((n,p,e,c)=>{})
-        this.exit = funcs.exit || ((n,p,e,c)=>[{}, true])
+        this.enter = funcs.enter || (()=>{})
+        this.exit = funcs.exit || (()=>[{}, true])
         this.renderer = funcs.renderer
 
         this.renderer_as_property = funcs.renderer_as_property

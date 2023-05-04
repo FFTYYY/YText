@@ -316,7 +316,7 @@ class Printer{
             // ([nowenv , nowcontext] = produce([nowenv , nowcontext] , ([e,c])=>{
             //     renderer.enter(node , my_parameters , e , c)
             // }))
-            renderer.enter(node , my_parameters , nowenv , nowcontext)
+            renderer.enter(node , path , my_parameters , nowenv , nowcontext)
 
             // 然后让所有子节点操作环境。
             if (! is_textnode(node)){ // 还有子节点
@@ -338,7 +338,7 @@ class Printer{
             //     let [flag2 , cache] = renderer.exit(node , my_parameters , e , c)
             //     flag = flag && flag2
             // }))
-            let [cache, flag2] = renderer.exit(node , my_parameters , nowenv , nowcontext)
+            let [cache, flag2] = renderer.exit(node , path , my_parameters , nowenv , nowcontext)
             flag = flag && flag2
 
 
