@@ -9,7 +9,7 @@ import * as C from "./constraints"
 export { withAllPlugins}
 
 let plugins = [ 
-    C.set_force_sectioner ,
+   //  C.set_force_sectioner ,
     C.set_style_ensure_parameters , 
 ]
 

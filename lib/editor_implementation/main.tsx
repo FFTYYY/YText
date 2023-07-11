@@ -198,12 +198,13 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
                     }
                     return <AutoStack force_direction="column">
                         <DefaultRootParameterEditButton root={root} editor={editor}/>
-                        {me.props.extra_buttons}
                         <Divider />
                         <DefaultSidebar 
                             editor = {me.get_editor()}
                             extra = {me.props.sidebar_extra}
                         />
+                        {me.props.extra_buttons?.length > 0 ? <Divider /> : <></>}
+                        {me.props.extra_buttons}
                     </AutoStack>
                 })()}</Box>
             </KeyEventManager>

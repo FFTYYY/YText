@@ -115,7 +115,7 @@ function get_deafult_group_editor_with_appbar({
     surrounder      ?: (props: EditorButtonInformation & {children: any}) => any ,
 }): EditorRenderer<GroupNode>{
     // 渲染器
-    return (props: EditorRendererProps<Slate.Node & GroupNode>) => {
+    let subcomp = (props: EditorRendererProps<Slate.Node & GroupNode>) => {
         let editor      = React.useContext(GlobalInfo).editor as EditorComponent
         let node        = props.node
         let parameters  = editor.get_core().get_printer().process_parameters(node)
@@ -156,6 +156,7 @@ function get_deafult_group_editor_with_appbar({
             </AutoStack>
         </GroupPaper>
     }
+    return React.memo(subcomp)
 }
 
 /** 这个函数返回一个默认的group组件，但是各种选项等都被折叠在右侧的一个小按钮内。用于比较小的group。

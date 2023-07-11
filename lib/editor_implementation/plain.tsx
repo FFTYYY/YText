@@ -56,7 +56,7 @@ function get_default_editors(): {[key in AllNodeTypes]: EditorRenderer}{
         "support"   : get_default_support_editor() , 
         "abstract"  : (props) => <Box>{props.children}</Box> , 
         "paragraph" : (props) => <ParagraphBox>{props.children}</ParagraphBox> , 
-        "text"      : (props) => <span>{props.children}</span> , 
+        "text"      : (props) => <span>{props.children}</span>, 
     }
 }
 

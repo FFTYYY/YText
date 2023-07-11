@@ -387,7 +387,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
                             Slate.createEditor() as SlateReact.ReactEditor
                         ) 
                     )
-                )
+                ) 
             ), 
             root_children: props.init_rootchildren || default_root_children , 
             root_property: props.init_rootproperty || default_root_but_children , 
@@ -495,9 +495,11 @@ class EditorComponent extends React.Component<EditorComponentProps , {
         }
 
         if(isinline){
-            return <span {...slate_attributes}><R {...subprops}/></span>
+            return <span {...slate_attributes}><R {...subprops} /></span>
         }
-        return <div {...slate_attributes}><R {...subprops}/></div>
+        // return <div {...slate_attributes}><R {...subprops}/></div>
+        return <div {...slate_attributes}><R {...subprops} /></div>
+        
     }
 
     renderLeaf(props: SlateReact.RenderLeafProps){
