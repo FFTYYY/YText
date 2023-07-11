@@ -45,12 +45,14 @@ import {
     EditorPlugin , 
     with_ytext_plugins , 
     set_normalize_status , 
+    get_normalize_status , 
 } from "./plugins"
 
 import {
     tree_op_mixin
 } from "./treeopmixin"
 import { UnexpectedParametersError } from "../exceptions"
+import { BorderColor } from "@mui/icons-material"
 
 export {
     EditorComponent , 
@@ -354,6 +356,7 @@ class EditorComponent extends React.Component<EditorComponentProps , {
     slate: SlateReact.ReactEditor
     root_property: Omit<AbstractNode , "children">
     root_children: (SlateReact.ReactEditor & AbstractNode)["children"]
+
 }>{
     
     // update_debounce: DoSomething<Slate.Node[]> // XXX 见contructor()结尾
@@ -531,7 +534,6 @@ class EditorComponent extends React.Component<EditorComponentProps , {
         }
         
         let root_children = this.state.root_children
-
         return <GlobalInfoProvider value={context}>
             <SlateReact.Slate 
                 editor = {slate} 
@@ -551,14 +553,20 @@ class EditorComponent extends React.Component<EditorComponentProps , {
                     renderElement = {me.renderElement.bind(me)}
                     renderLeaf    = {me.renderLeaf.bind(me)}
                     onClick       = {e=>{me.onFocusChange()}}
-    
+
+                    /**
+                     * TODO：应该这样处理Copy / Cut & Paste：
+                     * 在Copy或者Cut时，阻止原生事件，然后获得slate.selection，
+                     * 然后获得selection的节点，将其字符串化之后存到粘贴板中。
+                     * 
+                     * 粘贴时，从粘贴板中获得字符串化的节点并插入。
+                     */
                     onCopy = {(e)=>{
                         return true // 虽然不知道是什么原理，但是返回`true`会使得`slate`只向粘贴板中输入文本。
                     }}
 
-                    onPaste = {()=>{
+                    onPaste = {(e)=>{
                         set_normalize_status({pasting: true})
-                        return false
                     }}
     
                     onKeyDown   = {e=>me.onKeyDown(e)}

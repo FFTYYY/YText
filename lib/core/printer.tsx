@@ -146,7 +146,7 @@ class Printer{
      * 如果没有找到，就返回`undefined`。
      */
     get_second_concept(type: AllConceptTypes, name: string): SecondClassConcept | undefined{
-        return this.secondClassConcepts[type][name]
+        return this.secondClassConcepts?.[type]?.[name]
     }
     /** 查询一个一级概念。
      * @param type 查找的节点类型。

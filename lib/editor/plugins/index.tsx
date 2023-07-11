@@ -44,7 +44,7 @@ let plugins: EditorPlugin[] = [
     constraint_inline_children , 
     constraint_struct_children , 
     constraint_paragraph_children , 
-    constraint_paste , 
+    // constraint_paste , // 不要把这个作为一个plugin
     constraint_relation ,
     constraint_abstract , 
     constraint_parameters , 

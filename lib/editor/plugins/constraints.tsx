@@ -37,6 +37,7 @@ export {
 
 /** 这个插件要求所有节点的`idx`互不相同。
  * 为了效率，只在复制粘贴时开启检查（因为只有粘贴可能导致此问题）。
+ * TODO 已废弃
  */
 function constraint_paste(editor: EditorComponent , slate: SlateReact.ReactEditor): SlateReact.ReactEditor{
     const normalizeNode = slate.normalizeNode
@@ -48,17 +49,26 @@ function constraint_paste(editor: EditorComponent , slate: SlateReact.ReactEdito
             return 
         }
 
-        let idxs = {}
-        for(let [node,path] of Slate.Node.descendants(slate)){
-            if(!slate_is_concept(node)){
-                continue
-            }
-            if(idxs[node.idx]){
-                editor.set_node(node , {idx: editor.get_core().gene_idx()}) // 为当前节点重新生成编号。
-                return 
-            }
-            idxs[node.idx] = true
-        }
+        // let idx_paths: {[key: number]: number[][]} = {}
+        // for(let [node,path] of Slate.Node.descendants(slate)){
+        //     if(!slate_is_concept(node)){
+        //         continue
+        //     }
+        //     if(idx_paths[node.idx] == undefined){
+        //         idx_paths[node.idx] = []
+        //     }
+        //     idx_paths[node.idx].push(path)
+        // }
+
+        // let conflicts = []
+        // for(let idx in idx_paths){
+        //     if(idx_paths[idx].length > 1){
+        //         conflicts.push([idx, idx_paths[idx]])
+        //     }
+        // }
+        // if(conflicts.length > 0){
+        //     editor.append_idx_conflict( conflicts )
+        // }
 
         //如果检查了所有地方，都没有问题，就认为粘贴结束。
         set_normalize_status({pasting: false} )
