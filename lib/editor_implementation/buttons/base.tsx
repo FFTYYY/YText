@@ -10,7 +10,8 @@ import * as SlateReact from "slate-react"
 import {
     ConceptNode , 
     ParameterList , 
-    GlobalInfo , 
+    GlobalInfo, 
+    ParameterValue, 
 } from "../../core"
 
 import {
@@ -45,6 +46,7 @@ import {
     Button, 
     Typography , 
     TextField , 
+    Input , 
 } from "@mui/material"
 
 import {AutoStackedPopperWithButton} from "./buttons"
@@ -396,8 +398,11 @@ function MouselessParameterEditor(props: {
     parameter_name: string
     idx: number
     label: string
+    generate_parameter?: (arg0: any)=>ParameterList | undefined
+    width?: string | number
+    input?: boolean // 是否使用input而不是textfield
 }){
-    let {node , parameter_name , idx , label} = props
+    let {node , parameter_name , generate_parameter, idx , label} = props
 
     let input_ref = React.useRef<HTMLInputElement | undefined>()
     let [active , set_active] = React.useState(false)
@@ -420,13 +425,27 @@ function MouselessParameterEditor(props: {
         set_ec({...editor.get_slate().selection}) // 记录焦点。
     }
 
-    // 恢复已经记录的焦点。
-    function restore_selection(){
+    function apply(){
         if(input_ref && input_ref.current){
             let input = input_ref.current
-            editor.auto_set_parameter(props.node, {[parameter_name]: {type: "string" , val: input.value}})
-        }
 
+            let new_param = {[parameter_name]: {
+                type: "string" , 
+                val: input.value , 
+            }} as ParameterList
+
+            if(generate_parameter){
+                new_param = generate_parameter(input.value)
+            }
+
+            if(new_param){
+                editor.auto_set_parameter(props.node, new_param )
+            }
+        }
+    }
+
+    // 恢复已经记录的焦点。
+    function restore_selection(){
         SlateReact.ReactEditor.focus(editor.get_slate())
         if(enter_selection && enter_selection["anchor"] && enter_selection["anchor"]["path"]){
             Slate.Transforms.select(editor.get_slate() , enter_selection) // 设置为保存的selection。
@@ -458,13 +477,49 @@ function MouselessParameterEditor(props: {
     }
     let param_init = node.parameters[parameter_name].val
 
+    if(props.input){
+        return <Box sx={{
+            border: active ? "2px solid" : "none"
+        }}><GlobalInfo.Consumer>{globalinfo => {
+            return <Input 
+                sx              = {{
+                    width: props.width || "2rem" , 
+                    marginBottom: "0.5rem" , 
+                }} 
+                size = "small" 
+                margin = "none"
+                defaultValue    = {param_init} 
+                inputRef        = {input_ref}
+    
+                onBlur = {()=>{
+                    apply()
+                }}
+    
+                onKeyDown         = {(e)=>{
+                    if(e.key == "Enter"){
+                        apply()
+                        restore_selection()
+                        focus_blur_input(false)
+                        e.preventDefault()
+                        return true
+                    }
+                    return false
+                }}
+            />
+        }}</ GlobalInfo.Consumer></Box>
+    
+    }
+
     return <Box sx={{
         border: active ? "2px solid" : "none"
     }}><GlobalInfo.Consumer>{globalinfo => {
-        let editor = globalinfo.editor as EditorComponent
         return <TextField 
             variant         = "standard" 
-            sx              = {{width: "2rem" , marginBottom: "0.5rem" , hright: "1rem"}} 
+            sx              = {{
+                width: props.width || "2rem" , 
+                marginBottom: "0.5rem" , 
+            }} 
+            size = "small" 
             label           = {<Typography sx={{fontSize: "0.7rem"}}>{label}</Typography>} 
             defaultValue    = {param_init} 
             inputRef        = {input_ref}

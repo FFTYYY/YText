@@ -41,7 +41,38 @@ let sectioner_editor    = get_default_spliter_editor({get_title: (n,p)=>p.title}
 let ender_editor        = get_default_spliter_editor({get_title: (n,p)=>"章节"})
 var strong_editor       = get_default_inline_editor({})
 var delete_editor       = get_default_inline_editor({surrounder: (props)=><del>{props.children}</del>  })
-var link_editor         = get_default_inline_editor({surrounder: (props)=><u>{props.children}</u>      })
+var link_editor         = get_default_inline_editor({surrounder: (props)=><u>{props.children}</u>   ,   
+rightbar_extra: ({node}) => {/** 在右侧提供一个用于快速输入退出符号的文本框。 */
+return <MouselessParameterEditor 
+    node = {node} 
+    idx = {0} 
+    parameter_name = "target" 
+    label = "idx"
+    input 
+    width = "5rem"
+    generate_parameter={(val)=>{
+        if(val[0] == "x"){
+            return undefined
+        }
+        return {"target": {
+            type: "string" , 
+            val: val ,
+        }}
+    }}
+/>
+return [{
+    component: MouselessParameterEditor , 
+    other_props: {
+        idx: 0 , 
+        parameter_name: "target_idx" , 
+        label: "idx" , 
+    } , 
+    skip_mouseless: true , 
+}] as any 
+},
+
+
+})
 var mathinline_editor   = get_default_inline_editor({surrounder: (props)=><>{props.children}</>        })
 var alignedwords_editor = get_default_struct_editor_with_rightbar({
     get_label: ()=>"行" , 
