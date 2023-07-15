@@ -60,15 +60,6 @@ return <MouselessParameterEditor
         }}
     }}
 />
-return [{
-    component: MouselessParameterEditor , 
-    other_props: {
-        idx: 0 , 
-        parameter_name: "target_idx" , 
-        label: "idx" , 
-    } , 
-    skip_mouseless: true , 
-}] as any 
 },
 
 

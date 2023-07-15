@@ -434,6 +434,8 @@ function MouselessParameterEditor(props: {
                 val: input.value , 
             }} as ParameterList
 
+            console.log(new_param)
+
             if(generate_parameter){
                 new_param = generate_parameter(input.value)
             }
@@ -477,67 +479,52 @@ function MouselessParameterEditor(props: {
     }
     let param_init = node.parameters[parameter_name].val
 
+    let onBlur = ()=>{apply()}
+    let onKeyDown = ()=>{(e)=>{
+        if(e.key == "Enter"){
+            apply()
+            restore_selection()
+            focus_blur_input(false)
+            e.preventDefault()
+            return true
+        }
+        return false
+    }}
+
     if(props.input){
         return <Box sx={{
             border: active ? "2px solid" : "none"
-        }}><GlobalInfo.Consumer>{globalinfo => {
-            return <Input 
-                sx              = {{
-                    width: props.width || "2rem" , 
-                    marginBottom: "0.5rem" , 
-                }} 
-                size = "small" 
-                margin = "none"
-                defaultValue    = {param_init} 
-                inputRef        = {input_ref}
-    
-                onBlur = {()=>{
-                    apply()
-                }}
-    
-                onKeyDown         = {(e)=>{
-                    if(e.key == "Enter"){
-                        apply()
-                        restore_selection()
-                        focus_blur_input(false)
-                        e.preventDefault()
-                        return true
-                    }
-                    return false
-                }}
-            />
-        }}</ GlobalInfo.Consumer></Box>
-    
-    }
-
-    return <Box sx={{
-        border: active ? "2px solid" : "none"
-    }}><GlobalInfo.Consumer>{globalinfo => {
-        return <TextField 
-            variant         = "standard" 
+        }}><Input 
             sx              = {{
                 width: props.width || "2rem" , 
                 marginBottom: "0.5rem" , 
             }} 
             size = "small" 
-            label           = {<Typography sx={{fontSize: "0.7rem"}}>{label}</Typography>} 
+            margin = "none"
             defaultValue    = {param_init} 
             inputRef        = {input_ref}
 
-            onBlur = {()=>{
-                restore_selection()
-            }}
+            onBlur          = {onBlur}
+            onKeyDown       = {onKeyDown}
+        /></Box>
+    
+    }
 
-            onKeyDown         = {(e)=>{
-                if(e.key == "Enter"){
-                    restore_selection()
-                    focus_blur_input(false)
-                    e.preventDefault()
-                    return true
-                }
-                return false
-            }}
-        />
-    }}</ GlobalInfo.Consumer></Box>
+    return <Box sx={{
+        border: active ? "2px solid" : "none"
+    }}><TextField 
+        variant         = "standard" 
+        sx              = {{
+            width: props.width || "2rem" , 
+            marginBottom: "0.5rem" , 
+        }} 
+        size = "small" 
+        label           = {<Typography sx={{fontSize: "0.7rem"}}>{label}</Typography>} 
+        defaultValue    = {param_init} 
+        inputRef        = {input_ref}
+
+        onBlur          = {onBlur}
+        onKeyDown       = {onKeyDown}
+    /></Box>
 
 }
