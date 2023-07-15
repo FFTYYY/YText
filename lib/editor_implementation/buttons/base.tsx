@@ -434,7 +434,7 @@ function MouselessParameterEditor(props: {
                 val: input.value , 
             }} as ParameterList
 
-            console.log(new_param)
+            // console.log(new_param)
 
             if(generate_parameter){
                 new_param = generate_parameter(input.value)

@@ -232,7 +232,7 @@ class DefaultEditorComponent extends React.Component <DefaultEditorComponentprop
     }
 
     check_idx(){
-        console.log()
+        // console.log()
         if(!get_normalize_status("pasting")){ // 如果没有在粘贴，就直接退出。
             return 
         }
