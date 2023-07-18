@@ -463,6 +463,7 @@ function MouselessParameterEditor(props: {
             }  ,  
             () => { // 取消激活后还原焦点
                 restore_selection()
+                apply()
                 focus_blur_input(false)
                 set_active(false)
             } , 
@@ -482,9 +483,9 @@ function MouselessParameterEditor(props: {
     let onBlur = ()=>{apply()}
     let onKeyDown = ()=>{(e)=>{
         if(e.key == "Enter"){
+            focus_blur_input(false)
             apply()
             restore_selection()
-            focus_blur_input(false)
             e.preventDefault()
             return true
         }
